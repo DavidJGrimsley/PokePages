@@ -1,45 +1,41 @@
-import { Pressable, PressableProps, Text } from "react-native";
-import React from "react";
-import { cn } from "../utils/cn";
+import { forwardRef } from 'react';
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 
 type ButtonProps = {
-  title: string;
-  onPress?: () => void;
-  theme?: "primary" | "secondary" | "tertiary";
-  disabled?: boolean;
-} & PressableProps;
+  title?: string;
+} & TouchableOpacityProps;
 
-// from SDK 53 (React 19) onwards, forwardRef is no longer needed, as ref is now a prop
-export function Button({
-  title,
-  onPress,
-  theme = "primary",
-  disabled,
-  ...rest
-}: ButtonProps) {
+export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
   return (
-    <Pressable
-      onPress={onPress}
-      className={cn(
-        "flex-row items-center justify-center rounded-md px-5 py-3 mb-4 border",
-        theme === "primary" && "bg-[#007AFF] border-[#007AFF]",
-        theme === "secondary" && "bg-white border-gray-300",
-        theme === "tertiary" && "bg-transparent border-transparent",
-        disabled && "opacity-50",
-      )}
-      disabled={disabled}
-      {...rest}
-    >
-      <Text
-        className={cn(
-          "font-semibold text-lg tracking-wider",
-          theme === "secondary" && "text-black",
-          theme === "primary" && "text-white",
-          theme === "tertiary" && "text-gray-800",
-        )}
-      >
-        {title} {disabled}
-      </Text>
-    </Pressable>
+    <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
   );
-}
+});
+
+Button.displayName = 'Button';
+
+const styles = StyleSheet.create({
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#6366F1',
+    borderRadius: 24,
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});

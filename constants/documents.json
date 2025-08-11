@@ -1,0 +1,113 @@
+{
+  "termsOfService": {
+    "lastUpdated": "2025-08-04",
+    "sections": [
+      {
+        "title": "Acceptance of Terms",
+        "content": "By accessing or using PokePages (\"the Service\"), you agree to be bound by these Terms of Service (\"Terms\"). If you do not agree to these Terms, you may not use the Service."
+      },
+      {
+        "title": "Changes to Terms",
+        "content": "We may modify these Terms at any time. When changes are significant, we will notify you via an in-app notice or by updating this page. Continued use after updates constitutes acceptance of the revised Terms."
+      },
+      {
+        "title": "Description of Service",
+        "content": "PokePages provides a Pokemon-themed mobile application featuring:\n\n• Pokemon event counters and community statistics\n• Pokemon build guides and raid resources\n• Pokemon information and stats display\n• Optional social features including user profiles, posts, comments, and community interactions (account required)\n\nBasic features (counters, builds, resources) are available without creating an account."
+      },
+      {
+        "title": "Eligibility",
+        "content": "Users of all ages may access our educational content including Pokemon raid builds, guides, and resources. Users of all ages may also participate in event counters using anonymous player IDs. However, you must be at least 13 years old to:\n• Create an account for social features\n• Access the social tab (profiles, posts, comments)\n• Post content or interact with other users in social features\n\nUsers under 13 may use counters, builds, and resources without creating an account. If you're between 13–17, you may use all features only with consent from a parent or legal guardian."
+      },
+      {
+        "title": "User Accounts",
+        "content": "An account is optional for basic app features (counters, builds, resources). To access social features, you must register an account with a valid email address and password. You are responsible for maintaining the confidentiality of your login credentials and all activities under your account."
+      },
+      {
+        "title": "Acceptable Conduct",
+        "content": "When using PokePages, you agree not to:\n• Harass, threaten, or abuse other users\n• Post hate speech, explicit content, or illegal material\n• Spam, manipulate counters, or distribute unsolicited content\n• Impersonate individuals or entities\n• Attempt to disrupt or hack the Service\n• Use automated tools to inflate event counters"
+      },
+      {
+        "title": "User Content",
+        "content": "You retain ownership of content you post in social features. By sharing content on PokePages, you grant us a worldwide, royalty-free license to host, display, reproduce, and distribute it in connection with the Service. Counter contributions are considered community data."
+      },
+      {
+        "title": "Prohibited Content",
+        "content": "Content that is disallowed includes:\n• Infringing intellectual property (e.g., unlicensed art or music)\n• Personal data exposed without consent\n• Malware, viruses, or code intended to disrupt the Service\n• False or misleading information about Pokemon events\n\nWe reserve the right to remove any content that violates these Terms or our Community Guidelines."
+      },
+      {
+        "title": "Termination and Suspension",
+        "content": "We may suspend or terminate your account, without notice, if you violate these Terms or engage in harmful behavior. You may also delete your account at any time. Anonymous usage (without an account) may be restricted if Terms are violated."
+      },
+      {
+        "title": "Disclaimers",
+        "content": "The Service is provided \"as is\" and \"as available.\" We disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. Pokemon information is sourced from public APIs and we make no guarantees about accuracy or completeness."
+      },
+      {
+        "title": "Limitation of Liability",
+        "content": "To the fullest extent permitted by law, PokePages and its affiliates will not be liable for:\n• Any indirect, incidental, or consequential damages\n• Loss of data, counter progress, or other information arising from your use of the Service\n• Interruptions to event counters or other Service features"
+      },
+      {
+        "title": "Indemnification",
+        "content": "You agree to indemnify and hold harmless PokePages, its officers, employees, and partners from any claims, damages, or expenses arising out of your use of the Service or any violation of these Terms."
+      },
+      {
+        "title": "Governing Law",
+        "content": "These Terms are governed by the laws of North Carolina, without regard to conflict of law principles. Any dispute will be resolved in the state or federal courts located in Wake County."
+      },
+      {
+        "title": "Contact Information",
+        "content": "If you have questions or feedback about these Terms, please contact us at:\n\nEmail: MrDJ@PokePages.app\nWebsite: https://pokepages.app\n\nThank you for being part of the PokePages community!"
+      }
+    ]
+  },
+  "privacyPolicy": {
+    "effectiveDate": "2025-08-04",
+    "lastUpdated": "2025-08-04",
+    "sections": [
+      {
+        "title": "Introduction",
+        "content": "This Privacy Policy describes how PokePages (\"we,\" \"us,\" or \"our\") collects, uses, discloses, and safeguards information when you use our mobile application (the \"App\") and website at https://pokepages.app. We are committed to protecting your privacy and will never sell your data to third parties."
+      },
+      {
+        "title": "Information We Collect",
+        "content": "2.1 Anonymous Usage (All Users): When you use our Pokemon event counter features, we automatically generate a unique player ID that is stored locally on your device and used to track your individual contributions to community counters. This ID contains no personal information and cannot be used to identify you.\n\n2.2 Optional Account Information (Authenticated Users Only): If you choose to create an account for social features, we collect your email address, username, and password. You can use all basic app features without creating an account.\n\n2.3 Optional Profile Data (Authenticated Users Only): If you create an account, you may optionally provide a display name, profile photo, and biographical details for social features.\n\n2.4 User Content (Authenticated Users Only): If you use social features, we store posts, comments, likes, and other interactions you create within the app.\n\n2.5 Counter Data: When you increment event counters, we store the count data on our servers along with your anonymous player ID (or account if signed in) to maintain global and individual statistics.\n\n2.6 Device Information: We collect basic device information such as screen dimensions to provide responsive design and optimal user experience.\n\n2.7 Usage Data: We may collect general usage patterns and app performance data to improve functionality and fix bugs.\n\n2.8 Third-Party Data: We retrieve Pokemon-related information (images, stats, names) from public Pokemon APIs to enhance the app experience. This data is not personal information."
+      },
+      {
+        "title": "How We Use Your Information",
+        "content": "• To provide and maintain Pokemon event counter functionality\n• To display global and individual contribution statistics\n• To improve app performance and user experience\n• To provide responsive design across different devices\n• To analyze usage patterns for app improvements\n• To respond to user support requests\n• To provide social features for authenticated users (posts, comments, profiles)\n• To maintain user accounts and preferences for signed-in users"
+      },
+      {
+        "title": "Data Sharing and Disclosure",
+        "content": "We do not sell, rent, or trade any data. The only data sharing that occurs is:\n\n• Anonymous counter statistics are publicly visible within the app to show community progress\n• Your individual player ID and contribution counts are visible to you within the app\n• We may share aggregated, non-personal usage statistics to improve the app\n\nWe may disclose information only to comply with legal obligations or respond to lawful requests by public authorities."
+      },
+      {
+        "title": "Data Retention",
+        "content": "• Player IDs and counter data are retained indefinitely to maintain historical event statistics\n• Local device storage (player preferences, offline data) is retained until you delete the app\n• You may request deletion of your specific player data by contacting us at privacy@pokepages.app"
+      },
+      {
+        "title": "Your Rights",
+        "content": "Depending on your jurisdiction, you may have the right to:\n• Access the counter data associated with your player ID\n• Request deletion of your player data from our servers\n• Object to data processing (though this may limit app functionality)\n• Obtain information about how your data is processed\n\nTo exercise these rights, please email privacy@pokepages.app with your player ID (found in the app under counter statistics)."
+      },
+      {
+        "title": "Security",
+        "content": "We implement appropriate technical measures to protect data against unauthorized access, alteration, or destruction. However, no method of transmission over the internet is 100% secure. Since we only collect minimal, anonymous data, the privacy risk is inherently low."
+      },
+      {
+        "title": "Children's Privacy",
+        "content": "Users under 13 may access educational content (builds, guides, resources) without creating an account or providing personal information. We do not knowingly collect personal data from children under 13. For users under 13, the app operates in read-only mode with no data collection beyond basic app functionality. If you believe we have inadvertently collected information from a child under 13, please contact us to request removal."
+      },
+      {
+        "title": "International Transfers",
+        "content": "Counter data may be processed on servers in countries other than your own. We ensure that any data transfers comply with applicable data protection laws. Given the anonymous nature of our data collection, privacy risks from international transfers are minimal."
+      },
+      {
+        "title": "Changes to This Policy",
+        "content": "We may update this Policy to reflect changes in our practices or legal requirements. We will post the revised Policy in the app and update the \"Last Updated\" date. Continued use of the App after changes indicates your acceptance of the revised Policy."
+      },
+      {
+        "title": "Contact Us",
+        "content": "If you have questions, comments, or requests regarding this Privacy Policy, please contact us at:\n\nEmail: privacy@pokepages.app\nWebsite: https://pokepages.app\n\nFor general support: MrDJ@PokePages.app"
+      }
+    ]
+  }
+}

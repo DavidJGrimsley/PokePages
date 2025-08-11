@@ -1,0 +1,17 @@
+{
+  "name": "pokemon-event-counter-api",
+  "version": "1.0.0",
+  "description": "Pokemon Event Counter API Server",
+  "main": "server.cjs",
+  "scripts": {
+    "start": "node server.cjs",
+    "dev": "node server.cjs"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
