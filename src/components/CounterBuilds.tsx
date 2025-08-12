@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BuildVariant } from '../types/builds';
+import { BuildVariant } from '@/types/builds';
 import { Build } from './Build';
 
-interface EventBuildData {
+interface CounterBuildData {
   pokemonName: string;
   pokemonId: number;
   pokemonVariant?: string;
@@ -34,15 +34,15 @@ interface EventBuildData {
   notes?: string;
 }
 
-interface EventBuildsProps {
-  eventPokemonName: string;
-  attackerBuilds?: EventBuildData[];
-  defenderBuilds?: EventBuildData[];
+interface CounterBuildsProps {
+  bossPokemonName?: string;
+  attackerBuilds?: CounterBuildData[];
+  defenderBuilds?: CounterBuildData[];
   colorScheme?: 'light' | 'dark';
 }
 
-export const EventBuilds: React.FC<EventBuildsProps> = ({
-  eventPokemonName,
+export const CounterBuilds: React.FC<CounterBuildsProps> = ({
+  bossPokemonName,
   attackerBuilds = [],
   defenderBuilds = [],
   colorScheme = 'light'
@@ -57,11 +57,14 @@ export const EventBuilds: React.FC<EventBuildsProps> = ({
         Best <Text style={styles.attacker}>Attacker</Text>
         {' & '}
         <Text style={styles.defender}>Defender</Text>
-        {' Tera Raid Builds for '}
-        Shiny {eventPokemonName}
+        {bossPokemonName ? ' Tera Raid Builds for ' : ' Tera Raid Builds'}
+        {bossPokemonName}
       </Text>
       <Text style={styles.buildsCaption}>
-        Here are the best Tera Raid counters and optimal builds for defeating Shiny {eventPokemonName} in Pokémon Scarlet & Violet. These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.
+        {bossPokemonName 
+          ? `Here are the best Tera Raid counters and optimal builds for defeating ${bossPokemonName} in Pokémon Scarlet & Violet. These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.`
+          : 'Here are the best counters for most Tera Raid bosses! These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.'
+        }
       </Text>
 
       {attackerBuilds.length > 0 && (

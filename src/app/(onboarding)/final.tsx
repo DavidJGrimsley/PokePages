@@ -1,17 +1,78 @@
 import { Link, Stack, router } from 'expo-router';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useRef, useState, useCallback } from 'react';
+
+import { Confetti } from 'react-native-fast-confetti';
 
 import { Button } from '~/components/Button';
 import { useOnboardingStore } from '~/utils/onboardingStore';
 
 export default function OnboardingFinalScreen() {
-  const { completeOnboarding } = useOnboardingStore();
+  const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
+  const [confettiVisible, setConfettiVisible] = useState(false);
+  const [cannonPositions, setCannonPositions] = useState<{ x: number; y: number }[]>([]);
+  const [runId, setRunId] = useState(0); // force remount per run
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exploreBtnRef = useRef<View>(null); // ref to the Start Exploring button
 
-  const handleCompleteOnboarding = () => {
-    completeOnboarding();
-    router.replace('/(drawer)' as any);
+  // Tune these to your liking
+  const BLAST_MS = 1000;
+  const FALL_MS = 4000;
+  const TOTAL_MS = BLAST_MS + FALL_MS;
+
+  const clearFallback = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
   };
+
+  const handleCompleteOnboarding = useCallback(() => {
+    clearFallback();
+    setConfettiVisible(false);
+    console.log('Attempting to complete onboarding');
+    console.log('Has completed onboarding: ', hasCompletedOnboarding);
+    completeOnboarding();
+    console.log('Has completed onboarding: ', hasCompletedOnboarding);
+    router.replace('/(drawer)' as any);
+    console.log('Onboarding completed, navigating to main app...');
+  }, [completeOnboarding, hasCompletedOnboarding]);
+
+
+  const readyCannon = useCallback(() => {
+    clearFallback();
+
+    const measureAndFire = () => {
+      const node = exploreBtnRef.current as any;
+      if (node?.measure) {
+        node.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+          // center of the button in screen coords
+          const pos = { x: pageX + width / 2, y: pageY + height / 2 };
+          setCannonPositions([pos]);
+          setRunId((id) => id + 1);     // force remount/start
+          setConfettiVisible(true);
+
+          // fallback in case onAnimationEnd doesn't fire
+          timeoutRef.current = setTimeout(() => {
+            handleCompleteOnboarding();
+          }, TOTAL_MS - 2000);
+        });
+      } else {
+        // fallback position if measure unavailable
+        setCannonPositions([{ x: 0, y: 0 }]);
+        setRunId((id) => id + 1);
+        setConfettiVisible(true);
+        timeoutRef.current = setTimeout(() => {
+          handleCompleteOnboarding();
+        }, TOTAL_MS - 2000);
+      }
+    };
+
+    // ensure layout is ready before measuring
+    requestAnimationFrame(measureAndFire);
+  }, [TOTAL_MS, handleCompleteOnboarding]);
+
 
   return (
     <View style={styles.container}>
@@ -66,16 +127,22 @@ export default function OnboardingFinalScreen() {
           <Link href="/sign-in" asChild push>
             <Button title="Sign In" />
           </Link>
-          <Link href="/createAccount" asChild push>
-            <Button title="Create Account" />
-          </Link>
         </View>
       </View>
-      
+      <Confetti
+        key={runId}                  // remount per run
+        autoplay={confettiVisible}
+        isInfinite={false}
+        cannonsPositions={cannonPositions}
+        blastDuration={BLAST_MS}
+        fallDuration={FALL_MS}
+        onAnimationEnd={handleCompleteOnboarding}
+      />
       <View style={styles.footer}>
         <Button
+          ref={exploreBtnRef}
           title="Start Exploring"
-          onPress={handleCompleteOnboarding}
+          onPress={readyCannon}
           style={styles.completeButton}
         />
       </View>

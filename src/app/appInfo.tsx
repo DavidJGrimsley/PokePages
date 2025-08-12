@@ -6,13 +6,13 @@ import { useState } from 'react';
 import { ScreenContent } from '~/components/ScreenContent';
 import { ShowAgreement } from '~/components/ShowAgreement';
 import { useAuthStore } from '~/utils/authStore';
-// import { useOnboardingStore } from '~/store/onboardingStore';
+import { useOnboardingStore } from '~/utils/onboardingStore';
 
 export default function AppInfo() {
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementType, setAgreementType] = useState<'termsOfService' | 'privacyPolicy'>('termsOfService');
   const { logIn, logOut } = useAuthStore();
-  // const { resetOnboarding } = useOnboardingStore();
+  const { resetOnboarding } = useOnboardingStore();
 
   const handleLinkPress = (url: string) => {
     Linking.openURL(url);
@@ -95,35 +95,31 @@ export default function AppInfo() {
           {/* Development Helper */}
           <Pressable 
             style={styles.devButton}
-            // onPress={handleResetOnboarding}
+            onPress={resetOnboarding}
           >
             <Text style={styles.devButtonText}>🔄 Reset Onboarding (Dev)</Text>
           </Pressable>
-          <Link href="/createAccount" asChild push>
+
+          <Link href="/sign-in" asChild push>
             <Pressable
               style={styles.devButton}
-              // onPress={handleResetOnboarding}
             >
-              <Text style={styles.devButtonText}>🔄 Create Account (Dev)</Text>
+              <Text style={styles.devButtonText}>🔄 Create Account or Sign up(Dev-supabase)</Text>
             </Pressable>
           </Link>
-          <Pressable onPress={logIn}
+
+          <Pressable 
+            onPress={logIn}
             style={styles.devButton}
-            // onPress={handleResetOnboarding}
           >
-            <Text style={styles.devButtonText}>🔄 Sign In (Dev)</Text>
+            <Text style={styles.devButtonText}>🔄 Log In (Dev)</Text>
           </Pressable>
-          <Pressable onPress={logIn}
+        
+          <Pressable 
+            onPress={logOut}
             style={styles.devButton}
-            // onPress={handleResetOnboarding}
           >
-            <Text style={styles.devButtonText}>🔄 Sign In (Dev)</Text>
-          </Pressable>
-          <Pressable onPress={logOut}
-            style={styles.devButton}
-            // onPress={handleResetOnboarding}
-          >
-            <Text style={styles.devButtonText}>🔄 Sign Out (Dev)</Text>
+            <Text style={styles.devButtonText}>🔄 Log Out (Dev)</Text>
           </Pressable>
           
         </View>

@@ -1,101 +1,259 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
+import { supabase } from "./supabaseClient";
+import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 
+// Cross-platform storage functions
+const getStorageItem = async (key: string): Promise<string | null> => {
+  try {
+    if (Platform.OS === 'web') {
+      return localStorage.getItem(key);
+    } else {
+      return await AsyncStorage.getItem(key);
+    }
+  } catch (error) {
+    console.error('Error getting storage item:', error);
+    return null;
+  }
+};
+
+const removeStorageItem = async (key: string): Promise<void> => {
+  try {
+    if (Platform.OS === 'web') {
+      localStorage.removeItem(key);
+    } else {
+      await AsyncStorage.removeItem(key);
+    }
+  } catch (error) {
+    console.error('Error removing storage item:', error);
+  }
+};
+
+// Function to migrate anonymous data when user signs up/in
+const migrateAnonymousData = async (userId: string) => {
+  try {
+    console.log('Starting anonymous data migration for user:', userId);
+    
+    // Get all anonymous IDs from storage for different events
+    const eventKeys = ['wo-chien', 'chien-pao', 'ting-lu', 'chi-yu']; // Add your event keys
+    const anonymousIds: string[] = [];
+    
+    for (const eventKey of eventKeys) {
+      const storageKey = `anonymous_id_${eventKey}`;
+      const anonId = await getStorageItem(storageKey);
+      if (anonId && !anonymousIds.includes(anonId)) {
+        anonymousIds.push(anonId);
+      }
+    }
+    
+    console.log('Found anonymous IDs:', anonymousIds);
+    
+    // Migrate each anonymous ID
+    for (const anonId of anonymousIds) {
+      try {
+        const { error } = await supabase.rpc('migrate_anonymous_to_user', {
+          p_user_id: userId,
+          p_anonymous_id: anonId
+        });
+        
+        if (error) {
+          console.error('Migration error for', anonId, ':', error);
+        } else {
+          console.log('Successfully migrated anonymous ID:', anonId);
+          
+          // Clean up storage keys for this anonymous ID
+          for (const eventKey of eventKeys) {
+            const storageKey = `anonymous_id_${eventKey}`;
+            const storedId = await getStorageItem(storageKey);
+            if (storedId === anonId) {
+              await removeStorageItem(storageKey);
+            }
+          }
+        }
+      } catch (migrationError) {
+        console.error('Failed to migrate anonymous ID', anonId, ':', migrationError);
+      }
+    }
+    
+    console.log('Anonymous data migration completed');
+  } catch (error) {
+    console.error('Failed to migrate anonymous data:', error);
+  }
+};
+
+// Your existing UserState interface...
 type UserState = {
+  user: User | null;
+  session: Session | null;
   isLoggedIn: boolean;
   shouldCreateAccount: boolean;
-  hasCompletedOnboarding: boolean;
   isVip: boolean;
   _hasHydrated: boolean;
+  
+  // Supabase authentication methods
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  setUser: (user: User | null) => void;
+  setSession: (session: Session | null) => void;
   logIn: () => void;
-  logOut: () => void;
   logInAsVip: () => void;
-  setHasCompletedOnboarding: (value: boolean) => void;
+  logOut: () => void;
   setHasHydrated: (value: boolean) => void;
 };
 
-const secureStorage = {
-  setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
-  getItem: (key: string) => SecureStore.getItemAsync(key),
-  removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-};
-
-const webFallbackStorage = {
-  setItem: (key: string, value: string) => {
-    localStorage.setItem(key, value);
-    return Promise.resolve();
-  },
-  getItem: (key: string) => Promise.resolve(localStorage.getItem(key)),
-  removeItem: (key: string) => {
-    localStorage.removeItem(key);
-    return Promise.resolve();
-  },
-};
-
+const isWeb = Platform.OS === "web";
 
 export const useAuthStore = create(
   persist<UserState>(
-    (set) => ({
+    (set, get) => ({
+      user: null,
+      session: null,
       isLoggedIn: false,
       shouldCreateAccount: true,
       isVip: false,
-      hasCompletedOnboarding: false,
       _hasHydrated: false,
-      logIn: () => {
-        set((state) => {
-          console.log("Logging in user");
-          console.log(`User logged in successfully. Logged in state: ${JSON.stringify(state)}`);
-          return {
-            ...state,
-            isLoggedIn: true,
-          };
-        });
+      
+      // Supabase authentication methods
+      signIn: async (email: string, password: string) => {
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (error) {
+            throw error;
+          }
+          
+          if (data.user && data.session) {
+            set((state) => ({
+              ...state,
+              user: data.user,
+              session: data.session,
+              isLoggedIn: true,
+              shouldCreateAccount: false,
+            }));
+            
+            // Migrate anonymous data after successful sign in
+            await migrateAnonymousData(data.user.id);
+          }
+        } catch (error) {
+          console.error("Error signing in:", error);
+          throw error;
+        }
       },
-      logInAsVip: () => {
-        set((state) => {
-          return {
-            ...state,
-            isVip: true,
-            isLoggedIn: true,
-          };
-        });
+      
+      signUp: async (email: string, password: string) => {
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+          });
+          
+          if (error) {
+            throw error;
+          }
+          
+          if (data.user && data.session) {
+            set((state) => ({
+              ...state,
+              user: data.user,
+              session: data.session,
+              isLoggedIn: true,
+              shouldCreateAccount: false,
+            }));
+            
+            // Migrate anonymous data after successful sign up
+            await migrateAnonymousData(data.user.id);
+          }
+        } catch (error) {
+          console.error("Error signing up:", error);
+          throw error;
+        }
       },
-      logOut: () => {
-        set((state) => {
-          return {
+      
+      signOut: async () => {
+        try {
+          const { error } = await supabase.auth.signOut();
+          if (error) {
+            throw error;
+          }
+          
+          set((state) => ({
             ...state,
-            isVip: false,
+            user: null,
+            session: null,
             isLoggedIn: false,
-          };
-        });
+            isVip: false,
+          }));
+        } catch (error) {
+          console.error("Error signing out:", error);
+          throw error;
+        }
       },
-      setHasCompletedOnboarding: (value: boolean) => {
-        set((state) => {
-          return {
-            ...state,
-            hasCompletedOnboarding: value,
-          };
-        });
+      
+      setUser: (user: User | null) => {
+        set((state) => ({
+          ...state,
+          user,
+          isLoggedIn: !!user,
+        }));
       },
-      setHasHydrated: (value: boolean) => {
-        set((state) => {
-          return {
-            ...state,
-            _hasHydrated: value,
-          };
-        });
+      
+      setSession: (session: Session | null) => {
+        set((state) => ({
+          ...state,
+          session,
+        }));
+      },
+       setHasHydrated: (value: boolean) => {
+        set((state) => ({ ...state, _hasHydrated: value }));
+      },
+      // DEPRECATED: Dev-only methods - use signIn/signUp/signOut for real auth
+      logIn: () => {
+        set((state) => ({ ...state, isLoggedIn: true }));
+      },
+      
+      logInAsVip: () => {
+        set((state) => ({ ...state, isLoggedIn: true, isVip: true }));
+      },
+      
+      logOut: () => {
+        set((state) => ({ ...state, isLoggedIn: false, isVip: false }));
       },
     }),
     {
       name: "auth-store",
-      storage: createJSONStorage(() =>
-        Platform.OS === "web" ? webFallbackStorage : secureStorage,
-      ),
-      onRehydrateStorage: (state) => {
-        return () => state.setHasHydrated(true);
+      storage: isWeb
+        ? createJSONStorage(() => localStorage)
+        : createJSONStorage(() => ({
+            setItem: (key: string, value: string) =>
+              SecureStore.setItemAsync(key, value),
+            getItem: (key: string) => SecureStore.getItemAsync(key),
+            removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+          })),
+      onRehydrateStorage: () => {
+        return (state) => {
+          state?.setHasHydrated(true);
+        };
       },
     },
   ),
 );
+
+// Set up auth state listener
+supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
+  console.log('Auth state changed:', event, session?.user?.email);
+  const { setUser, setSession } = useAuthStore.getState();
+  setSession(session);
+  setUser(session?.user ?? null);
+  
+  // Handle migration for token refresh or other auth events
+  if (event === 'SIGNED_IN' && session?.user) {
+    await migrateAnonymousData(session.user.id);
+  }
+});

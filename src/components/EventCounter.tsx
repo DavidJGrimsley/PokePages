@@ -4,6 +4,7 @@ import {
   StyleSheet, 
   View, 
   ScrollView, 
+  Alert,
   Pressable, 
   Platform, 
   Image,
@@ -14,6 +15,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { PokemonClient } from 'pokenode-ts';
+import { supabase } from '~/utils/supabaseClient';
+import { useAuthStore } from '~/utils/authStore';
+import { diagnosticChecks } from '~/utils/supabaseDiagnostics';
+
+// Cross-platform alert function
+const showAlert = (title: string, message?: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(message ? `${title}\n${message}` : title);
+  } else {
+    Alert.alert(title, message);
+  }
+}
 
 // Add interface for Pokemon stats
 interface PokemonStats {
@@ -31,7 +44,7 @@ interface EventCounterProps {
   teraType: string;
   eventTitle: string;
   eventDescription: string;
-  apiEndpoint?: string;
+  eventKey: string; // Unique identifier for the event
   startDate: string;
   endDate: string;
   distributionStart: string;
@@ -42,9 +55,9 @@ interface EventCounterProps {
 }
 
 interface CounterData {
-  count: number;
-  playerCount: number;
-  lastUpdated: string;
+  total_count: number;
+  user_count: number;
+  last_updated: string;
 }
 
 export const EventCounter: React.FC<EventCounterProps> = ({
@@ -53,7 +66,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   teraType,
   eventTitle,
   eventDescription,
-  apiEndpoint,
+  eventKey,
   startDate,
   endDate,
   distributionStart,
@@ -62,13 +75,14 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   maxRewards,
   colorScheme = 'light'
 }) => {
+  const { user, isLoggedIn } = useAuthStore();
   const [globalCount, setGlobalCount] = useState(0);
-  const [playerCount, setPlayerCount] = useState(0);
+  const [userCount, setUserCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState('');
-  const [playerId, setPlayerId] = useState('');
+  const [anonymousId, setAnonymousId] = useState('');
   const [pokemonImage, setPokemonImage] = useState('');
   const [pokemonStats, setPokemonStats] = useState<PokemonStats | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -84,18 +98,14 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
   // Function to get color based on stat value (red to green gradient)
   const getStatColor = (statValue: number): string => {
-    // Pokemon stats typically range from 1-255, with most being 20-180
-    // Normalize to 0-1 range for color calculation
-    const normalized = Math.min(statValue / 180, 1); // 180 is considered "high"
+    const normalized = Math.min(statValue / 180, 1);
     
     if (normalized <= 0.5) {
-      // Red to Orange (0-0.5)
       const redToOrange = normalized * 2;
       const red = 220;
       const green = Math.floor(120 * redToOrange);
       return `rgb(${red}, ${green}, 50)`;
     } else {
-      // Orange to Forest Green (0.5-1)
       const orangeToGreen = (normalized - 0.5) * 2;
       const red = Math.floor(220 * (1 - orangeToGreen) + 60 * orangeToGreen);
       const green = Math.floor(120 + 100 * orangeToGreen);
@@ -108,10 +118,234 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
-    }, 60000); // Update every minute
+    }, 60000);
 
     return () => clearInterval(timer);
   }, []);
+
+  // Generate anonymous ID for non-logged-in users
+  const generateAnonymousId = () => {
+    return 'anon_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+  };
+
+  // Cross-platform storage functions
+  const getStorageItem = async (key: string): Promise<string | null> => {
+    try {
+      if (Platform.OS === 'web') {
+        return localStorage.getItem(key);
+      } else {
+        return await AsyncStorage.getItem(key);
+      }
+    } catch (error) {
+      console.error('Error getting storage item:', error);
+      return null;
+    }
+  };
+
+  const setStorageItem = async (key: string, value: string): Promise<void> => {
+    try {
+      if (Platform.OS === 'web') {
+        localStorage.setItem(key, value);
+      } else {
+        await AsyncStorage.setItem(key, value);
+      }
+    } catch (error) {
+      console.error('Error setting storage item:', error);
+    }
+  };
+
+  // Initialize anonymous ID for non-logged-in users
+  useEffect(() => {
+    const initializeAnonymousId = async () => {
+      if (!isLoggedIn) {
+        const storageKey = `anonymous_id_${eventKey}`;
+        let storedId = await getStorageItem(storageKey);
+        
+        if (!storedId) {
+          storedId = generateAnonymousId();
+          await setStorageItem(storageKey, storedId);
+        }
+        
+        setAnonymousId(storedId);
+      }
+    };
+
+    initializeAnonymousId();
+  }, [isLoggedIn, eventKey]);
+
+  // Load Pokemon data using pokenode-ts
+  useEffect(() => {
+    const loadPokemonData = async () => {
+      try {
+        const pokemonClient = new PokemonClient();
+        const pokemon = await pokemonClient.getPokemonById(pokemonId)
+          .catch((error: any) => {
+            console.error('Error fetching Pokemon from pokenode-ts:', error);
+            return null;
+          });
+
+        if (!pokemon) {
+          setPokemonImage('');
+          setPokemonStats(null);
+          return;
+        }
+        
+        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_shiny || 
+                        pokemon.sprites.front_shiny || 
+                        pokemon.sprites.front_default || '';
+        setPokemonImage(imageUrl);
+        
+        const stats: PokemonStats = {
+          hp: pokemon.stats.find((stat: any) => stat.stat.name === 'hp')?.base_stat || 0,
+          attack: pokemon.stats.find((stat: any) => stat.stat.name === 'attack')?.base_stat || 0,
+          defense: pokemon.stats.find((stat: any) => stat.stat.name === 'defense')?.base_stat || 0,
+          specialAttack: pokemon.stats.find((stat: any) => stat.stat.name === 'special-attack')?.base_stat || 0,
+          specialDefense: pokemon.stats.find((stat: any) => stat.stat.name === 'special-defense')?.base_stat || 0,
+          speed: pokemon.stats.find((stat: any) => stat.stat.name === 'speed')?.base_stat || 0,
+        };
+        
+        setPokemonStats(stats);
+        
+      } catch (error) {
+        console.error('Error in loadPokemonData:', error);
+        setPokemonImage('');
+        setPokemonStats(null);
+      } finally {
+        setImageLoading(false);
+      }
+    };
+
+    loadPokemonData();
+  }, [pokemonId]);
+
+  // Load event data and user participation
+  useEffect(() => {
+    const loadEventData = async () => {
+      try {
+        console.log('🔍 Loading event data for:', eventKey);
+        
+        // Get event data
+        const { data: eventData, error: eventError } = await supabase
+          .from('event_counters')
+          .select('*')
+          .eq('event_key', eventKey)
+          .single();
+
+        if (eventError) {
+          console.error('❌ Event data error:', eventError);
+          throw eventError;
+        }
+
+        console.log('✅ Event data loaded:', eventData);
+
+        if (eventData) {
+          setGlobalCount(eventData.total_count || 0);
+          setLastUpdated(eventData.updated_at);
+        }
+
+        // Get user participation with enhanced error handling
+        if (isLoggedIn && user) {
+          console.log('🔍 Loading user participation...');
+          console.log('Event ID:', eventData.id, 'Type:', typeof eventData.id);
+          console.log('User ID:', user.id, 'Type:', typeof user.id);
+          
+          const { data: userParticipation, error: userError, status, statusText } = await supabase
+            .from('user_event_participation')
+            .select('contribution_count, event_id, user_id')  // Explicitly list columns
+            .eq('event_id', eventData.id)
+            .eq('user_id', user.id)
+            .maybeSingle();  // Use maybeSingle() instead of single() to handle empty results
+
+          console.log('User participation response status:', status);
+          console.log('User participation response statusText:', statusText);
+
+          if (userError) {
+            console.error('❌ User participation error:', userError);
+            console.error('Full error details:', {
+              message: userError.message,
+              details: userError.details,
+              hint: userError.hint,
+              code: userError.code
+            });
+            
+            // Don't throw here - this might be expected if user hasn't participated yet
+            if (userError.code !== 'PGRST116') { // PGRST116 is "not found" which is expected
+              console.warn('Unexpected user participation error:', userError);
+            }
+          }
+
+          if (!userError && userParticipation) {
+            console.log('✅ User participation loaded:', userParticipation);
+            setUserCount(userParticipation.contribution_count || 0);
+          } else {
+            console.log('ℹ️ No user participation found (user hasn\'t participated yet)');
+            setUserCount(0);
+          }
+        } else if (anonymousId) {
+          // Get anonymous participation
+          console.log('🔍 Loading anonymous participation for:', anonymousId);
+          
+          const { data: anonParticipation, error: anonError } = await supabase
+            .from('anonymous_event_participation')
+            .select('contribution_count')
+            .eq('event_id', eventData.id)
+            .eq('anonymous_id', anonymousId)
+            .maybeSingle();  // Use maybeSingle() for anonymous participation too
+
+          if (anonError && anonError.code !== 'PGRST116') {
+            console.error('❌ Anonymous participation error:', anonError);
+          }
+
+          if (!anonError && anonParticipation) {
+            console.log('✅ Anonymous participation loaded:', anonParticipation);
+            setUserCount(anonParticipation.contribution_count || 0);
+          } else {
+            console.log('ℹ️ No anonymous participation found');
+            setUserCount(0);
+          }
+        }
+
+        setError('');
+      } catch (error) {
+        console.error('❌ Failed to load event data:', error);
+        setError(`Failed to load event data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        
+        // Run diagnostics if there's an error
+        console.log('🚀 Running diagnostics due to error...');
+        if (isLoggedIn && user) {
+          await diagnosticChecks.runAllChecks();
+        }
+      }
+    };
+
+    if (eventKey && (isLoggedIn || anonymousId)) {
+      loadEventData();
+      
+      // Set up real-time subscription for event updates
+      const subscription = supabase
+        .channel(`event_${eventKey}`)
+        .on('postgres_changes', 
+          { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'event_counters',
+            filter: `event_key=eq.${eventKey}`
+          }, 
+          (payload) => {
+            console.log('Event updated:', payload);
+            if (payload.new) {
+              setGlobalCount(payload.new.total_count || 0);
+              setLastUpdated(payload.new.updated_at);
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [eventKey, isLoggedIn, user, anonymousId]);
 
   // Format date to user-friendly format
   const formatUserFriendlyDate = (dateString: string) => {
@@ -182,180 +416,60 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     return status !== 'active' || loading;
   };
 
-  // API base URL - you can modify this based on your backend
-  const API_BASE = apiEndpoint || 'https://api.pokepages.app';
-
-  const storageKey = `pokemon_event_${pokemonName.toLowerCase().replace(/\s+/g, '_')}`;
-  
-  // Sanitize pokemon name for API calls (same logic as server)
-  const sanitizedPokemonName = pokemonName.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-
-  // Generate or retrieve player ID
-  const generatePlayerId = () => {
-    return 'player_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
-  };
-
-  // Cross-platform storage functions
-  const getStorageItem = async (key: string): Promise<string | null> => {
-    try {
-      if (Platform.OS === 'web') {
-        return localStorage.getItem(key);
-      } else {
-        return await AsyncStorage.getItem(key);
-      }
-    } catch (error) {
-      console.error('Error getting storage item:', error);
-      return null;
-    }
-  };
-
-  const setStorageItem = async (key: string, value: string): Promise<void> => {
-    try {
-      if (Platform.OS === 'web') {
-        localStorage.setItem(key, value);
-      } else {
-        await AsyncStorage.setItem(key, value);
-      }
-    } catch (error) {
-      console.error('Error setting storage item:', error);
-    }
-  };
-
-  // Fetch Pokemon data using pokenode-ts
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        let storedPlayerId = await getStorageItem(`${storageKey}_player_id`);
-        let storedPlayerCount = await getStorageItem(`${storageKey}_player_count`);
-        
-        if (!storedPlayerId) {
-          storedPlayerId = generatePlayerId();
-          await setStorageItem(`${storageKey}_player_id`, storedPlayerId);
-          await setStorageItem(`${storageKey}_player_count`, '0');
-          storedPlayerCount = '0';
-        }
-        
-        setPlayerId(storedPlayerId);
-        setPlayerCount(parseInt(storedPlayerCount || '0'));
-      } catch (error) {
-        console.error('Error initializing player:', error);
-        const fallbackId = generatePlayerId();
-        setPlayerId(fallbackId);
-        setPlayerCount(0);
-      }
-    };
-
-    const loadPokemonData = async () => {
-      try {
-        // Create PokemonClient instance
-        const pokemonClient = new PokemonClient();
-        
-        // Fetch Pokemon data using pokenode-ts
-        const pokemon = await pokemonClient.getPokemonById(pokemonId)
-          .catch((error: any) => {
-            console.error('Error fetching Pokemon from pokenode-ts:', error);
-            return null;
-          });
-
-        if (!pokemon) {
-          setPokemonImage('');
-          setPokemonStats(null);
-          return;
-        }
-        
-        // Get shiny image with proper null checking
-        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_shiny || 
-                        pokemon.sprites.front_shiny || 
-                        pokemon.sprites.front_default || '';
-        setPokemonImage(imageUrl);
-        console.log(`Pokemon image URL: ${imageUrl}`);
-        
-        // Extract base stats with proper typing
-        const stats: PokemonStats = {
-          hp: pokemon.stats.find((stat: any) => stat.stat.name === 'hp')?.base_stat || 0,
-          attack: pokemon.stats.find((stat: any) => stat.stat.name === 'attack')?.base_stat || 0,
-          defense: pokemon.stats.find((stat: any) => stat.stat.name === 'defense')?.base_stat || 0,
-          specialAttack: pokemon.stats.find((stat: any) => stat.stat.name === 'special-attack')?.base_stat || 0,
-          specialDefense: pokemon.stats.find((stat: any) => stat.stat.name === 'special-defense')?.base_stat || 0,
-          speed: pokemon.stats.find((stat: any) => stat.stat.name === 'speed')?.base_stat || 0,
-        };
-        
-        setPokemonStats(stats);
-        console.log(`Loaded data for ${pokemon.name}:`, pokemon);
-        
-      } catch (error) {
-        console.error('Error in loadPokemonData:', error);
-        setPokemonImage('');
-        setPokemonStats(null);
-      } finally {
-        setImageLoading(false);
-      }
-    };
-
-    initialize();
-    loadPokemonData();
-  }, [pokemonId, storageKey]);
-
-  // Load counter data
-  useEffect(() => {
-    if (!playerId) return;
-
-    const loadCounter = async () => {
-      try {
-        const url = `${API_BASE}/counter/${sanitizedPokemonName}/player/${playerId}`;
-        console.log('Fetching counter from:', url);
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch counter: ${response.status} ${response.statusText}`);
-        
-        const data: CounterData = await response.json();
-        console.log('Counter data received:', data);
-        
-        setGlobalCount(data.count);
-        setPlayerCount(data.playerCount);
-        setLastUpdated(data.lastUpdated);
-        setError('');
-        
-        await setStorageItem(`${storageKey}_player_count`, data.playerCount.toString());
-      } catch (error) {
-        console.error('Failed to fetch counter:', error);
-        setError(`Failed to load counter: ${error instanceof Error ? error.message : 'Unknown error'}. Using offline mode.`);
-      }
-    };
-
-    loadCounter();
-    const interval = setInterval(loadCounter, 30000);
-    return () => clearInterval(interval);
-  }, [playerId, API_BASE, storageKey, sanitizedPokemonName]);
-
   const incrementCounter = async () => {
     setLoading(true);
     setError('');
     
     try {
-      const url = `${API_BASE}/counter/${sanitizedPokemonName}/increment`;
-      console.log('Incrementing counter at:', url);
-      console.log('With playerId:', playerId);
+      // Call the Supabase function with explicit parameters
+      const params = {
+        p_event_key: eventKey,  // Using p_ prefix to match SQL function parameter
+        p_pokemon_name: pokemonName,  // Add pokemon name parameter
+        p_user_id: isLoggedIn && user ? user.id : null,
+        p_anonymous_id: !isLoggedIn && anonymousId ? anonymousId : null
+      };
       
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playerId })
-      });
+      console.log('🚀 Calling increment_counter with params:', params);
       
-      if (!response.ok) throw new Error(`Failed to increment counter: ${response.status} ${response.statusText}`);
+      const { data, error } = await supabase.rpc('increment_counter', params);
       
-      const data: CounterData = await response.json();
-      console.log('Increment response:', data);
+      console.log('🔍 increment_counter response:', { data, error });
       
-      setGlobalCount(data.count);
-      setPlayerCount(data.playerCount);
-      setLastUpdated(data.lastUpdated);
+      if (error) {
+        console.error('❌ increment_counter error:', error);
+        throw error;
+      }
+
+      if (data) {
+        console.log('📊 increment_counter data:', data);
+        
+        if (data.success) {
+          // The function returns a JSON object
+          const eventCounter = data.event_counter;
+          const userContribution = data.user_contribution;
+          
+          console.log('✅ Updating counts:', {
+            globalCount: eventCounter.current_count,
+            userCount: userContribution
+          });
+          
+          setGlobalCount(eventCounter.current_count || 0);
+          setUserCount(userContribution || 0);
+          setLastUpdated(eventCounter.updated_at || new Date().toISOString());
+        } else {
+          // Function returned success: false
+          console.error('❌ Function returned error:', data.error);
+          throw new Error(data.error || 'Function returned unsuccessful result');
+        }
+      } else {
+        console.error('❌ No data returned from function');
+        throw new Error('No data returned from increment_counter function');
+      }
       
-      await setStorageItem(`${storageKey}_player_count`, data.playerCount.toString());
     } catch (error) {
-      console.error('Failed to increment counter:', error);
-      setError(`Failed to update counter: ${error instanceof Error ? error.message : 'Unknown error'}. Please contact me for assistance at MrDJ@PokePages.app.`);
+      console.error('❌ Failed to increment counter:', error);
+      setError(`Failed to update counter: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      showAlert('Error', 'Failed to update counter. Please try again.');
     }
     
     setLoading(false);
@@ -369,6 +483,10 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     const bonusLevels = Math.floor((globalCount - targetCount) / 100000);
     return Math.min(bonusLevels, (maxRewards - targetCount) / 100000);
   };
+
+  // Add this inside your component or before making Supabase requests
+  // console.log('Supabase session:', supabase.auth.getSession ? await supabase.auth.getSession() : useAuthStore.getState().session);
+  console.log('Supabase user:', useAuthStore.getState().user);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -388,9 +506,36 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           </View>
         )}
       </View>
+      {/* Show login prompt for better experience */}
+      {!isLoggedIn && (
+        <View style={styles.loginPrompt}>
+          <Text style={styles.loginPromptText}>
+            💡 Sign in to sync your progress across devices and get personalized stats!
+          </Text>
+        </View>
+      )}
 
+      {/* Counter Display */}
+      <View style={styles.counterContainer}>
+        <Text style={styles.counter}>
+          Global Count: {globalCount.toLocaleString()}
+        </Text>
+        <Text style={styles.playerCounter}>
+          Your Contributions: {userCount.toLocaleString()}
+        </Text>
+        {!isLoggedIn && anonymousId && (
+          <Text style={styles.playerId}>
+            Anonymous ID: {anonymousId.slice(-8)}
+          </Text>
+        )}
+        {lastUpdated && (
+          <Text style={styles.lastUpdated}>
+            Last updated: {new Date(lastUpdated).toLocaleString()}
+          </Text>
+        )}
+      </View>
       {/* Tera Type */}
-      <View style={styles.teraTypeContainer}>  
+      <View style={styles.teraTypeContainer}>
         <Text style={styles.title}>
           {teraType} Tera Type
         </Text>
@@ -400,7 +545,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           </Text>
         </Pressable>
       </View>
-    
       {/* Base Stats Section */}
       {(pokemonStats && showBaseStats) && (
         <View style={[styles.statsContainer, { width: getStatsContainerWidth() }]}>
@@ -459,11 +603,10 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             styles.congratsSubtext,
             globalCount >= maxRewards && { color: '#FF6F00' }
           ]}>
-            Don&apos;t forget to claim your {pokemonName} from Mystery Gift between {distributionStart} and {distributionEnd}!
+            {"Don't forget to claim your "}{pokemonName}{" from Mystery Gift between "}{distributionStart}{" and "}{distributionEnd}{"!"}
           </Text>
         </View>
       )}
-
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
@@ -478,33 +621,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           {getProgressPercentage().toFixed(3)}% Complete
         </Text>
       </View>
-
       {/* Error Message */}
-      {error && (
+      {/* PROBLEM HERE */}
+      {/* {error && (
         <Text style={styles.error}>{error}</Text>
-      )}
-
-      {/* Counter Display */}
-      <View style={styles.counterContainer}>
-        <Text style={styles.counter}>
-          Global Count: {globalCount.toLocaleString()}
-        </Text>
-        <Text style={styles.playerCounter}>
-          Your Contributions: {playerCount.toLocaleString()}
-        </Text>
-        {playerId && (
-          <Text style={styles.playerId}>
-            Player ID: {playerId.slice(-8)}
-          </Text>
-        )}
-        {/* Last Updated */}
-        {lastUpdated && (
-          <Text style={styles.lastUpdated}>
-            Last updated: {new Date(lastUpdated).toLocaleString()}
-          </Text>
-        )}
-      </View>
-
+      )} */}
       {/* Action Button */}
       <View style={styles.buttonContainer}>
         <Pressable
@@ -527,7 +648,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         </Pressable>
         <Text style={styles.description}>{eventDescription}</Text>
       </View>
-
       {/* Event Status and Countdown */}
       <View style={[
         styles.statusContainer,
@@ -545,8 +665,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           {formatUserFriendlyDate(startDate)} - {formatUserFriendlyDate(endDate)}
         </Text>
       </View>
-
-
       {/* Bonus Rewards Info */}
       {globalCount >= targetCount && (
         <View style={styles.bonusContainer}>
@@ -558,8 +676,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           </Text>
         </View>
       )}
-
-
     </ScrollView>
   );
 };
@@ -932,5 +1048,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2c3e50',
     fontWeight: 'bold',
+  },
+  loginPrompt: {
+    backgroundColor: '#E3F2FD',
+    marginHorizontal: 20,
+    marginVertical: 8,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#2196F3',
+  },
+  loginPromptText: {
+    fontSize: 14,
+    color: '#1976D2',
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });

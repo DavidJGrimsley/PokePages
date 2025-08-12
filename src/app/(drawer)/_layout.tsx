@@ -45,7 +45,7 @@ const DrawerLayout = () => {
             headerStyle: { height: headerHeight, backgroundColor: mainHeaderColor },
           }}
           />
-        {/* <Drawer.Screen
+        <Drawer.Screen
           name="social"
           options={{
             headerTitle: 'Social',
@@ -61,8 +61,8 @@ const DrawerLayout = () => {
             ),
             headerStyle: { height: headerHeight, backgroundColor: mainHeaderColor },
           }}
-        /> */}
-      {/* <Drawer.Screen
+        />
+      <Drawer.Screen
         name="events"
         options={{
           headerTitle: 'Pokemon Events',
@@ -87,7 +87,7 @@ const DrawerLayout = () => {
           ),
           headerStyle: { height: headerHeight, backgroundColor: mainHeaderColor },
         }}
-      /> */}
+      />
     </Drawer>
   );
 };

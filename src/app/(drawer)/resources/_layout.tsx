@@ -5,6 +5,16 @@ export default function ResourcesTabsLayout() {
   return (
     <Tabs>
       <Tabs.Screen
+        name="top50"
+        options={{
+          title: 'Raid Counters',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="barbell-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           title: 'Type Calculator',

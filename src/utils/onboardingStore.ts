@@ -7,12 +7,12 @@ type OnboardingState = {
   hasCompletedOnboarding: boolean;
   hasAcceptedTerms: boolean;
   hasAcceptedPrivacy: boolean;
-  _hasHydrated: boolean;
+  _hasHydratedOnboarding: boolean;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
   acceptTerms: () => void;
   acceptPrivacy: () => void;
-  setHasHydrated: (value: boolean) => void;
+  setHasHydratedOnboarding: (value: boolean) => void;
 };
 
 // Check if we're in a web environment
@@ -45,13 +45,14 @@ export const useOnboardingStore = create(
       hasCompletedOnboarding: false,
       hasAcceptedTerms: false,
       hasAcceptedPrivacy: false,
-      _hasHydrated: false,
+      _hasHydratedOnboarding: false,
       completeOnboarding: () => {
         console.log('Completing onboarding...');
         set((state) => ({
           ...state,
           hasCompletedOnboarding: true,
         }));
+        console.log('hasCompletedOnboarding:', get().hasCompletedOnboarding);
       },
       resetOnboarding: () => {
         console.log('Resetting onboarding...');
@@ -76,11 +77,11 @@ export const useOnboardingStore = create(
           hasAcceptedPrivacy: true,
         }));
       },
-      setHasHydrated: (value: boolean) => {
-        console.log('Setting _hasHydrated to:', value);
+      setHasHydratedOnboarding: (value: boolean) => {
+        console.log('Setting _hasHydratedOnboarding to:', value);
         set((state) => ({
           ...state,
-          _hasHydrated: value,
+          _hasHydratedOnboarding: value,
         }));
       },
     }),
@@ -94,7 +95,7 @@ export const useOnboardingStore = create(
         return (state, error) => {
           console.log('Onboarding store rehydrated with state:', state, 'error:', error);
           const store = useOnboardingStore.getState();
-          store.setHasHydrated(true);
+          store.setHasHydratedOnboarding(true);
         };
       },
     }
@@ -104,5 +105,5 @@ export const useOnboardingStore = create(
 // Set hydrated to true after store creation with a delay
 setTimeout(() => {
   console.log('Fallback: Setting hydrated to true after timeout');
-  useOnboardingStore.getState().setHasHydrated(true);
+  useOnboardingStore.getState().setHasHydratedOnboarding(true);
 }, 500);

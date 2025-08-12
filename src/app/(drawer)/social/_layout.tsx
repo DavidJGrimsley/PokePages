@@ -6,7 +6,7 @@ import { useAuthStore } from '@/src/utils/authStore';
 
 
 export default function SocialLayout() {
-  const { isLoggedIn, shouldCreateAccount } = useAuthStore();
+  const { isLoggedIn } = useAuthStore();
   return (
       <Stack>
         <Stack.Protected guard={!isLoggedIn}>
@@ -14,9 +14,6 @@ export default function SocialLayout() {
         </Stack.Protected>
         <Stack.Protected guard={isLoggedIn}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Protected guard={shouldCreateAccount}>
-            <Stack.Screen name="create-account" options={{ headerShown: false }} />
-          </Stack.Protected>
         </Stack.Protected>
           
       </Stack>

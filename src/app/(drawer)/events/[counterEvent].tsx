@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
 import { EventCounter } from '~/components/EventCounter';
-import { EventBuilds } from '~/components/EventBuilds';
+import { CounterBuilds } from '@/src/components/CounterBuilds';
 import { eventConfig } from '@/constants/eventConfig';
 import { buildsConfig } from '@/constants/buildsConfig';
 
@@ -51,7 +51,7 @@ export default function CounterEvent() {
   const title = `Shiny ${finalConfig.pokemonName} Event Counters & Tera Raid Builds | PokePages`;
   const description = `Best counters and builds for the Shiny ${finalConfig.pokemonName} Tera Raid event in Pokémon Scarlet & Violet. Find effective strategies, optimal builds, and complete event details for ${finalConfig.pokemonName}.`;
   const keywords = `shiny ${finalConfig.pokemonName.toLowerCase()}, ${finalConfig.pokemonName.toLowerCase()} counters, tera raid builds, pokemon scarlet violet, ${finalConfig.pokemonName.toLowerCase()} event, tera raid battles, pokemon builds, ${finalConfig.pokemonName.toLowerCase()} strategy`;
-
+  const shinyPokemonName = `Shiny ${finalConfig.pokemonName}`;
   // Structured data for SEO
   const structuredData = {
     "@context": "https://schema.org",
@@ -79,7 +79,7 @@ export default function CounterEvent() {
 
   return (
     <>
-      {/* <Head>
+      <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
@@ -95,7 +95,7 @@ export default function CounterEvent() {
             __html: JSON.stringify(structuredData),
           }}
         />
-      </Head> */}
+      </Head>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <EventCounter
           pokemonName={finalConfig.pokemonName}
@@ -103,7 +103,7 @@ export default function CounterEvent() {
           teraType={finalConfig.teraType}
           eventTitle={finalConfig.eventTitle}
           eventDescription={finalConfig.eventDescription}
-          apiEndpoint={finalConfig.apiEndpoint}
+          eventKey={finalEventSlug}
           startDate={finalConfig.startDate}
           endDate={finalConfig.endDate}
           distributionStart={finalConfig.distributionStart}
@@ -113,8 +113,8 @@ export default function CounterEvent() {
         />
         
         {eventBuilds && (
-          <EventBuilds
-            eventPokemonName={finalConfig.pokemonName}
+          <CounterBuilds
+            bossPokemonName={shinyPokemonName}
             attackerBuilds={eventBuilds.attackers}
             defenderBuilds={eventBuilds.defenders}
           />

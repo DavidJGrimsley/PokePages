@@ -1,13 +1,29 @@
 import { forwardRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, Pressable, PressableProps, View } from 'react-native';
 
 type ButtonProps = {
   title?: string;
-} & TouchableOpacityProps;
+  variant?: 'touch' | 'press';
+} & (TouchableOpacityProps | PressableProps);
 
-export const Button = forwardRef<View, ButtonProps>(({ title, ...touchableProps }, ref) => {
+export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch', style, ...touchableProps }, ref) => {
+  if (variant === 'press') {
+    return (
+      <Pressable 
+        ref={ref} 
+        {...touchableProps as PressableProps} 
+        style={({ pressed }) => [
+          styles.button, 
+          typeof style === 'function' ? style({ pressed }) : style
+        ]}
+      >
+        <Text style={styles.buttonText}>{title}</Text>
+      </Pressable>
+    );
+  }
+  
   return (
-    <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
+    <TouchableOpacity ref={ref} {...touchableProps as TouchableOpacityProps} style={[styles.button, typeof style === 'function' ? style({ pressed: false }) : style]}>
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );

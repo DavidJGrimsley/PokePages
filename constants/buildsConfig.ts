@@ -1,7 +1,7 @@
-import { EventBuilds } from '../types/builds';
+import { Builds } from '../types/builds';
 
 // Builds organized by Pokemon name for easy lookup
-export const buildsConfig: EventBuilds = {
+export const buildsConfig: Builds = {
   // Builds for Wo-Chien
   'wo-chien': {
     attackers: [
