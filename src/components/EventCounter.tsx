@@ -528,6 +528,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             Anonymous ID: {anonymousId.slice(-8)}
           </Text>
         )}
+        {isLoggedIn && anonymousId && (
+          <Text style={styles.playerId}>
+            Anonymous ID: {anonymousId.slice(-8)}
+          </Text>
+        )}
         {lastUpdated && (
           <Text style={styles.lastUpdated}>
             Last updated: {new Date(lastUpdated).toLocaleString()}

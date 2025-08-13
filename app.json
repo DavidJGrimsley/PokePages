@@ -13,22 +13,46 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
+      "bundleIdentifier": "com.mrdj2u.pokepages",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.mrdj2u.pokepages",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.mrdj2u.PokePages"
+      }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3082632d-cc95-42f2-a8cf-f457b1850272"
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon-32x32.png"
     },
     "plugins": [
       "expo-router",
+      // [
+      //   "expo-dev-launcher",
+      //   {
+      //     "launchMode": "most-recent"
+      //   }
+      // ],
+      // "expo-web-browser",
       "expo-secure-store"
-    ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "tsconfigPaths": true
+    }
   }
 }
+

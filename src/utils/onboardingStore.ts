@@ -29,12 +29,21 @@ const secureStorage = {
 
 const webFallbackStorage = {
   setItem: (key: string, value: string) => {
-    localStorage.setItem(key, value);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, value);
+    }
     return Promise.resolve();
   },
-  getItem: (key: string) => Promise.resolve(localStorage.getItem(key)),
+  getItem: (key: string) => {
+    if (typeof localStorage !== 'undefined') {
+      return Promise.resolve(localStorage.getItem(key));
+    }
+    return Promise.resolve(null);
+  },
   removeItem: (key: string) => {
-    localStorage.removeItem(key);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(key);
+    }
     return Promise.resolve();
   },
 };

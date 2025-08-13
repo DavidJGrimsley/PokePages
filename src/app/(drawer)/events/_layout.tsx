@@ -68,23 +68,6 @@ export default function EventsLayout() {
           };
         }}
       />
-      <Stack.Screen 
-        name="wo-Builds" 
-        options={{ 
-          title: 'Wo-Chien Builds',
-          headerLeft: () => (
-            <Pressable
-              onPress={() => {
-                router.push('/(drawer)/events');
-              }}
-              style={{ marginLeft: 16 }}
-            >
-              <Ionicons name="arrow-back" size={24} color="#007AFF" />
-            </Pressable>
-          ),
-          headerStyle: { backgroundColor: '#E6E6FA' }, // Lavender, shorter
-        }} 
-      />
     </Stack>
   );
 }
