@@ -22,7 +22,7 @@ export default function OnboardingWelcomeScreen() {
         <Text style={styles.title}>Welcome to PokePages!</Text>
         
         <Text style={styles.subtitle}>
-          Your ultimate companion for Pokémon raid battles and events
+          Your ultimate (unofficial) Pokémon companion
         </Text>
         
         <View style={styles.featuresContainer}>

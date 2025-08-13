@@ -40,8 +40,8 @@ export default function RootLayout() {
   }
 
   // Skip onboarding on web platform
-  const shouldShowOnboarding = Platform.OS !== 'web' && !hasCompletedOnboarding;
-  
+  const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
+
   console.log('Made it to RootLayout. hasCompletedOnboarding:', hasCompletedOnboarding);
   console.log('Platform:', Platform.OS, 'shouldShowOnboarding:', shouldShowOnboarding);
   console.log('_hasHydrated (auth):', _hasHydrated, '_hasHydratedOnboarding:', _hasHydratedOnboarding);
