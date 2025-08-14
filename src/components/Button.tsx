@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, Pressable, PressableProps, View } from 'react-native';
+import { theme } from '@/constants/style/theme';
 
 type ButtonProps = {
   title?: string;
@@ -34,24 +35,20 @@ Button.displayName = 'Button';
 const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
-    backgroundColor: '#6366F1',
-    borderRadius: 24,
-    elevation: 5,
+    backgroundColor: theme.colors.light.primary,
+    borderRadius: theme.borderRadius.lg,
     flexDirection: 'row',
     justifyContent: 'center',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    padding: theme.spacing.md,
+    shadowColor: theme.shadows.medium.shadowColor,
+    shadowOffset: theme.shadows.medium.shadowOffset,
+    shadowOpacity: theme.shadows.medium.shadowOpacity,
+    shadowRadius: theme.shadows.medium.shadowRadius,
+    elevation: theme.shadows.medium.elevation,
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.light.white,
+    ...theme.typography.callToAction,
     textAlign: 'center',
   },
 });

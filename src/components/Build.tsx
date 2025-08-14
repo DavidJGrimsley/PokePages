@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import { BuildVariant } from '../types/builds';
+import { BuildVariant } from '@/types/builds';
+import { theme } from '../../constants/style/theme';
 
 interface BuildProps {
   pokemonName: string;
@@ -230,17 +231,13 @@ export const Build: React.FC<BuildProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 10,
-    marginVertical: 8,
+    borderRadius: theme.borderRadius.lg,
+    marginVertical: theme.spacing.sm,
     marginHorizontal: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.07,
-    shadowRadius: 2,
-    elevation: 1,
+    ...theme.shadows.small,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: theme.colors.light.secondary,
     position: 'relative',
   },
   bgImage: {
@@ -255,86 +252,83 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    padding: theme.spacing.md,
+    borderTopLeftRadius: theme.borderRadius.lg,
+    borderTopRightRadius: theme.borderRadius.lg,
   },
   headerIcon: {
-    fontSize: 26,
-    marginRight: 10,
+    ...theme.typography.subheader,
+    marginRight: theme.spacing.sm,
   },
   headerText: {
     flex: 1,
   },
   pokemonName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
+    ...theme.typography.header,
+    color: theme.colors.light.white,
     marginBottom: 0,
   },
   buildType: {
-    fontSize: 13,
-    color: '#fff',
+    ...theme.typography.copy,
+    color: theme.colors.light.white,
     opacity: 0.9,
   },
   content: {
-    padding: 12,
+    padding: theme.spacing.md,
   },
   sectionRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: theme.spacing.sm,
   },
   statLabel: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginRight: 6,
-    color: '#555',
+    ...theme.typography.copyBold,
+    marginRight: theme.spacing.sm,
+    color: theme.colors.light.brown,
   },
   statValue: {
-    fontSize: 15,
-    color: '#333',
-    marginRight: 12,
+    ...theme.typography.copy,
+    color: theme.colors.light.text,
+    marginRight: theme.spacing.md,
   },
   evIvLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginRight: 4,
-    color: '#1976D2',
+    ...theme.typography.copyBold,
+    marginRight: theme.spacing.xs,
+    color: theme.colors.light.primary,
   },
   evIvValue: {
-    fontSize: 14,
-    color: '#1976D2',
-    marginRight: 8,
+    ...theme.typography.copy,
+    color: theme.colors.light.primary,
+    marginRight: theme.spacing.sm,
   },
   movesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 4,
-    marginBottom: 6,
+    marginVertical: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
   },
   moveName: {
-    fontSize: 14,
-    color: '#4CAF50',
-    backgroundColor: '#f1f8e9',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    marginRight: 6,
-    marginBottom: 3,
+    ...theme.typography.copy,
+    color: theme.colors.light.accent,
+    backgroundColor: theme.colors.light.background,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    marginRight: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
   },
   roleText: {
-    fontSize: 14,
-    color: '#6d4c41',
-    marginTop: 4,
-    marginBottom: 2,
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
+    marginTop: theme.spacing.xs,
+    marginBottom: theme.spacing.xs,
     lineHeight: 18,
   },
   notesText: {
-    fontSize: 13,
-    color: '#888',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     fontStyle: 'italic',
-    marginTop: 2,
+    marginTop: theme.spacing.xs,
   },
 });

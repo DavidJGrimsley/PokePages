@@ -3,7 +3,9 @@ import { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 
 import { Container } from '~/components/Container';
+import { NewestFeature } from '~/components/NewestFeature';
 import { eventConfig } from '@/constants/eventConfig';
+import { theme } from '@/constants/style/theme';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -55,8 +57,16 @@ export default function Home() {
           
 
           <View style={styles.newsSection}>
-            <Text style={styles.sectionTitle}>🎉 Latest News & Events</Text>
+            <Text style={styles.sectionTitle}>🎉 Latest Features</Text>
             
+            {/* Featured newest feature */}
+            <NewestFeature
+              title="Top Raid builds"
+              description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
+              path="/(drawer)/resources/top50"
+            />
+            <Text style={styles.sectionTitle}>🎉 Latest News</Text>
+          
             {/* Dynamic News Cards for Active Events */}
             {activeCounterEvents.map((event) => (
               <View key={event.key} style={styles.newsCard}>
@@ -99,7 +109,8 @@ export default function Home() {
                 </Pressable>
               </Link>
             )} */}
-
+            <Text style={styles.sectionTitle}>🎉 Latest Events</Text>
+            
             {/* Multiple Active Event Buttons */}
             {activeCounterEvents.map((event) => (
               <Link key={event.key} href={event.href} asChild>
@@ -123,7 +134,7 @@ export default function Home() {
             </Link>
           </View>
 
-          {/* <View style={styles.featuresSection}>
+          <View style={styles.featuresSection}>
             <Text style={styles.sectionTitle}>🌟 Features</Text>
             
             <View style={styles.featureGrid}>
@@ -155,7 +166,7 @@ export default function Home() {
                 </Text>
               </View>
             </View>
-          </View> */}
+          </View>
         </ScrollView>
       </Container>
     </>
@@ -168,101 +179,92 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   header: {
-    backgroundColor: '#3498db',
-    padding: 24,
+    backgroundColor: theme.colors.light.primary,
+    padding: theme.spacing.lg,
     alignItems: 'center',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
+    ...theme.typography.header,
+    color: theme.colors.light.white,
+    marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#ecf0f1',
+    ...theme.typography.copy,
+    color: theme.colors.light.white,
     textAlign: 'center',
     lineHeight: 22,
   },
   newsSection: {
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.light.white,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 16,
+    ...theme.typography.header,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
   },
   newsCard: {
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+    backgroundColor: theme.colors.light.background,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    marginBottom: theme.spacing.md,
     borderLeftWidth: 4,
-    borderLeftColor: '#e74c3c',
+    borderLeftColor: theme.colors.light.red,
   },
   newsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 8,
+    ...theme.typography.subheader,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.sm,
   },
   newsContent: {
-    fontSize: 14,
-    color: '#6c757d',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     lineHeight: 20,
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   newsDate: {
-    fontSize: 12,
-    color: '#e74c3c',
+    fontSize: theme.fontSizes.xs,
+    color: theme.colors.light.red,
     fontWeight: '500',
   },
   eventsButton: {
-    backgroundColor: '#3498db',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: theme.colors.light.secondary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
   eventsButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    ...theme.typography.callToAction,
+    color: theme.colors.light.white,
   },
   featuredButton: {
-    backgroundColor: '#e74c3c',
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    backgroundColor: theme.colors.light.red,
+    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
-    marginTop: 12,
-    marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
+    marginTop: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
+    ...theme.shadows.medium,
   },
   featuredButtonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...theme.typography.callToAction,
+    color: theme.colors.light.white,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   featuredButtonSubtext: {
-    color: '#fff',
-    fontSize: 14,
+    ...theme.typography.copy,
+    color: theme.colors.light.white,
     textAlign: 'center',
     opacity: 0.9,
   },
   featuresSection: {
-    padding: 20,
-    backgroundColor: '#ecf0f1',
+    padding: theme.spacing.lg,
+    backgroundColor: theme.colors.light.background,
   },
   featureGrid: {
     flexDirection: 'row',
@@ -270,26 +272,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   featureCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: theme.colors.light.white,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
     width: '48%',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: theme.spacing.md,
+    ...theme.shadows.small,
   },
   featureTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 8,
+    ...theme.typography.subheader,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.sm,
   },
   featureText: {
-    fontSize: 12,
-    color: '#6c757d',
+    fontSize: theme.fontSizes.xs,
+    color: theme.colors.light.brown,
     lineHeight: 16,
   },
 });

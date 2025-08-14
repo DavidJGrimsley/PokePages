@@ -1,17 +1,14 @@
 import { Stack } from 'expo-router';
-import { ComingSoon } from '~/components/ComingSoon';
+import { FontShowcase } from '~/components/FontShowcase';
 
 import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
 
 export default function Home() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Tab Two' }} />
+      <Stack.Screen options={{ title: 'Font Showcase' }} />
       <Container>
-        <ScreenContent path="app/(drawer)/(tabs)/two.tsx" title="Tab Two">
-          <ComingSoon />
-        </ScreenContent>
+        <FontShowcase />
       </Container>
     </>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { theme } from '../../constants/style/theme';
 
 interface ComingSoonProps {
   title?: string;
@@ -54,13 +55,13 @@ export const ComingSoon: React.FC<ComingSoonProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.light.background,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   containerDark: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: theme.colors.dark.background,
   },
   content: {
     alignItems: 'center',
@@ -68,87 +69,78 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   icon: {
-    fontSize: 64,
-    marginBottom: 20,
+    fontSize: theme.fontSizes.display,
+    marginBottom: theme.spacing.lg,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 12,
+    ...theme.typography.header,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
     textAlign: 'center',
   },
   titleDark: {
-    color: '#ffffff',
+    color: theme.colors.dark.text,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#6c757d',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 32,
+    marginBottom: theme.spacing.xxl,
   },
   subtitleDark: {
-    color: '#b0b0b0',
+    color: theme.colors.dark.text,
   },
   progressContainer: {
     width: '100%',
-    marginBottom: 32,
+    marginBottom: theme.spacing.xxl,
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#e9ecef',
-    borderRadius: 4,
+    backgroundColor: theme.colors.light.secondary,
+    borderRadius: theme.borderRadius.sm,
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   progressFill: {
     height: '100%',
     width: '35%',
-    backgroundColor: '#3498db',
-    borderRadius: 4,
+    backgroundColor: theme.colors.light.accent,
+    borderRadius: theme.borderRadius.sm,
   },
   progressText: {
-    fontSize: 14,
-    color: '#6c757d',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     textAlign: 'center',
   },
   progressTextDark: {
-    color: '#b0b0b0',
+    color: theme.colors.dark.text,
   },
   featuresList: {
     width: '100%',
-    backgroundColor: '#ffffff',
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: theme.colors.light.white,
+    padding: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: '#e9ecef',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderColor: theme.colors.light.secondary,
+    ...theme.shadows.small,
   },
   featuresTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 12,
+    ...theme.typography.subheader,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
     textAlign: 'center',
   },
   featuresTitleDark: {
-    color: '#ffffff',
+    color: theme.colors.dark.text,
   },
   featureItem: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 6,
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
+    marginBottom: theme.spacing.sm,
     lineHeight: 20,
   },
   featureItemDark: {
-    color: '#d0d0d0',
+    color: theme.colors.dark.text,
   },
 });

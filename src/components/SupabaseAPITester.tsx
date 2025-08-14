@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, TextInput } from 'react-native';
 import { supabase } from '../utils/supabaseClient';
+import { theme } from '../../constants/style/theme';
 
 export const SupabaseAPITester: React.FC = () => {
   const [results, setResults] = useState<string>('');
@@ -121,74 +122,69 @@ export const SupabaseAPITester: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f8f9fa',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.light.background,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    ...theme.typography.header,
+    marginBottom: theme.spacing.lg,
     textAlign: 'center',
-    color: '#2c3e50',
+    color: theme.colors.light.text,
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: theme.spacing.md,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-    color: '#2c3e50',
+    ...theme.typography.copyBold,
+    marginBottom: theme.spacing.xs,
+    color: theme.colors.light.text,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    borderColor: theme.colors.light.secondary,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    ...theme.typography.copy,
+    backgroundColor: theme.colors.light.white,
   },
   buttonContainer: {
     flexDirection: 'row',
-    gap: 12,
-    marginBottom: 20,
+    gap: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
   },
   button: {
     flex: 1,
-    backgroundColor: '#4CAF50',
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: theme.colors.light.accent,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
   },
   clearButton: {
-    backgroundColor: '#ff6b6b',
+    backgroundColor: theme.colors.light.red,
   },
   buttonDisabled: {
-    backgroundColor: '#9E9E9E',
+    backgroundColor: theme.colors.light.brown,
     opacity: 0.6,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: theme.colors.light.white,
+    ...theme.typography.copyBold,
   },
   resultsContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
+    backgroundColor: theme.colors.light.white,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: theme.colors.light.secondary,
   },
   resultsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#2c3e50',
+    ...theme.typography.subheader,
+    marginBottom: theme.spacing.md,
+    color: theme.colors.light.text,
   },
   results: {
-    fontSize: 12,
-    fontFamily: 'monospace',
+    ...theme.typography.mono,
     lineHeight: 16,
-    color: '#333',
+    color: theme.colors.light.text,
   },
 });

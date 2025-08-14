@@ -4,6 +4,7 @@ import { supabase } from "~/utils/supabaseClient"
 
 
 import { Button } from '~/components/Button'
+import { theme } from '../../constants/style/theme'
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -81,24 +82,25 @@ export default function Auth() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    marginTop: theme.spacing.xxl,
+    padding: theme.spacing.md,
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.xs,
     alignSelf: 'stretch',
   },
   mt20: {
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    borderColor: theme.colors.light.secondary,
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    backgroundColor: theme.colors.light.white,
+    color: theme.colors.light.text,
+    ...theme.typography.copy,
   },
 })

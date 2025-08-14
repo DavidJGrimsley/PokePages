@@ -5,6 +5,7 @@ import { StyleSheet, View, Alert, Platform, Text, TextInput } from 'react-native
 import { Session } from '@supabase/supabase-js'
 
 import { Button } from '~/components/Button'
+import { theme } from '../../constants/style/theme'
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -170,36 +171,35 @@ export default function Account({ session }: { session: Session }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    marginTop: theme.spacing.xxl,
+    padding: theme.spacing.md,
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingTop: theme.spacing.xs,
+    paddingBottom: theme.spacing.xs,
     alignSelf: 'stretch',
   },
   mt20: {
-    marginTop: 20,
+    marginTop: theme.spacing.lg,
   },
   inputLabel: {
-    marginBottom: 6,
-    color: '#111827',
-    fontSize: 14,
-    fontWeight: '600',
+    marginBottom: theme.spacing.sm,
+    color: theme.colors.light.text,
+    ...theme.typography.copyBold,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#FFFFFF',
-    color: '#111827',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 16,
+    borderColor: theme.colors.light.secondary,
+    backgroundColor: theme.colors.light.white,
+    color: theme.colors.light.text,
+    borderRadius: theme.borderRadius.md,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.md,
+    ...theme.typography.copy,
   },
   inputDisabled: {
-    backgroundColor: '#F3F4F6',
-    color: '#6B7280',
+    backgroundColor: theme.colors.light.background,
+    color: theme.colors.light.brown,
   },
   textArea: {
     height: 120,

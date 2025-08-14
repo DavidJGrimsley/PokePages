@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 import EditScreenInfo from './EditScreenInfo';
+import { theme } from '../../constants/style/theme';
 
 type ScreenContentProps = {
   title: string;
@@ -26,16 +27,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexGrow: 1,
     justifyContent: 'center',
-    paddingVertical: 20,
+    paddingVertical: theme.spacing.lg,
   },
   separator: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: theme.colors.light.secondary,
     height: 1,
-    marginVertical: 20,
+    marginVertical: theme.spacing.lg,
     width: '80%',
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    ...theme.typography.header,
+    color: theme.colors.light.text,
   },
 });

@@ -1,9 +1,10 @@
 import { Stack, Link, router } from 'expo-router';
-import { HeaderButton } from '~/components/HeaderButton';
+import { HeaderButton } from '@/src/components/HeaderComponents';
 import { Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { eventConfig } from '@/constants/eventConfig';
+import { theme } from '@/constants/style/theme';
 
 export default function EventsLayout() {
   const navigation = useNavigation();
@@ -64,7 +65,7 @@ export default function EventsLayout() {
                 <HeaderButton />
               </Link>
             ),
-            headerStyle: { backgroundColor: '#E6E6FA', height: 56 * 0.9 }, // Lavender, shorter
+            headerStyle: { backgroundColor: theme.colors.light.secondary, height: 56 * 0.9 }, // Lavender, shorter
           };
         }}
       />

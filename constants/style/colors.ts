@@ -11,7 +11,7 @@ export default {
     secondary: tintColorLight, // light purple
     accent: accentColorLight, // dark purple
     tint: tintColorLight,
-    icon: '#8D6346', // raw umber (brown)
+    brown: '#8d6346ff', // raw umber (brown)
     red: '#FA4A1E', // Coquelicot
     tabIconDefault: accentColorLight, // accent
     tabIconSelected: tintColorLight,

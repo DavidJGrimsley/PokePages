@@ -1,13 +1,13 @@
 import { Tabs } from 'expo-router';
 import { TabBarIcon } from '~/components/TabBarIcon';
+import { theme } from '@/constants/style/theme';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-
-        tabBarActiveTintColor: 'black',
+        ...theme.tabBarStyles,
       }}>
       <Tabs.Screen
         name="index"

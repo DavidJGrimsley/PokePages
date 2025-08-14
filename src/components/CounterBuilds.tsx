@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { BuildVariant } from '@/types/builds';
 import { Build } from './Build';
+import { theme } from '../../constants/style/theme';
 
 interface CounterBuildData {
   pokemonName: string;
@@ -130,43 +131,43 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
 
 const styles = StyleSheet.create({
   buildsSection: {
-    marginTop: 24,
-    marginBottom: 32,
+    marginTop: theme.spacing.lg,
+    marginBottom: theme.spacing.xxl,
     marginHorizontal: 'auto',
-    maxWidth: 800,
+    maxWidth: 1000,
     width: '90%',
     alignSelf: 'center',
   },
   buildsTitle: {
-    fontSize: 32,
+    ...theme.typography.subheader,
+    fontSize: theme.fontSizes.display,
     textAlign: 'center',
-    fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
+    color: theme.colors.light.text,
   },
   buildsCaption: {
-    fontSize: 16,
+    ...theme.typography.copy,
     textAlign: 'center',
-    color: '#666',
+    color: theme.colors.light.brown,
   },
   attacker: {
-    color: '#d84315',
+    color: theme.colors.light.red,
   },
   defender: {
-    color: '#19d285ff',
+    color: theme.colors.light.accent,
   },
   subSectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    marginTop: 16,
+    ...theme.typography.header,
+    marginBottom: theme.spacing.md,
+    marginTop: theme.spacing.md,
     textAlign: 'left',
   },
   separator: {
     height: 2,
-    backgroundColor: '#e0e0e0',
-    marginVertical: 16,
+    backgroundColor: theme.colors.light.secondary,
+    marginVertical: theme.spacing.md,
     width: '60%',
     alignSelf: 'center',
-    borderRadius: 1,
+    borderRadius: theme.borderRadius.sm,
   },
 });

@@ -4,12 +4,31 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "~/*": ["src/*"],
-      "app/*": ["src/app/*"],
-      "@/constants/*": ["constants/*"],
-      "~/components/*": ["./src/components/*"],
-      "~/utils/*": ["src/utils/*"]
+      "@/*": [
+        "./*"
+      ],
+      "~/*": [
+        "src/*"
+      ],
+      "app/*": [
+        "src/app/*"
+      ],
+      "@/constants/*": [
+        "constants/*"
+      ],
+      "~/components/*": [
+        "./src/components/*"
+      ],
+      "~/utils/*": [
+        "src/utils/*"
+      ]
     }
-  }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+  ]
 }

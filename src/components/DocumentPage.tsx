@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import documentsData from '../../constants/documents.json';
+import { theme } from '../../constants/style/theme';
 
 type DocumentType = 'termsOfService' | 'privacyPolicy';
 
@@ -51,42 +52,40 @@ export const DocumentPage: React.FC<DocumentPageProps> = ({ documentType }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.light.white,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#333',
+    ...theme.typography.header,
+    color: theme.colors.light.text,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   lastUpdated: {
-    fontSize: 14,
-    color: '#666',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: theme.spacing.xxl,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 12,
-    paddingBottom: 8,
+    ...theme.typography.subheader,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: theme.colors.light.secondary,
   },
   sectionContent: {
-    fontSize: 16,
+    ...theme.typography.copy,
     lineHeight: 24,
-    color: '#555',
+    color: theme.colors.light.brown,
   },
 });

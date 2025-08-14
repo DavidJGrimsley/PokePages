@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import documentsData from '@/constants/documents.json';
+import { theme } from '../../constants/style/theme';
 
 type AgreementType = 'termsOfService' | 'privacyPolicy';
 
@@ -77,82 +78,78 @@ export const ShowAgreement: React.FC<ShowAgreementProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.light.white,
   },
   header: {
-    padding: 20,
+    padding: theme.spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#f8f9fa',
+    borderBottomColor: theme.colors.light.secondary,
+    backgroundColor: theme.colors.light.background,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#333',
+    ...theme.typography.header,
+    color: theme.colors.light.text,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   lastUpdated: {
-    fontSize: 14,
-    color: '#666',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   closeButton: {
     position: 'absolute',
-    top: 20,
-    right: 20,
+    top: theme.spacing.lg,
+    right: theme.spacing.lg,
     width: 32,
     height: 32,
-    borderRadius: 16,
-    backgroundColor: '#e0e0e0',
+    borderRadius: theme.borderRadius.md,
+    backgroundColor: theme.colors.light.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeButtonText: {
-    fontSize: 18,
-    color: '#666',
-    fontWeight: '600',
+    ...theme.typography.subheader,
+    color: theme.colors.light.brown,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 20,
+    padding: theme.spacing.lg,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: theme.spacing.lg,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 12,
-    paddingBottom: 8,
+    ...theme.typography.subheader,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
+    paddingBottom: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: theme.colors.light.secondary,
   },
   sectionContent: {
-    fontSize: 16,
+    ...theme.typography.copy,
     lineHeight: 24,
-    color: '#555',
+    color: theme.colors.light.brown,
   },
   footer: {
-    padding: 20,
+    padding: theme.spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    backgroundColor: '#f8f9fa',
+    borderTopColor: theme.colors.light.secondary,
+    backgroundColor: theme.colors.light.background,
   },
   doneButton: {
-    backgroundColor: '#6366F1',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: theme.colors.light.primary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
   },
   doneButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    color: theme.colors.light.white,
+    ...theme.typography.copyBold,
   },
 });

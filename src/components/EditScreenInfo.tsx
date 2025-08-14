@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { theme } from '../../constants/style/theme';
 
 export default function EditScreenInfo({ path }: { path: string }) {
   const title = 'Open up the code for this screen:';
@@ -18,30 +19,32 @@ export default function EditScreenInfo({ path }: { path: string }) {
 
 const styles = StyleSheet.create({
   codeHighlightContainer: {
-    borderRadius: 3,
-    paddingHorizontal: 4,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: theme.spacing.xs,
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    marginHorizontal: theme.spacing.xxl + theme.spacing.md,
   },
   getStartedText: {
-    fontSize: 17,
+    ...theme.typography.copy,
     lineHeight: 24,
     textAlign: 'center',
+    color: theme.colors.light.text,
   },
   helpContainer: {
     alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 15,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.md,
   },
   helpLink: {
-    paddingVertical: 15,
+    paddingVertical: theme.spacing.md,
   },
   helpLinkText: {
     textAlign: 'center',
+    color: theme.colors.light.primary,
   },
   homeScreenFilename: {
-    marginVertical: 7,
+    marginVertical: theme.spacing.sm,
   },
 });
