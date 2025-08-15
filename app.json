@@ -47,7 +47,19 @@
       //   }
       // ],
       // "expo-web-browser",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Modak-Regular.ttf",
+            "./assets/fonts/PressStart2P-Regular.ttf",
+            "./assets/fonts/Roboto-Regular.ttf",
+            "./assets/fonts/Roboto-Bold.ttf",
+            "./assets/fonts/Roboto-Medium.ttf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

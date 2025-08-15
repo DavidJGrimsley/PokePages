@@ -17,16 +17,16 @@ export const NewestFeature: React.FC<NewestFeatureProps> = ({
   return (
     <Link href={path as any} asChild>
       <Pressable style={styles.container}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>NEW</Text>
-        </View>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <View style={styles.arrow}>
-          <Text style={styles.arrowText}>→</Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>NEW</Text>
         </View>
+        {/* <View style={styles.arrow}> */}
+          <Text style={styles.arrowText}>→</Text>
+        {/* </View> */}
       </Pressable>
     </Link>
   );
@@ -35,7 +35,7 @@ export const NewestFeature: React.FC<NewestFeatureProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.light.white,
-    padding: theme.spacing.lg,
+    padding: theme.spacing.sm,
     borderRadius: theme.borderRadius.md,
     marginBottom: theme.spacing.md,
     ...theme.shadows.medium,
@@ -43,22 +43,24 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.light.secondary,
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'relative',
+    // position: 'relative',
   },
   badge: {
     backgroundColor: theme.colors.light.red,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.borderRadius.md,
-    position: 'absolute',
-    top: theme.spacing.md,
-    right: theme.spacing.md,
-    zIndex: 1,
+    // position: 'absolute',
+    // top: theme.spacing.md,
+    // right: theme.spacing.md,
+    // zIndex: 1,
   },
   badgeText: {
     color: theme.colors.light.white,
     ...theme.typography.callToAction,
+    fontSize: theme.fontSizes.xxxl,
     letterSpacing: 0.5,
+    padding: theme.spacing.sm,
   },
   content: {
     flex: 1,
@@ -72,18 +74,18 @@ const styles = StyleSheet.create({
   description: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    lineHeight: 20,
+    // lineHeight: 20,
   },
   arrow: {
     backgroundColor: theme.colors.light.accent,
-    width: 40,
-    height: 40,
+    width: 96,
+    height: 96,
     borderRadius: theme.borderRadius.round,
     justifyContent: 'center',
     alignItems: 'center',
   },
   arrowText: {
-    color: theme.colors.light.white,
-    ...theme.typography.subheader,
+    color: theme.colors.light.accent,
+    ...theme.typography.display,
   },
 });

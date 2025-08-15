@@ -20,32 +20,39 @@ const isWeb = Platform.OS === 'web';
 
 console.log('OnboardingStore - Platform:', Platform.OS, 'isWeb:', isWeb);
 
-// Create storage adapter that works on both native and web (like authStore)
-const secureStorage = {
-  setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
-  getItem: (key: string) => SecureStore.getItemAsync(key),
-  removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-};
-
-const webFallbackStorage = {
-  setItem: (key: string, value: string) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, value);
-    }
-    return Promise.resolve();
-  },
-  getItem: (key: string) => {
-    if (typeof localStorage !== 'undefined') {
-      return Promise.resolve(localStorage.getItem(key));
-    }
-    return Promise.resolve(null);
-  },
-  removeItem: (key: string) => {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(key);
-    }
-    return Promise.resolve();
-  },
+// Create storage adapter that works on both native and web
+const createStorage = () => {
+  if (isWeb) {
+    return {
+      getItem: (name: string) => {
+        try {
+          return localStorage.getItem(name);
+        } catch {
+          return null;
+        }
+      },
+      setItem: (name: string, value: string) => {
+        try {
+          localStorage.setItem(name, value);
+        } catch {
+          // Silently fail
+        }
+      },
+      removeItem: (name: string) => {
+        try {
+          localStorage.removeItem(name);
+        } catch {
+          // Silently fail
+        }
+      },
+    };
+  } else {
+    return {
+      setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+      getItem: (key: string) => SecureStore.getItemAsync(key),
+      removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+    };
+  }
 };
 
 export const useOnboardingStore = create(
@@ -96,23 +103,32 @@ export const useOnboardingStore = create(
     }),
     {
       name: 'onboarding-store',
-      storage: createJSONStorage(() =>
-        Platform.OS === "web" ? webFallbackStorage : secureStorage
-      ),
+      storage: createJSONStorage(() => createStorage()),
       onRehydrateStorage: () => {
         console.log('OnRehydrateStorage callback called');
         return (state, error) => {
           console.log('Onboarding store rehydrated with state:', state, 'error:', error);
-          const store = useOnboardingStore.getState();
-          store.setHasHydratedOnboarding(true);
+          if (error) {
+            console.error('Onboarding store rehydration error:', error);
+          }
+          // Only call setHasHydratedOnboarding if state exists and the method is available
+          if (state && typeof state.setHasHydratedOnboarding === 'function') {
+            state.setHasHydratedOnboarding(true);
+          }
         };
       },
     }
   )
 );
 
-// Set hydrated to true after store creation with a delay
-setTimeout(() => {
-  console.log('Fallback: Setting hydrated to true after timeout');
-  useOnboardingStore.getState().setHasHydratedOnboarding(true);
-}, 500);
+// Only run the fallback timeout on client-side (not during static rendering)
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    try {
+      console.log('Fallback: Setting hydrated to true after timeout');
+      useOnboardingStore.getState().setHasHydratedOnboarding(true);
+    } catch (error) {
+      console.warn('Failed to set fallback hydration:', error);
+    }
+  }, 500);
+}

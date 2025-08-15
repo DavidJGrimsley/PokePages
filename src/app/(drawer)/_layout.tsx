@@ -33,7 +33,7 @@ const DrawerLayout = () => {
         drawerInactiveBackgroundColor: theme.colors.light.background, // Inactive item background
         drawerStyle: {
           backgroundColor: theme.colors.light.white, // Drawer background (white)
-          width: isMobile ? '90%' : 500, // Full width on mobile, fixed width on desktop
+          // width: isMobile ? '90%' : 500, // Full width on mobile, fixed width on desktop
           height: '90%', // Full height
         },
         drawerLabelStyle: {
@@ -50,6 +50,7 @@ const DrawerLayout = () => {
         drawerContentStyle: {
           // paddingVertical: theme.spacing.xl, // Add padding to the whole drawer content
         },
+        
       }}
     >
       <Drawer.Screen

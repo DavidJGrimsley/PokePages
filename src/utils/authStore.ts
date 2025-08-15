@@ -107,6 +107,42 @@ type UserState = {
 
 const isWeb = Platform.OS === "web";
 
+// Create storage adapter that works better on web
+const createStorage = () => {
+  if (isWeb) {
+    return {
+      getItem: (name: string) => {
+        try {
+          return localStorage.getItem(name);
+        } catch {
+          return null;
+        }
+      },
+      setItem: (name: string, value: string) => {
+        try {
+          localStorage.setItem(name, value);
+        } catch {
+          // Silently fail
+        }
+      },
+      removeItem: (name: string) => {
+        try {
+          localStorage.removeItem(name);
+        } catch {
+          // Silently fail
+        }
+      },
+    };
+  } else {
+    return {
+      setItem: (key: string, value: string) =>
+        SecureStore.setItemAsync(key, value),
+      getItem: (key: string) => SecureStore.getItemAsync(key),
+      removeItem: (key: string) => SecureStore.deleteItemAsync(key),
+    };
+  }
+};
+
 export const useAuthStore = create(
   persist<UserState>(
     (set, get) => ({
@@ -210,9 +246,11 @@ export const useAuthStore = create(
           session,
         }));
       },
-       setHasHydrated: (value: boolean) => {
+      
+      setHasHydrated: (value: boolean) => {
         set((state) => ({ ...state, _hasHydrated: value }));
       },
+      
       // DEPRECATED: Dev-only methods - use signIn/signUp/signOut for real auth
       logIn: () => {
         set((state) => ({ ...state, isLoggedIn: true }));
@@ -228,22 +266,35 @@ export const useAuthStore = create(
     }),
     {
       name: "auth-store",
-      storage: isWeb
-        ? createJSONStorage(() => localStorage)
-        : createJSONStorage(() => ({
-            setItem: (key: string, value: string) =>
-              SecureStore.setItemAsync(key, value),
-            getItem: (key: string) => SecureStore.getItemAsync(key),
-            removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-          })),
+      storage: createJSONStorage(() => createStorage()),
       onRehydrateStorage: () => {
-        return (state) => {
+        return (state, error) => {
+          if (error) {
+            console.error('Auth store rehydration error:', error);
+          }
           state?.setHasHydrated(true);
         };
       },
+      partialize: (state) => ({
+        user: state.user,
+        isLoggedIn: state.isLoggedIn,
+        shouldCreateAccount: state.shouldCreateAccount,
+        isVip: state.isVip,
+        _hasHydrated: state._hasHydrated,
+        // Exclude session to avoid size limits - it will be restored from Supabase
+      }) as UserState,
     },
   ),
 );
+
+// Set hydrated to true after timeout as fallback
+setTimeout(() => {
+  const state = useAuthStore.getState();
+  if (!state._hasHydrated) {
+    console.log('Auth store: Setting hydrated to true after timeout');
+    state.setHasHydrated(true);
+  }
+}, 500);
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {

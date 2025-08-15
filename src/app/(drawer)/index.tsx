@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   newsContent: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    lineHeight: 20,
+    lineHeight: 30,
     marginBottom: theme.spacing.sm,
   },
   newsDate: {

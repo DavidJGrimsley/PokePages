@@ -1,9 +1,22 @@
 import colors from './colors';
 import { fontFamilies, fontSizes, fontWeights, spacing, borderRadius } from './fonts';
 import { RFPercentage } from "react-native-responsive-fontsize";
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 
 const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+
+// Comprehensive mobile web detection
+const isMobileWeb = Platform.OS === 'web' && (() => {
+  const screenWidth = Dimensions.get('window').width;
+  const isMobileByWidth = screenWidth < 768;
+  
+  if (typeof navigator !== 'undefined') {
+    const isMobileByUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return isMobileByWidth || isMobileByUserAgent;
+  }
+  
+  return isMobileByWidth;
+})();
 
 // Semantic font styles - combines family, size, and weight
 export const typography = {
@@ -41,6 +54,14 @@ export const typography = {
     textShadowColor: colors.light.white,
     textShadowOffset: { width: RFPercentage(0.2), height: RFPercentage(0.2) },
     textShadowRadius: RFPercentage(0.1),
+  },
+  logo: {
+    fontFamily: fontFamilies.callToAction,
+    fontSize: fontSizes.display,
+    color: colors.light.primary,
+    textShadowColor: colors.light.accent, // Glow effect color
+    textShadowOffset: { width: 0, height: 0 }, // No offset
+    textShadowRadius: 20, // Glow intensity
   },
   header: {
     fontFamily: fontFamilies.header,
@@ -108,20 +129,20 @@ export const shadows = {
 export const tabBarStyles = {
   tabBarStyle: {
     backgroundColor: colors.light.white, // Brown background
-    height: isMobile ? RFPercentage(10) : RFPercentage(4),// Increased height
-    // paddingV: RFPercentage(4), // Padding at top
     borderTopWidth: 5,
     borderTopColor: colors.light.accent, // Brown border
+    // For mobile web specifically, ensure minimum height to prevent cutoff
+    minHeight: isMobileWeb ? RFPercentage(8) : RFPercentage(4),
   },
   tabBarLabelStyle: {
     fontSize: RFPercentage(1.2), // Responsive font size
     fontWeight: '600' as const, // Proper TypeScript type
-    marginBottom: RFPercentage(0.2),
+    // marginBottom: isMobileWeb ? RFPercentage(0.8) : Platform.OS === 'web' ? RFPercentage(0.5) : RFPercentage(0.2),
   },
   tabBarActiveTintColor: colors.light.accent, // Brown for active tab
   tabBarInactiveTintColor: colors.light.brown, // Black for inactive tab
   tabBarIconStyle: {
-    marginBottom: RFPercentage(0.1),
+    // marginBottom: isMobileWeb ? RFPercentage(0.5) : Platform.OS === 'web' ? RFPercentage(0.3) : RFPercentage(0.1),
   },
 };
 

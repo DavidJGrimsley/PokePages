@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   },
   buildsTitle: {
     ...theme.typography.subheader,
-    fontSize: theme.fontSizes.display,
+    fontSize: theme.fontSizes.xxxl,
     textAlign: 'center',
     marginBottom: theme.spacing.lg,
     color: theme.colors.light.text,

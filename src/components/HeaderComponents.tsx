@@ -5,6 +5,7 @@ import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { theme } from '../../constants/style/theme';
 
 const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+const isWeb = Platform.OS === 'web';
 const mainHeaderColor = theme.colors.light.primary;
 const headerHeight = isMobile ? hp(10) : hp(9);
 
@@ -25,7 +26,7 @@ export const HeaderButton = forwardRef<typeof Pressable, HeaderButtonProps>(
           <FontAwesome
             name={iconName}
             size={25}
-            color="gray"
+            color={theme.colors.light.text}
             style={[
               styles.headerRight,
               {
@@ -39,7 +40,7 @@ export const HeaderButton = forwardRef<typeof Pressable, HeaderButtonProps>(
   }
 );
 
-// ✅ Reusable HeaderTitle component
+// ✅ Reusable HeaderTitle component with web fallback fonts
 export const HeaderTitle = ({ title }: HeaderTitleProps) => (
   <Text style={isMobile ? styles.headerTitleMobile : styles.headerTitleDesktop}>
     {title}
@@ -86,14 +87,31 @@ export const styles = StyleSheet.create({
   },
   headerTitleMobile: {
     ...theme.typography.displayOutlinedMobile,
-    // paddingTop: theme.spacing.md,
+    // Web fallback fonts
+    ...(isWeb && {
+      fontFamily: 'Georgia, serif', // Fallback for Modak
+      textShadowColor: theme.colors.light.accent,
+      textShadowOffset: { width: 2, height: 2 },
+      textShadowRadius: 0,
+    }),
   },
   headerTitleDesktop: {
     ...theme.typography.displayOutlined,
     paddingTop: theme.spacing.md,
+    // Web fallback fonts
+    // ...(isWeb && {
+    //   fontFamily: 'Georgia, serif', // Fallback for Modak
+    //   textShadowColor: theme.colors.light.accent,
+    //   textShadowOffset: { width: 3, height: 3 },
+    //   textShadowRadius: 0,
+    // }),
   },
   headerStyle: {
     height: headerHeight,
     backgroundColor: mainHeaderColor,
+    // Web-specific fixes
+    ...(isWeb && {
+      boxShadow: `0 2px 4px ${theme.colors.light.accent}40`,
+    }),
   },
 });

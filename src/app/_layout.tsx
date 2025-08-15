@@ -1,8 +1,9 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, SplashScreen } from 'expo-router';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
+import { Platform, View, Text } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { 
   PressStart2P_400Regular,
@@ -31,6 +32,9 @@ import {
 import { useAuthStore } from '~/utils/authStore';
 import { useOnboardingStore } from '~/utils/onboardingStore';
 import { HeaderTitle, styles } from '~/components/HeaderComponents';
+import { theme } from '@/constants/style/theme';
+import LottieView  from 'lottie-react-native';
+import Loading from '../components/LoadingAnim';
 
 const isWeb = Platform.OS === 'web';
 
@@ -76,6 +80,33 @@ export default function RootLayout() {
     }
   }, [_hasHydrated, _hasHydratedOnboarding, fontsLoaded]);
 
+  // You'll need to update your root layout to handle hydration properly
+  // Add this to prevent infinite re-renders:
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    // Set a timeout to ensure hydration completes
+    const timer = setTimeout(() => {
+      setIsHydrated(true);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isHydrated) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.light.background }}>
+        <LottieView
+          autoPlay={true}
+          loop={true}
+          style={{ width: 200, height: 200 }}
+          source={require('@/assets/lottie/stars.json')}
+        />
+        {/* <Loading /> */}
+      </View>
+    );
+  }
+
   if ((!_hasHydrated || !_hasHydratedOnboarding || !fontsLoaded) && !isWeb) {
     return null;
   }
@@ -88,53 +119,55 @@ export default function RootLayout() {
   console.log('_hasHydrated (auth):', _hasHydrated, '_hasHydratedOnboarding:', _hasHydratedOnboarding);
   
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar style="auto" />
-      <Stack>
-        <Stack.Protected guard={shouldShowOnboarding}>
-          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
-        </Stack.Protected>
-        <Stack.Protected guard={!shouldShowOnboarding}>
-          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-          <Stack.Screen 
-            name="eventDisclaimer" 
-            options={{ 
-              headerTitle: () => <HeaderTitle title="Event Disclaimer" />,
-              presentation: 'modal',
-              headerStyle: styles.headerStyle,
-            }} 
-          />
-          <Stack.Screen 
-            name="appInfo" 
-            options={{ 
-              headerTitle: () => <HeaderTitle title="App Information" />,
-              presentation: 'modal',
-              headerStyle: styles.headerStyle,
-            }} 
-          />
-          <Stack.Screen 
-            name="resourcesInfo" 
-            options={{ 
-              headerTitle: () => <HeaderTitle title="Resources Info" />,
-              presentation: 'modal',
-              headerStyle: styles.headerStyle,
-            }} 
-          />
-          <Stack.Protected guard={!isLoggedIn}>
-            <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <Stack>
+          <Stack.Protected guard={shouldShowOnboarding}>
+            <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
           </Stack.Protected>
-          <Stack.Protected guard={isLoggedIn}>
+          <Stack.Protected guard={!shouldShowOnboarding}>
+            <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
             <Stack.Screen 
-              name="editProfile" 
+              name="eventDisclaimer" 
               options={{ 
-                headerTitle: () => <HeaderTitle title="Edit Profile" />,
+                headerTitle: () => <HeaderTitle title="Event Disclaimer" />,
                 presentation: 'modal',
                 headerStyle: styles.headerStyle,
               }} 
             />
+            <Stack.Screen 
+              name="appInfo" 
+              options={{ 
+                headerTitle: () => <HeaderTitle title="App Information" />,
+                presentation: 'modal',
+                headerStyle: styles.headerStyle,
+              }} 
+            />
+            <Stack.Screen 
+              name="resourcesInfo" 
+              options={{ 
+                headerTitle: () => <HeaderTitle title="Resources Info" />,
+                presentation: 'modal',
+                headerStyle: styles.headerStyle,
+              }} 
+            />
+            <Stack.Protected guard={!isLoggedIn}>
+              <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+            </Stack.Protected>
+            <Stack.Protected guard={isLoggedIn}>
+              <Stack.Screen 
+                name="editProfile" 
+                options={{ 
+                  headerTitle: () => <HeaderTitle title="Edit Profile" />,
+                  presentation: 'modal',
+                  headerStyle: styles.headerStyle,
+                }} 
+              />
+            </Stack.Protected>
           </Stack.Protected>
-        </Stack.Protected>
-      </Stack>
-    </GestureHandlerRootView>
+        </Stack>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

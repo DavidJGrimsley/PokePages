@@ -1,11 +1,12 @@
 import { forwardRef } from 'react';
-import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, Pressable, PressableProps, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, Pressable, PressableProps, View, ViewStyle } from 'react-native';
 import { theme } from '@/constants/style/theme';
 
 type ButtonProps = {
   title?: string;
   variant?: 'touch' | 'press';
-} & (TouchableOpacityProps | PressableProps);
+  style?: ViewStyle | ViewStyle[] | ((state: { pressed: boolean }) => ViewStyle | ViewStyle[]);
+} & Omit<(TouchableOpacityProps | PressableProps), 'style'>;
 
 export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch', style, ...touchableProps }, ref) => {
   if (variant === 'press') {
@@ -15,7 +16,7 @@ export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch',
         {...touchableProps as PressableProps} 
         style={({ pressed }) => [
           styles.button, 
-          typeof style === 'function' ? style({ pressed }) : style
+          typeof style === 'function' ? (style as (state: { pressed: boolean }) => ViewStyle | ViewStyle[])({ pressed }) : style
         ]}
       >
         <Text style={styles.buttonText}>{title}</Text>
@@ -24,7 +25,14 @@ export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch',
   }
   
   return (
-    <TouchableOpacity ref={ref} {...touchableProps as TouchableOpacityProps} style={[styles.button, typeof style === 'function' ? style({ pressed: false }) : style]}>
+    <TouchableOpacity 
+      ref={ref} 
+      {...touchableProps as TouchableOpacityProps} 
+      style={[
+        styles.button, 
+        typeof style === 'function' ? undefined : style
+      ]}
+    >
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
