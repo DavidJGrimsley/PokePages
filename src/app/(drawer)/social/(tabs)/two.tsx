@@ -9,6 +9,7 @@ export default function Home() {
       <Stack.Screen options={{ title: 'Font Showcase' }} />
       <Container>
         <FontShowcase />
+        {/* <DigitalClock /> */}
       </Container>
     </>
   );

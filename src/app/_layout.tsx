@@ -96,13 +96,13 @@ export default function RootLayout() {
   if (!isHydrated) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.light.background }}>
-        <LottieView
+        {/* <LottieView
           autoPlay={true}
           loop={true}
           style={{ width: 200, height: 200 }}
           source={require('@/assets/lottie/stars.json')}
-        />
-        {/* <Loading /> */}
+        /> */}
+        <Loading />
       </View>
     );
   }

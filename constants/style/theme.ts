@@ -18,6 +18,14 @@ const isMobileWeb = Platform.OS === 'web' && (() => {
   return isMobileByWidth;
 })();
 
+export const lineHeights = {
+  display: fontSizes.display * 1.2,
+  header: fontSizes.header * 1.25,
+  subheader: fontSizes.subheader * 1.25,
+  copy: fontSizes.copy * 1.5,
+  mono: fontSizes.mono * 1.4,
+};
+
 // Semantic font styles - combines family, size, and weight
 export const typography = {
   display: {
@@ -82,7 +90,8 @@ export const typography = {
     fontFamily: fontFamilies.copy,
     fontSize: fontSizes.copy,
     fontWeight: fontWeights.regular,
-  },
+    // lineHeight: lineHeights.copy,
+    },
   copyBold: {
     fontFamily: fontFamilies.copy,
     fontSize: fontSizes.copy,
@@ -146,6 +155,8 @@ export const tabBarStyles = {
   },
 };
 
+
+
 // Combined theme object
 export const theme = {
   colors,
@@ -157,6 +168,7 @@ export const theme = {
   fontFamilies,
   fontSizes,
   fontWeights,
+  lineHeights,
 };
 
 export default theme;

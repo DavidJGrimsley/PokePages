@@ -16,10 +16,13 @@ import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { PokemonClient } from 'pokenode-ts';
 import { supabase } from '~/utils/supabaseClient';
-import { useAuthStore } from '~/utils/authStore';
 import { diagnosticChecks } from '~/utils/supabaseDiagnostics';
 import { router } from 'expo-router';
+import LottieView from 'lottie-react-native';
+
+import { useAuthStore } from '~/utils/authStore';
 import { theme } from '../../constants/style/theme';
+import { getEventStatus } from '~/utils/helperFX';
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -364,22 +367,23 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   };
 
   // Check if event is active, upcoming, or ended
-  const getEventStatus = () => {
-    const now = currentTime;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+  // const getEventStatus = () => {
+  //   const now = currentTime;
+  //   const start = new Date(startDate);
+  //   const end = new Date(endDate);
     
-    if (now < start) return 'upcoming';
-    if (now > end) return 'ended';
-    return 'active';
-  };
+  //   if (now < start) return 'upcoming';
+  //   if (now > end) return 'ended';
+  //   return 'active';
+  // };
 
+  const status = getEventStatus(startDate, endDate, distributionStart, distributionEnd);
+  console.log('Event status:', status);
   // Get countdown text
   const getCountdownText = () => {
     const now = currentTime;
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const status = getEventStatus();
     
     if (status === 'upcoming') {
       const timeDiff = start.getTime() - now.getTime();
@@ -414,7 +418,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
   // Check if button should be disabled
   const isButtonDisabled = () => {
-    const status = getEventStatus();
+    // const status = getEventStatus();
     return status !== 'active' || loading;
   };
 
@@ -495,7 +499,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       {/* Pokemon Image */}
       <View style={styles.pokemonImageContainer}>
         {imageLoading ? (
-          <ActivityIndicator size="large" color="#4CAF50" />
+          <LottieView
+            source={require('@/assets/lottie/stars.json')}
+            autoPlay
+            loop
+          />
         ) : pokemonImage ? (
           <Image 
             source={{ uri: pokemonImage }} 
@@ -649,8 +657,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             isButtonDisabled() && styles.buttonTextDisabled
           ]}>
             {loading ? 'Updating...' : 
-             getEventStatus() === 'upcoming' ? `Event starts ${formatUserFriendlyDate(startDate)}` :
-             getEventStatus() === 'ended' ? 'Event has ended' :
+             status === 'upcoming' ? `Event starts ${formatUserFriendlyDate(startDate)}` :
+             status === 'ended' ? 'Event has ended' :
              `Defeated ${pokemonName}`}
           </Text>
         </Pressable>
@@ -659,12 +667,12 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       {/* Event Status and Countdown */}
       <View style={[
         styles.statusContainer,
-        getEventStatus() === 'active' ? styles.activeStatus :
-        getEventStatus() === 'upcoming' ? styles.upcomingStatus : styles.endedStatus
+        status === 'active' ? styles.activeStatus :
+        status === 'upcoming' ? styles.upcomingStatus : styles.endedStatus
       ]}>
         <Text style={styles.statusTitle}>
-          {getEventStatus() === 'active' ? '🟢 EVENT ACTIVE' :
-           getEventStatus() === 'upcoming' ? '🟡 UPCOMING EVENT' : '🔴 EVENT ENDED'}
+          {status === 'active' ? '🟢 EVENT ACTIVE' :
+           status === 'upcoming' ? '🟡 UPCOMING EVENT' : '🔴 EVENT ENDED'}
         </Text>
         <Text style={styles.countdownText}>
           {getCountdownText()}

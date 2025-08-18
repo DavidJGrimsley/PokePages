@@ -96,11 +96,7 @@ const DrawerLayout = () => {
           drawerLabel: 'Events',
           headerShown: true,
           headerLeft: () => <DrawerToggle />, 
-          headerRight: () => (
-            <Link href="/eventDisclaimer" asChild>
-              <HeaderButton iconName="calendar" />
-            </Link>
-          ),
+
           drawerIcon: ({ size, color }) => (
             <Ionicons name="trophy-outline" size={iconSize} color={color} />
           ),

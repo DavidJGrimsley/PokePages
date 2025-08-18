@@ -1,4 +1,5 @@
-import { Stack, Link, router } from 'expo-router';
+import { Link, Stack, router } from 'expo-router';
+
 import { HeaderButton } from '@/src/components/HeaderComponents';
 import { Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,22 +17,7 @@ export default function EventsLayout() {
         options={{ 
           title: 'Pokemon Events',
           headerShown: false,
-          headerLeft: () => (
-            <Pressable
-              onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-              style={{ marginHorizontal: 12 }}
-            >
-              <Image
-                source={require('@/assets/PP_Icon.png')}
-                style={{ width: 32, height: 32,  }}
-              />
-            </Pressable>
-          ),
-          headerRight: () => (
-            <Link href="/appInfo" asChild>
-              <HeaderButton />
-            </Link>
-          ),
+
           // headerStyle: { height: 56 * 0.9 },
         }} 
       />
@@ -47,9 +33,9 @@ export default function EventsLayout() {
                 onPress={() => {
                   router.push('/(drawer)/events');
                 }}
-                style={{ marginHorizontal: 16 }}
+                style={{ marginHorizontal: theme.spacing.md }}
               >
-                <Ionicons name="arrow-back" size={24} color="#599a82ff" />
+                <Ionicons name="arrow-back" size={24} color={theme.colors.light.background} />
               </Pressable>
             ),
             headerRight: () => (
@@ -65,7 +51,7 @@ export default function EventsLayout() {
                 <HeaderButton />
               </Link>
             ),
-            headerStyle: { backgroundColor: theme.colors.light.secondary, height: 56 * 0.9 }, // Lavender, shorter
+            headerStyle: { backgroundColor: theme.colors.light.secondary, height: theme.spacing.xl }, // Lavender, shorter
           };
         }}
       />

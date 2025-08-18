@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import { Button } from "~/components/Button";
+import { PrettyText } from '@/src/components/PrettyText';
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
@@ -13,11 +14,12 @@ export default function OnboardingWelcomeScreen() {
       <StatusBar style="auto" />
       
       <View style={styles.content}>
-        <Image 
-          source={require('@/assets/PP_Icon.png')} 
+        {/* <Image 
+          source={require('@/assets/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
-        />
+        /> */}
+        <PrettyText text="Poké Pages" />
         
         <Text style={styles.title}>Welcome to PokePages!</Text>
         

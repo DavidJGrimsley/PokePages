@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { theme } from '../../constants/style/theme';
+import theme from '../../constants/style/theme';
 
 interface ComingSoonProps {
   title?: string;

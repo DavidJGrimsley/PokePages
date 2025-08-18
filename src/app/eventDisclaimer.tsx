@@ -1,8 +1,9 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Text, View, StyleSheet, Linking, Pressable } from 'react-native';
+import { Platform, Text, View, StyleSheet, Linking, Pressable, ScrollView } from 'react-native';
 
-import { ScreenContent } from '~/components/ScreenContent';
+import { theme } from '../../constants/style/theme';
+import { getEventStatus } from '~/utils/helperFX';
 
 export default function EventDisclaimer() {
   const { eventData } = useLocalSearchParams<{ eventData?: string }>();
@@ -30,9 +31,6 @@ export default function EventDisclaimer() {
     return name
       .toLowerCase()
       .replace(/\s+/g, '') // Remove all spaces
-      // .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
-      // .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      // .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
   };
 
   // Sanitize Pokemon name for Pokemon.com URL (they use hyphens instead of removing spaces)
@@ -40,9 +38,6 @@ export default function EventDisclaimer() {
     return name
       .toLowerCase()
       .replace(/\s+/g, '-') // Replace spaces with hyphens
-      // .replace(/[^a-z0-9-]/g, '') // Remove special characters except hyphens
-      // .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      // .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
   };
 
   const sanitizedPokemonName = sanitizePokemonNameForUrl(eventInfo.pokemonName);
@@ -50,12 +45,15 @@ export default function EventDisclaimer() {
   
   const serebiiUrl = `https://www.serebii.net/scarletviolet/teraraidbattles/event-${sanitizedPokemonName}spotlight.shtml`;
   const pokemonComUrl = `https://www.pokemon.com/us/pokemon-news/${sanitizedPokemonNameForPokemonCom}-appears-in-5-star-tera-raid-battles-in-pokemon-scarlet-and-pokemon-violet`;
+  const pokemonFinishedUrl = `https://www.pokemon.com/us/pokemon-news/announcing-the-total-victories-against-${sanitizedPokemonNameForPokemonCom}-in-pokemon-scarlet-and-pokemon-violet`;
+  const claimMysteryGiftUrl = 'https://youtu.be/63FRpg8slIw?si=CQGN-Qwy6hbuheUR&t=430';
 
+  const status = getEventStatus(eventInfo.startDate, eventInfo.endDate, eventInfo.distributionStart, eventInfo.distributionEnd);
+  console.log('Event Status:', status);
   return (
     <>
       <Stack.Screen options={{ title: '' }} />
-      <ScreenContent path="app/modal.tsx" title="Extra Info">
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
 
           
           <Text style={styles.mainText}>
@@ -68,21 +66,46 @@ export default function EventDisclaimer() {
               The official event requires players worldwide to collectively defeat {eventInfo.pokemonName} one million times between <Text style={styles.dateHighlight}>{eventInfo.startDate} and {eventInfo.endDate}</Text>. 
               If this goal is met, a {eventInfo.pokemonName} will be distributed via Mystery Gift from <Text style={styles.dateHighlight}>{eventInfo.distributionStart} to {eventInfo.distributionEnd}</Text>.
             </Text>
+
+            {!(status === 'upcoming') && 
+              <View style={styles.linksList}>
+                <Pressable 
+                  style={[styles.linkItem, styles.pokemonLink]}
+                  onPress={() => Linking.openURL(pokemonComUrl)}
+                >
+                  <Text style={styles.linkText}>🔗 Official Pokémon News - {eventInfo.pokemonName} Event</Text>
+                </Pressable>
+                {(status === 'ended' || status === 'distribution') && <Pressable 
+                  style={[styles.linkItem, styles.pokemonLink]}
+                  onPress={() => Linking.openURL(pokemonFinishedUrl)}
+                >
+                  <Text style={styles.linkText}>🔗 Goal Met News from Pokemon.com</Text>
+                </Pressable>}
+              </View>
+            }
+
           </View>
           
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>✅ To Ensure Your Battles Count</Text>
-            <View style={styles.tipsList}>
-              <Text style={styles.tipItem}>• Connect to the internet periodically during the event</Text>
-              <Text style={styles.tipItem}>• Check Poké Portal News for official progress updates</Text>
-              <Text style={styles.tipItem}>• Redeem your Mystery Gift during the distribution period if the goal is achieved</Text>
-            </View>
+            <Text style={styles.sectionTitle}>✅ Redeem your Mystery Gift during the distribution period if the goal is achieved </Text>
+            <Pressable 
+                style={[styles.linkItem, styles.myLink]}
+                onPress={() => Linking.openURL(claimMysteryGiftUrl)}
+              >
+                <Text style={styles.linkText}>🔗 How to claim Mystery Gifts - Video from Mr. DJ (Developer of this app)</Text>
+              </Pressable>
           </View>
           
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🎯 Community Counter Info</Text>
+            <View style={styles.tipsList}>
+              <Text style={styles.tipItem}>• This community counter helps us track progress but is not foolproof - there may be other players defeating {eventInfo.pokemonName} who aren&apos;t using this tracker.  </Text>
+              <Text style={styles.tipItem}>• To Ensure Your Battles Count, connect to the internet periodically during the event</Text>
+              <Text style={styles.tipItem}>• Check Poké Portal News for official progress updates</Text>
+            </View>
+
             <Text style={styles.bodyText}>
-              This community counter helps us track progress but is not foolproof - there may be other players defeating {eventInfo.pokemonName} who aren&apos;t using this tracker. 
+
               <Text style={styles.emphasis}> Let&apos;s aim for more than the required million to account for any missed contributions!</Text>
             </Text>
           </View>
@@ -90,34 +113,23 @@ export default function EventDisclaimer() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>📚 Resources</Text>
             <Text style={styles.bodyText}>
-              For complete event details and updates:
-            </Text>
-            <View style={styles.linksList}>
-              <Pressable 
-                style={styles.linkItem}
-                onPress={() => Linking.openURL(pokemonComUrl)}
-              >
-                <Text style={styles.linkText}>🔗 Official Pokémon News - {eventInfo.pokemonName} Event</Text>
-              </Pressable>
-            </View>
-            <Text style={styles.bodyText}>
               For raid guides and more information on the event from top content creators and trusted sources, check out:
             </Text>
             <View style={styles.linksList}>
               <Pressable 
-                style={styles.linkItem}
+                style={[styles.linkItem, styles.outsideLink]}
                 onPress={() => Linking.openURL(serebiiUrl)}
               >
                 <Text style={styles.linkText}>🔗 Serebii Event Guide - Detailed Battle Information</Text>
               </Pressable>
               <Pressable 
-                style={styles.linkItem}
+                style={[styles.linkItem, styles.outsideLink]}
                 onPress={() => Linking.openURL('https://www.youtube.com/@AustinJohnPlays')}
               >
                 <Text style={styles.linkText}>🔗 Austin John Plays - YouTube Channel</Text>
               </Pressable>
               <Pressable 
-                style={styles.linkItem}
+                style={[styles.linkItem, styles.outsideLink]}
                 onPress={() => Linking.openURL('https://www.youtube.com/@Osirus')}
               >
                 <Text style={styles.linkText}>🔗 Osirus - YouTube Channel</Text>
@@ -136,8 +148,7 @@ export default function EventDisclaimer() {
               </Text>
             </View>
           </View>
-        </View>
-      </ScreenContent>
+        </ScrollView>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </>
   );
@@ -145,153 +156,159 @@ export default function EventDisclaimer() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 15,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    backgroundColor: theme.colors.light.background,
   },
   warningBanner: {
     backgroundColor: '#FFF3CD',
     borderColor: '#FFEAA7',
     borderWidth: 2,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
   },
   warningIcon: {
     fontSize: 24,
-    marginRight: 12,
+    marginRight: theme.spacing.md,
   },
   warningTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: theme.fontSizes.header,
+    fontWeight: theme.fontWeights.bold,
     color: '#856404',
     flex: 1,
   },
   mainText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-    marginBottom: 20,
+    ...theme.typography.copy,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.lg,
     textAlign: 'center',
   },
   highlight: {
-    fontWeight: 'bold',
-    color: '#e74c3c',
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.light.red,
   },
   section: {
-    marginBottom: 24,
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-    borderRadius: 12,
+    marginBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.light.white,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
     borderLeftWidth: 4,
-    borderLeftColor: '#3498db',
+    borderLeftColor: theme.colors.light.primary,
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 12,
+    ...theme.typography.header,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.md,
   },
   bodyText: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#555',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
   },
   dateHighlight: {
-    fontWeight: '600',
-    color: '#e74c3c',
+    fontWeight: theme.fontWeights.semibold,
+    color: theme.colors.light.red,
     backgroundColor: '#fdf2f2',
-    paddingHorizontal: 4,
+    paddingHorizontal: theme.spacing.xs,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,
   },
   tipsList: {
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
   },
   tipItem: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#555',
-    marginBottom: 6,
-    paddingLeft: 8,
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
+    marginBottom: theme.spacing.xs,
+    paddingLeft: theme.spacing.sm,
   },
   emphasis: {
-    fontWeight: '600',
-    color: '#2980b9',
+    fontWeight: theme.fontWeights.semibold,
+    color: theme.colors.light.primary,
   },
   rewardsBanner: {
     backgroundColor: '#E8F5E8',
-    borderColor: '#4CAF50',
+    borderColor: theme.colors.light.accent,
     borderWidth: 2,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginTop: theme.spacing.sm,
     alignItems: 'center',
   },
   rewardsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 8,
+    fontSize: theme.fontSizes.header,
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.light.accent,
+    marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   rewardsText: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: '#1B5E20',
+    ...theme.typography.copy,
+    color: theme.colors.light.primary,
     textAlign: 'center',
   },
   rewardsDetails: {
-    marginTop: 16,
-    backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 8,
+    marginTop: theme.spacing.md,
+    backgroundColor: theme.colors.light.white,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
     borderWidth: 1,
-    borderColor: '#A5D6A7',
+    borderColor: theme.colors.light.accent,
   },
   rewardsDetailTitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 8,
+    fontSize: theme.fontSizes.subheader,
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.light.accent,
+    marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
   rewardsDetailItem: {
-    fontSize: 16,
-    lineHeight: 18,
-    color: '#1B5E20',
-    marginBottom: 4,
-    paddingLeft: 4,
+    ...theme.typography.copyBold,
+    color: theme.colors.light.primary,
+    marginBottom: theme.spacing.xs,
+    paddingLeft: theme.spacing.xs,
   },
   rewardHighlight: {
-    fontWeight: 'bold',
-    color: '#4CAF50',
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.light.accent,
     backgroundColor: '#E8F5E8',
-    paddingHorizontal: 6,
+    paddingHorizontal: theme.spacing.sm,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: theme.borderRadius.sm,
   },
   rewardsDetailFooter: {
-    fontSize: 12,
-    color: '#388E3C',
+    ...theme.typography.copy,
+    color: theme.colors.light.primary,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: theme.spacing.sm,
     fontStyle: 'italic',
   },
   linksList: {
-    marginTop: 12,
+    marginTop: theme.spacing.md,
   },
   linkItem: {
-    backgroundColor: '#e3f2fd',
-    borderColor: '#2196f3',
     borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    borderRadius: theme.borderRadius.sm,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
+  },
+  pokemonLink: {
+    backgroundColor: theme.colors.light.red,
+    // textShadowColor: theme.colors.light.white,
+    borderColor: theme.colors.light.brown,
+  },
+  myLink: {
+    backgroundColor: theme.colors.light.secondary,
+    borderColor: theme.colors.light.primary,
+  },
+  outsideLink: {
+    backgroundColor: theme.colors.light.accent,
+    borderColor: theme.colors.light.primary,
   },
   linkText: {
-    fontSize: 14,
-    color: '#1976d2',
-    fontWeight: '500',
+    ...theme.typography.copyBold,
+    // color: theme.colors.light.primary,
   },
 });

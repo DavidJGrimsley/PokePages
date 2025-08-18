@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { BuildVariant } from '@/types/builds';
-import { theme } from '../../constants/style/theme';
+import { theme } from '@/constants/style/theme';
 
 interface BuildProps {
   pokemonName: string;
@@ -97,41 +97,36 @@ export const Build: React.FC<BuildProps> = ({
         return {
           title: 'Physical Attacker',
           icon: '⚔️',
-          primaryColor: '#e74c3c',
-          secondaryColor: '#c0392b',
-          backgroundColor: '#fdf2f2'
+          primaryColor: theme.colors.light.red,
+          backgroundColor: theme.colors.light.lightRed,
         };
       case 'special-attacker':
         return {
           title: 'Special Attacker',
           icon: '✨',
-          primaryColor: '#9b59b6',
-          secondaryColor: '#8e44ad',
-          backgroundColor: '#f8f4fd'
+          primaryColor: theme.colors.light.purple,
+          backgroundColor: theme.colors.light.purpleBackground,
         };
       case 'physical-wall':
         return {
           title: 'Physical Wall',
           icon: '🛡️',
-          primaryColor: '#3498db',
-          secondaryColor: '#2980b9',
-          backgroundColor: '#f2f8fd'
+          primaryColor: theme.colors.light.blue,
+          backgroundColor: theme.colors.light.blueBackground
         };
       case 'special-wall':
         return {
           title: 'Special Wall',
           icon: '🌟',
-          primaryColor: '#2ecc71',
-          secondaryColor: '#27ae60',
-          backgroundColor: '#f2fdf5'
+          primaryColor: theme.colors.light.green,
+          backgroundColor: theme.colors.light.greenBackground
         };
       default:
         return {
           title: 'Build',
           icon: '📋',
-          primaryColor: '#34495e',
-          secondaryColor: '#2c3e50',
-          backgroundColor: '#f8f9fa'
+          primaryColor: theme.colors.light.primary,
+          backgroundColor: theme.colors.light.background
         };
     }
   };

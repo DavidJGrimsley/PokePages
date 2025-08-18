@@ -6,6 +6,7 @@ import { useRef, useState, useCallback } from 'react';
 
 import { Button } from '~/components/Button';
 import { useOnboardingStore } from '~/utils/onboardingStore';
+import { PrettyText } from '@/src/components/PrettyText';
 
 export default function OnboardingFinalScreen() {
   const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
@@ -34,12 +35,12 @@ export default function OnboardingFinalScreen() {
       <StatusBar style="auto" />
       
       <View style={styles.content}>
-        <Image 
-          source={require('@/assets/PP_Icon.png')} 
+        {/* <Image 
+          source={require('@/assets/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
-        />
-        
+        /> */}
+        <PrettyText text="Poké Pages" />
         <Text style={styles.title}>You&apos;re All Set!</Text>
         
         <Text style={styles.subtitle}>

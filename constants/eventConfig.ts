@@ -23,8 +23,8 @@ export const eventConfig = {
     apiEndpoint: 'https://api.pokepages.app',
     startDate: '2025-08-03T17:00:00-07:00', // Sunday, August 3, 2025, at 5:00 p.m. PDT
     endDate: '2025-08-17T16:59:59-07:00',   // Sunday, August 17, 2025, at 4:59 p.m. PDT
-    distributionStart: 'August 21',
-    distributionEnd: 'October 15, 2025',
+    distributionStart: '2025-08-21T17:00:00-07:00',
+    distributionEnd: '2025-09-30T16:59:59-07:00',
     targetCount: 1000000,
     maxRewards: 2000000,
     timezone: 'America/Los_Angeles', // PDT timezone

@@ -39,7 +39,7 @@ export default function OnboardingWelcomeScreen() {
       
       <View style={styles.content}>
         <Image 
-          source={require('@/assets/PP_Icon.png')} 
+          source={require('@/assets/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
         />

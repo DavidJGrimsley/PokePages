@@ -5,22 +5,28 @@ import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 import { eventConfig } from '@/constants/eventConfig';
-
+import { theme } from '@/constants/style/theme';
+import { getEventStatus } from '~/utils/helperFX';
 interface EventCardProps {
   title: string;
   description: string;
   href: string;
-  status: 'active' | 'upcoming' | 'ended';
+  status: 'upcoming' | 'active' | 'limbo' | 'distribution' | 'ended';
+  startDate?: string;
   endDate?: string;
+  distributionStartDate?: string;
+  distributionEndDate?: string;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ title, description, href, status, endDate }) => {
+const EventCard: React.FC<EventCardProps> = ({ title, description, href, status, startDate, endDate, distributionStartDate, distributionEndDate }) => {
   const getStatusColor = () => {
     switch (status) {
-      case 'active': return '#4CAF50';
-      case 'upcoming': return '#FF9800';
-      case 'ended': return '#9E9E9E';
-      default: return '#9E9E9E';
+      case 'active': return theme.colors.light.green;
+      case 'distribution': return theme.colors.light.red;
+      case 'upcoming': return theme.colors.light.flag;
+      case 'ended': return theme.colors.light.brown;
+      case 'limbo': return theme.colors.light.primary;
+      default: return theme.colors.light.brown;
     }
   };
 
@@ -31,13 +37,29 @@ const EventCard: React.FC<EventCardProps> = ({ title, description, href, status,
           <Text style={styles.eventTitle}>{title}</Text>
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor() }]}>
             <Text style={styles.statusText}>
-              {status === 'active' ? 'ACTIVE' : status === 'upcoming' ? 'UPCOMING' : 'ENDED'}
+              {status === 'active' ? 'ACTIVE' : status === 'distribution' ? 'CLAIM NOW!' : status === 'limbo' ? 'WAITING' : status === 'upcoming' ? 'UPCOMING' : 'ENDED'}
             </Text>
           </View>
         </View>
         <Text style={styles.eventDescription}>{description}</Text>
         {endDate && (
-          <Text style={styles.endDate}>Ends: {endDate}</Text>
+          <>
+            {(status === 'upcoming') && (
+              <Text style={styles.endDate}>Raid starts: {startDate}</Text>
+            )}
+            {(status === 'active') && (
+              <Text style={styles.endDate}>Raid ends: {endDate}</Text>
+            )}
+            {status === 'limbo' && distributionStartDate && (
+              <Text style={styles.endDate}>Distribution Starts: {distributionStartDate}</Text>
+            )}
+            {status === 'distribution' && distributionEndDate && (
+              <Text style={styles.endDate}>Distribution Ends: {distributionEndDate}</Text>
+            )}
+            {status === 'ended' && (
+              <Text style={styles.endDate}>Event ended: {distributionEndDate}</Text>
+            )}
+          </>
         )}
       </Pressable>
     </Link>
@@ -45,15 +67,19 @@ const EventCard: React.FC<EventCardProps> = ({ title, description, href, status,
 };
 
 // Helper function to determine event status based on dates
-const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
-  const now = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  
-  if (now < start) return 'upcoming';
-  if (now > end) return 'ended';
-  return 'active';
-};
+// const getEventStatus = (startDate: string, endDate: string, distributionStartDate: string, distributionEndDate: string): 'active' | 'upcoming' | 'distribution' | 'ended' => {
+//   const now = new Date();
+//   const start = new Date(startDate);
+//   const end = new Date(endDate);
+//   const distributionStart = new Date(distributionStartDate);
+//   const distributionEnd = new Date(distributionEndDate);
+
+//   if (now < start) return 'upcoming';
+//   if (now < end) return 'active';
+//   if (now > distributionStart && now < distributionEnd) return 'distribution';
+//   return 'ended';
+// };
+
 
 // Format date to user-friendly format
 const formatUserFriendlyDate = (dateString: string) => {
@@ -75,9 +101,13 @@ export default function EventsIndex() {
     title: config.eventTitle,
     description: `Help defeat ${config.pokemonName} 1 million times worldwide to unlock Mystery Gift rewards!`,
     href: `/(drawer)/events/${key}` as any,
-    status: getEventStatus(config.startDate, config.endDate),
+    status: getEventStatus(config.startDate, config.endDate, config.distributionStart, config.distributionEnd),
+    startDate: formatUserFriendlyDate(config.startDate),
     endDate: formatUserFriendlyDate(config.endDate),
+    distributionEndDate: formatUserFriendlyDate(config.distributionEnd),
+    distributionStartDate: formatUserFriendlyDate(config.distributionStart),
   }));
+  console.log('status:', events.map(event => event.status));
 
   return (
     <>
@@ -96,7 +126,10 @@ export default function EventsIndex() {
               description={event.description}
               href={event.href}
               status={event.status}
+              startDate={event.startDate}
               endDate={event.endDate}
+              distributionEndDate={event.distributionEndDate}
+              distributionStartDate={event.distributionStartDate}
             />
           ))}
         </View>
@@ -112,92 +145,85 @@ export default function EventsIndex() {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: theme.colors.light.background,
   },
   header: {
-    padding: 20,
-    paddingBottom: 16,
+    padding: theme.spacing.lg,
+    paddingBottom: theme.spacing.md,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 8,
+    ...theme.typography.header,
+    color: theme.colors.light.text,
+    marginBottom: theme.spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#6c757d',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     lineHeight: 24,
   },
   eventsContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: theme.spacing.lg,
   },
   eventCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    backgroundColor: theme.colors.light.white,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    ...theme.shadows.small,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    borderColor: theme.colors.light.secondary,
   },
   eventHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: theme.spacing.sm,
   },
   eventTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2c3e50',
+    ...theme.typography.subheader,
+    color: theme.colors.light.primary,
     flex: 1,
-    marginRight: 12,
+    marginRight: theme.spacing.sm,
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.md,
     minWidth: 70,
     alignItems: 'center',
   },
   statusText: {
-    color: '#ffffff',
-    fontSize: 12,
+    color: theme.colors.light.white,
+    fontSize: theme.fontSizes.xs,
     fontWeight: 'bold',
   },
   eventDescription: {
-    fontSize: 14,
-    color: '#495057',
-    lineHeight: 20,
-    marginBottom: 8,
+    ...theme.typography.copy,
+    color: theme.colors.light.secondary,
+    marginBottom: theme.spacing.xs,
   },
   endDate: {
-    fontSize: 12,
-    color: '#6c757d',
+    ...theme.typography.copy,
+    color: theme.colors.light.text,
     fontStyle: 'italic',
   },
   noEvents: {
-    padding: 40,
+    padding: theme.spacing.xl,
     alignItems: 'center',
   },
   noEventsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#6c757d',
+    ...theme.typography.subheader,
+    color: theme.colors.light.brown,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.xs,
   },
   noEventsSubtitle: {
-    fontSize: 14,
-    color: '#9e9e9e',
+    ...theme.typography.copy,
+    color: theme.colors.light.brown,
     textAlign: 'center',
     lineHeight: 20,
   },

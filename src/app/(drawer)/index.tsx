@@ -65,6 +65,26 @@ export default function Home() {
               description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
               path="/(drawer)/resources/top50"
             />
+
+            <Text style={styles.sectionTitle}>🎉 Latest Events</Text>
+            
+            {/* Multiple Active Event Buttons */}
+            {activeCounterEvents.map((event) => (
+              <Link key={event.key} href={event.href} asChild>
+                <Pressable style={styles.featuredButton}>
+                  <Text style={styles.featuredButtonText}>{event.buttonText}</Text>
+                  <Text style={styles.featuredButtonSubtext}>Click to contribute to the global counter</Text>
+                </Pressable>
+              </Link>
+            ))}
+           
+
+            <Link href="/(drawer)/events" asChild>
+              <Pressable style={styles.eventsButton}>
+                <Text style={styles.eventsButtonText}>View All Events</Text>
+              </Pressable>
+            </Link>
+            
             <Text style={styles.sectionTitle}>🎉 Latest News</Text>
           
             {/* Dynamic News Cards for Active Events */}
@@ -100,38 +120,6 @@ export default function Home() {
               </Text>
               <Text style={styles.newsDate}>Ongoing Series</Text>
             </View>
-
-            {/* { activeCounterEvent.length > 0 && (
-              <Link href={activeCounterEvent[0]?.href} asChild>
-                <Pressable style={styles.featuredButton}>
-                  <Text style={styles.featuredButtonText}>{activeCounterEvent[0]?.buttonText}</Text>
-                  <Text style={styles.featuredButtonSubtext}>Click to contribute to the global counter</Text>
-                </Pressable>
-              </Link>
-            )} */}
-            <Text style={styles.sectionTitle}>🎉 Latest Events</Text>
-            
-            {/* Multiple Active Event Buttons */}
-            {activeCounterEvents.map((event) => (
-              <Link key={event.key} href={event.href} asChild>
-                <Pressable style={styles.featuredButton}>
-                  <Text style={styles.featuredButtonText}>{event.buttonText}</Text>
-                  <Text style={styles.featuredButtonSubtext}>Click to contribute to the global counter</Text>
-                </Pressable>
-              </Link>
-            ))}
-            {/* <Link href="/(drawer)/events/wo-chien" asChild>
-              <Pressable style={styles.featuredButton}>
-                <Text style={styles.featuredButtonText}>🚀 Join the Shiny Wo-Chien Challenge!</Text>
-                <Text style={styles.featuredButtonSubtext}>Click to contribute to the global counter</Text>
-              </Pressable>
-            </Link> */}
-
-            <Link href="/(drawer)/events" asChild>
-              <Pressable style={styles.eventsButton}>
-                <Text style={styles.eventsButtonText}>View All Events</Text>
-              </Pressable>
-            </Link>
           </View>
 
           <View style={styles.featuresSection}>
@@ -189,12 +177,6 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
     textAlign: 'center',
   },
-  subtitle: {
-    ...theme.typography.copy,
-    color: theme.colors.light.white,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
   newsSection: {
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.light.white,
@@ -220,7 +202,7 @@ const styles = StyleSheet.create({
   newsContent: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    lineHeight: 30,
+    // lineHeight: 30,
     marginBottom: theme.spacing.sm,
   },
   newsDate: {
