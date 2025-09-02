@@ -3,24 +3,27 @@ import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, TextInput } from 'react-native';
 import { supabase } from '../utils/supabaseClient';
 import { theme } from '../../constants/style/theme';
+import ErrorMessage from './Error';
 
 export const SupabaseAPITester: React.FC = () => {
   const [results, setResults] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [eventId, setEventId] = useState('');
   const [userId, setUserId] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const runManualAPITest = async () => {
     setLoading(true);
     setResults('Running manual API tests...\n\n');
     
-    try {
+  try {
       // Test 1: Basic connection
       const { data: basicTest, error: basicError } = await supabase
         .from('event_counters')
         .select('count');
         
-      setResults(prev => prev + `Test 1 - Basic Connection:\n${basicError ? `❌ Error: ${JSON.stringify(basicError, null, 2)}` : `✅ Success: ${JSON.stringify(basicTest, null, 2)}`}\n\n`);
+  setResults(prev => prev + `Test 1 - Basic Connection:\n${basicError ? `❌ Error: ${JSON.stringify(basicError, null, 2)}` : `✅ Success: ${JSON.stringify(basicTest, null, 2)}`}\n\n`);
+  if (basicError) setErrorMessage(basicError.message || 'Unknown error in basic connection test');
       
       // Test 2: User participation query (with explicit headers)
       if (eventId && userId) {
@@ -31,12 +34,14 @@ export const SupabaseAPITester: React.FC = () => {
           .eq('user_id', userId)
           .maybeSingle();  // Use maybeSingle() to handle empty results gracefully
           
-        setResults(prev => prev + `Test 2 - User Participation Query:\nStatus: ${status} ${statusText}\n${userError ? `❌ Error: ${JSON.stringify(userError, null, 2)}` : `✅ Success: ${JSON.stringify(userTest, null, 2)}`}\n\n`);
+  setResults(prev => prev + `Test 2 - User Participation Query:\nStatus: ${status} ${statusText}\n${userError ? `❌ Error: ${JSON.stringify(userError, null, 2)}` : `✅ Success: ${JSON.stringify(userTest, null, 2)}`}\n\n`);
+  if (userError) setErrorMessage(userError.message || 'Unknown error in user participation test');
       }
       
       // Test 3: Check auth session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      setResults(prev => prev + `Test 3 - Auth Session:\n${sessionError ? `❌ Error: ${JSON.stringify(sessionError, null, 2)}` : `✅ Session exists: ${!!session}\nUser ID: ${session?.user?.id}\nAccess token: ${session?.access_token ? 'Present' : 'Missing'}`}\n\n`);
+  setResults(prev => prev + `Test 3 - Auth Session:\n${sessionError ? `❌ Error: ${JSON.stringify(sessionError, null, 2)}` : `✅ Session exists: ${!!session}\nUser ID: ${session?.user?.id}\nAccess token: ${session?.access_token ? 'Present' : 'Missing'}`}\n\n`);
+  if (sessionError) setErrorMessage(sessionError.message || 'Unknown error in session test');
       
       // Test 4: Manual fetch (simulating cURL)
       try {
@@ -54,23 +59,35 @@ export const SupabaseAPITester: React.FC = () => {
         const responseText = await response.text();
         setResults(prev => prev + `Test 4 - Manual Fetch:\nStatus: ${response.status} ${response.statusText}\nResponse: ${responseText}\n\n`);
       } catch (fetchError) {
-        setResults(prev => prev + `Test 4 - Manual Fetch:\n❌ Error: ${fetchError}\n\n`);
+  setResults(prev => prev + `Test 4 - Manual Fetch:\n❌ Error: ${fetchError}\n\n`);
+  setErrorMessage(String(fetchError));
       }
       
     } catch (error) {
       setResults(prev => prev + `Overall Error: ${error}\n`);
+      setErrorMessage(String(error));
     }
     
     setLoading(false);
   };
 
   const clearResults = () => {
-    setResults('');
+  setResults('');
+  setErrorMessage(null);
   };
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Supabase API Diagnostics</Text>
+      {errorMessage && (
+        <View style={{ marginVertical: theme.spacing.lg }}>
+          <ErrorMessage
+            title="API Test Error"
+            description="An error occurred during one of the Supabase API tests."
+            error={errorMessage}
+          />
+        </View>
+      )}
       
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Event ID (UUID):</Text>
@@ -184,7 +201,6 @@ const styles = StyleSheet.create({
   },
   results: {
     ...theme.typography.mono,
-    lineHeight: 16,
     color: theme.colors.light.text,
   },
 });

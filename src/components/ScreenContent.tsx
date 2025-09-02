@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+    backgroundColor: theme.colors.light.background,
     flexGrow: 1,
     justifyContent: 'center',
     paddingVertical: theme.spacing.lg,

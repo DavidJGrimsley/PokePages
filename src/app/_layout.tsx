@@ -113,6 +113,7 @@ export default function RootLayout() {
 
   // Skip onboarding on web platform
   const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
+  
 
   console.log('Made it to RootLayout. hasCompletedOnboarding:', hasCompletedOnboarding);
   console.log('Platform:', Platform.OS, 'shouldShowOnboarding:', shouldShowOnboarding);
@@ -154,6 +155,7 @@ export default function RootLayout() {
             />
             <Stack.Protected guard={!isLoggedIn}>
               <Stack.Screen name="sign-in" options={{ headerShown: false }} />
+              <Stack.Screen name="sign-up" options={{ headerShown: false }} />
             </Stack.Protected>
             <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen 

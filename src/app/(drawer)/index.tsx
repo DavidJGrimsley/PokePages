@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
   newsContent: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    // lineHeight: 30,
     marginBottom: theme.spacing.sm,
   },
   newsDate: {
@@ -269,6 +268,5 @@ const styles = StyleSheet.create({
   featureText: {
     fontSize: theme.fontSizes.xs,
     color: theme.colors.light.brown,
-    lineHeight: 16,
   },
 });

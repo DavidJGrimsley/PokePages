@@ -1,10 +1,11 @@
+import { StyleSheet, View, AppState, TextInput } from 'react-native'
 import React, { useState } from 'react'
-import { Alert, StyleSheet, View, AppState, TextInput } from 'react-native'
 import { supabase } from "~/utils/supabaseClient"
 
 
 import { Button } from '~/components/Button'
 import { theme } from '../../constants/style/theme'
+import ErrorMessage from './Error';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -22,20 +23,22 @@ export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function signInWithEmail() {
     setLoading(true)
+    setErrorMessage(null);
     const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     })
-
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+    if (error) setErrorMessage(error.message);
+    setLoading(false);
   }
 
   async function signUpWithEmail() {
     setLoading(true)
+    setErrorMessage(null);
     const {
       data: { session },
       error,
@@ -43,14 +46,20 @@ export default function Auth() {
       email: email,
       password: password,
     })
-
-    if (error) Alert.alert(error.message)
-    if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
+    if (error) setErrorMessage(error.message);
+    if (!session && !error) setErrorMessage('Please check your inbox for email verification!');
+    setLoading(false);
   }
 
   return (
     <View style={styles.container}>
+      {errorMessage && (
+        <ErrorMessage
+          title="Authentication Error"
+          description="There was a problem signing in or signing up."
+          error={errorMessage}
+        />
+      )}
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <TextInput
           onChangeText={(text) => setEmail(text)}

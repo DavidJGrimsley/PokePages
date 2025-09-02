@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import documentsData from '../../constants/documents.json';
+import ErrorMessage from './Error';
 import { theme } from '../../constants/style/theme';
 
 type DocumentType = 'termsOfService' | 'privacyPolicy';
@@ -18,6 +19,7 @@ interface DocumentPageProps {
 
 export const DocumentPage: React.FC<DocumentPageProps> = ({ documentType }) => {
   const document = documentsData[documentType];
+  const isValidDocument = document && document.sections && Array.isArray(document.sections);
   
   // Get the title based on document type
   const getTitle = () => {
@@ -30,21 +32,28 @@ export const DocumentPage: React.FC<DocumentPageProps> = ({ documentType }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={true}>
-        <View style={styles.content}>
-          <Text style={styles.headerTitle}>{getTitle()}</Text>
-          <Text style={styles.lastUpdated}>
-            Last Updated: {(document as any).lastUpdated || (document as any).effectiveDate}
-          </Text>
-          
-          {document.sections.map((section, index) => (
-            <View key={index} style={styles.section}>
-              <Text style={styles.sectionTitle}>{section.title}</Text>
-              <Text style={styles.sectionContent}>{section.content}</Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+      {!isValidDocument ? (
+        <ErrorMessage
+          title="Document Error"
+          description={`Could not load the ${getTitle()} document.`}
+          error={`Document data for '${documentType}' is missing or invalid.`}
+        />
+      ) : (
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={true}>
+          <View style={styles.content}>
+            <Text style={styles.headerTitle}>{getTitle()}</Text>
+            <Text style={styles.lastUpdated}>
+              Last Updated: {(document as any).lastUpdated || (document as any).effectiveDate}
+            </Text>
+            {document.sections.map((section, index) => (
+              <View key={index} style={styles.section}>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+                <Text style={styles.sectionContent}>{section.content}</Text>
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
@@ -85,7 +94,6 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     ...theme.typography.copy,
-    lineHeight: 24,
     color: theme.colors.light.brown,
   },
 });

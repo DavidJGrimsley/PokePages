@@ -1,5 +1,7 @@
-import { Link, Stack, router } from 'expo-router';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { Stack, router } from 'expo-router';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
+const { colors, fontSizes, spacing } = Theme;
 import { StatusBar } from 'expo-status-bar';
 import { useRef, useState, useCallback } from 'react';
 
@@ -7,6 +9,7 @@ import { useRef, useState, useCallback } from 'react';
 import { Button } from '~/components/Button';
 import { useOnboardingStore } from '~/utils/onboardingStore';
 import { PrettyText } from '@/src/components/PrettyText';
+import { size } from '@shopify/react-native-skia';
 
 export default function OnboardingFinalScreen() {
   const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
@@ -15,6 +18,7 @@ export default function OnboardingFinalScreen() {
   // const [runId, setRunId] = useState(0); // force remount per run
   // const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exploreBtnRef = useRef<View>(null); // ref to the Start Exploring button
+  const signInButtonRef = useRef<View>(null); // ref to the Sign In button
 
 
 
@@ -28,26 +32,33 @@ export default function OnboardingFinalScreen() {
     console.log('Onboarding completed, navigating to main app...');
   }, [completeOnboarding, hasCompletedOnboarding]);
 
+  const handleSignInCompleteOnboarding = useCallback(() => {
+    // setConfettiVisible(false);
+    completeOnboarding();
+    router.replace('/sign-in' as any);
+  }, [completeOnboarding]);
+
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: '' }} />
       <StatusBar style="auto" />
-      
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         {/* <Image 
           source={require('@/assets/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
         /> */}
-        <PrettyText text="Poké Pages" />
+        {/* <PrettyText text="Poké Pages" /> */}
         <Text style={styles.title}>You&apos;re All Set!</Text>
-        
         <Text style={styles.subtitle}>
-          Welcome to the PokePages community, trainer!
+          Welcome to the Poké Pages community, trainer!
         </Text>
-        
-        <View style={styles.featuresContainer}>
+        {/* <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>🎯</Text>
             <Text style={styles.featureText}>
@@ -71,7 +82,7 @@ export default function OnboardingFinalScreen() {
               {'\n'}Find guides, tips, and battle strategies
             </Text>
           </View>
-        </View>
+        </View> */}
         
         <View style={styles.authInfo}>
           <Text style={styles.authTitle}>💡 Tip</Text>
@@ -79,12 +90,14 @@ export default function OnboardingFinalScreen() {
             Some features like social interactions will require creating an account, 
             but you can explore most of the app without signing up!
           </Text>
-          <Link href="/sign-in" asChild push>
-            <Button title="Sign In" />
-          </Link>
+          
+            <Button 
+            ref={signInButtonRef}
+            title="Sign In" 
+            onPress={handleSignInCompleteOnboarding}
+            />
         </View>
-      </View>
-     
+      </ScrollView>
       <View style={styles.footer}>
         <Button
           ref={exploreBtnRef}
@@ -100,92 +113,92 @@ export default function OnboardingFinalScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 20,
+    backgroundColor: colors.light.background,
+    padding: spacing.lg,
+  },
+  scroll: {
+    flex: 1,
+    width: '100%',
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
+    justifyContent: 'space-around',
+    paddingVertical: spacing.xl,
+    width: '100%',
   },
   logo: {
     width: 100,
     height: 100,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+    ...typography.header,
+    color: colors.light.text,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#666',
+    ...typography.subheader,
+    color: colors.light.secondary,
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
+    marginBottom: spacing.xl,
+    lineHeight: lineHeights.subheader,
   },
   featuresContainer: {
     width: '100%',
-    marginBottom: 32,
+    marginBottom: spacing.xl,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
-    paddingHorizontal: 20,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   featureEmoji: {
-    fontSize: 24,
-    marginRight: 16,
+    fontSize: fontSizes.header,
+    marginRight: spacing.md,
     width: 32,
     textAlign: 'center',
     marginTop: 2,
   },
   featureText: {
     flex: 1,
-    fontSize: 14,
-    color: '#555',
-    lineHeight: 20,
+    ...typography.copy,
+    color: colors.light.primary,
+    lineHeight: lineHeights.copy,
   },
   featureTitle: {
-    fontWeight: '600',
-    fontSize: 16,
-    color: '#333',
+    ...typography.copyBold,
+    color: colors.light.text,
   },
   authInfo: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: colors.light.accent,
     borderRadius: 12,
-    padding: 16,
+    padding: spacing.md,
     width: '100%',
-    marginBottom: 20,
+    marginBottom: spacing.md,
   },
   authTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1976D2',
-    marginBottom: 8,
+    ...typography.copyBold,
+    color: colors.light.primary,
+    marginBottom: spacing.sm,
   },
   authDescription: {
-    fontSize: 14,
-    color: '#1976D2',
-    lineHeight: 20,
+    ...typography.copy,
+    color: colors.light.primary,
+    lineHeight: lineHeights.copy,
   },
   footer: {
-    paddingVertical: 20,
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: spacing.lg,
   },
   completeButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.light.primary,
+    width: '100%',
+    borderRadius: 12,
+    marginTop: spacing.md,
   },
 });

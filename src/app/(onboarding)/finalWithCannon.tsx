@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginBottom: 32,
-    lineHeight: 24,
   },
   featuresContainer: {
     width: '100%',
@@ -210,7 +209,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: '#555',
-    lineHeight: 20,
   },
   featureTitle: {
     fontWeight: '600',
@@ -233,7 +231,6 @@ const styles = StyleSheet.create({
   authDescription: {
     fontSize: 14,
     color: '#1976D2',
-    lineHeight: 20,
   },
   footer: {
     paddingVertical: 20,

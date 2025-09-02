@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
   description: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    // lineHeight: 20,
   },
   arrow: {
     backgroundColor: theme.colors.light.accent,

@@ -7,6 +7,11 @@ import Account from '../components/Account';
 
 export default function EditProfile() {
   const { user, session, isLoggedIn } = useAuthStore();
+  console.log('user:', user);
+  console.log('session:', session);
+  console.log('isLoggedIn:', isLoggedIn);
+
+
 
   return (
     <>

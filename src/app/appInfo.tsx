@@ -2,6 +2,7 @@ import { Stack, Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, Text, View, Pressable, Linking, StyleSheet } from 'react-native';
 import { useState } from 'react';
+import { theme } from '@/constants/style/theme';
 
 import { ScreenContent } from '~/components/ScreenContent';
 import { ShowAgreement } from '~/components/ShowAgreement';
@@ -32,19 +33,15 @@ export default function AppInfo() {
   //   // The app will automatically redirect to onboarding
   // };
 
-
   return (
     <>
       <Stack.Screen options={{ title: '' }} />
-
       <ScreenContent path="app/modal.tsx" title="Thank you">
         <View style={styles.container}>
           <Text style={styles.mainText}>
             Hello fellow trainers, I appreciate you using my app! This is and always will be free to use and free from ads. Consider it my gift to the community. If you&apos;d like to support then please follow my social media pages or view my portfolio website for more of my work and contact info. Go catch &apos;em all!
           </Text>
-          
           <Text style={styles.followText}>Follow me on:</Text>
-          
           <View style={styles.buttonContainer}>
             <Pressable 
               style={[styles.socialButton, styles.twitterButton]}
@@ -52,14 +49,12 @@ export default function AppInfo() {
             >
               <Text style={styles.buttonText}>🐦 Twitter</Text>
             </Pressable>
-            
             <Pressable 
               style={[styles.socialButton, styles.instagramButton]}
               onPress={() => handleLinkPress('https://instagram.com/OfficialMrDJ')}
             >
               <Text style={styles.buttonText}>📸 Instagram</Text>
             </Pressable>
-            
             <Pressable 
               style={[styles.socialButton, styles.youtubeButton]}
               onPress={() => handleLinkPress('https://youtube.com/@MrDJsArcade')}
@@ -67,7 +62,6 @@ export default function AppInfo() {
               <Text style={styles.buttonText}>🎥 YouTube</Text>
             </Pressable>
           </View>
-          
           <Pressable 
             style={styles.portfolioButton}
             onPress={() => handleLinkPress('https://www.DavidJGrimsley.com')}
@@ -75,7 +69,6 @@ export default function AppInfo() {
             <Text style={styles.portfolioButtonText}>🌐 Visit My Portfolio</Text>
             <Text style={styles.portfolioSubtext}>www.DavidJGrimsley.com</Text>
           </Pressable>
-          
           <View style={styles.agreementButtonContainer}>
             <Pressable 
               style={styles.agreementButton}
@@ -83,7 +76,6 @@ export default function AppInfo() {
             >
               <Text style={styles.agreementButtonText}>📄 Terms of Service</Text>
             </Pressable>
-            
             <Pressable 
               style={styles.agreementButton}
               onPress={() => openAgreement('privacyPolicy')}
@@ -91,39 +83,37 @@ export default function AppInfo() {
               <Text style={styles.agreementButtonText}>🔒 Privacy Policy</Text>
             </Pressable>
           </View>
-          
           {/* Development Helper */}
-          <Pressable 
-            style={styles.devButton}
-            onPress={resetOnboarding}
-          >
-            <Text style={styles.devButtonText}>🔄 Reset Onboarding (Dev)</Text>
-          </Pressable>
-
-          <Link href="/sign-in" asChild push>
-            <Pressable
-              style={styles.devButton}
-            >
-              <Text style={styles.devButtonText}>🔄 Create Account or Sign up(Dev-supabase)</Text>
-            </Pressable>
-          </Link>
-
-          <Pressable 
-            onPress={logIn}
-            style={styles.devButton}
-          >
-            <Text style={styles.devButtonText}>🔄 Log In (Dev)</Text>
-          </Pressable>
-        
-          <Pressable 
-            onPress={logOut}
-            style={styles.devButton}
-          >
-            <Text style={styles.devButtonText}>🔄 Log Out (Dev)</Text>
-          </Pressable>
-          
+          {__DEV__ && (
+            <View>
+              <Pressable
+                style={styles.devButton}
+                onPress={resetOnboarding}
+              >
+                <Text style={styles.devButtonText}>🔄 Reset Onboarding (Dev)</Text>
+              </Pressable>
+              <Link href="/sign-in" asChild push>
+                <Pressable
+                  style={styles.devButton}
+                >
+                  <Text style={styles.devButtonText}>🔄 Create Account or Sign up(Dev-supabase)</Text>
+                </Pressable>
+              </Link>
+              <Pressable
+                onPress={logIn}
+                style={styles.devButton}
+              >
+                <Text style={styles.devButtonText}>🔄 Log In (Dev)</Text>
+              </Pressable>
+              <Pressable
+                onPress={logOut}
+                style={styles.devButton}
+              >
+                <Text style={styles.devButtonText}>🔄 Log Out (Dev)</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
-        
         <ShowAgreement
           visible={showAgreementModal}
           onClose={closeAgreement}
@@ -137,43 +127,36 @@ export default function AppInfo() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    gap: 24,
+    padding: theme.spacing.lg,
+    gap: theme.spacing.xl,
+    backgroundColor: theme.colors.light.background,
   },
   mainText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
+    ...theme.typography.copy,
+    color: theme.colors.light.text,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
+    lineHeight: theme.lineHeights.copy,
   },
   followText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    ...theme.typography.subheader,
+    color: theme.colors.light.primary,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: theme.spacing.sm,
   },
   buttonContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 12,
+    gap: theme.spacing.md,
   },
   socialButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.xl,
     minWidth: 120,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...theme.shadows.small,
   },
   twitterButton: {
     backgroundColor: '#1DA1F2',
@@ -185,76 +168,62 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF0000',
   },
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: theme.colors.light.white,
+    fontSize: theme.fontSizes.md,
     fontWeight: '600',
   },
   portfolioButton: {
-    backgroundColor: '#6366F1',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
+    backgroundColor: theme.colors.light.accent,
+    paddingVertical: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.xl,
+    borderRadius: theme.borderRadius.lg,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
-    marginTop: 8,
+    ...theme.shadows.large,
+    marginTop: theme.spacing.sm,
   },
   portfolioButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    color: theme.colors.light.white,
+    fontSize: theme.fontSizes.lg,
     fontWeight: '700',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xs,
   },
   portfolioSubtext: {
-    color: '#E0E7FF',
-    fontSize: 14,
+    color: theme.colors.light.secondary,
+    fontSize: theme.fontSizes.sm,
     fontWeight: '500',
   },
   agreementButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
-    marginTop: 8,
+    gap: theme.spacing.md,
+    marginTop: theme.spacing.sm,
   },
   agreementButton: {
     flex: 1,
-    backgroundColor: '#64748B',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
+    backgroundColor: theme.colors.light.secondary,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.md,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    ...theme.shadows.small,
   },
   agreementButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    color: theme.colors.light.white,
+    fontSize: theme.fontSizes.sm,
     fontWeight: '600',
     textAlign: 'center',
   },
   devButton: {
-    backgroundColor: '#FF6B6B',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
+    backgroundColor: theme.colors.light.red,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.sm,
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: theme.spacing.md,
   },
   devButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
+    color: theme.colors.light.white,
+    fontSize: theme.fontSizes.xs,
     fontWeight: '500',
   },
 });

@@ -2,14 +2,46 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { Pressable, Text, Platform } from 'react-native';
+import { Pressable, Text, Platform, View } from 'react-native';
 import { HeaderButton, HeaderTitle, styles } from '../../components/HeaderComponents';
 import { theme } from '../../../constants/style/theme';
+import { useUserAge } from '../../../src/utils/useUserAge';
 
 const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 const iconSize = isMobile ? 24 : 32;
 
 const DrawerLayout = () => {
+  const { shouldShowSocialTab, isLoggedIn } = useUserAge();
+
+  // Custom component for social drawer label
+  const SocialDrawerLabel = (props: { color: string }) => {
+    const { color } = props;
+    const shouldShowRestriction = isLoggedIn && !shouldShowSocialTab;
+    console.log('Rendering SocialDrawerLabel - isLoggedIn:', isLoggedIn, 'shouldShowSocialTab:', shouldShowSocialTab, 'shouldShowRestriction:', shouldShowRestriction);
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={{
+          fontFamily: theme.fontFamilies.copy,
+          fontSize: theme.fontSizes.lg,
+          fontWeight: theme.fontWeights.medium,
+          marginLeft: theme.spacing.md,
+          color: color,
+        }}>
+          Social
+        </Text>
+        {shouldShowRestriction && (
+          <Text style={{
+            fontSize: 12,
+            color: theme.colors.light.text, // Use inactive color for restriction
+            marginLeft: theme.spacing.xs, // Use theme spacing for correct gap
+          }}>
+            (13+)
+          </Text>
+        )}
+      </View>
+    );
+  };
+
   // ✅ Memoize the drawer toggle to prevent unnecessary re-renders
   const DrawerToggle = () => {
     const navigation = useNavigation();
@@ -75,7 +107,7 @@ const DrawerLayout = () => {
         name="social"
         options={{
           headerTitle: () => <HeaderTitle title="Community" />,
-          drawerLabel: 'Social',
+          drawerLabel: SocialDrawerLabel,
           drawerIcon: ({ size, color }) => (
             <MaterialIcons name="person-outline" size={iconSize} color={color} />
           ),
@@ -87,6 +119,9 @@ const DrawerLayout = () => {
           ),
           headerTitleAlign: 'center',
           headerStyle: styles.headerStyle,
+          drawerItemStyle: {
+            display: 'none'
+          }
         }}
       />
       <Drawer.Screen

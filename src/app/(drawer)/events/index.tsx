@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
   subtitle: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    lineHeight: 24,
   },
   eventsContainer: {
     paddingHorizontal: theme.spacing.lg,
@@ -225,6 +224,5 @@ const styles = StyleSheet.create({
     ...theme.typography.copy,
     color: theme.colors.light.brown,
     textAlign: 'center',
-    lineHeight: 20,
   },
 });

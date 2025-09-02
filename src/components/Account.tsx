@@ -5,6 +5,7 @@ import { StyleSheet, View, Alert, Platform, Text, TextInput } from 'react-native
 import { Session } from '@supabase/supabase-js'
 
 import { Button } from '~/components/Button'
+import ErrorMessage from '~/components/Error'
 import { theme } from '../../constants/style/theme'
 
 // Cross-platform alert function
@@ -16,67 +17,60 @@ const showAlert = (title: string, message?: string) => {
   }
 }
 
-export default function Account({ session }: { session: Session }) {
-  const { signOut } = useAuthStore()
-  const [loading, setLoading] = useState(true)
+export default function Account({ session, isSignUp = false }: { session: Session; isSignUp?: boolean }) {
+  const { signOut, setProfile, profile } = useAuthStore()
+  const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
+  const [birthdate, setBirthdate] = useState('')
   const [bio, setBio] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
+  // Sync form fields with profile data from store
   useEffect(() => {
-    if (session) getProfile()
-  }, [session])
-
-  async function getProfile() {
-    try {
-      setLoading(true)
-      if (!session?.user) throw new Error('No user on the session!')
-
-      const { data, error, status } = await supabase
-        .from('profiles')
-        .select(`username, bio, avatar_url`)
-        .eq('id', session?.user.id)
-        .single()
-      if (error && status !== 406) {
-        throw error
-      }
-
-      if (data) {
-        setUsername(data.username)
-        setBio(data.bio)
-        setAvatarUrl(data.avatar_url)
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message)
-      }
-    } finally {
-      setLoading(false)
+    if (profile) {
+      setUsername(profile.username || '')
+      setBirthdate(profile.birthdate || '')
+      setBio(profile.bio || '')
+      setAvatarUrl(profile.avatar_url || '')
+    } else {
+      // Clear form if no profile
+      setUsername('')
+      setBirthdate('')
+      setBio('')
+      setAvatarUrl('')
     }
-  }
+  }, [profile])
 
   async function updateProfile({
     username,
+    birthdate,
     bio,
     avatar_url,
   }: {
     username: string
+    birthdate: string
     bio: string
     avatar_url: string
   }) {
+    setLoading(true)
+    setError(null)
+    
     try {
-      setLoading(true)
       if (!session?.user) throw new Error('No user on the session!')
 
       // Validate username length (your constraint requires >= 3 chars)
       if (username && username.length < 3) {
-        showAlert('Validation Error', 'Username must be at least 3 characters long')
+        const errorMsg = 'Username must be at least 3 characters long'
+        setError(errorMsg)
+        showAlert('Validation Error', errorMsg)
         return
       }
 
       const updates = {
         id: session?.user.id,
         username: username || null,
+        birthdate: birthdate || null,
         bio: bio || null,
         avatar_url: avatar_url || null,
         updated_at: new Date().toISOString(),
@@ -88,15 +82,25 @@ export default function Account({ session }: { session: Session }) {
 
       if (error) {
         console.error('Supabase error:', error)
+        setError(error.message)
         showAlert('Update Failed', error.message)
         return
       }
 
-      showAlert('Success', 'Profile updated successfully!')
+      // Update the store with the new profile data
+      setProfile({
+        username: username || null,
+        birthdate: birthdate || null,
+        bio: bio || null,
+        avatar_url: avatar_url || null,
+      })
+
+      showAlert('Success', isSignUp ? 'Profile created successfully!' : 'Profile updated successfully!')
       console.log('Update successful:', data)
     } catch (error) {
       console.error('Full error:', error)
       if (error instanceof Error) {
+        setError(error.message)
         showAlert('Update Failed', error.message)
       }
     } finally {
@@ -114,8 +118,22 @@ export default function Account({ session }: { session: Session }) {
     }
   }
 
+  console.log('Account component render:')
+  console.log('  - Session user ID:', session?.user?.id)
+  console.log('  - Profile from store:', profile)
+  console.log('  - Form birthdate:', birthdate)
+  
   return (
     <View style={styles.container}>
+      {error && (
+        <View style={{ marginVertical: theme.spacing.lg }}>
+          <ErrorMessage
+            title="Profile Error"
+            description="There was a problem loading or updating your profile."
+            error={error}
+          />
+        </View>
+      )}
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Text style={styles.inputLabel}>Email</Text>
         <TextInput
@@ -142,6 +160,19 @@ export default function Account({ session }: { session: Session }) {
       </View>
 
       <View style={styles.verticallySpaced}>
+        <Text style={styles.inputLabel}>Birthdate</Text>
+        <TextInput
+          value={birthdate}
+          onChangeText={setBirthdate}
+          placeholder="YYYY-MM-DD"
+          autoCapitalize="none"
+          autoCorrect={false}
+          style={styles.input}
+          accessibilityLabel="Birthdate"
+        />
+      </View>
+
+      <View style={styles.verticallySpaced}>
         <Text style={styles.inputLabel}>Bio</Text>
         <TextInput
           value={bio}
@@ -156,8 +187,8 @@ export default function Account({ session }: { session: Session }) {
 
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
-          title={loading ? 'Loading ...' : 'Update'}
-          onPress={() => updateProfile({ username, bio, avatar_url: avatarUrl })}
+          title={loading ? 'Loading ...' : (isSignUp ? 'Complete Profile' : 'Update')}
+          onPress={() => updateProfile({ username, birthdate, bio, avatar_url: avatarUrl })}
           disabled={loading}
         />
       </View>

@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
     ...theme.typography.copy,
     color: theme.colors.light.brown,
     textAlign: 'center',
-    lineHeight: 24,
     marginBottom: theme.spacing.xxl,
   },
   subtitleDark: {
@@ -138,7 +137,6 @@ const styles = StyleSheet.create({
     ...theme.typography.copy,
     color: theme.colors.light.brown,
     marginBottom: theme.spacing.sm,
-    lineHeight: 20,
   },
   featureItemDark: {
     color: theme.colors.dark.text,

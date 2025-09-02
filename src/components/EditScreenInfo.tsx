@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   getStartedText: {
     ...theme.typography.copy,
-    lineHeight: 24,
+    : 24,
     textAlign: 'center',
     color: theme.colors.light.text,
   },

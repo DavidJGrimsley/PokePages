@@ -9,7 +9,7 @@ export default function Top50Builds() {
   return (
     <>
       <Stack.Screen options={{ title: 'Top 50 Builds' }} />
-  <ScrollView style={{ flex: 1, backgroundColor: theme.colors.light.background }}>
+      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.light.white }}>
         {teraBuildsTop50 && (
                   <CounterBuilds
                     attackerBuilds={teraBuildsTop50['Top Tera Raid Pokémon Builds'].attackers}

@@ -141,7 +141,7 @@ export const tabBarStyles = {
     borderTopWidth: 5,
     borderTopColor: colors.light.accent, // Brown border
     // For mobile web specifically, ensure minimum height to prevent cutoff
-    minHeight: isMobileWeb ? RFPercentage(8) : RFPercentage(4),
+    minHeight: isMobileWeb ? RFPercentage(8) : isMobile ? RFPercentage(7) : RFPercentage(4),
   },
   tabBarLabelStyle: {
     fontSize: RFPercentage(1.2), // Responsive font size

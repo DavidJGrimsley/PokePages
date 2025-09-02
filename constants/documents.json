@@ -56,7 +56,7 @@
       },
       {
         "title": "Contact Information",
-        "content": "If you have questions or feedback about these Terms, please contact us at:\n\nEmail: MrDJ@PokePages.app\nWebsite: https://pokepages.app\n\nThank you for being part of the PokePages community!"
+  "content": "If you have questions or feedback about these Terms, please contact us at:\n\nEmail: support@pokepages.app\nWebsite: https://pokepages.app\n\nThank you for being part of the PokePages community!"
       }
     ]
   },
@@ -82,11 +82,11 @@
       },
       {
         "title": "Data Retention",
-        "content": "• Player IDs and counter data are retained indefinitely to maintain historical event statistics\n• Local device storage (player preferences, offline data) is retained until you delete the app\n• You may request deletion of your specific player data by contacting us at privacy@pokepages.app"
+  "content": "• Player IDs and counter data are retained indefinitely to maintain historical event statistics\n• Local device storage (player preferences, offline data) is retained until you delete the app\n• You may request deletion of your specific player data by contacting us at support@pokepages.app"
       },
       {
         "title": "Your Rights",
-        "content": "Depending on your jurisdiction, you may have the right to:\n• Access the counter data associated with your player ID\n• Request deletion of your player data from our servers\n• Object to data processing (though this may limit app functionality)\n• Obtain information about how your data is processed\n\nTo exercise these rights, please email privacy@pokepages.app with your player ID (found in the app under counter statistics)."
+  "content": "Depending on your jurisdiction, you may have the right to:\n• Access the counter data associated with your player ID\n• Request deletion of your player data from our servers\n• Object to data processing (though this may limit app functionality)\n• Obtain information about how your data is processed\n\nTo exercise these rights, please email support@pokepages.app with your player ID (found in the app under counter statistics)."
       },
       {
         "title": "Security",
@@ -106,7 +106,11 @@
       },
       {
         "title": "Contact Us",
-        "content": "If you have questions, comments, or requests regarding this Privacy Policy, please contact us at:\n\nEmail: privacy@pokepages.app\nWebsite: https://pokepages.app\n\nFor general support: MrDJ@PokePages.app"
+  "content": "If you have questions, comments, or requests regarding this Privacy Policy, please contact us at:\n\nEmail: support@pokepages.app\nWebsite: https://pokepages.app\n"
+      },
+      {
+        "title": "Child Safety and CSAE Prevention",
+        "content": "PokePages is committed to protecting children and preventing child sexual abuse and exploitation (CSAE). We do not allow any content or behavior that promotes or facilitates CSAE. Users can report any concerns or suspicious activity related to child safety or CSAE by contacting us at support@pokepages.app. We will promptly review all reports and cooperate with relevant authorities as required by law."
       }
     ]
   }

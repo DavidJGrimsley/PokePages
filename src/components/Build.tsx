@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { BuildVariant } from '@/types/builds';
 import { theme } from '@/constants/style/theme';
+import ErrorMessage from './Error';
 
 interface BuildProps {
   pokemonName: string;
@@ -53,6 +54,7 @@ export const Build: React.FC<BuildProps> = ({
   pokemonId,
 }) => {
   const [pokeImage, setPokeImage] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   // Get screen dimensions for responsive styling
   const screenWidth = Dimensions.get('window').width;
@@ -71,8 +73,12 @@ export const Build: React.FC<BuildProps> = ({
         console.log(`Fetching image for: ${pokemonName}${pokemonVariant ? ` (${sanitizedPokemonVariant(pokemonVariant)})` : ''}`);
         const img = data.sprites?.other['official-artwork']?.front_default || data.sprites?.front_default || null;
         setPokeImage(img);
+        setImageError(null);
       })
-      .catch(() => setPokeImage(null));
+      .catch((err) => {
+        setPokeImage(null);
+        setImageError('Failed to load Pokémon image.');
+      });
   }, [pokemonId]);
   //
   // trying to fetch the image for the Pokémon based on its name and variant.
@@ -164,6 +170,13 @@ export const Build: React.FC<BuildProps> = ({
 
   return (
     <View style={[styles.container, { backgroundColor: config.backgroundColor }]}> 
+      {imageError && (
+        <ErrorMessage
+          title="Image Load Error"
+          description={`Could not load image for ${pokemonName}.`}
+          error={imageError}
+        />
+      )}
       {pokeImage && (
         <Image
           source={{ uri: pokeImage }}
@@ -318,7 +331,6 @@ const styles = StyleSheet.create({
     color: theme.colors.light.brown,
     marginTop: theme.spacing.xs,
     marginBottom: theme.spacing.xs,
-    lineHeight: 18,
   },
   notesText: {
     ...theme.typography.copy,

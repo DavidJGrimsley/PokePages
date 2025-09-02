@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PokePages",
-    "slug": "PokePages",
+    "name": "Poké Pages",
+    "slug": "pokepages",
     "scheme": "expo-starter",
     "version": "1.0.0",
     "orientation": "portrait",

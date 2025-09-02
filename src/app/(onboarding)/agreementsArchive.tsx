@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginBottom: 32,
-    lineHeight: 22,
   },
   agreementContainer: {
     marginBottom: 24,
@@ -197,7 +196,6 @@ const styles = StyleSheet.create({
   agreementDescription: {
     fontSize: 14,
     color: '#666',
-    lineHeight: 20,
     marginBottom: 16,
   },
   agreementButton: {

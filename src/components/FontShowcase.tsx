@@ -17,8 +17,6 @@ export const FontShowcase: React.FC = () => {
         {/* Call to Action Font */}
         <View style={styles.fontSection}>
           <Text style={styles.fontLabel}>Call to Action (Press Start 2P)</Text>
-          <Text style={styles.ctaFont}>JOIN CHALLENGE!</Text>
-          <Text style={styles.ctaFont}>POWER UP!</Text>
           <Text style={styles.ctaFont}>LEVEL UP!</Text>
         </View>
 
@@ -134,12 +132,10 @@ const styles = StyleSheet.create({
   copyFont: {
     ...theme.typography.copy,
     color: theme.colors.light.text,
-    lineHeight: 24,
   },
   copyBoldFont: {
     ...theme.typography.copyBold,
     color: theme.colors.light.text,
-    lineHeight: 24,
   },
   monoFont: {
     ...theme.typography.mono,
@@ -171,7 +167,6 @@ const styles = StyleSheet.create({
   cardBody: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
-    lineHeight: 22,
     marginBottom: theme.spacing.lg,
   },
   cardButton: {

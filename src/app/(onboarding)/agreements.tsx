@@ -2,8 +2,11 @@ import { Stack, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
+import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
+const { colors, fontSizes, spacing } = Theme;
 
 import { Button } from "~/components/Button";
+import { PrettyText } from '~/components/PrettyText';
 import { ShowAgreement } from '~/components/ShowAgreement';
 import { useOnboardingStore } from "~/utils/onboardingStore";
 
@@ -38,11 +41,12 @@ export default function OnboardingWelcomeScreen() {
       <StatusBar style="auto" />
       
       <View style={styles.content}>
-        <Image 
-          source={require('@/assets/icon.png')} 
+        {/* <Image 
+          source={require('@/assets/favicon.png')} 
           style={styles.logo}
           resizeMode="contain"
-        />
+        /> */}
+        {/* <PrettyText text="Poké Pages" /> */}
         
         <Text style={styles.title}>Legal Agreements</Text>
         
@@ -56,7 +60,11 @@ export default function OnboardingWelcomeScreen() {
             <Button
               title={hasAcceptedTerms ? "Accepted" : "Review & Accept"}
               onPress={() => setShowTermsModal(true)}
-              style={[styles.agreementButton, hasAcceptedTerms && styles.acceptedButton]}
+              style={
+                hasAcceptedTerms
+                  ? [styles.agreementButton, styles.acceptedButton]
+                  : [styles.agreementButton]
+              }
             />
           </View>
 
@@ -65,7 +73,11 @@ export default function OnboardingWelcomeScreen() {
             <Button
               title={hasAcceptedPrivacy ? "Accepted" : "Review & Accept"}
               onPress={() => setShowPrivacyModal(true)}
-              style={[styles.agreementButton, hasAcceptedPrivacy && styles.acceptedButton]}
+              style={
+                hasAcceptedPrivacy
+                  ? [styles.agreementButton, styles.acceptedButton]
+                  : [styles.agreementButton]
+              }
             />
           </View>
         </View>
@@ -87,7 +99,11 @@ export default function OnboardingWelcomeScreen() {
             console.log('Navigating to final Screen');
             router.push('/final');
           }}
-          style={[styles.continueButton, !canContinue && styles.disabledButton]}
+          style={ 
+            !canContinue
+              ? [styles.continueButton, styles.disabledButton]
+              : [styles.continueButton]
+          }
         />
       </View>
 
@@ -114,100 +130,78 @@ export default function OnboardingWelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 20,
+    backgroundColor: colors.light.background,
+    padding: spacing.lg,
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 40,
+    paddingVertical: spacing.xl,
   },
   logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+    width: '40%',
+    height: '40%',
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+    ...typography.header,
+    color: colors.light.text,
+    marginBottom: spacing.md,
     textAlign: 'center',
-    marginBottom: 12,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#666',
+    ...typography.subheader,
+    color: colors.light.secondary,
+    marginBottom: spacing.md,
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
+    lineHeight: lineHeights.subheader,
   },
   agreementContainer: {
     width: '100%',
-    marginBottom: 32,
+    marginBottom: spacing.xl,
   },
   agreementItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 20,
-  },
-  agreementEmoji: {
-    fontSize: 24,
-    marginRight: 16,
-    width: 32,
-    textAlign: 'center',
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   agreementText: {
-    fontSize: 16,
-    color: '#555',
+    ...typography.copyBold,
+    color: colors.light.primary,
     flex: 1,
-    fontWeight: '500',
   },
   agreementButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderRadius: 8,
-    backgroundColor: '#007bff',
-    color: '#fff',
+    backgroundColor: colors.light.flag,
+    color: colors.light.white,
   },
   acceptedButton: {
-    backgroundColor: '#28a745',
-  },
-  description: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 20,
+    backgroundColor: colors.light.accent,
   },
   successContainer: {
-    backgroundColor: '#E8F5E8',
+    backgroundColor: colors.light.accent,
     borderRadius: 8,
-    padding: 16,
+    padding: spacing.md,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   successText: {
-    fontSize: 16,
-    color: '#2E7D2E',
-    fontWeight: '500',
+    ...typography.copyBold,
+    color: colors.light.text,
+    textAlign: 'center',
   },
   footer: {
-    paddingVertical: 20,
+    paddingVertical: spacing.lg,
   },
-    continueButton: {
-    backgroundColor: '#6366F1',
+  continueButton: {
+    backgroundColor: colors.light.primary,
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: colors.light.red || '#ccc',
   },
 });

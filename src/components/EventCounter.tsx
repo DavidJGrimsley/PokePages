@@ -23,6 +23,7 @@ import LottieView from 'lottie-react-native';
 import { useAuthStore } from '~/utils/authStore';
 import { theme } from '../../constants/style/theme';
 import { getEventStatus } from '~/utils/helperFX';
+import ErrorMessage from '~/components/Error';
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -92,6 +93,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   const [pokemonStats, setPokemonStats] = useState<PokemonStats | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showBaseStats, setShowBaseStats] = useState(false);
+  const [pokemonError, setPokemonError] = useState('');
+  const [eventError, setEventError] = useState('');
 
   // Get screen dimensions for responsive styling
   const screenWidth = Dimensions.get('window').width;
@@ -194,10 +197,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           setPokemonStats(null);
           return;
         }
+       
         
         const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_shiny || 
-                        pokemon.sprites.front_shiny || 
-                        pokemon.sprites.front_default || '';
+                          pokemon.sprites.front_shiny || 
+                          pokemon.sprites.front_default || '';
         setPokemonImage(imageUrl);
         
         const stats: PokemonStats = {
@@ -213,6 +217,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         
       } catch (error) {
         console.error('Error in loadPokemonData:', error);
+        setPokemonError(`${error instanceof Error ? error.message : String(error)}`);
         setPokemonImage('');
         setPokemonStats(null);
       } finally {
@@ -313,8 +318,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         setError('');
       } catch (error) {
         console.error('❌ Failed to load event data:', error);
-        setError(`Failed to load event data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        
+        setEventError(`Failed to load event data: ${error instanceof Error ? error.message : 'Unknown error'}`);
         // Run diagnostics if there's an error
         console.log('🚀 Running diagnostics due to error...');
         if (isLoggedIn && user) {
@@ -356,13 +360,20 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   const formatUserFriendlyDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
+      
+      // Check if the date is valid
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid date string:', dateString);
+        return 'Date TBD';
+      }
+      
       const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const zonedDate = toZonedTime(date, userTimeZone);
       
       return format(zonedDate, 'MMMM d, yyyy \'at\' h:mm a') + ' local time';
     } catch (error) {
       console.error('Error formatting date:', error);
-      return new Date(dateString).toLocaleDateString() + ' local time';
+      return 'Date TBD';
     }
   };
 
@@ -550,6 +561,14 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           </Text>
         )}
       </View>
+      {/* Display the Error Message component if there is an error */}
+      {(pokemonError || eventError) && (
+        <ErrorMessage 
+          title='Oh no something went wrong!' 
+          description={pokemonError ? "Failed to load event data." : "Failed to update event counter."}
+          error={pokemonError || eventError}
+        />
+      )}
       {/* Tera Type */}
       <View style={styles.teraTypeContainer}>
         <Text style={styles.title}>
@@ -834,7 +853,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: theme.spacing.lg,
     color: theme.colors.light.brown,
-    lineHeight: 20,
   },
   counterContainer: {
     backgroundColor: theme.colors.light.white,
@@ -904,14 +922,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: theme.colors.light.text,
     marginBottom: theme.spacing.sm,
-    lineHeight: 20,
   },
   congratsSubtext: {
     ...theme.typography.copy,
     textAlign: 'center',
     color: theme.colors.light.brown,
     fontStyle: 'italic',
-    lineHeight: 16,
   },
   bonusContainer: {
     backgroundColor: theme.colors.light.background,
@@ -932,7 +948,6 @@ const styles = StyleSheet.create({
     ...theme.typography.copy,
     color: theme.colors.light.brown,
     textAlign: 'center',
-    lineHeight: 18,
   },
   buildsSection: {
     marginTop: theme.spacing.lg,

@@ -1,15 +1,17 @@
-import { Stack, useRouter } from 'expo-router';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 
+import { Stack, useRouter } from 'expo-router';
+import { View, Text, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { Button } from "~/components/Button";
 import { PrettyText } from '@/src/components/PrettyText';
+import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
+const { colors, fontSizes, spacing } = Theme;
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
   
   return (
-    <View style={styles.container}>
+  <View style={styles.container}>
       <Stack.Screen options={{ title: '' }} />
       <StatusBar style="auto" />
       
@@ -18,11 +20,10 @@ export default function OnboardingWelcomeScreen() {
           source={require('@/assets/icon.png')} 
           style={styles.logo}
           resizeMode="contain"
+        
         /> */}
+        <Text style={styles.title}>Welcome to</Text>
         <PrettyText text="Poké Pages" />
-        
-        <Text style={styles.title}>Welcome to PokePages!</Text>
-        
         <Text style={styles.subtitle}>
           Your ultimate (unofficial) Pokémon companion
         </Text>
@@ -32,17 +33,14 @@ export default function OnboardingWelcomeScreen() {
             <Text style={styles.featureEmoji}>⚔️</Text>
             <Text style={styles.featureText}>Counter Builds & Strategies</Text>
           </View>
-          
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>📊</Text>
             <Text style={styles.featureText}>Community Event Counters</Text>
           </View>
-          
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>🎯</Text>
             <Text style={styles.featureText}>Raid Resources & Guides</Text>
           </View>
-          
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>👥</Text>
             <Text style={styles.featureText}>Connect with Trainers</Text>
@@ -71,72 +69,63 @@ export default function OnboardingWelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    padding: 20,
+    backgroundColor: colors.light.background,
+    padding: spacing.lg,
   },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 40,
+    paddingVertical: spacing.xl,
   },
   logo: {
     width: 120,
     height: 120,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
+    marginBottom: spacing.lg,
+    ...shadows.large,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333',
+    ...typography.header,
+    color: colors.light.text,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#666',
+    ...typography.subheader,
+    color: colors.light.secondary,
     textAlign: 'center',
-    marginBottom: 32,
-    lineHeight: 24,
+    marginBottom: spacing.xl,
+    lineHeight: lineHeights.subheader,
   },
   featuresContainer: {
     width: '100%',
-    marginBottom: 32,
+    marginBottom: spacing.xl,
   },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 20,
+    marginBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   featureEmoji: {
-    fontSize: 24,
-    marginRight: 16,
+    fontSize: fontSizes.header,
+    marginRight: spacing.md,
     width: 32,
     textAlign: 'center',
   },
   featureText: {
-    fontSize: 16,
-    color: '#555',
+    ...typography.copyBold,
+    color: colors.light.primary,
     flex: 1,
-    fontWeight: '500',
   },
   description: {
-    fontSize: 16,
-    color: '#666',
+    ...typography.copy,
+    color: colors.light.text,
     textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 20,
+    lineHeight: lineHeights.copy,
+    paddingHorizontal: spacing.lg,
   },
   footer: {
-    paddingVertical: 20,
+    paddingVertical: spacing.lg,
   },
 });

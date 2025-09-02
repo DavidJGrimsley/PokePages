@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     ...theme.typography.copy,
-    lineHeight: 24,
     color: theme.colors.light.brown,
   },
   footer: {

@@ -1,3 +1,9 @@
+// Component Readme:
+// If you have more than one error that can occur on a page, you need 
+// you need to use a state variable for each and use an 'or' 
+// operator to display the component if either is truthy.
+// See usage.
+
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, Linking, Pressable } from 'react-native';
 import { theme } from '../../constants/style/theme';
@@ -8,16 +14,7 @@ interface ErrorProps {
   error?: string;
 }
 
-const ErrorComponent: React.FC<ErrorProps> = ({
-  title,
-  description,
-  error,
-}) => {
-  // Get screen dimensions for responsive styling
-  const screenWidth = Dimensions.get('window').width;
-  const getBackgroundOpacity = () => {
-    return screenWidth < 768 ? 0.45 : 0.65; // 45% on phone, 65% on tablet/desktop
-  };
+export default function ErrorMessage({ title, description, error }: ErrorProps) {
 
   const handleEmailPress = () => {
     const emailSubject = encodeURIComponent('PokePages App Error Report');
@@ -31,8 +28,10 @@ const ErrorComponent: React.FC<ErrorProps> = ({
     });
   };
 
+  // Use theme flag color and opacity for the background
+
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <View style={styles.header}> 
         <Text style={styles.headerText}>{title}</Text>
       </View>
@@ -45,7 +44,7 @@ const ErrorComponent: React.FC<ErrorProps> = ({
           <Pressable onPress={handleEmailPress}>
             <Text style={styles.emailLink}>support@pokepages.app</Text>
           </Pressable>
-          {' '}to get help. Include a screenshot of the error message please.
+          {' '}to get help. Include a screenshot of the enitre page/screen please.
         </Text>
         {error && (
           <View style={styles.errorContainer}>
@@ -61,18 +60,20 @@ const ErrorComponent: React.FC<ErrorProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.light.background,
     padding: theme.spacing.lg,
+    backgroundColor: theme.colors.light.white,
+    borderWidth: 1,
   },
   header: {
-    alignItems: 'center',
-    marginBottom: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.light.red,
+    // alignItems: 'center',
+    alignSelf: 'center', // Center the header box
+    padding: theme.spacing.sm,
+    backgroundColor: theme.colors.light.flag,
     borderRadius: theme.borderRadius.md,
   },
   headerText: {
-    ...theme.typography.header,
+    ...theme.typography.subheader,
+    fontSize: theme.fontSizes.lg,
     color: theme.colors.light.white,
     textAlign: 'center',
   },
@@ -82,17 +83,14 @@ const styles = StyleSheet.create({
   },
   description: {
     ...theme.typography.copy,
-    color: theme.colors.light.brown,
+    color: theme.colors.light.text,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
-    lineHeight: 24,
+    marginVertical: theme.spacing.sm,
   },
   sorry: {
     ...theme.typography.copy,
     color: theme.colors.light.brown,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
-    lineHeight: 20,
     fontStyle: 'italic',
   },
   emailLink: {
@@ -104,6 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.light.background,
     borderColor: theme.colors.light.red,
     borderWidth: 1,
+    alignSelf: 'center',
     borderRadius: theme.borderRadius.md,
     padding: theme.spacing.md,
     marginTop: theme.spacing.lg,
@@ -116,8 +115,7 @@ const styles = StyleSheet.create({
   errorText: {
     ...theme.typography.mono,
     color: theme.colors.light.red,
-    lineHeight: 16,
   },
 });
 
-export default ErrorComponent;
+// export default ErrorComponent;
