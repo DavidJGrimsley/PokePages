@@ -21,12 +21,6 @@ export const getEventStatus = (
   const distributionStart = safeCreateDate(distributionStartDate);
   const distributionEnd = safeCreateDate(distributionEndDate);
 
-  console.log('now:', now);
-  console.log('start:', start);
-  console.log('end:', end);
-  console.log('distributionStart:', distributionStart);
-  console.log('distributionEnd:', distributionEnd);
-
   if (now < start) return 'upcoming';
   if (now < end) return 'active';
   if (now > end && now < distributionStart) return 'limbo';

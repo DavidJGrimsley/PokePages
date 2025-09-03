@@ -1,18 +1,21 @@
 import { Stack, router } from 'expo-router';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
-const { colors, fontSizes, spacing } = Theme;
 import { StatusBar } from 'expo-status-bar';
 import { useRef, useState, useCallback } from 'react';
 
 
 import { Button } from '~/components/Button';
 import { useOnboardingStore } from '~/utils/onboardingStore';
+import { useAuthStore } from '@/src/utils/authStore';
+
 import { PrettyText } from '@/src/components/PrettyText';
 import { size } from '@shopify/react-native-skia';
 
+const { colors, fontSizes, spacing } = Theme;
 export default function OnboardingFinalScreen() {
   const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
+  const { isLoggedIn } = useAuthStore();
   // const [confettiVisible, setConfettiVisible] = useState(false);
   // const [cannonPositions, setCannonPositions] = useState<{ x: number; y: number }[]>([]);
   // const [runId, setRunId] = useState(0); // force remount per run
@@ -24,13 +27,10 @@ export default function OnboardingFinalScreen() {
 
   const handleCompleteOnboarding = useCallback(() => {
     // setConfettiVisible(false);
-    console.log('Attempting to complete onboarding');
-    console.log('Has completed onboarding: ', hasCompletedOnboarding);
+   
     completeOnboarding();
-    console.log('Has completed onboarding: ', hasCompletedOnboarding);
     router.replace('/(drawer)' as any);
-    console.log('Onboarding completed, navigating to main app...');
-  }, [completeOnboarding, hasCompletedOnboarding]);
+  }, [completeOnboarding]);
 
   const handleSignInCompleteOnboarding = useCallback(() => {
     // setConfettiVisible(false);
@@ -84,7 +84,7 @@ export default function OnboardingFinalScreen() {
           </View>
         </View> */}
         
-        <View style={styles.authInfo}>
+        {!isLoggedIn && (<View style={styles.authInfo}>
           <Text style={styles.authTitle}>💡 Tip</Text>
           <Text style={styles.authDescription}>
             Some features like social interactions will require creating an account, 
@@ -96,7 +96,7 @@ export default function OnboardingFinalScreen() {
             title="Sign In" 
             onPress={handleSignInCompleteOnboarding}
             />
-        </View>
+        </View>)}
       </ScrollView>
       <View style={styles.footer}>
         <Button

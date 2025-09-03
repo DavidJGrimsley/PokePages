@@ -231,106 +231,152 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   // Load event data and user participation
   useEffect(() => {
     const loadEventData = async () => {
+      console.log('🔍 Starting loadEventData for eventKey:', eventKey);
+      console.log('🔍 User status:', { isLoggedIn, userId: user?.id, anonymousId });
+      
       try {
-        console.log('🔍 Loading event data for:', eventKey);
+        // Test basic Supabase connection with timeout
+        console.log('🧪 Testing basic Supabase connection...');
         
-        // Get event data
-        const { data: eventData, error: eventError } = await supabase
-          .from('event_counters')
-          .select('*')
-          .eq('event_key', eventKey)
-          .single();
+        const connectionTest = Promise.race([
+          supabase
+            .from('event_counters')
+            .select('event_key')
+            .limit(1),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Connection timeout after 10 seconds')), 10000)
+          )
+        ]);
+
+        const { data: testData, error: testError } = await connectionTest as any;
+        
+        console.log('🧪 Connection test completed:', { testData, testError });
+        
+        if (testError) {
+          console.error('❌ Basic connection failed:', testError);
+          throw new Error(`Connection failed: ${testError.message}`);
+        }
+
+        // Get event data with timeout
+        console.log('📊 Fetching event data for eventKey:', eventKey);
+        
+        const eventQuery = Promise.race([
+          supabase
+            .from('event_counters')
+            .select('*')
+            .eq('event_key', eventKey)
+            .single(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Event query timeout after 10 seconds')), 10000)
+          )
+        ]);
+
+        const { data: eventData, error: eventError } = await eventQuery as any;
+
+        console.log('📊 Event query completed:', { 
+          eventData, 
+          eventError,
+          hasData: !!eventData,
+          errorCode: eventError?.code,
+          errorMessage: eventError?.message 
+        });
 
         if (eventError) {
-          console.error('❌ Event data error:', eventError);
-          throw eventError;
+          if (eventError.code === 'PGRST116') {
+            console.warn('⚠️ No event found for key:', eventKey);
+            setGlobalCount(0);
+            setEventError(`No event found for key: ${eventKey}`);
+            return;
+          }
+          throw new Error(`Event data error: ${eventError.message}`);
         }
 
-        console.log('✅ Event data loaded:', eventData);
-
-        if (eventData) {
-          setGlobalCount(eventData.total_count || 0);
-          setLastUpdated(eventData.updated_at);
+        if (!eventData) {
+          console.warn('⚠️ No event data returned for key:', eventKey);
+          setGlobalCount(0);
+          setEventError(`No event data found for: ${eventKey}`);
+          return;
         }
 
-        // Get user participation with enhanced error handling
+        console.log('✅ Setting global count to:', eventData.total_count);
+        setGlobalCount(eventData.total_count || 0);
+        setLastUpdated(eventData.updated_at);
+
+        // Get user participation
         if (isLoggedIn && user) {
-          console.log('🔍 Loading user participation...');
-          console.log('Event ID:', eventData.id, 'Type:', typeof eventData.id);
-          console.log('User ID:', user.id, 'Type:', typeof user.id);
+          console.log('👤 Fetching user participation for event_id:', eventData.id, 'user_id:', user.id);
           
-          const { data: userParticipation, error: userError, status, statusText } = await supabase
-            .from('user_event_participation')
-            .select('contribution_count, event_id, user_id')  // Explicitly list columns
-            .eq('event_id', eventData.id)
-            .eq('user_id', user.id)
-            .maybeSingle();  // Use maybeSingle() instead of single() to handle empty results
+          const userQuery = Promise.race([
+            supabase
+              .from('user_event_participation')
+              .select('contribution_count')
+              .eq('event_id', eventData.id)
+              .eq('user_id', user.id)
+              .maybeSingle(),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('User participation timeout')), 10000)
+            )
+          ]);
 
-          console.log('User participation response status:', status);
-          console.log('User participation response statusText:', statusText);
-
-          if (userError) {
+          const { data: userParticipation, error: userError } = await userQuery as any;
+          console.log('👤 User participation response:', { userParticipation, userError });
+          
+          if (userError && userError.code !== 'PGRST116') {
             console.error('❌ User participation error:', userError);
-            console.error('Full error details:', {
-              message: userError.message,
-              details: userError.details,
-              hint: userError.hint,
-              code: userError.code
-            });
-            
-            // Don't throw here - this might be expected if user hasn't participated yet
-            if (userError.code !== 'PGRST116') { // PGRST116 is "not found" which is expected
-              console.warn('Unexpected user participation error:', userError);
-            }
           }
 
-          if (!userError && userParticipation) {
-            console.log('✅ User participation loaded:', userParticipation);
-            setUserCount(userParticipation.contribution_count || 0);
-          } else {
-            console.log('ℹ️ No user participation found (user hasn\'t participated yet)');
-            setUserCount(0);
-          }
+          setUserCount(userParticipation?.contribution_count || 0);
         } else if (anonymousId) {
-          // Get anonymous participation
-          console.log('🔍 Loading anonymous participation for:', anonymousId);
+          console.log('👻 Fetching anonymous participation for event_id:', eventData.id, 'anonymous_id:', anonymousId);
           
           const { data: anonParticipation, error: anonError } = await supabase
             .from('anonymous_event_participation')
             .select('contribution_count')
             .eq('event_id', eventData.id)
             .eq('anonymous_id', anonymousId)
-            .maybeSingle();  // Use maybeSingle() for anonymous participation too
+            .maybeSingle();
 
+          console.log('👻 Anonymous participation response:', { 
+            anonParticipation, 
+            anonError,
+            hasData: !!anonParticipation 
+          });
+          
           if (anonError && anonError.code !== 'PGRST116') {
             console.error('❌ Anonymous participation error:', anonError);
           }
 
-          if (!anonError && anonParticipation) {
-            console.log('✅ Anonymous participation loaded:', anonParticipation);
-            setUserCount(anonParticipation.contribution_count || 0);
-          } else {
-            console.log('ℹ️ No anonymous participation found');
-            setUserCount(0);
-          }
+          setUserCount(anonParticipation?.contribution_count || 0);
         }
 
         setError('');
+        setEventError('');
+        console.log('✅ loadEventData completed successfully');
+        
       } catch (error) {
-        console.error('❌ Failed to load event data:', error);
-        setEventError(`Failed to load event data: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        // Run diagnostics if there's an error
-        console.log('🚀 Running diagnostics due to error...');
+        console.error('💥 Failed to load event data:', error);
+        console.error('💥 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+        
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        setEventError(`Failed to load event data: ${errorMessage}`);
+        
+        // Run diagnostics only if user is logged in
         if (isLoggedIn && user) {
-          await diagnosticChecks.runAllChecks();
+          console.log('🚀 Running diagnostics due to error...');
+          try {
+            await diagnosticChecks.runAllChecks();
+          } catch (diagError) {
+            console.error('🚀 Diagnostics failed:', diagError);
+          }
         }
       }
     };
 
     if (eventKey && (isLoggedIn || anonymousId)) {
+      console.log('🚀 Conditions met, calling loadEventData...');
       loadEventData();
       
-      // Set up real-time subscription for event updates
+      // Set up real-time subscription
       const subscription = supabase
         .channel(`event_${eventKey}`)
         .on('postgres_changes', 
@@ -341,18 +387,27 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             filter: `event_key=eq.${eventKey}`
           }, 
           (payload) => {
-            console.log('Event updated:', payload);
+            console.log('📡 Real-time update received:', payload);
             if (payload.new) {
               setGlobalCount(payload.new.total_count || 0);
               setLastUpdated(payload.new.updated_at);
             }
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('📡 Subscription status:', status);
+        });
 
       return () => {
+        console.log('🧹 Cleaning up subscription');
         subscription.unsubscribe();
       };
+    } else {
+      console.log('⏸️ Conditions not met:', { 
+        hasEventKey: !!eventKey, 
+        isLoggedIn, 
+        hasAnonymousId: !!anonymousId 
+      });
     }
   }, [eventKey, isLoggedIn, user, anonymousId]);
 
@@ -389,7 +444,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   // };
 
   const status = getEventStatus(startDate, endDate, distributionStart, distributionEnd);
-  console.log('Event status:', status);
   // Get countdown text
   const getCountdownText = () => {
     const now = currentTime;
@@ -446,11 +500,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         p_anonymous_id: !isLoggedIn && anonymousId ? anonymousId : null
       };
       
-      console.log('🚀 Calling increment_counter with params:', params);
       
       const { data, error } = await supabase.rpc('increment_counter', params);
-      
-      console.log('🔍 increment_counter response:', { data, error });
       
       if (error) {
         console.error('❌ increment_counter error:', error);
@@ -458,17 +509,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       }
 
       if (data) {
-        console.log('📊 increment_counter data:', data);
         
         if (data.success) {
           // The function returns a JSON object
           const eventCounter = data.event_counter;
           const userContribution = data.user_contribution;
-          
-          console.log('✅ Updating counts:', {
-            globalCount: eventCounter.current_count,
-            userCount: userContribution
-          });
           
           setGlobalCount(eventCounter.current_count || 0);
           setUserCount(userContribution || 0);
@@ -502,8 +547,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   };
 
   // Add this inside your component or before making Supabase requests
-  // console.log('Supabase session:', supabase.auth.getSession ? await supabase.auth.getSession() : useAuthStore.getState().session);
-  console.log('Supabase user:', useAuthStore.getState().user);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -638,8 +681,18 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             styles.congratsSubtext,
             globalCount >= maxRewards && { color: '#FF6F00' }
           ]}>
-            {"Don't forget to claim your "}{pokemonName}{" from Mystery Gift between "}{distributionStart}{" and "}{distributionEnd}{"!"}
+            {"Don't forget to claim your "}{pokemonName}{" from Mystery Gift between "} new Date({distributionStart}{" and "}{distributionEnd}{"!"}
           </Text>
+            (
+          <View style={styles.bonusContainer}>
+            <Text style={styles.bonusTitle}>
+              Bonus Rewards Unlocked: {getBonusRewards()}
+            </Text>
+            <Text style={styles.bonusText}>
+              Every 100,000 defeats beyond {targetCount.toLocaleString()} unlocks additional rewards!
+            </Text>
+          </View>
+      )
         </View>
       )}
       {/* Progress Bar */}
@@ -701,16 +754,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         </Text>
       </View>
       {/* Bonus Rewards Info */}
-      {globalCount >= targetCount && (
-        <View style={styles.bonusContainer}>
-          <Text style={styles.bonusTitle}>
-            Bonus Rewards Unlocked: {getBonusRewards()}
-          </Text>
-          <Text style={styles.bonusText}>
-            Every 100,000 defeats beyond {targetCount.toLocaleString()} unlocks additional rewards!
-          </Text>
-        </View>
-      )}
+     
     </ScrollView>
   );
 };

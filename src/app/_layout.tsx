@@ -115,9 +115,6 @@ export default function RootLayout() {
   const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
   
 
-  console.log('Made it to RootLayout. hasCompletedOnboarding:', hasCompletedOnboarding);
-  console.log('Platform:', Platform.OS, 'shouldShowOnboarding:', shouldShowOnboarding);
-  console.log('_hasHydrated (auth):', _hasHydrated, '_hasHydratedOnboarding:', _hasHydratedOnboarding);
   
   return (
     <SafeAreaProvider>

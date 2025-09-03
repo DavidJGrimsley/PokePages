@@ -57,7 +57,6 @@ export default function OnboardingWelcomeScreen() {
         <Button 
           title="Get Started" 
           onPress={() => {
-            console.log('Navigating to Agreements Screen');
             router.push('/agreements');
           }}
         />

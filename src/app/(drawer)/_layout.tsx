@@ -17,7 +17,6 @@ const DrawerLayout = () => {
   const SocialDrawerLabel = (props: { color: string }) => {
     const { color } = props;
     const shouldShowRestriction = isLoggedIn && !shouldShowSocialTab;
-    console.log('Rendering SocialDrawerLabel - isLoggedIn:', isLoggedIn, 'shouldShowSocialTab:', shouldShowSocialTab, 'shouldShowRestriction:', shouldShowRestriction);
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={{

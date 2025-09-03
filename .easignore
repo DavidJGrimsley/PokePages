@@ -1,0 +1,66 @@
+# EAS Build Ignore File
+# Exclude unnecessary files to reduce build size and speed
+
+# Node modules (should be excluded by default, but just in case)
+node_modules/
+
+# Development files
+.env.local
+.env.development
+.env.test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+dist/
+build/
+android/app/build/
+android/.gradle/
+ios/build/
+
+# Temporary files
+.tmp/
+temp/
+
+# Documentation (optional - remove if you want docs in build)
+README.md
+*.md
+docs/
+
+# Test files (optional - remove if you want tests in build)
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Storybook files (if not using)
+.storybook/
+*.stories.js
+*.stories.tsx
+
+# Coverage reports
+coverage/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/cache/
+
+# Expo specific
+.expo/
+.expo-shared/

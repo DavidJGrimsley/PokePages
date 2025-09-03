@@ -18,8 +18,6 @@ type OnboardingState = {
 // Check if we're in a web environment
 const isWeb = Platform.OS === 'web';
 
-console.log('OnboardingStore - Platform:', Platform.OS, 'isWeb:', isWeb);
-
 // Create storage adapter that works on both native and web
 const createStorage = () => {
   if (isWeb) {
@@ -63,15 +61,12 @@ export const useOnboardingStore = create(
       hasAcceptedPrivacy: false,
       _hasHydratedOnboarding: false,
       completeOnboarding: () => {
-        console.log('Completing onboarding...');
         set((state) => ({
           ...state,
           hasCompletedOnboarding: true,
         }));
-        console.log('hasCompletedOnboarding:', get().hasCompletedOnboarding);
       },
       resetOnboarding: () => {
-        console.log('Resetting onboarding...');
         set((state) => ({
           ...state,
           hasCompletedOnboarding: false,
@@ -80,21 +75,18 @@ export const useOnboardingStore = create(
         }));
       },
       acceptTerms: () => {
-        console.log('Accepting terms...');
         set((state) => ({
           ...state,
           hasAcceptedTerms: true,
         }));
       },
       acceptPrivacy: () => {
-        console.log('Accepting privacy...');
         set((state) => ({
           ...state,
           hasAcceptedPrivacy: true,
         }));
       },
       setHasHydratedOnboarding: (value: boolean) => {
-        console.log('Setting _hasHydratedOnboarding to:', value);
         set((state) => ({
           ...state,
           _hasHydratedOnboarding: value,
@@ -105,9 +97,7 @@ export const useOnboardingStore = create(
       name: 'onboarding-store',
       storage: createJSONStorage(() => createStorage()),
       onRehydrateStorage: () => {
-        console.log('OnRehydrateStorage callback called');
         return (state, error) => {
-          console.log('Onboarding store rehydrated with state:', state, 'error:', error);
           if (error) {
             console.error('Onboarding store rehydration error:', error);
           }
@@ -125,7 +115,6 @@ export const useOnboardingStore = create(
 if (typeof window !== 'undefined') {
   setTimeout(() => {
     try {
-      console.log('Fallback: Setting hydrated to true after timeout');
       useOnboardingStore.getState().setHasHydratedOnboarding(true);
     } catch (error) {
       console.warn('Failed to set fallback hydration:', error);

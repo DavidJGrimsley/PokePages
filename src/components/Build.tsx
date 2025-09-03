@@ -70,7 +70,6 @@ export const Build: React.FC<BuildProps> = ({
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
     .then(res => res.json())
     .then(data => {
-        console.log(`Fetching image for: ${pokemonName}${pokemonVariant ? ` (${sanitizedPokemonVariant(pokemonVariant)})` : ''}`);
         const img = data.sprites?.other['official-artwork']?.front_default || data.sprites?.front_default || null;
         setPokeImage(img);
         setImageError(null);
@@ -90,7 +89,6 @@ export const Build: React.FC<BuildProps> = ({
   //   fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}${pokemonVariant ? `-${sanitizedPokemonVariant(pokemonVariant)}` : ''}`)
   //   .then(res => res.json())
   //   .then(data => {
-  //       console.log(`Fetching image for: ${pokemonName}${pokemonVariant ? ` (${sanitizedPokemonVariant(pokemonVariant)})` : ''}`);
   //       const img = data.sprites?.other['official-artwork']?.front_default || data.sprites?.front_default || null;
   //       setPokeImage(img);
   //     })

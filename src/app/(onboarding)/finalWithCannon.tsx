@@ -31,12 +31,8 @@ export default function OnboardingFinalScreen() {
   const handleCompleteOnboarding = useCallback(() => {
     clearFallback();
     setConfettiVisible(false);
-    console.log('Attempting to complete onboarding');
-    console.log('Has completed onboarding: ', hasCompletedOnboarding);
     completeOnboarding();
-    console.log('Has completed onboarding: ', hasCompletedOnboarding);
     router.replace('/(drawer)' as any);
-    console.log('Onboarding completed, navigating to main app...');
   }, [completeOnboarding, hasCompletedOnboarding]);
 
 

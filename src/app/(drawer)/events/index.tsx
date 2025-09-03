@@ -107,7 +107,6 @@ export default function EventsIndex() {
     distributionEndDate: formatUserFriendlyDate(config.distributionEnd),
     distributionStartDate: formatUserFriendlyDate(config.distributionStart),
   }));
-  console.log('status:', events.map(event => event.status));
 
   return (
     <>

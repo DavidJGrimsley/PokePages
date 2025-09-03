@@ -49,7 +49,6 @@ export default function EventDisclaimer() {
   const claimMysteryGiftUrl = 'https://youtu.be/63FRpg8slIw?si=CQGN-Qwy6hbuheUR&t=430';
 
   const status = getEventStatus(eventInfo.startDate, eventInfo.endDate, eventInfo.distributionStart, eventInfo.distributionEnd);
-  console.log('Event Status:', status);
   return (
     <>
       <Stack.Screen options={{ title: '' }} />

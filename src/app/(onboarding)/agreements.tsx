@@ -96,7 +96,6 @@ export default function OnboardingWelcomeScreen() {
           title="Continue"
           disabled={!canContinue}
           onPress={() => {
-            console.log('Navigating to final Screen');
             router.push('/final');
           }}
           style={ 

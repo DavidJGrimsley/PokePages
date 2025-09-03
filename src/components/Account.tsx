@@ -76,8 +76,6 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
         updated_at: new Date().toISOString(),
       }
 
-      console.log('Sending updates:', updates)
-
       const { data, error } = await supabase.from('profiles').upsert(updates)
 
       if (error) {
@@ -96,7 +94,6 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
       })
 
       showAlert('Success', isSignUp ? 'Profile created successfully!' : 'Profile updated successfully!')
-      console.log('Update successful:', data)
     } catch (error) {
       console.error('Full error:', error)
       if (error instanceof Error) {
@@ -118,11 +115,6 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
     }
   }
 
-  console.log('Account component render:')
-  console.log('  - Session user ID:', session?.user?.id)
-  console.log('  - Profile from store:', profile)
-  console.log('  - Form birthdate:', birthdate)
-  
   return (
     <View style={styles.container}>
       {error && (
