@@ -28,7 +28,7 @@ export default function OnboardingWelcomeScreen() {
           Your ultimate (unofficial) Pokémon companion
         </Text>
         
-        <View style={styles.featuresContainer}>
+        {/* <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>⚔️</Text>
             <Text style={styles.featureText}>Counter Builds & Strategies</Text>
@@ -46,7 +46,7 @@ export default function OnboardingWelcomeScreen() {
             <Text style={styles.featureText}>Connect with Trainers</Text>
           </View>
         </View>
-        
+         */}
         <Text style={styles.description}>
           Join thousands of trainers tracking legendary events, sharing strategies, 
           and building the ultimate raid teams. Let&apos;s catch &apos;em all together!
@@ -70,11 +70,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.light.background,
     padding: spacing.lg,
+    // alignItems: 'center',
   },
   content: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: spacing.xl,
   },
   logo: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   subtitle: {
-    ...typography.subheader,
+    ...typography.header,
     color: colors.light.secondary,
     textAlign: 'center',
     marginBottom: spacing.xl,

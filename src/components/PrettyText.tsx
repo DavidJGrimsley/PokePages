@@ -1,10 +1,17 @@
 import React from 'react';
-import { theme } from '@/constants/style/theme';
-import { Text } from 'react-native';
+import { Platform } from 'react-native';
+import { BouncyText } from './BouncyText';
+import { MaskText } from './MaskText';
+
+const isWeb = Platform.OS === 'web';
 
 
 export function PrettyText({ text }: { text: string }) {
-  return <Text style={theme.typography.display}>{text}</Text>;
+  return isWeb ? (
+      <BouncyText text={text} />
+    ) : (
+      <MaskText text={text} />
+    );
 }
 
 

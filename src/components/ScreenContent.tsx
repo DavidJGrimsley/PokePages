@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 
-import EditScreenInfo from './EditScreenInfo';
-import { theme } from '../../constants/style/theme';
+import { theme } from '@/constants/style/theme';
+import { PrettyText } from '~/components/PrettyText';
 
+
+
+ 
 type ScreenContentProps = {
   title: string;
   path: string;
@@ -12,7 +15,7 @@ type ScreenContentProps = {
 export const ScreenContent = ({ title, path, children }: ScreenContentProps) => {
   return (
     <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <PrettyText text={title} />
       <View style={styles.separator} />
       {children}
     </ScrollView>

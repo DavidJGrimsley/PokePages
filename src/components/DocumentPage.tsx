@@ -3,9 +3,9 @@ import {
   View, 
   Text, 
   ScrollView, 
-  StyleSheet, 
-  SafeAreaView 
+  StyleSheet
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import documentsData from '../../constants/documents.json';
 import ErrorMessage from './Error';

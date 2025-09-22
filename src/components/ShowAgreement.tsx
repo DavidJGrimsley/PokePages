@@ -5,9 +5,9 @@ import {
   ScrollView, 
   Modal, 
   Pressable, 
-  StyleSheet, 
-  SafeAreaView 
+  StyleSheet
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import documentsData from '@/constants/documents.json';
 import { theme } from '../../constants/style/theme';

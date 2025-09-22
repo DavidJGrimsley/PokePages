@@ -113,8 +113,8 @@ export default function RootLayout() {
 
   // Skip onboarding on web platform
   const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
-  
-
+  console.log('User has completed onboarding: ', hasCompletedOnboarding);
+  console.log('Is Dev mode', __DEV__);
   
   return (
     <SafeAreaProvider>

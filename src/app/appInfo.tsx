@@ -41,7 +41,6 @@ export default function AppInfo() {
           <Text style={styles.mainText}>
             Hello fellow trainers, I appreciate you using my app! This is and always will be free to use and free from ads. Consider it my gift to the community. If you&apos;d like to support then please follow my social media pages or view my portfolio website for more of my work and contact info. Go catch &apos;em all!
           </Text>
-          <Text style={styles.followText}>Follow me on:</Text>
           <View style={styles.buttonContainer}>
             <Pressable 
               style={[styles.socialButton, styles.twitterButton]}

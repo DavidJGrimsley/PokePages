@@ -57,13 +57,15 @@ export default function OnboardingFinalScreen() {
         <Text style={styles.title}>You&apos;re All Set!</Text>
         <Text style={styles.subtitle}>
           Welcome to the Poké Pages community, trainer!
+          {'\n'}
+          Here you will find all sorts of helpful tools for your Pokémon journey including: 
         </Text>
-        {/* <View style={styles.featuresContainer}>
+        <View style={styles.featuresContainer}>
           <View style={styles.featureItem}>
             <Text style={styles.featureEmoji}>🎯</Text>
             <Text style={styles.featureText}>
               <Text style={styles.featureTitle}>Raid Builds</Text>
-              {'\n'}Access counter strategies for legendary raids
+              {'\n'}Access counter strategies for tough raids
             </Text>
           </View>
           
@@ -79,10 +81,18 @@ export default function OnboardingFinalScreen() {
             <Text style={styles.featureEmoji}>📚</Text>
             <Text style={styles.featureText}>
               <Text style={styles.featureTitle}>Resources</Text>
-              {'\n'}Find guides, tips, and battle strategies
+              {'\n'}Find maps, guides, tips, and battle strategies
             </Text>
           </View>
-        </View> */}
+          
+          <View style={styles.featureItem}>
+            <Text style={styles.featureEmoji}>🧠</Text>
+            <Text style={styles.featureText}>
+              <Text style={styles.featureTitle}>In the know</Text>
+              {'\n'}Avoid FOMO by getting notified of events and promo codes
+            </Text>
+          </View>
+        </View>
         
         {!isLoggedIn && (<View style={styles.authInfo}>
           <Text style={styles.authTitle}>💡 Tip</Text>
