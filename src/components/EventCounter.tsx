@@ -192,6 +192,19 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             return null;
           });
 
+        // Debug logs to help track down runtime errors on web
+        try {
+          console.log('loadPokemonData: fetched pokemon (id):', pokemonId);
+          console.log('loadPokemonData: pokemon object preview:', pokemon ? {
+            id: (pokemon as any).id,
+            name: (pokemon as any).name,
+            sprites: (pokemon as any).sprites ? 'hasSprites' : 'noSprites',
+          } : null);
+          console.log('loadPokemonData: pokemon.stats type:', typeof (pokemon as any)?.stats, 'isArray:', Array.isArray((pokemon as any)?.stats));
+        } catch (dbgErr) {
+          console.warn('loadPokemonData: debug logging failed:', dbgErr);
+        }
+
         if (!pokemon) {
           setPokemonImage('');
           setPokemonStats(null);
@@ -204,13 +217,14 @@ export const EventCounter: React.FC<EventCounterProps> = ({
                           pokemon.sprites.front_default || '';
         setPokemonImage(imageUrl);
         
+        const statsArray = Array.isArray(pokemon.stats) ? pokemon.stats : [];
         const stats: PokemonStats = {
-          hp: pokemon.stats.find((stat: any) => stat.stat.name === 'hp')?.base_stat || 0,
-          attack: pokemon.stats.find((stat: any) => stat.stat.name === 'attack')?.base_stat || 0,
-          defense: pokemon.stats.find((stat: any) => stat.stat.name === 'defense')?.base_stat || 0,
-          specialAttack: pokemon.stats.find((stat: any) => stat.stat.name === 'special-attack')?.base_stat || 0,
-          specialDefense: pokemon.stats.find((stat: any) => stat.stat.name === 'special-defense')?.base_stat || 0,
-          speed: pokemon.stats.find((stat: any) => stat.stat.name === 'speed')?.base_stat || 0,
+          hp: statsArray.find((stat: any) => stat?.stat?.name === 'hp')?.base_stat || 0,
+          attack: statsArray.find((stat: any) => stat?.stat?.name === 'attack')?.base_stat || 0,
+          defense: statsArray.find((stat: any) => stat?.stat?.name === 'defense')?.base_stat || 0,
+          specialAttack: statsArray.find((stat: any) => stat?.stat?.name === 'special-attack')?.base_stat || 0,
+          specialDefense: statsArray.find((stat: any) => stat?.stat?.name === 'special-defense')?.base_stat || 0,
+          speed: statsArray.find((stat: any) => stat?.stat?.name === 'speed')?.base_stat || 0,
         };
         
         setPokemonStats(stats);

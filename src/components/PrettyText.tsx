@@ -7,11 +7,14 @@ const isWeb = Platform.OS === 'web';
 
 
 export function PrettyText({ text }: { text: string }) {
-  return isWeb ? (
-      <BouncyText text={text} />
-    ) : (
+  return (
       <MaskText text={text} />
     );
+  // return isWeb ? (
+  //     <BouncyText text={text} />
+  //   ) : (
+  //     <MaskText text={text} />
+  //   );
 }
 
 
