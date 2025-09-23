@@ -4,9 +4,9 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
-import { eventConfig } from '@/constants/eventConfig';
-import { theme } from '@/constants/style/theme';
-import { getEventStatus } from '~/utils/helperFX';
+import { eventConfig } from 'constants/eventConfig';
+import { theme } from 'constants/style/theme';
+import { getEventStatus } from 'utils/helperFX';
 interface EventCardProps {
   title: string;
   description: string;

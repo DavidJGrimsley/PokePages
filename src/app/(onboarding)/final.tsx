@@ -1,25 +1,20 @@
 import { Stack, router } from 'expo-router';
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
+import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
 import { StatusBar } from 'expo-status-bar';
 import { useRef, useState, useCallback } from 'react';
 
 
-import { Button } from '~/components/Button';
-import { useOnboardingStore } from '~/utils/onboardingStore';
-import { useAuthStore } from '@/src/utils/authStore';
+import { Button } from 'components/UI/Button';
+import { useOnboardingStore } from '~/store/onboardingStore';
+import { useAuthStore } from '~/store/authStore';
 
-import { PrettyText } from '@/src/components/PrettyText';
-import { size } from '@shopify/react-native-skia';
+import { PrettyText } from 'components/TextTheme/PrettyText';
 
 const { colors, fontSizes, spacing } = Theme;
 export default function OnboardingFinalScreen() {
   const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
   const { isLoggedIn } = useAuthStore();
-  // const [confettiVisible, setConfettiVisible] = useState(false);
-  // const [cannonPositions, setCannonPositions] = useState<{ x: number; y: number }[]>([]);
-  // const [runId, setRunId] = useState(0); // force remount per run
-  // const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exploreBtnRef = useRef<View>(null); // ref to the Start Exploring button
   const signInButtonRef = useRef<View>(null); // ref to the Sign In button
 

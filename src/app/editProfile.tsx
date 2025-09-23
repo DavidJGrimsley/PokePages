@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import { Platform, Text } from 'react-native';
 
-import { useAuthStore } from '~/utils/authStore';
-import { ScreenContent } from '~/components/ScreenContent';
-import Account from '../components/Account';
+import { useAuthStore } from '~/store/authStore';
+import { ScreenContent } from 'components/UI/ScreenContent';
+import Account from 'components/Auth/Account';
 
 export default function EditProfile() {
   const { user, session, isLoggedIn } = useAuthStore();

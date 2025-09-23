@@ -40,13 +40,6 @@
     },
     "plugins": [
       "expo-router",
-      // [
-      //   "expo-dev-launcher",
-      //   {
-      //     "launchMode": "most-recent"
-      //   }
-      // ],
-      // "expo-web-browser",
       "expo-secure-store",
       [
         "expo-font",
@@ -59,7 +52,8 @@
             "./assets/fonts/Roboto-Medium.ttf"
           ]
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -67,4 +61,3 @@
     }
   }
 }
-

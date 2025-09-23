@@ -1,6 +1,6 @@
-import { ScreenContent } from '~/components/ScreenContent';
-import Account from '~/components/Account';
-import { useAuthStore } from '~/utils/authStore';
+import { ScreenContent } from 'components/UI/ScreenContent';
+import Account from 'components/Auth/Account';
+import { useAuthStore } from '~/store/authStore';
 
 export default function SignUpScreen() {
   const { session } = useAuthStore();

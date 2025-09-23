@@ -1,4 +1,4 @@
-import { DocumentPage } from "../components/DocumentPage";
+import { DocumentPage } from "components/Docs/DocumentPage";
 
 export default function PrivacyPolicy() {
   return (

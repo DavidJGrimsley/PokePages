@@ -3,9 +3,9 @@ import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { Pressable, Text, Platform, View } from 'react-native';
-import { HeaderButton, HeaderTitle, styles } from '../../components/HeaderComponents';
-import { theme } from '../../../constants/style/theme';
-import { useUserAge } from '../../../src/utils/useUserAge';
+import { HeaderButton, HeaderTitle, styles } from 'components/UI/HeaderComponents';
+import { theme } from 'constants/style/theme';
+import { useUserAge } from '~/hooks/useUserAge';
 
 const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 const iconSize = isMobile ? 24 : 32;

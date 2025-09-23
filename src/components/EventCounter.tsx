@@ -8,7 +8,6 @@ import {
   Pressable, 
   Platform, 
   Image,
-  ActivityIndicator,
   Dimensions 
 } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,10 +19,10 @@ import { diagnosticChecks } from '~/utils/supabaseDiagnostics';
 import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 
-import { useAuthStore } from '~/utils/authStore';
-import { theme } from '../../constants/style/theme';
-import { getEventStatus } from '~/utils/helperFX';
-import ErrorMessage from '~/components/Error';
+import { useAuthStore } from '~/store/authStore';
+import { theme } from 'constants/style/theme';
+import { getEventStatus } from 'utils/helperFX';
+import ErrorMessage from 'components/Meta/Error';
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -724,7 +723,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         </Text>
       </View>
       {/* Error Message */}
-      {/* PROBLEM HERE - 'D:\ReactNativeProjec…y\LogBox.web.ts:134 Unexpected text node: . '*/}
+      {/* PROBLEM HERE - 'D:\ReactNativeProject…y\LogBox.web.ts:134 Unexpected text node: . '*/}
       {error && (
         <Text style={styles.error}>{error}</Text>
       )}

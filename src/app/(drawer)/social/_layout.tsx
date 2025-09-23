@@ -1,9 +1,9 @@
 import { Stack } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 
-import { useAuthStore } from '@/src/utils/authStore';
-import { useUserAge } from '@/src/utils/useUserAge';
-import { theme } from '@/constants/style/theme';
+import { useAuthStore } from '~/store/authStore';
+import { useUserAge } from '~/hooks/useUserAge';
+import { theme } from 'constants/style/theme';
 
 export default function SocialLayout() {
   const { isLoggedIn } = useAuthStore();

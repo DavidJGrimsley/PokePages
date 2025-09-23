@@ -13,13 +13,13 @@
       "app/*": [
         "src/app/*"
       ],
-      "@/constants/*": [
-        "constants/*"
+      "constants/*": [
+        "src/constants/*"
       ],
-      "~/components/*": [
+      "components/*": [
         "./src/components/*"
       ],
-      "~/utils/*": [
+      "utils/*": [
         "src/utils/*"
       ]
     }

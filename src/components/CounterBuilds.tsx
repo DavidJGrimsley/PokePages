@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { BuildVariant } from '@/types/builds';
-import { Build } from './Build';
-import { theme } from '../../constants/style/theme';
+import { BuildVariant } from '~/types/builds';
+import { Build } from 'components/Build';
+import { theme } from 'constants/style/theme';
 
 interface CounterBuildData {
   pokemonName: string;

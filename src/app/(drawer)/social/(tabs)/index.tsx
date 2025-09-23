@@ -1,8 +1,8 @@
 import { Stack } from 'expo-router';
-import { ComingSoon } from '~/components/ComingSoon';
+import { ComingSoon } from 'components/Meta/ComingSoon';
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
+import { Container } from 'components/UI/Container';
+import { ScreenContent } from 'components/UI/ScreenContent';
 
 export default function Home() {
   return (

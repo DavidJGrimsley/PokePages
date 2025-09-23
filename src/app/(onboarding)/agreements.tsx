@@ -2,13 +2,14 @@ import { Stack, useRouter } from 'expo-router';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
-const { colors, fontSizes, spacing } = Theme;
+import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
 
-import { Button } from "~/components/Button";
-import { PrettyText } from '~/components/PrettyText';
-import { ShowAgreement } from '~/components/ShowAgreement';
-import { useOnboardingStore } from "~/utils/onboardingStore";
+import { Button } from "components/UI/Button";
+import { PrettyText } from 'components/TextTheme/PrettyText';
+import { ShowAgreement } from 'components/Docs/ShowAgreement';
+import { useOnboardingStore } from "~/store/onboardingStore";
+
+const { colors, fontSizes, spacing } = Theme;
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();

@@ -29,12 +29,11 @@ import {
   RobotoMono_700Bold,
 } from '@expo-google-fonts/roboto-mono';
 
-import { useAuthStore } from '~/utils/authStore';
-import { useOnboardingStore } from '~/utils/onboardingStore';
-import { HeaderTitle, styles } from '~/components/HeaderComponents';
-import { theme } from '@/constants/style/theme';
-import LottieView  from 'lottie-react-native';
-import Loading from '../components/LoadingAnim';
+import { useAuthStore } from '~/store/authStore';
+import { useOnboardingStore } from '~/store/onboardingStore';
+import { HeaderTitle, styles } from 'components/UI/HeaderComponents';
+import { theme } from 'constants/style/theme';
+import Loading from 'components/Animation/LoadingAnim';
 
 const isWeb = Platform.OS === 'web';
 

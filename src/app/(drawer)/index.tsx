@@ -2,10 +2,10 @@ import { Stack, Link } from 'expo-router';
 import { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 
-import { Container } from '~/components/Container';
-import { NewestFeature } from '~/components/NewestFeature';
-import { eventConfig } from '@/constants/eventConfig';
-import { theme } from '@/constants/style/theme';
+import { Container } from 'components/UI/Container';
+import { NewestFeature } from 'components/Meta/NewestFeature';
+import { eventConfig } from 'constants/eventConfig';
+import { theme } from 'constants/style/theme';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();

@@ -2,7 +2,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, Text, View, StyleSheet, Linking, Pressable, ScrollView } from 'react-native';
 
-import { theme } from '../../constants/style/theme';
+import { theme } from 'constants/style/theme';
 import { getEventStatus } from '~/utils/helperFX';
 
 export default function EventDisclaimer() {

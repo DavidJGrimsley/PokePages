@@ -1,5 +1,5 @@
-import { ScreenContent } from '~/components/ScreenContent';
-import Auth from '../components/Auth';
+import { ScreenContent } from 'components/UI/ScreenContent';
+import Auth from 'components/Auth/SignIn';
 
 
 export default function SignInScreen() {

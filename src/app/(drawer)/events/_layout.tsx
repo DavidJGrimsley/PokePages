@@ -1,11 +1,11 @@
 import { Link, Stack, router } from 'expo-router';
 
-import { HeaderButton } from '@/src/components/HeaderComponents';
+import { HeaderButton } from 'components/UI/HeaderComponents';
 import { Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { eventConfig } from '@/constants/eventConfig';
-import { theme } from '@/constants/style/theme';
+import { eventConfig } from 'constants/eventConfig';
+import { theme } from 'constants/style/theme';
 
 export default function EventsLayout() {
   const navigation = useNavigation();

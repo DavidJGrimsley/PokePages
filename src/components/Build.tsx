@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import { BuildVariant } from '@/types/builds';
-import { theme } from '@/constants/style/theme';
-import ErrorMessage from './Error';
+import { BuildVariant } from '~/types/builds';
+import { theme } from 'constants/style/theme';
+import ErrorMessage from 'components/Meta/Error';
 
 interface BuildProps {
   pokemonName: string;

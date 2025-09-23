@@ -2,10 +2,10 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import Head from 'expo-router/head';
-import { EventCounter } from '~/components/EventCounter';
-import { CounterBuilds } from '@/src/components/CounterBuilds';
-import { eventConfig } from '@/constants/eventConfig';
-import { buildsConfig } from '@/constants/buildsConfig';
+import { EventCounter } from 'components/EventCounter';
+import { CounterBuilds } from 'components/CounterBuilds';
+import { eventConfig } from 'constants/eventConfig';
+import { buildsConfig } from 'constants/buildsConfig';
 
 // Static generation for all event slugs
 export async function generateStaticParams(): Promise<{ counterEvent: string }[]> {

@@ -1,9 +1,9 @@
 import { Link, Stack } from 'expo-router';
 import { Text } from 'react-native';
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
-import { Button } from '~/components/Button';
+import { Container } from 'components/UI/Container';
+import { ScreenContent } from 'components/UI/ScreenContent';
+import { Button } from 'components/UI/Button';
 
 export default function CheckSignin() {
   return (

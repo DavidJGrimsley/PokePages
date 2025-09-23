@@ -2,9 +2,9 @@
 import { Stack, useRouter } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { Button } from "~/components/Button";
-import { PrettyText } from '@/src/components/PrettyText';
-import Theme, { typography, shadows, lineHeights } from '@/constants/style/theme';
+import { Button } from "components/UI/Button";
+import { PrettyText } from 'components/TextTheme/PrettyText';
+import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
 const { colors, fontSizes, spacing } = Theme;
 
 export default function OnboardingWelcomeScreen() {

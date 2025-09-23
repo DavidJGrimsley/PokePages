@@ -1,9 +1,9 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { ScrollView } from 'react-native';
-import { teraBuildsTop50 } from '@/constants/teraBuildsTop50Config';
-import { CounterBuilds } from '~/components/CounterBuilds';
-import { theme } from '@/constants/style/theme';
+import { teraBuildsTop50 } from 'constants/teraBuildsTop50Config';
+import { CounterBuilds } from 'components/CounterBuilds';
+import { theme } from 'constants/style/theme';
 
 export default function Top50Builds() {
   return (

@@ -3,10 +3,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, Text, View, Pressable, Linking, StyleSheet } from 'react-native';
 import { useState } from 'react';
 
-import { ScreenContent } from '~/components/ScreenContent';
-import { ShowAgreement } from '~/components/ShowAgreement';
-import { useAuthStore } from '~/utils/authStore';
-import { useOnboardingStore } from '~/utils/onboardingStore';
+import { ScreenContent } from 'components/UI/ScreenContent';
+import { ShowAgreement } from 'components/Docs/ShowAgreement';
+import { useAuthStore } from '~/store/authStore';
+import { useOnboardingStore } from '~/store/onboardingStore';
 
 export default function AppInfo() {
   const [showAgreementModal, setShowAgreementModal] = useState(false);

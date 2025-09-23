@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
-import { Container } from '~/components/Container';
-import { ComingSoon } from '~/components/ComingSoon';
+import { Container } from 'components/UI/Container';
+import { ComingSoon } from 'components/Meta/ComingSoon';
 
 export default function RaidCounter() {
 

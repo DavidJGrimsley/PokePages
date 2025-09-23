@@ -5,12 +5,12 @@ module.exports = function (api) {
       [
         'babel-preset-expo',
         {
-         unstable_transformImportMeta: true
+          unstable_transformImportMeta: true,
+          jsxImportSource: 'nativewind',
         },
       ],
+      'nativewind/babel'
     ],
-    plugins: [
-      // 'nativewind/babel', // temporarily disabled to test
-    ],
+    plugins: ['react-native-worklets/plugin'],
   };
 };
