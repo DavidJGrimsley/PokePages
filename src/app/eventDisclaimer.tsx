@@ -1,8 +1,6 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Text, View, StyleSheet, Linking, Pressable, ScrollView } from 'react-native';
-
-import { theme } from 'constants/style/theme';
+import { Platform, Text, View, Linking, Pressable, ScrollView } from 'react-native';
 import { getEventStatus } from '~/utils/helperFX';
 
 export default function EventDisclaimer() {
@@ -52,98 +50,96 @@ export default function EventDisclaimer() {
   return (
     <>
       <Stack.Screen options={{ title: '' }} />
-        <ScrollView style={styles.container}>
-
+        <ScrollView className="flex-1 bg-app-background p-lg">
           
-          <Text style={styles.mainText}>
-            This counter is <Text style={styles.highlight}>unofficial and separate</Text> from the official Pokemon event.
+          <Text className="typography-copy text-app-text text-center mb-md leading-6">
+            This counter is <Text className="font-bold text-app-primary">unofficial and separate</Text> from the official Pokemon event.
           </Text>
           
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📅 Official Event Details</Text>
-            <Text style={styles.bodyText}>
-              The official event requires players worldwide to collectively defeat {eventInfo.pokemonName} one million times between <Text style={styles.dateHighlight}>{eventInfo.startDate} and {eventInfo.endDate}</Text>. 
-              If this goal is met, a {eventInfo.pokemonName} will be distributed via Mystery Gift from <Text style={styles.dateHighlight}>{eventInfo.distributionStart} to {eventInfo.distributionEnd}</Text>.
+          <View className="bg-app-white p-md rounded-lg mb-lg border-l-4 border-l-blue-500">
+            <Text className="typography-subheader text-app-text mb-sm">📅 Official Event Details</Text>
+            <Text className="typography-copy text-app-brown mb-sm leading-5">
+              The official event requires players worldwide to collectively defeat {eventInfo.pokemonName} one million times between <Text className="font-semibold text-blue-600">{eventInfo.startDate} and {eventInfo.endDate}</Text>. 
+              If this goal is met, a {eventInfo.pokemonName} will be distributed via Mystery Gift from <Text className="font-semibold text-blue-600">{eventInfo.distributionStart} to {eventInfo.distributionEnd}</Text>.
             </Text>
 
             {!(status === 'upcoming') && 
-              <View style={styles.linksList}>
+              <View className="mt-sm">
                 <Pressable 
-                  style={[styles.linkItem, styles.pokemonLink]}
+                  className="bg-blue-500 p-sm rounded-md mb-sm"
                   onPress={() => Linking.openURL(pokemonComUrl)}
                 >
-                  <Text style={styles.linkText}>🔗 Official Pokémon News - {eventInfo.pokemonName} Event</Text>
+                  <Text className="text-white text-sm font-medium">🔗 Official Pokémon News - {eventInfo.pokemonName} Event</Text>
                 </Pressable>
                 {(status === 'ended' || status === 'distribution') && <Pressable 
-                  style={[styles.linkItem, styles.pokemonLink]}
+                  className="bg-blue-500 p-sm rounded-md"
                   onPress={() => Linking.openURL(pokemonFinishedUrl)}
                 >
-                  <Text style={styles.linkText}>🔗 Goal Met News from Pokemon.com</Text>
+                  <Text className="text-white text-sm font-medium">🔗 Goal Met News from Pokemon.com</Text>
                 </Pressable>}
               </View>
             }
 
           </View>
           
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>✅ Redeem your Mystery Gift during the distribution period if the goal is achieved </Text>
+          <View className="bg-app-white p-md rounded-lg mb-lg border-l-4 border-l-green-500">
+            <Text className="typography-subheader text-app-text mb-sm">✅ Redeem your Mystery Gift during the distribution period if the goal is achieved </Text>
             <Pressable 
-                style={[styles.linkItem, styles.myLink]}
+                className="bg-app-accent p-sm rounded-md"
                 onPress={() => Linking.openURL(claimMysteryGiftUrl)}
               >
-                <Text style={styles.linkText}>🔗 How to claim Mystery Gifts - Video from Mr. DJ (Developer of this app)</Text>
+                <Text className="text-white text-sm font-medium">🔗 How to claim Mystery Gifts - Video from Mr. DJ (Developer of this app)</Text>
               </Pressable>
           </View>
           
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>🎯 Community Counter Info</Text>
-            <View style={styles.tipsList}>
-              <Text style={styles.tipItem}>• This community counter helps us track progress but is not foolproof - there may be other players defeating {eventInfo.pokemonName} who aren&apos;t using this tracker.  </Text>
-              <Text style={styles.tipItem}>• To Ensure Your Battles Count, connect to the internet periodically during the event</Text>
-              <Text style={styles.tipItem}>• Check Poké Portal News for official progress updates</Text>
+          <View className="bg-app-white p-md rounded-lg mb-lg border-l-4 border-l-orange-500">
+            <Text className="typography-subheader text-app-text mb-sm">🎯 Community Counter Info</Text>
+            <View className="mb-sm">
+              <Text className="typography-copy text-app-brown mb-xs leading-5">• This community counter helps us track progress but is not foolproof - there may be other players defeating {eventInfo.pokemonName} who aren&apos;t using this tracker.  </Text>
+              <Text className="typography-copy text-app-brown mb-xs leading-5">• To Ensure Your Battles Count, connect to the internet periodically during the event</Text>
+              <Text className="typography-copy text-app-brown mb-xs leading-5">• Check Poké Portal News for official progress updates</Text>
             </View>
 
-            <Text style={styles.bodyText}>
-
-              <Text style={styles.emphasis}> Let&apos;s aim for more than the required million to account for any missed contributions!</Text>
+            <Text className="typography-copy text-app-brown">
+              <Text className="font-semibold text-app-primary"> Let&apos;s aim for more than the required million to account for any missed contributions!</Text>
             </Text>
           </View>
           
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>📚 Resources</Text>
-            <Text style={styles.bodyText}>
+          <View className="bg-app-white p-md rounded-lg mb-lg border-l-4 border-l-purple-500">
+            <Text className="typography-subheader text-app-text mb-sm">📚 Resources</Text>
+            <Text className="typography-copy text-app-brown mb-sm leading-5">
               For raid guides and more information on the event from top content creators and trusted sources, check out:
             </Text>
-            <View style={styles.linksList}>
+            <View className="gap-2">
               <Pressable 
-                style={[styles.linkItem, styles.outsideLink]}
+                className="bg-gray-600 p-sm rounded-md"
                 onPress={() => Linking.openURL(serebiiUrl)}
               >
-                <Text style={styles.linkText}>🔗 Serebii Event Guide - Detailed Battle Information</Text>
+                <Text className="text-white text-sm font-medium">🔗 Serebii Event Guide - Detailed Battle Information</Text>
               </Pressable>
               <Pressable 
-                style={[styles.linkItem, styles.outsideLink]}
+                className="bg-gray-600 p-sm rounded-md"
                 onPress={() => Linking.openURL('https://www.youtube.com/@AustinJohnPlays')}
               >
-                <Text style={styles.linkText}>🔗 Austin John Plays - YouTube Channel</Text>
+                <Text className="text-white text-sm font-medium">🔗 Austin John Plays - YouTube Channel</Text>
               </Pressable>
               <Pressable 
-                style={[styles.linkItem, styles.outsideLink]}
+                className="bg-gray-600 p-sm rounded-md"
                 onPress={() => Linking.openURL('https://www.youtube.com/@Osirus')}
               >
-                <Text style={styles.linkText}>🔗 Osirus - YouTube Channel</Text>
+                <Text className="text-white text-sm font-medium">🔗 Osirus - YouTube Channel</Text>
               </Pressable>
             </View>
           </View>
           
-          <View style={styles.rewardsBanner}>
-            <Text style={styles.rewardsTitle}>🎁 Bonus Rewards</Text>
-            <View style={styles.rewardsDetails}>
-              <Text style={styles.rewardsDetailItem}>
-                • Every additional 100,000 defeats: <Text style={styles.rewardHighlight}>40 Tera Shards</Text>
+          <View className="bg-gradient-to-r from-yellow-400 to-orange-500 p-md rounded-lg shadow-app-large">
+            <Text className="typography-subheader text-white mb-sm">🎁 Bonus Rewards</Text>
+            <View>
+              <Text className="typography-copy text-white mb-xs leading-5">
+                • Every additional 100,000 defeats: <Text className="font-bold text-yellow-200">40 Tera Shards</Text>
               </Text>
-              <Text style={styles.rewardsDetailItem}>
-                • Maximum: <Text style={styles.rewardHighlight}>400 Tera Shards</Text> (at 2 million total defeats)
+              <Text className="typography-copy text-white leading-5">
+                • Maximum: <Text className="font-bold text-yellow-200">400 Tera Shards</Text> (at 2 million total defeats)
               </Text>
             </View>
           </View>
@@ -153,161 +149,3 @@ export default function EventDisclaimer() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-    backgroundColor: theme.colors.light.background,
-  },
-  warningBanner: {
-    backgroundColor: '#FFF3CD',
-    borderColor: '#FFEAA7',
-    borderWidth: 2,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  warningIcon: {
-    fontSize: 24,
-    marginRight: theme.spacing.md,
-  },
-  warningTitle: {
-    fontSize: theme.fontSizes.header,
-    fontWeight: theme.fontWeights.bold,
-    color: '#856404',
-    flex: 1,
-  },
-  mainText: {
-    ...theme.typography.copy,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.lg,
-    textAlign: 'center',
-  },
-  highlight: {
-    fontWeight: theme.fontWeights.bold,
-    color: theme.colors.light.red,
-  },
-  section: {
-    marginBottom: theme.spacing.xl,
-    backgroundColor: theme.colors.light.white,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.light.primary,
-  },
-  sectionTitle: {
-    ...theme.typography.header,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.md,
-  },
-  bodyText: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-  },
-  dateHighlight: {
-    fontWeight: theme.fontWeights.semibold,
-    color: theme.colors.light.red,
-    backgroundColor: '#fdf2f2',
-    paddingHorizontal: theme.spacing.xs,
-    paddingVertical: 2,
-    borderRadius: theme.borderRadius.sm,
-  },
-  tipsList: {
-    marginTop: theme.spacing.sm,
-  },
-  tipItem: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    marginBottom: theme.spacing.xs,
-    paddingLeft: theme.spacing.sm,
-  },
-  emphasis: {
-    fontWeight: theme.fontWeights.semibold,
-    color: theme.colors.light.primary,
-  },
-  rewardsBanner: {
-    backgroundColor: '#E8F5E8',
-    borderColor: theme.colors.light.accent,
-    borderWidth: 2,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    marginTop: theme.spacing.sm,
-    alignItems: 'center',
-  },
-  rewardsTitle: {
-    fontSize: theme.fontSizes.header,
-    fontWeight: theme.fontWeights.bold,
-    color: theme.colors.light.accent,
-    marginBottom: theme.spacing.sm,
-    textAlign: 'center',
-  },
-  rewardsText: {
-    ...theme.typography.copy,
-    color: theme.colors.light.primary,
-    textAlign: 'center',
-  },
-  rewardsDetails: {
-    marginTop: theme.spacing.md,
-    backgroundColor: theme.colors.light.white,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.sm,
-    borderWidth: 1,
-    borderColor: theme.colors.light.accent,
-  },
-  rewardsDetailTitle: {
-    fontSize: theme.fontSizes.subheader,
-    fontWeight: theme.fontWeights.bold,
-    color: theme.colors.light.accent,
-    marginBottom: theme.spacing.sm,
-    textAlign: 'center',
-  },
-  rewardsDetailItem: {
-    ...theme.typography.copyBold,
-    color: theme.colors.light.primary,
-    marginBottom: theme.spacing.xs,
-    paddingLeft: theme.spacing.xs,
-  },
-  rewardHighlight: {
-    fontWeight: theme.fontWeights.bold,
-    color: theme.colors.light.accent,
-    backgroundColor: '#E8F5E8',
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: 2,
-    borderRadius: theme.borderRadius.sm,
-  },
-  rewardsDetailFooter: {
-    ...theme.typography.copy,
-    color: theme.colors.light.primary,
-    textAlign: 'center',
-    marginTop: theme.spacing.sm,
-    fontStyle: 'italic',
-  },
-  linksList: {
-    marginTop: theme.spacing.md,
-  },
-  linkItem: {
-    borderWidth: 1,
-    borderRadius: theme.borderRadius.sm,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-  },
-  pokemonLink: {
-    backgroundColor: theme.colors.light.red,
-    // textShadowColor: theme.colors.light.white,
-    borderColor: theme.colors.light.brown,
-  },
-  myLink: {
-    backgroundColor: theme.colors.light.secondary,
-    borderColor: theme.colors.light.primary,
-  },
-  outsideLink: {
-    backgroundColor: theme.colors.light.accent,
-    borderColor: theme.colors.light.primary,
-  },
-  linkText: {
-    ...theme.typography.copyBold,
-    // color: theme.colors.light.primary,
-  },
-});

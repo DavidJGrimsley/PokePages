@@ -1,6 +1,6 @@
 import { Stack, Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, Text, View, Pressable, Linking, StyleSheet } from 'react-native';
+import { Platform, Text, View, Pressable, Linking } from 'react-native';
 import { useState } from 'react';
 
 import { ScreenContent } from 'components/UI/ScreenContent';
@@ -38,88 +38,86 @@ export default function AppInfo() {
       <Stack.Screen options={{ title: '' }} />
 
       <ScreenContent path="app/modal.tsx" title="Thank you">
-        <View style={styles.container}>
-          <Text style={styles.mainText}>
+        <View className="p-lg gap-6">
+          <Text className="text-base text-app-text text-center mb-sm">
             Hello fellow trainers, I appreciate you using my app! This is and always will be free to use and free from ads. Consider it my gift to the community. If you&apos;d like to support then please follow my social media pages or view my portfolio website for more of my work and contact info. Go catch &apos;em all!
           </Text>
           
-          <Text style={styles.followText}>Follow me on:</Text>
+          <Text className="text-lg font-semibold text-app-text text-center mb-sm">Follow me on:</Text>
           
-          <View style={styles.buttonContainer}>
+          <View className="flex-row flex-wrap justify-center gap-3">
             <Pressable 
-              style={[styles.socialButton, styles.twitterButton]}
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#1DA1F2]"
               onPress={() => handleLinkPress('https://twitter.com/MrDJ2U26')}
             >
-              <Text style={styles.buttonText}>🐦 Twitter</Text>
+              <Text className="text-white text-base font-semibold">🐦 Twitter</Text>
             </Pressable>
             
             <Pressable 
-              style={[styles.socialButton, styles.instagramButton]}
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#E4405F]"
               onPress={() => handleLinkPress('https://instagram.com/OfficialMrDJ')}
             >
-              <Text style={styles.buttonText}>📸 Instagram</Text>
+              <Text className="text-white text-base font-semibold">📸 Instagram</Text>
             </Pressable>
             
             <Pressable 
-              style={[styles.socialButton, styles.youtubeButton]}
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#FF0000]"
               onPress={() => handleLinkPress('https://youtube.com/@MrDJsArcade')}
             >
-              <Text style={styles.buttonText}>🎥 YouTube</Text>
+              <Text className="text-white text-base font-semibold">🎥 YouTube</Text>
             </Pressable>
           </View>
           
           <Pressable 
-            style={styles.portfolioButton}
+            className="bg-app-accent py-4 px-6 rounded-xl items-center shadow-app-large mt-sm"
             onPress={() => handleLinkPress('https://www.DavidJGrimsley.com')}
           >
-            <Text style={styles.portfolioButtonText}>🌐 Visit My Portfolio</Text>
-            <Text style={styles.portfolioSubtext}>www.DavidJGrimsley.com</Text>
+            <Text className="text-white text-lg font-bold mb-1">🌐 Visit My Portfolio</Text>
+            <Text className="text-app-secondary text-sm font-medium">www.DavidJGrimsley.com</Text>
           </Pressable>
           
-          <View style={styles.agreementButtonContainer}>
+          <View className="flex-row justify-between gap-3 mt-sm">
             <Pressable 
-              style={styles.agreementButton}
+              className="flex-1 bg-app-secondary py-3 px-4 rounded-lg items-center shadow-app-small"
               onPress={() => openAgreement('termsOfService')}
             >
-              <Text style={styles.agreementButtonText}>📄 Terms of Service</Text>
+              <Text className="text-white text-sm font-semibold text-center">📄 Terms of Service</Text>
             </Pressable>
             
             <Pressable 
-              style={styles.agreementButton}
+              className="flex-1 bg-app-secondary py-3 px-4 rounded-lg items-center shadow-app-small"
               onPress={() => openAgreement('privacyPolicy')}
             >
-              <Text style={styles.agreementButtonText}>🔒 Privacy Policy</Text>
+              <Text className="text-white text-sm font-semibold text-center">🔒 Privacy Policy</Text>
             </Pressable>
           </View>
           
           {/* Development Helper */}
           <Pressable 
-            style={styles.devButton}
+            className="bg-red-500 py-2.5 px-4 rounded-md items-center mt-3"
             onPress={resetOnboarding}
           >
-            <Text style={styles.devButtonText}>🔄 Reset Onboarding (Dev)</Text>
+            <Text className="text-white text-xs font-medium">🔄 Reset Onboarding (Dev)</Text>
           </Pressable>
 
           <Link href="/sign-in" asChild push>
-            <Pressable
-              style={styles.devButton}
-            >
-              <Text style={styles.devButtonText}>🔄 Create Account or Sign up(Dev-supabase)</Text>
+            <Pressable className="bg-red-500 py-2.5 px-4 rounded-md items-center">
+              <Text className="text-white text-xs font-medium">🔄 Create Account or Sign up(Dev-supabase)</Text>
             </Pressable>
           </Link>
 
           <Pressable 
             onPress={logIn}
-            style={styles.devButton}
+            className="bg-red-500 py-2.5 px-4 rounded-md items-center"
           >
-            <Text style={styles.devButtonText}>🔄 Log In (Dev)</Text>
+            <Text className="text-white text-xs font-medium">🔄 Log In (Dev)</Text>
           </Pressable>
         
           <Pressable 
             onPress={logOut}
-            style={styles.devButton}
+            className="bg-red-500 py-2.5 px-4 rounded-md items-center"
           >
-            <Text style={styles.devButtonText}>🔄 Log Out (Dev)</Text>
+            <Text className="text-white text-xs font-medium">🔄 Log Out (Dev)</Text>
           </Pressable>
           
         </View>
@@ -135,125 +133,4 @@ export default function AppInfo() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    gap: 24,
-  },
-  mainText: {
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  followText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  socialButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    minWidth: 120,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  twitterButton: {
-    backgroundColor: '#1DA1F2',
-  },
-  instagramButton: {
-    backgroundColor: '#E4405F',
-  },
-  youtubeButton: {
-    backgroundColor: '#FF0000',
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  portfolioButton: {
-    backgroundColor: '#6366F1',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 8,
-    marginTop: 8,
-  },
-  portfolioButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  portfolioSubtext: {
-    color: '#E0E7FF',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  agreementButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-    marginTop: 8,
-  },
-  agreementButton: {
-    flex: 1,
-    backgroundColor: '#64748B',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  agreementButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  devButton: {
-    backgroundColor: '#FF6B6B',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 6,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  devButtonText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-});
+

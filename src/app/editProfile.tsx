@@ -14,7 +14,7 @@ export default function EditProfile() {
   return (
     <>
       <ScreenContent path="app/modal.tsx" title="Edit Profile">
-        <Text style={{ fontSize: 20, textAlign: 'center', marginTop: 20 }}>
+        <Text className="text-xl text-center mt-lg">
           Edit your profile information below. Soon we will have more information on your profile such as your gamertag in certain games.
         </Text>
         {isLoggedIn && user && session && <Account session={session} />}

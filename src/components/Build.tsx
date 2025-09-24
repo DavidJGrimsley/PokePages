@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, Text, Image, Dimensions } from 'react-native';
 import { BuildVariant } from '~/types/builds';
-import { theme } from 'constants/style/theme';
 import ErrorMessage from 'components/Meta/Error';
+import { cn } from '~/utils/cn';
 
 interface BuildProps {
   pokemonName: string;
@@ -101,36 +101,51 @@ export const Build: React.FC<BuildProps> = ({
         return {
           title: 'Physical Attacker',
           icon: '⚔️',
-          primaryColor: theme.colors.light.red,
-          backgroundColor: theme.colors.light.lightRed,
+          primaryColor: '#e74c3c',
+          backgroundColor: '#fdf2f2',
+          bgClass: 'bg-app-red-bg',
+          headerClass: 'bg-app-red',
+          labelClass: 'text-app-red',
         };
       case 'special-attacker':
         return {
           title: 'Special Attacker',
           icon: '✨',
-          primaryColor: theme.colors.light.purple,
-          backgroundColor: theme.colors.light.purpleBackground,
+          primaryColor: '#582a5a',
+          backgroundColor: '#E6e6fa',
+          bgClass: 'bg-app-purple-bg',
+          headerClass: 'bg-app-purple',
+          labelClass: 'text-app-purple',
         };
       case 'physical-wall':
         return {
           title: 'Physical Wall',
           icon: '🛡️',
-          primaryColor: theme.colors.light.blue,
-          backgroundColor: theme.colors.light.blueBackground
+          primaryColor: '#3498db',
+          backgroundColor: '#f2f8fd',
+          bgClass: 'bg-app-blue-bg',
+          headerClass: 'bg-app-blue',
+          labelClass: 'text-app-blue',
         };
       case 'special-wall':
         return {
           title: 'Special Wall',
           icon: '🌟',
-          primaryColor: theme.colors.light.green,
-          backgroundColor: theme.colors.light.greenBackground
+          primaryColor: '#959F5C',
+          backgroundColor: '#f2fdf5',
+          bgClass: 'bg-app-green-bg',
+          headerClass: 'bg-app-green',
+          labelClass: 'text-app-green',
         };
       default:
         return {
           title: 'Build',
           icon: '📋',
-          primaryColor: theme.colors.light.primary,
-          backgroundColor: theme.colors.light.background
+          primaryColor: '#582a5a',
+          backgroundColor: '#E6e6fa',
+          bgClass: 'bg-app-background',
+          headerClass: 'bg-app-primary',
+          labelClass: 'text-app-primary',
         };
     }
   };
@@ -167,7 +182,10 @@ export const Build: React.FC<BuildProps> = ({
   const config = getVariantConfig();
 
   return (
-    <View style={[styles.container, { backgroundColor: config.backgroundColor }]}> 
+    <View className={cn(
+      "rounded-lg my-sm mx-0 shadow-app-small overflow-hidden border border-app-secondary relative",
+      config.bgClass
+    )}> 
       {imageError && (
         <ErrorMessage
           title="Image Load Error"
@@ -178,162 +196,71 @@ export const Build: React.FC<BuildProps> = ({
       {pokeImage && (
         <Image
           source={{ uri: pokeImage }}
-          style={[styles.bgImage, { opacity: getBackgroundOpacity() }]}
+          className="absolute w-[70%] h-[70%] z-0"
+          style={{ 
+            top: '18%',
+            left: '50%',
+            opacity: getBackgroundOpacity(),
+            transform: [{ translateX: -0.5 * 0.7 * 300 }] // 300 is approx card width
+          }}
           resizeMode="contain"
-          // pointerEvents="none"
         />
       )}
-      <View style={[styles.header, { backgroundColor: config.primaryColor }]}> 
-        <Text style={styles.headerIcon}>{config.icon}</Text>
-        <View style={styles.headerText}>
-          <Text style={styles.pokemonName}>
+      <View className={cn(
+        "flex-row items-center p-md rounded-t-lg",
+        config.headerClass
+      )}> 
+        <Text className="typography-subheader mr-sm">{config.icon}</Text>
+        <View className="flex-1">
+          <Text className="typography-header text-app-white mb-0">
             {pokemonName}{pokemonVariant ? ` (${pokemonVariant})` : ''}
           </Text>
-          <Text style={styles.buildType}>{config.title}</Text>
+          <Text className="typography-copy text-app-white opacity-90">{config.title}</Text>
         </View>
       </View>
-      <View style={styles.content}>
-        <View style={styles.sectionRow}>
-          <Text style={[styles.statLabel, { color: config.primaryColor }]}>Level:</Text>
-          <Text style={styles.statValue}>{level}</Text>
+      <View className="p-md">
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className={cn("typography-copy-bold mr-sm", config.labelClass)}>Level:</Text>
+          <Text className="typography-copy text-app-text mr-md">{level}</Text>
         </View>
         {teraType && (
-          <View style={styles.sectionRow}>
-            <Text style={styles.statLabel}>Tera Type:</Text>
-            <Text style={styles.statValue}>{teraType}</Text>
+          <View className="flex-row flex-wrap items-center mb-sm">
+            <Text className="typography-copy-bold mr-sm text-app-brown">Tera Type:</Text>
+            <Text className="typography-copy text-app-text mr-md">{teraType}</Text>
           </View>
         )}
-        <View style={styles.sectionRow}>
-          <Text style={styles.statLabel}>Ability:</Text>
-          <Text style={styles.statValue}>{ability}</Text>
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className="typography-copy-bold mr-sm text-app-brown">Ability:</Text>
+          <Text className="typography-copy text-app-text mr-md">{ability}</Text>
         </View>
-        <View style={styles.sectionRow}>
-          <Text style={styles.statLabel}>Nature:</Text>
-          <Text style={styles.statValue}>{nature}</Text>
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className="typography-copy-bold mr-sm text-app-brown">Nature:</Text>
+          <Text className="typography-copy text-app-text mr-md">{nature}</Text>
         </View>
-        <View style={styles.sectionRow}>
-          <Text style={styles.statLabel}>Held Item:</Text>
-          <Text style={styles.statValue}>{heldItem}</Text>
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className="typography-copy-bold mr-sm text-app-brown">Held Item:</Text>
+          <Text className="typography-copy text-app-text mr-md">{heldItem}</Text>
         </View>
-        <View style={styles.sectionRow}>
-          <Text style={styles.evIvLabel}>EVs:</Text>
-          <Text style={styles.evIvValue}>{formatEVs()}</Text>
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className="typography-copy-bold mr-xs text-app-primary">EVs:</Text>
+          <Text className="typography-copy text-app-primary mr-sm">{formatEVs()}</Text>
         </View>
-        <View style={styles.sectionRow}>
-          <Text style={styles.evIvLabel}>IVs:</Text>
-          <Text style={styles.evIvValue}>{formatIVs()}</Text>
+        <View className="flex-row flex-wrap items-center mb-sm">
+          <Text className="typography-copy-bold mr-xs text-app-primary">IVs:</Text>
+          <Text className="typography-copy text-app-primary mr-sm">{formatIVs()}</Text>
         </View>
-        <View style={styles.movesRow}>
+        <View className="flex-row flex-wrap my-xs mb-sm">
           {moves.map((move, idx) => (
-            <Text key={idx} style={styles.moveName}>{move}</Text>
+            <Text key={idx} className="typography-copy text-app-accent bg-app-background rounded-sm px-sm py-xs mr-sm mb-xs">
+              {move}
+            </Text>
           ))}
         </View>
-        <Text style={styles.roleText}>{role}</Text>
-        {notes && <Text style={styles.notesText}>{notes}</Text>}
+        <Text className="typography-copy text-app-brown mt-xs mb-xs">{role}</Text>
+        {notes && <Text className="typography-copy text-app-brown italic mt-xs">{notes}</Text>}
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: theme.borderRadius.lg,
-    marginVertical: theme.spacing.sm,
-    marginHorizontal: 0,
-    ...theme.shadows.small,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: theme.colors.light.secondary,
-    position: 'relative',
-  },
-  bgImage: {
-    position: 'absolute',
-    top: '18%',
-    left: '50%',
-    width: '70%',
-    height: '70%',
-    zIndex: 0,
-    transform: [{ translateX: -0.5 * 0.7 * 300 }], // 300 is approx card width
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.md,
-    borderTopLeftRadius: theme.borderRadius.lg,
-    borderTopRightRadius: theme.borderRadius.lg,
-  },
-  headerIcon: {
-    ...theme.typography.subheader,
-    marginRight: theme.spacing.sm,
-  },
-  headerText: {
-    flex: 1,
-  },
-  pokemonName: {
-    ...theme.typography.header,
-    color: theme.colors.light.white,
-    marginBottom: 0,
-  },
-  buildType: {
-    ...theme.typography.copy,
-    color: theme.colors.light.white,
-    opacity: 0.9,
-  },
-  content: {
-    padding: theme.spacing.md,
-  },
-  sectionRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    marginBottom: theme.spacing.sm,
-  },
-  statLabel: {
-    ...theme.typography.copyBold,
-    marginRight: theme.spacing.sm,
-    color: theme.colors.light.brown,
-  },
-  statValue: {
-    ...theme.typography.copy,
-    color: theme.colors.light.text,
-    marginRight: theme.spacing.md,
-  },
-  evIvLabel: {
-    ...theme.typography.copyBold,
-    marginRight: theme.spacing.xs,
-    color: theme.colors.light.primary,
-  },
-  evIvValue: {
-    ...theme.typography.copy,
-    color: theme.colors.light.primary,
-    marginRight: theme.spacing.sm,
-  },
-  movesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: theme.spacing.xs,
-    marginBottom: theme.spacing.sm,
-  },
-  moveName: {
-    ...theme.typography.copy,
-    color: theme.colors.light.accent,
-    backgroundColor: theme.colors.light.background,
-    borderRadius: theme.borderRadius.sm,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    marginRight: theme.spacing.sm,
-    marginBottom: theme.spacing.xs,
-  },
-  roleText: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    marginTop: theme.spacing.xs,
-    marginBottom: theme.spacing.xs,
-  },
-  notesText: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    fontStyle: 'italic',
-    marginTop: theme.spacing.xs,
-  },
-});
+

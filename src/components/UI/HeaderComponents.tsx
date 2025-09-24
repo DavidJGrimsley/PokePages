@@ -1,8 +1,8 @@
 import { forwardRef } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Pressable, Text, Platform, StyleSheet } from 'react-native';
+import { Pressable, Text, Platform } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { theme } from 'constants/style/theme';
+import { cn } from '~/utils/cn';
 
 const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 const isWeb = Platform.OS === 'web';
@@ -11,16 +11,21 @@ const headerHeight = isMobile ? hp(10) : hp(9);
 interface HeaderButtonProps {
   onPress?: () => void;
   iconName?: keyof typeof FontAwesome.glyphMap;
+  className?: string;
 }
 
 interface HeaderTitleProps {
   title: string;
+  className?: string;
 }
 
 export const HeaderButton = forwardRef<typeof Pressable, HeaderButtonProps>(
-  ({ onPress, iconName = "info-circle" }, ref) => {
+  ({ onPress, iconName = "info-circle", className }, ref) => {
     return (
-      <Pressable onPress={onPress} className="mr-4">
+      <Pressable 
+        onPress={onPress} 
+        className={cn("mr-md", className)}
+      >
         {({ pressed }) => (
           <FontAwesome
             name={iconName}
@@ -36,18 +41,14 @@ export const HeaderButton = forwardRef<typeof Pressable, HeaderButtonProps>(
   }
 );
 
-// ✅ Reusable HeaderTitle component with web fallback fonts
-export const HeaderTitle = ({ title }: HeaderTitleProps) => (
+// ✅ Reusable HeaderTitle component using NativeWind typography classes
+export const HeaderTitle = ({ title, className }: HeaderTitleProps) => (
   <Text 
-    className={`text-white text-center pt-4`}
-    style={{
-      // Use our theme's display font (Modak) with outlined styling
-      ...(isMobile ? theme.typography.displayOutlinedMobile : theme.typography.displayOutlined),
-      // Extra safety for web: if Modak isn't available for any reason, fall back to Georgia/serif
-      ...(isWeb && {
-        fontFamily: 'Modak',
-      }),
-    }}
+    className={cn(
+      'text-center pt-md',
+      isMobile ? 'typography-display-outlined-mobile' : 'typography-display-outlined',
+      className
+    )}
   >
     {title}
   </Text>
@@ -56,43 +57,37 @@ export const HeaderTitle = ({ title }: HeaderTitleProps) => (
 HeaderButton.displayName = 'HeaderButton';
 HeaderTitle.displayName = 'HeaderTitle';
 
-export const styles = StyleSheet.create({
-  desktopDrawerStyle: {
-    margin: theme.spacing.sm,
-    backgroundColor: theme.colors.light.secondary,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    paddingTop: theme.spacing.sm,
-    paddingLeft: theme.spacing.md * 0.9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: theme.spacing.md,
-    minHeight: headerHeight - theme.spacing.sm * 2,
-  },
-  mobileDrawerStyle: {
-    margin: theme.spacing.sm,
-    backgroundColor: theme.colors.light.secondary,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.sm,
-    paddingTop: theme.spacing.md,
-    paddingLeft: theme.spacing.md * 0.9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: theme.spacing.sm,
-    minHeight: headerHeight - theme.spacing.xxl,
-  },
-  drawerToggleText: {
-    color: theme.colors.light.text,
-    fontSize: theme.typography.callToAction.fontSize * 2,
-    fontFamily: theme.typography.callToAction.fontFamily,
-    fontWeight: theme.typography.callToAction.fontWeight,
-  },
-  headerStyle: {
-    height: headerHeight,
-    backgroundColor: theme.colors.light.primary,
-    ...(isWeb && {
-      boxShadow: `0 2px 4px ${theme.colors.light.accent}40`,
-    }),
-  },
-});
+// Custom drawer toggle components using NativeWind
+export const DrawerToggleButton = ({ onPress, isMobile: isMobileDevice }: { onPress?: () => void; isMobile?: boolean }) => (
+  <Pressable 
+    onPress={onPress}
+    className={cn(
+      "m-sm bg-app-secondary rounded-md px-sm items-center justify-center",
+      isMobileDevice 
+        ? "pt-md min-h-16" // Equivalent to minHeight: headerHeight - theme.spacing.xxl
+        : "py-xs pt-sm min-h-20" // Equivalent to minHeight: headerHeight - theme.spacing.sm * 2
+    )}
+    style={{
+      paddingLeft: 14, // Equivalent to theme.spacing.md * 0.9
+      minWidth: isMobileDevice ? 8 : 16, // theme.spacing.sm : theme.spacing.md
+    }}
+  >
+    <Text className="typography-cta text-app-text" style={{ fontSize: 28 }}>☰</Text>
+  </Pressable>
+);
+
+// Header styles now handled by NativeWind classes
+export const headerStyle = {
+  height: headerHeight,
+  backgroundColor: '#582a5a', // app-primary color
+  ...(isWeb && {
+    boxShadow: `0 2px 4px #959F5C40`, // app-accent with 40 opacity
+  }),
+};
+
+// Export legacy styles as NativeWind classes for compatibility
+export const drawerStyles = {
+  desktop: "m-sm bg-app-secondary rounded-md px-sm py-xs pt-sm items-center justify-center min-w-md",
+  mobile: "m-sm bg-app-secondary rounded-md px-sm pt-md items-center justify-center min-w-sm",
+  text: "typography-cta text-app-text",
+};

@@ -1,10 +1,11 @@
 import { Text, type TextProps } from 'react-native';
 import { useThemeColor } from '~/hooks/useThemeColor';
+import { cn } from '~/utils/cn';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'display' | 'displayOutlined' | 'displayOutlinedMobile' | 'displayOutlinedReverse' | 'logo' | 'header' | 'subheader' | 'cta' | 'copy' | 'copyBold' | 'mono' | 'monoBold';
 };
 
 export function ThemedText({
@@ -17,27 +18,52 @@ export function ThemedText({
 }: ThemedTextProps & { className?: string }) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
-  // Define type-based classes using NativeWind
+  // Define type-based classes using NativeWind that match your theme.ts typography
   const getTypeClasses = (type: string) => {
     switch (type) {
+      case 'display':
+        return 'typography-display text-app-text';
+      case 'displayOutlined':
+        return 'typography-display-outlined';
+      case 'displayOutlinedMobile':
+        return 'typography-display-outlined-mobile';
+      case 'displayOutlinedReverse':
+        return 'typography-display-outlined-reverse';
+      case 'logo':
+        return 'typography-logo';
+      case 'header':
+        return 'typography-header text-app-text';
+      case 'subheader':
+        return 'typography-subheader text-app-text';
+      case 'cta':
+        return 'typography-cta text-app-text';
+      case 'copy':
+        return 'typography-copy text-app-text';
+      case 'copyBold':
+        return 'typography-copy-bold text-app-text';
+      case 'mono':
+        return 'typography-mono text-app-text';
+      case 'monoBold':
+        return 'typography-mono-bold text-app-text';
       case 'title':
-        return 'text-3xl font-bold leading-8 font-molle';
+        return 'typography-header text-app-text';
       case 'subtitle':
-        return 'text-xl font-bold font-roboto';
+        return 'typography-subheader text-app-text';
       case 'defaultSemiBold':
-        return 'text-base leading-6 font-semibold font-roboto';
+        return 'typography-copy-bold text-app-text';
       case 'link':
-        return 'text-base leading-7 text-app-primary font-roboto';
+        return 'typography-copy text-app-primary underline';
       default:
-        return 'text-base leading-6 font-roboto';
+        return 'typography-copy text-app-text';
     }
   };
 
   return (
     <Text
-      className={`text-app-text ${getTypeClasses(type)} ${className || ''}`}
+      className={cn(getTypeClasses(type), className)}
       style={[
-        { color },
+        // Only apply custom color if lightColor or darkColor is specified
+        (lightColor || darkColor) && { color },
         style,
       ]}
       {...rest}

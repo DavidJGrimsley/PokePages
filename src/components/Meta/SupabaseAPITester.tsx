@@ -1,9 +1,9 @@
 // Manual API test utility for Supabase 406 troubleshooting
 import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, Pressable, ScrollView, TextInput } from 'react-native';
 import { supabase } from 'utils/supabaseClient';
-import { theme } from 'constants/style/theme';
-import ErrorMessage from 'components/Meta/Error';
+// Inline an error card to avoid casing conflicts with shared Error component
+import { ThemedText } from 'components/TextTheme/ThemedText';
 
 export const SupabaseAPITester: React.FC = () => {
   const [results, setResults] = useState<string>('');
@@ -77,130 +77,66 @@ export const SupabaseAPITester: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Supabase API Diagnostics</Text>
+    <ScrollView className="flex-1 p-4 bg-app-background">
+      <ThemedText type="header" className="text-center mb-6">Supabase API Diagnostics</ThemedText>
       {errorMessage && (
-        <View style={{ marginVertical: theme.spacing.lg }}>
-          <ErrorMessage
-            title="API Test Error"
-            description="An error occurred during one of the Supabase API tests."
-            error={errorMessage}
-          />
+        <View className="my-6 bg-white border border-red-400 rounded-md p-4">
+          <View className="self-center p-2 bg-red-500 rounded-md mb-2">
+            <ThemedText type="subheader" className="text-white">API Test Error</ThemedText>
+          </View>
+          <ThemedText type="copy" className="text-center mb-2">
+            An error occurred during one of the Supabase API tests.
+          </ThemedText>
+          <ThemedText type="mono" className="text-red-600 text-xs">
+            {errorMessage}
+          </ThemedText>
         </View>
       )}
       
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Event ID (UUID):</Text>
+      <View className="mb-4">
+        <ThemedText type="copyBold" className="mb-1">Event ID (UUID):</ThemedText>
         <TextInput
-          style={styles.input}
+          className="border border-app-secondary rounded-md p-3 bg-white typography-copy"
           value={eventId}
           onChangeText={setEventId}
           placeholder="Enter event ID for testing"
         />
       </View>
       
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>User ID (UUID):</Text>
+      <View className="mb-4">
+        <ThemedText type="copyBold" className="mb-1">User ID (UUID):</ThemedText>
         <TextInput
-          style={styles.input}
+          className="border border-app-secondary rounded-md p-3 bg-white typography-copy"
           value={userId}
           onChangeText={setUserId}
           placeholder="Enter user ID for testing"
         />
       </View>
       
-      <View style={styles.buttonContainer}>
+      <View className="flex-row gap-4 mb-6">
         <Pressable
-          style={[styles.button, loading && styles.buttonDisabled]}
+          className={`flex-1 rounded-md items-center p-3 ${loading ? 'bg-amber-700/60' : 'bg-app-accent'}`}
           onPress={runManualAPITest}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>
+          <Text className="text-white typography-copy-bold">
             {loading ? 'Running Tests...' : 'Run API Tests'}
           </Text>
         </Pressable>
         
         <Pressable
-          style={[styles.button, styles.clearButton]}
+          className="flex-1 rounded-md items-center p-3 bg-red-600"
           onPress={clearResults}
         >
-          <Text style={styles.buttonText}>Clear Results</Text>
+          <Text className="text-white typography-copy-bold">Clear Results</Text>
         </Pressable>
       </View>
       
-      <View style={styles.resultsContainer}>
-        <Text style={styles.resultsTitle}>Test Results:</Text>
-        <Text style={styles.results}>{results}</Text>
+      <View className="bg-white rounded-md p-4 border border-app-secondary">
+        <ThemedText type="subheader" className="mb-4">Test Results:</ThemedText>
+        <Text className="font-mono text-app-text">{results}</Text>
       </View>
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.light.background,
-  },
-  title: {
-    ...theme.typography.header,
-    marginBottom: theme.spacing.lg,
-    textAlign: 'center',
-    color: theme.colors.light.text,
-  },
-  inputContainer: {
-    marginBottom: theme.spacing.md,
-  },
-  label: {
-    ...theme.typography.copyBold,
-    marginBottom: theme.spacing.xs,
-    color: theme.colors.light.text,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.light.secondary,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    ...theme.typography.copy,
-    backgroundColor: theme.colors.light.white,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: theme.spacing.md,
-    marginBottom: theme.spacing.lg,
-  },
-  button: {
-    flex: 1,
-    backgroundColor: theme.colors.light.accent,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
-  },
-  clearButton: {
-    backgroundColor: theme.colors.light.red,
-  },
-  buttonDisabled: {
-    backgroundColor: theme.colors.light.brown,
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: theme.colors.light.white,
-    ...theme.typography.copyBold,
-  },
-  resultsContainer: {
-    backgroundColor: theme.colors.light.white,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md,
-    borderWidth: 1,
-    borderColor: theme.colors.light.secondary,
-  },
-  resultsTitle: {
-    ...theme.typography.subheader,
-    marginBottom: theme.spacing.md,
-    color: theme.colors.light.text,
-  },
-  results: {
-    ...theme.typography.mono,
-    color: theme.colors.light.text,
-  },
-});

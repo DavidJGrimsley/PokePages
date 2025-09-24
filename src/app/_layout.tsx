@@ -1,3 +1,5 @@
+import '@/global.css';  // Add this at the very top
+
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, SplashScreen } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -31,8 +33,7 @@ import {
 
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
-import { HeaderTitle, styles } from 'components/UI/HeaderComponents';
-import { theme } from 'constants/style/theme';
+import { HeaderTitle, headerStyle } from 'components/UI/HeaderComponents';
 import Loading from 'components/Animation/LoadingAnim';
 
 const isWeb = Platform.OS === 'web';
@@ -94,7 +95,7 @@ export default function RootLayout() {
 
   if (!isHydrated) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.light.background }}>
+      <View className="flex-1 justify-center items-center bg-app-background">
         {/* <LottieView
           autoPlay={true}
           loop={true}
@@ -130,7 +131,7 @@ export default function RootLayout() {
               options={{ 
                 headerTitle: () => <HeaderTitle title="Event Disclaimer" />,
                 presentation: 'modal',
-                headerStyle: styles.headerStyle,
+                headerStyle: headerStyle,
               }} 
             />
             <Stack.Screen 
@@ -138,7 +139,7 @@ export default function RootLayout() {
               options={{ 
                 headerTitle: () => <HeaderTitle title="App Information" />,
                 presentation: 'modal',
-                headerStyle: styles.headerStyle,
+                headerStyle: headerStyle,
               }} 
             />
             <Stack.Screen 
@@ -146,7 +147,7 @@ export default function RootLayout() {
               options={{ 
                 headerTitle: () => <HeaderTitle title="Resources Info" />,
                 presentation: 'modal',
-                headerStyle: styles.headerStyle,
+                headerStyle: headerStyle,
               }} 
             />
             <Stack.Protected guard={!isLoggedIn}>
@@ -159,7 +160,7 @@ export default function RootLayout() {
                 options={{ 
                   headerTitle: () => <HeaderTitle title="Edit Profile" />,
                   presentation: 'modal',
-                  headerStyle: styles.headerStyle,
+                  headerStyle: headerStyle,
                 }} 
               />
             </Stack.Protected>

@@ -2,6 +2,126 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom Typography Classes - matching your theme.ts typography */
+@layer utilities {
+  /* Display Typography */
+  .typography-display {
+    font-family: 'Modak';
+    font-size: 56px;
+    font-weight: 400;
+  }
+  
+  .typography-display-outlined {
+    font-family: 'Modak';
+    font-size: 56px;
+    font-weight: 400;
+    color: rgba(251, 251, 251, 1);
+    text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
+  }
+  
+  .typography-display-outlined-mobile {
+    font-family: 'Modak';
+    font-size: 50px;
+    font-weight: 400;
+    color: rgba(251, 251, 251, 1);
+    text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
+  }
+  
+  .typography-display-outlined-reverse {
+    font-family: 'Modak';
+    font-size: 56px;
+    font-weight: 400;
+    color: rgba(20, 17, 21, 1);
+    text-shadow: 2px 2px 1px rgba(251, 251, 251, 1);
+  }
+  
+  .typography-logo {
+    font-family: 'PressStart2P';
+    font-size: 56px;
+    color: #582a5a;
+    text-shadow: 0 0 20px rgba(149, 159, 92, 1);
+  }
+  
+  /* Header Typography */
+  .typography-header {
+    font-family: 'RobotoSlab';
+    font-size: 28px;
+    font-weight: 600;
+  }
+  
+  .typography-subheader {
+    font-family: 'RobotoCondensed';
+    font-size: 20px;
+    font-weight: 500;
+  }
+  
+  /* Call to Action Typography */
+  .typography-cta {
+    font-family: 'PressStart2P';
+    font-size: 14px;
+    font-weight: 400;
+  }
+  
+  /* Copy Typography */
+  .typography-copy {
+    font-family: 'Roboto';
+    font-size: 16px;
+    font-weight: 400;
+  }
+  
+  .typography-copy-bold {
+    font-family: 'Roboto';
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  /* Mono Typography */
+  .typography-mono {
+    font-family: 'RobotoMono';
+    font-size: 14px;
+    font-weight: 400;
+  }
+  
+  .typography-mono-bold {
+    font-family: 'RobotoMono';
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* Shadow Presets */
+  .shadow-app-small {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .shadow-app-medium {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  }
+  
+  .shadow-app-large {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  }
+
+  /* Tab Bar Styles */
+  .tab-bar-style {
+    background-color: rgba(251, 251, 251, 1);
+    border-top-width: 5px;
+    border-top-color: #959F5C;
+    min-height: 56px;
+  }
+  
+  .tab-bar-label {
+    font-size: 12px;
+    font-weight: 600;
+  }
+  
+  /* Responsive variants for mobile web */
+  @media screen and (max-width: 768px) {
+    .tab-bar-style {
+      min-height: 64px;
+    }
+  }
+}
+
 /* Mobile web safe area handling */
 @media screen and (max-width: 768px) {
   body {

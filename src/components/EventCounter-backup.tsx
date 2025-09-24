@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions 
 } from "react-native";
+import { cn } from '~/utils/cn';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
@@ -19,9 +20,8 @@ import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 
 import { useAuthStore } from '~/store/authStore';
-import { getEventStatus } from '~/utils/helperFX';
-import ErrorMessage from '~/components/Meta/Error';
-import { cn } from '~/utils/cn';
+import { getEventStatus } from 'utils/helperFX';
+import ErrorMessage from 'components/Meta/Error';
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -57,6 +57,8 @@ interface EventCounterProps {
   maxRewards: number;
   colorScheme?: 'light' | 'dark';
 }
+
+
 
 export const EventCounter: React.FC<EventCounterProps> = ({
   pokemonName,
@@ -184,12 +186,26 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             return null;
           });
 
+        // Debug logs to help track down runtime errors on web
+        try {
+          console.log('loadPokemonData: fetched pokemon (id):', pokemonId);
+          console.log('loadPokemonData: pokemon object preview:', pokemon ? {
+            id: (pokemon as any).id,
+            name: (pokemon as any).name,
+            sprites: (pokemon as any).sprites ? 'hasSprites' : 'noSprites',
+          } : null);
+          console.log('loadPokemonData: pokemon.stats type:', typeof (pokemon as any)?.stats, 'isArray:', Array.isArray((pokemon as any)?.stats));
+        } catch (dbgErr) {
+          console.warn('loadPokemonData: debug logging failed:', dbgErr);
+        }
+
         if (!pokemon) {
           setPokemonImage('');
           setPokemonStats(null);
           return;
         }
        
+        
         const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_shiny || 
                           pokemon.sprites.front_shiny || 
                           pokemon.sprites.front_default || '';
@@ -424,8 +440,18 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     }
   };
 
+  // Check if event is active, upcoming, or ended
+  // const getEventStatus = () => {
+  //   const now = currentTime;
+  //   const start = new Date(startDate);
+  //   const end = new Date(endDate);
+    
+  //   if (now < start) return 'upcoming';
+  //   if (now > end) return 'ended';
+  //   return 'active';
+  // };
+
   const status = getEventStatus(startDate, endDate, distributionStart, distributionEnd);
-  
   // Get countdown text
   const getCountdownText = () => {
     const now = currentTime;
@@ -465,6 +491,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
   // Check if button should be disabled
   const isButtonDisabled = () => {
+    // const status = getEventStatus();
     return status !== 'active' || loading;
   };
 
@@ -481,6 +508,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         p_anonymous_id: !isLoggedIn && anonymousId ? anonymousId : null
       };
       
+      
       const { data, error } = await supabase.rpc('increment_counter', params);
       
       if (error) {
@@ -489,6 +517,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       }
 
       if (data) {
+        
         if (data.success) {
           // The function returns a JSON object
           const eventCounter = data.event_counter;
@@ -525,66 +554,67 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     return Math.min(bonusLevels, (maxRewards - targetCount) / 100000);
   };
 
+  // Add this inside your component or before making Supabase requests
+
   return (
     <ScrollView className="flex-1 bg-app-background" showsVerticalScrollIndicator={false}>
-      {/* Pokemon Image - using exact original styling */}
-      <View className="items-center my-sm h-[200px] justify-center">
+      {/* Pokemon Image */}
+      <View className="items-center my-lg h-50 justify-center">
         {imageLoading ? (
-          <LottieView
-            source={require('@/assets/lottie/stars.json')}
-            autoPlay
-            loop
-            style={{ width: 180, height: 180 }}
-          />
+          <View className="w-32 h-32">
+            <LottieView
+              source={require('@/assets/lottie/stars.json')}
+              autoPlay
+              loop
+              style={{ width: 128, height: 128 }}
+            />
+          </View>
         ) : pokemonImage ? (
           <Image 
             source={{ uri: pokemonImage }} 
-            style={{ width: 180, height: 180 }}  // Using exact original dimensions
+            className="w-32 h-32"
             resizeMode="contain"
           />
         ) : (
-          <View className="w-45 h-45 bg-app-secondary rounded-full justify-center items-center border-2 border-app-accent">
+          <View className="w-32 h-32 bg-app-secondary rounded-full justify-center items-center border-2 border-app-accent">
             <Text className="typography-copy text-app-brown text-center">{pokemonName}</Text>
           </View>
         )}
       </View>
-
-      {/* Show login prompt for better experience - using exact original styling */}
+      {/* Show login prompt for better experience */}
       {!isLoggedIn && (
         <Pressable onPress={() => router.push('/sign-in')}>
-          <View className="bg-app-background mx-lg my-sm p-md rounded-md border border-app-primary">
+          <View className="bg-app-accent/10 mx-lg my-md p-lg rounded-lg border border-app-accent">
             <Text className="typography-copy text-app-primary text-center">
               💡 Sign in to sync your progress across devices and get personalized stats!
             </Text>
           </View>
         </Pressable>
       )}
-
-      {/* Counter Display - using exact original styling */}
-      <View className="bg-app-white py-xs px-lg my-sm mx-lg rounded-md border border-app-secondary shadow-app-small">
-        <Text className="typography-header text-center text-app-accent mb-sm">
+      {/* Counter Display */}
+      <View className="bg-app-white py-lg px-xl my-lg mx-lg rounded-lg border border-app-secondary shadow-app-small">
+        <Text className="typography-header text-center text-app-accent mb-md text-4xl font-bold">
           Global Count: {globalCount.toLocaleString()}
         </Text>
-        <Text className="typography-subheader text-center text-app-primary mb-sm">
+        <Text className="typography-subheader text-center text-app-primary mb-md text-xl">
           Your Contributions: {userCount.toLocaleString()}
         </Text>
         {!isLoggedIn && anonymousId && (
-          <Text className="typography-mono text-app-brown text-center">
+          <Text className="typography-mono text-app-brown text-center text-sm">
             Anonymous ID: {anonymousId.slice(-8)}
           </Text>
         )}
         {isLoggedIn && anonymousId && (
-          <Text className="typography-mono text-app-brown text-center">
+          <Text className="typography-mono text-app-brown text-center text-sm">
             Anonymous ID: {anonymousId.slice(-8)}
           </Text>
         )}
         {lastUpdated && (
-          <Text className="typography-copy text-app-brown text-center mb-sm">
+          <Text className="typography-copy text-app-brown text-center mb-sm text-sm">
             Last updated: {new Date(lastUpdated).toLocaleString()}
           </Text>
         )}
       </View>
-
       {/* Display the Error Message component if there is an error */}
       {(pokemonError || eventError) && (
         <ErrorMessage 
@@ -593,20 +623,18 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           error={pokemonError || eventError}
         />
       )}
-
-      {/* Tera Type - using exact original styling */}
-      <View className="my-md flex-row justify-center">
-        <Text className="typography-header mb-md text-center text-app-text px-lg">
+      {/* Tera Type */}
+      <View className="my-lg mx-lg">
+        <Text className="typography-header text-center text-app-text text-2xl font-bold mb-md">
           {teraType} Tera Type
         </Text>
-        <Pressable onPress={() => setShowBaseStats(!showBaseStats)}>
-          <Text className="typography-copy-bold text-app-primary text-center my-sm">
+        <Pressable onPress={() => setShowBaseStats(!showBaseStats)} className="items-center">
+          <Text className="typography-copy-bold text-app-primary text-center">
             {showBaseStats ? 'Hide base stats' : 'Show base stats'}
           </Text>
         </Pressable>
       </View>
-
-      {/* Base Stats Section - using exact original styling with dynamic colors */}
+      {/* Base Stats Section */}
       {(pokemonStats && showBaseStats) && (
         <View className="bg-app-white my-md p-md rounded-md border border-app-secondary shadow-app-small self-center" style={{ width: getStatsContainerWidth() }}>
           <Text className="typography-subheader text-center text-app-text mb-md">Base Stats</Text>
@@ -639,16 +667,16 @@ export const EventCounter: React.FC<EventCounterProps> = ({
         </View>
       )}
 
-      {/* Congratulatory Banner - using exact original styling */}
+      {/* Congratulatory Banner */}
       {globalCount >= targetCount && (
         <View className={cn(
-          "my-md mx-lg p-lg rounded-md border-2 items-center",
+          "my-lg mx-lg p-xl rounded-xl border-2 items-center shadow-lg",
           globalCount >= maxRewards 
-            ? "bg-app-background border-app-secondary" 
-            : "bg-app-background border-app-accent"
+            ? "bg-orange-50 border-orange-300" 
+            : "bg-app-accent/10 border-app-accent"
         )}>
           <Text className={cn(
-            "typography-subheader text-center mb-md",
+            "typography-subheader text-center mb-lg text-xl font-bold",
             globalCount >= maxRewards ? "text-orange-600" : "text-app-accent"
           )}>
             🎉 {globalCount >= maxRewards ? 'MAXIMUM REWARDS UNLOCKED!' : 'MILESTONE REACHED!'} 🎉
@@ -678,30 +706,29 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           </View>
         </View>
       )}
-
-      {/* Progress Bar - using exact original styling */}
-      <View className="mx-lg my-md">
-        <View className="h-5 bg-app-secondary rounded-lg overflow-hidden">
+      {/* Progress Bar */}
+      <View className="mx-lg my-lg">
+        <View className="h-6 bg-app-secondary rounded-lg overflow-hidden border border-app-accent/30">
           <View 
-            className="h-full bg-app-accent rounded-lg"
+            className="h-full bg-app-accent rounded-lg transition-all duration-300"
             style={{ width: `${getProgressPercentage()}%` }}
           />
         </View>
-        <Text className="text-center mt-sm typography-copy-bold text-app-accent">
-          {getProgressPercentage().toFixed(3)}% Complete
+        <Text className="text-center mt-md typography-copy-bold text-app-accent text-lg">
+          {getProgressPercentage().toFixed(1)}% Complete
         </Text>
       </View>
-
-      {/* Error Message - using exact original styling */}
+      {/* Error Message */}
       {error && (
-        <Text className="typography-copy text-red-500 text-center my-md px-lg">{error}</Text>
+        <View className="mx-lg my-lg p-lg bg-red-50 border border-red-200 rounded-lg">
+          <Text className="typography-copy text-red-600 text-center">{error}</Text>
+        </View>
       )}
-
-      {/* Action Button - using exact original styling */}
-      <View className="items-center my-md">
+      {/* Action Button */}
+      <View className="items-center my-lg mx-lg">
         <Pressable
           className={cn(
-            "py-md px-xxl rounded-md mb-md min-w-[200px] items-center",
+            "py-lg px-xxl rounded-xl mb-lg min-w-[240px] items-center shadow-lg",
             isButtonDisabled() 
               ? "bg-app-brown opacity-60" 
               : "bg-app-accent"
@@ -710,7 +737,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           disabled={isButtonDisabled()}
         >
           <Text className={cn(
-            "text-app-white typography-cta",
+            "typography-cta text-app-white text-lg font-bold",
             isButtonDisabled() && "opacity-80"
           )}>
             {loading ? 'Updating...' : 
@@ -719,27 +746,28 @@ export const EventCounter: React.FC<EventCounterProps> = ({
              `Defeated ${pokemonName}`}
           </Text>
         </Pressable>
-        <Text className="typography-copy text-center mx-lg text-app-brown">{eventDescription}</Text>
+        <Text className="typography-copy text-center text-app-brown text-base leading-relaxed px-md">{eventDescription}</Text>
       </View>
-
-      {/* Event Status and Countdown - using exact original styling */}
+      {/* Event Status and Countdown */}
       <View className={cn(
-        "bg-app-white mx-lg my-md p-md rounded-md border-2 items-center shadow-app-small",
-        status === 'active' ? "border-app-accent bg-app-background" :
-        status === 'upcoming' ? "border-app-secondary bg-app-background" : 
-        "border-app-brown bg-app-background"
+        "mx-lg my-lg p-lg rounded-xl border-2 items-center shadow-app-small",
+        status === 'active' ? "border-app-accent bg-app-accent/10" :
+        status === 'upcoming' ? "border-app-secondary bg-app-secondary/10" : 
+        "border-app-brown bg-app-brown/10"
       )}>
-        <Text className="typography-subheader mb-sm text-app-text">
+        <Text className="typography-subheader mb-md text-app-text text-xl font-bold">
           {status === 'active' ? '🟢 EVENT ACTIVE' :
            status === 'upcoming' ? '🟡 UPCOMING EVENT' : '🔴 EVENT ENDED'}
         </Text>
-        <Text className="typography-copy-bold mb-sm text-app-text text-center">
+        <Text className="typography-copy-bold mb-md text-app-text text-center text-lg">
           {getCountdownText()}
         </Text>
-        <Text className="typography-copy text-app-brown text-center italic">
+        <Text className="typography-copy text-app-brown text-center italic text-sm">
           {formatUserFriendlyDate(startDate)} - {formatUserFriendlyDate(endDate)}
         </Text>
       </View>
     </ScrollView>
   );
 };
+
+

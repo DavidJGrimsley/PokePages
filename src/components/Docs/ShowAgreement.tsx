@@ -1,16 +1,8 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  Modal, 
-  Pressable, 
-  StyleSheet, 
-  SafeAreaView 
-} from 'react-native';
-
+import { View, Text, ScrollView, Modal, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import documentsData from 'constants/documents.json';
-import { theme } from 'constants/style/theme';
+import { ThemedText } from 'components/TextTheme/ThemedText';
 
 type AgreementType = 'termsOfService' | 'privacyPolicy';
 
@@ -41,114 +33,41 @@ export const ShowAgreement: React.FC<ShowAgreementProps> = ({
       visible={visible}
       animationType="slide"
       presentationStyle="pageSheet"
-      // onRequestClose={onClose}
     >
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>{getTitle()}</Text>
-          <Text style={styles.lastUpdated}>
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="p-6 border-b border-app-secondary bg-app-background relative">
+          <ThemedText type="header" className="text-center mb-1">
+            {getTitle()}
+          </ThemedText>
+          <ThemedText type="copy" className="text-amber-700 text-center mb-2">
             Last Updated: {agreement.lastUpdated}
-          </Text>
-          <Pressable style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>✕</Text>
+          </ThemedText>
+          <Pressable onPress={onClose} className="absolute top-4 right-4 w-8 h-8 rounded-md bg-app-secondary items-center justify-center">
+            <ThemedText type="subheader" className="text-amber-700">✕</ThemedText>
           </Pressable>
         </View>
         
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={true}>
-          <View style={styles.content}>
+        <ScrollView className="flex-1" showsVerticalScrollIndicator>
+          <View className="p-6">
             {agreement.sections.map((section, index) => (
-              <View key={index} style={styles.section}>
-                <Text style={styles.sectionTitle}>{section.title}</Text>
-                <Text style={styles.sectionContent}>{section.content}</Text>
+              <View key={index} className="mb-6">
+                <ThemedText type="subheader" className="mb-3 pb-2 border-b border-app-secondary">
+                  {section.title}
+                </ThemedText>
+                <ThemedText type="copy" className="text-amber-700">
+                  {section.content}
+                </ThemedText>
               </View>
             ))}
           </View>
         </ScrollView>
         
-        <View style={styles.footer}>
-          <Pressable style={styles.doneButton} onPress={onClose}>
-            <Text style={styles.doneButtonText}>Done</Text>
+        <View className="p-6 border-t border-app-secondary bg-app-background">
+          <Pressable onPress={onClose} className="bg-app-primary py-3 px-6 rounded-md items-center">
+            <Text className="text-white typography-copy-bold">Done</Text>
           </Pressable>
         </View>
       </SafeAreaView>
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.light.white,
-  },
-  header: {
-    padding: theme.spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.light.secondary,
-    backgroundColor: theme.colors.light.background,
-  },
-  headerTitle: {
-    ...theme.typography.header,
-    color: theme.colors.light.text,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xs,
-  },
-  lastUpdated: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: theme.spacing.lg,
-    right: theme.spacing.lg,
-    width: 32,
-    height: 32,
-    borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.light.secondary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.brown,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: theme.spacing.lg,
-  },
-  section: {
-    marginBottom: theme.spacing.lg,
-  },
-  sectionTitle: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.md,
-    paddingBottom: theme.spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.light.secondary,
-  },
-  sectionContent: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-  },
-  footer: {
-    padding: theme.spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.light.secondary,
-    backgroundColor: theme.colors.light.background,
-  },
-  doneButton: {
-    backgroundColor: theme.colors.light.primary,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
-  },
-  doneButtonText: {
-    color: theme.colors.light.white,
-    ...theme.typography.copyBold,
-  },
-});

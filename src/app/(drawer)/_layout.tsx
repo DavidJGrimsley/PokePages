@@ -3,7 +3,7 @@ import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { Pressable, Text, Platform, View } from 'react-native';
-import { HeaderButton, HeaderTitle, styles } from 'components/UI/HeaderComponents';
+import { HeaderButton, HeaderTitle, headerStyle, drawerStyles } from 'components/UI/HeaderComponents';
 import { theme } from 'constants/style/theme';
 import { useUserAge } from '~/hooks/useUserAge';
 
@@ -47,9 +47,9 @@ const DrawerLayout = () => {
     return (
       <Pressable
         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-        style={isMobile ? styles.mobileDrawerStyle : styles.desktopDrawerStyle}
+        className={isMobile ? drawerStyles.mobile : drawerStyles.desktop}
       >
-        <Text style={styles.drawerToggleText} numberOfLines={1}>
+        <Text className={drawerStyles.text} numberOfLines={1}>
           PP
         </Text>
       </Pressable>
@@ -99,7 +99,7 @@ const DrawerLayout = () => {
             </Link>
           ),
           headerTitleAlign: 'center',
-          headerStyle: styles.headerStyle,
+          headerStyle: headerStyle,
         }}
       />
       <Drawer.Screen
@@ -117,7 +117,7 @@ const DrawerLayout = () => {
             </Link>
           ),
           headerTitleAlign: 'center',
-          headerStyle: styles.headerStyle,
+          headerStyle: headerStyle,
           drawerItemStyle: {
             display: 'none'
           }
@@ -135,7 +135,7 @@ const DrawerLayout = () => {
             <Ionicons name="trophy-outline" size={iconSize} color={color} />
           ),
           headerTitleAlign: 'center',
-          headerStyle: styles.headerStyle,
+          headerStyle: headerStyle,
         }}
       />
       <Drawer.Screen
@@ -153,7 +153,7 @@ const DrawerLayout = () => {
             <MaterialIcons name="build" size={iconSize} color={color} />
           ),
           headerTitleAlign: 'center',
-          headerStyle: styles.headerStyle,
+          headerStyle: headerStyle,
         }}
       />
     </Drawer>

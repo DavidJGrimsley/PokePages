@@ -1,12 +1,12 @@
 import React from 'react';
 import { Stack, Link } from 'expo-router';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 import { eventConfig } from 'constants/eventConfig';
-import { theme } from 'constants/style/theme';
 import { getEventStatus } from 'utils/helperFX';
+import { cn } from '~/utils/cn';
 interface EventCardProps {
   title: string;
   description: string;
@@ -19,45 +19,45 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ title, description, href, status, startDate, endDate, distributionStartDate, distributionEndDate }) => {
-  const getStatusColor = () => {
+  const getStatusBgClass = () => {
     switch (status) {
-      case 'active': return theme.colors.light.green;
-      case 'distribution': return theme.colors.light.red;
-      case 'upcoming': return theme.colors.light.flag;
-      case 'ended': return theme.colors.light.brown;
-      case 'limbo': return theme.colors.light.primary;
-      default: return theme.colors.light.brown;
+      case 'active': return 'bg-green-500';
+      case 'distribution': return 'bg-red-500';
+      case 'upcoming': return 'bg-orange-500';
+      case 'ended': return 'bg-app-brown';
+      case 'limbo': return 'bg-app-primary';
+      default: return 'bg-app-brown';
     }
   };
 
   return (
     <Link href={href as any} asChild>
-      <Pressable style={styles.eventCard}>
-        <View style={styles.eventHeader}>
-          <Text style={styles.eventTitle}>{title}</Text>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor() }]}>
-            <Text style={styles.statusText}>
+      <Pressable className="bg-app-white rounded-lg p-md mb-md shadow-app-small border border-app-secondary">
+        <View className="flex-row justify-between items-start mb-sm">
+          <Text className="typography-subheader text-app-primary flex-1 mr-sm">{title}</Text>
+          <View className={cn("px-sm py-xs rounded-md min-w-[70px] items-center", getStatusBgClass())}>
+            <Text className="text-app-white text-xs font-bold">
               {status === 'active' ? 'ACTIVE' : status === 'distribution' ? 'CLAIM NOW!' : status === 'limbo' ? 'WAITING' : status === 'upcoming' ? 'UPCOMING' : 'ENDED'}
             </Text>
           </View>
         </View>
-        <Text style={styles.eventDescription}>{description}</Text>
+        <Text className="typography-copy text-app-secondary mb-xs">{description}</Text>
         {endDate && (
           <>
             {(status === 'upcoming') && (
-              <Text style={styles.endDate}>Raid starts: {startDate}</Text>
+              <Text className="typography-copy text-app-text italic">Raid starts: {startDate}</Text>
             )}
             {(status === 'active') && (
-              <Text style={styles.endDate}>Raid ends: {endDate}</Text>
+              <Text className="typography-copy text-app-text italic">Raid ends: {endDate}</Text>
             )}
             {status === 'limbo' && distributionStartDate && (
-              <Text style={styles.endDate}>Distribution Starts: {distributionStartDate}</Text>
+              <Text className="typography-copy text-app-text italic">Distribution Starts: {distributionStartDate}</Text>
             )}
             {status === 'distribution' && distributionEndDate && (
-              <Text style={styles.endDate}>Distribution Ends: {distributionEndDate}</Text>
+              <Text className="typography-copy text-app-text italic">Distribution Ends: {distributionEndDate}</Text>
             )}
             {status === 'ended' && (
-              <Text style={styles.endDate}>Event ended: {distributionEndDate}</Text>
+              <Text className="typography-copy text-app-text italic">Event ended: {distributionEndDate}</Text>
             )}
           </>
         )}
@@ -111,13 +111,12 @@ export default function EventsIndex() {
   return (
     <>
       <Stack.Screen options={{ title: 'Pokemon Events' }} />
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Participate in global Pokemon challenges and events!</Text>
-          
+      <ScrollView className="flex-1 bg-app-background">
+        <View className="p-lg pb-md">
+          <Text className="typography-header text-app-text mb-xs">Participate in global Pokemon challenges and events!</Text>
         </View>
 
-        <View style={styles.eventsContainer}>
+        <View className="px-lg">
           {events.map((event, index) => (
             <EventCard
               key={index}
@@ -134,94 +133,12 @@ export default function EventsIndex() {
         </View>
 
         {events.length === 0 && (
-          <View style={styles.noEvents}>
-            <Text style={styles.noEventsTitle}>No events available at the moment.</Text>
-            <Text style={styles.noEventsSubtitle}>Check back later for new Pokemon events!</Text>
+          <View className="p-xl items-center">
+            <Text className="typography-subheader text-app-brown text-center mb-xs">No events available at the moment.</Text>
+            <Text className="typography-copy text-app-brown text-center">Check back later for new Pokemon events!</Text>
           </View>
         )}
       </ScrollView>
     </>
   );
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.light.background,
-  },
-  header: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing.md,
-  },
-  title: {
-    ...theme.typography.header,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.xs,
-  },
-  subtitle: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-  },
-  eventsContainer: {
-    paddingHorizontal: theme.spacing.lg,
-  },
-  eventCard: {
-    backgroundColor: theme.colors.light.white,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.md,
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.small,
-    borderWidth: 1,
-    borderColor: theme.colors.light.secondary,
-  },
-  eventHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing.sm,
-  },
-  eventTitle: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.primary,
-    flex: 1,
-    marginRight: theme.spacing.sm,
-  },
-  statusBadge: {
-    paddingHorizontal: theme.spacing.sm,
-    paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.md,
-    minWidth: 70,
-    alignItems: 'center',
-  },
-  statusText: {
-    color: theme.colors.light.white,
-    fontSize: theme.fontSizes.xs,
-    fontWeight: 'bold',
-  },
-  eventDescription: {
-    ...theme.typography.copy,
-    color: theme.colors.light.secondary,
-    marginBottom: theme.spacing.xs,
-  },
-  endDate: {
-    ...theme.typography.copy,
-    color: theme.colors.light.text,
-    fontStyle: 'italic',
-  },
-  noEvents: {
-    padding: theme.spacing.xl,
-    alignItems: 'center',
-  },
-  noEventsTitle: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.brown,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xs,
-  },
-  noEventsSubtitle: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    textAlign: 'center',
-  },
-});

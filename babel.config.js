@@ -11,6 +11,8 @@ module.exports = function (api) {
       ],
       'nativewind/babel'
     ],
-    plugins: ['react-native-worklets/plugin'],
+    plugins: [
+      '@babel/plugin-proposal-export-namespace-from',
+      'react-native-worklets/plugin'],
   };
 };

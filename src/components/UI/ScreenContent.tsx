@@ -1,11 +1,6 @@
-import { StyleSheet, View, ScrollView } from 'react-native';
-
-import { theme } from 'constants/style/theme';
+import { View, ScrollView } from 'react-native';
 import { PrettyText } from 'components/TextTheme/PrettyText';
 
-
-
- 
 type ScreenContentProps = {
   title: string;
   path: string;
@@ -14,33 +9,11 @@ type ScreenContentProps = {
 
 export const ScreenContent = ({ title, path, children }: ScreenContentProps) => {
   return (
-    <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.container}>
+    <ScrollView className="flex-1" contentContainerClassName="items-center bg-app-background flex-grow justify-center py-6">
       <PrettyText text={title} />
-      <View style={styles.separator} />
+      <View className="bg-app-secondary h-px my-6 w-4/5" />
       {children}
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-  },
-  container: {
-    alignItems: 'center',
-    backgroundColor: theme.colors.light.background,
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.lg,
-  },
-  separator: {
-    backgroundColor: theme.colors.light.secondary,
-    height: 1,
-    marginVertical: theme.spacing.lg,
-    width: '80%',
-  },
-  title: {
-    ...theme.typography.header,
-    color: theme.colors.light.text,
-  },
-});

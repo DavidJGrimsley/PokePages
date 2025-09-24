@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { BuildVariant } from '~/types/builds';
 import { Build } from 'components/Build';
-import { theme } from 'constants/style/theme';
+import { cn } from '~/utils/cn';
 
 interface CounterBuildData {
   pokemonName: string;
@@ -53,15 +53,15 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
   }
 
   return (
-    <View style={styles.buildsSection}>
-      <Text style={styles.buildsTitle}>
-        Best <Text style={styles.attacker}>Attacker</Text>
+    <View className="mt-lg mb-xxl mx-auto max-w-[1000px] w-[90%] self-center">
+      <Text className="typography-subheader text-4xl text-center mb-lg text-app-text">
+        Best <Text className="text-app-red">Attacker</Text>
         {' & '}
-        <Text style={styles.defender}>Defender</Text>
+        <Text className="text-app-accent">Defender</Text>
         {bossPokemonName ? ' Tera Raid Builds for ' : ' Tera Raid Builds'}
         {bossPokemonName}
       </Text>
-      <Text style={styles.buildsCaption}>
+      <Text className="typography-copy text-center text-app-brown">
         {bossPokemonName 
           ? `Here are the best Tera Raid counters and optimal builds for defeating ${bossPokemonName} in Pokémon Scarlet & Violet. These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.`
           : 'Here are the best counters for most Tera Raid bosses! These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.'
@@ -70,7 +70,7 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
 
       {attackerBuilds.length > 0 && (
         <View>
-          <Text style={[styles.subSectionTitle, styles.attacker]}>
+          <Text className="typography-header mb-md mt-md text-left text-app-red">
             Best Attacker Builds & Counters
           </Text>
           {attackerBuilds.map((build, index) => (
@@ -98,7 +98,7 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
 
       {defenderBuilds.length > 0 && (
         <View>
-          <Text style={[styles.subSectionTitle, styles.defender]}>
+          <Text className="typography-header mb-md mt-md text-left text-app-accent">
             Best Defender Builds & Tank Strategies
           </Text>
           {defenderBuilds.map((build, index) => (
@@ -124,50 +124,9 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
         </View>
       )}
 
-      <View style={styles.separator} />
+      <View className="h-0.5 bg-app-secondary my-md w-3/5 self-center rounded-sm" />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  buildsSection: {
-    marginTop: theme.spacing.lg,
-    marginBottom: theme.spacing.xxl,
-    marginHorizontal: 'auto',
-    maxWidth: 1000,
-    width: '90%',
-    alignSelf: 'center',
-  },
-  buildsTitle: {
-    ...theme.typography.subheader,
-    fontSize: theme.fontSizes.xxxl,
-    textAlign: 'center',
-    marginBottom: theme.spacing.lg,
-    color: theme.colors.light.text,
-  },
-  buildsCaption: {
-    ...theme.typography.copy,
-    textAlign: 'center',
-    color: theme.colors.light.brown,
-  },
-  attacker: {
-    color: theme.colors.light.red,
-  },
-  defender: {
-    color: theme.colors.light.accent,
-  },
-  subSectionTitle: {
-    ...theme.typography.header,
-    marginBottom: theme.spacing.md,
-    marginTop: theme.spacing.md,
-    textAlign: 'left',
-  },
-  separator: {
-    height: 2,
-    backgroundColor: theme.colors.light.secondary,
-    marginVertical: theme.spacing.md,
-    width: '60%',
-    alignSelf: 'center',
-    borderRadius: theme.borderRadius.sm,
-  },
-});
+

@@ -1,59 +1,56 @@
 
 import { Stack, useRouter } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Button } from "components/UI/Button";
 import { PrettyText } from 'components/TextTheme/PrettyText';
-import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
-const { colors, fontSizes, spacing } = Theme;
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
   
   return (
-  <View style={styles.container}>
+    <View className="flex-1 bg-app-background p-lg">
       <Stack.Screen options={{ title: '' }} />
       <StatusBar style="auto" />
       
-      <View style={styles.content}>
+      <View className="flex-1 items-center py-xl">
         {/* <Image 
           source={require('@/assets/icon.png')} 
-          style={styles.logo}
+          className="w-[120px] h-[120px] mb-lg shadow-app-large"
           resizeMode="contain"
-        
         /> */}
-        <Text style={styles.title}>Welcome to</Text>
+        <Text className="typography-header text-app-text text-center mb-sm">Welcome to</Text>
         <PrettyText text="Poké Pages" />
-        <Text style={styles.subtitle}>
+        <Text className="typography-header text-app-secondary text-center mb-xl leading-6">
           Your ultimate (unofficial) Pokémon companion
         </Text>
         
-        {/* <View style={styles.featuresContainer}>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>⚔️</Text>
-            <Text style={styles.featureText}>Counter Builds & Strategies</Text>
+        {/* <View className="w-full mb-xl">
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center">⚔️</Text>
+            <Text className="typography-copy-bold text-app-primary flex-1">Counter Builds & Strategies</Text>
           </View>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>📊</Text>
-            <Text style={styles.featureText}>Community Event Counters</Text>
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center">📊</Text>
+            <Text className="typography-copy-bold text-app-primary flex-1">Community Event Counters</Text>
           </View>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>🎯</Text>
-            <Text style={styles.featureText}>Raid Resources & Guides</Text>
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center">🎯</Text>
+            <Text className="typography-copy-bold text-app-primary flex-1">Raid Resources & Guides</Text>
           </View>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>👥</Text>
-            <Text style={styles.featureText}>Connect with Trainers</Text>
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center">👥</Text>
+            <Text className="typography-copy-bold text-app-primary flex-1">Connect with Trainers</Text>
           </View>
-        </View>
-         */}
-        <Text style={styles.description}>
+        </View> */}
+        
+        <Text className="typography-copy text-app-text text-center leading-6 px-lg">
           Join thousands of trainers tracking legendary events, sharing strategies, 
           and building the ultimate raid teams. Let&apos;s catch &apos;em all together!
         </Text>
       </View>
       
-      <View style={styles.footer}>
+      <View className="py-lg">
         <Button 
           title="Get Started" 
           onPress={() => {
@@ -65,66 +62,4 @@ export default function OnboardingWelcomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.light.background,
-    padding: spacing.lg,
-    // alignItems: 'center',
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: spacing.lg,
-    ...shadows.large,
-  },
-  title: {
-    ...typography.header,
-    color: colors.light.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.header,
-    color: colors.light.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: lineHeights.subheader,
-  },
-  featuresContainer: {
-    width: '100%',
-    marginBottom: spacing.xl,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  featureEmoji: {
-    fontSize: fontSizes.header,
-    marginRight: spacing.md,
-    width: 32,
-    textAlign: 'center',
-  },
-  featureText: {
-    ...typography.copyBold,
-    color: colors.light.primary,
-    flex: 1,
-  },
-  description: {
-    ...typography.copy,
-    color: colors.light.text,
-    textAlign: 'center',
-    lineHeight: lineHeights.copy,
-    paddingHorizontal: spacing.lg,
-  },
-  footer: {
-    paddingVertical: spacing.lg,
-  },
-});
+

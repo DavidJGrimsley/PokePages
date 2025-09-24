@@ -1,15 +1,11 @@
 import { Stack, useRouter } from 'expo-router';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
 
 import { Button } from "components/UI/Button";
-import { PrettyText } from 'components/TextTheme/PrettyText';
 import { ShowAgreement } from 'components/Docs/ShowAgreement';
 import { useOnboardingStore } from "~/store/onboardingStore";
-
-const { colors, fontSizes, spacing } = Theme;
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
@@ -37,73 +33,72 @@ export default function OnboardingWelcomeScreen() {
 
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-app-background p-lg">
       <Stack.Screen options={{ title: '' }} />
       <StatusBar style="auto" />
       
-      <View style={styles.content}>
+      <View className="flex-1 items-center justify-center py-xl">
         {/* <Image 
           source={require('@/assets/favicon.png')} 
-          style={styles.logo}
+          className="w-[40%] h-[40%] mb-lg shadow-app-large"
           resizeMode="contain"
         /> */}
-        {/* <PrettyText text="Poké Pages" /> */}
         
-        <Text style={styles.title}>Legal Agreements</Text>
+        <Text className="typography-header text-app-text mb-md text-center">Legal Agreements</Text>
         
-        <Text style={styles.subtitle}>
+        <Text className="typography-subheader text-app-secondary mb-md text-center leading-6">
           Before we begin, please review and accept our terms
         </Text>
         
-        <View style={styles.agreementContainer}>
-          <View style={styles.agreementItem}>
-            <Text style={styles.agreementText}>Terms of Service</Text>
+        <View className="w-full mb-xl">
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-copy-bold text-app-primary flex-1">Terms of Service</Text>
             <Button
               title={hasAcceptedTerms ? "Accepted" : "Review & Accept"}
               onPress={() => setShowTermsModal(true)}
-              style={
-                hasAcceptedTerms
-                  ? [styles.agreementButton, styles.acceptedButton]
-                  : [styles.agreementButton]
-              }
+              style={{
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 8,
+                backgroundColor: hasAcceptedTerms ? '#6366F1' : '#582a5a'
+              }}
             />
           </View>
 
-          <View style={styles.agreementItem}>
-            <Text style={styles.agreementText}>Privacy Policy</Text>
+          <View className="flex-row items-center mb-md px-lg">
+            <Text className="typography-copy-bold text-app-primary flex-1">Privacy Policy</Text>
             <Button
               title={hasAcceptedPrivacy ? "Accepted" : "Review & Accept"}
               onPress={() => setShowPrivacyModal(true)}
-              style={
-                hasAcceptedPrivacy
-                  ? [styles.agreementButton, styles.acceptedButton]
-                  : [styles.agreementButton]
-              }
+              style={{
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 8,
+                backgroundColor: hasAcceptedPrivacy ? '#6366F1' : '#582a5a'
+              }}
             />
           </View>
         </View>
 
         {canContinue && (
-          <View style={styles.successContainer}>
-            <Text style={styles.successText}>
+          <View className="bg-app-accent rounded-lg p-md items-center mt-sm">
+            <Text className="typography-copy-bold text-app-text text-center">
               🎉 Great! You&apos;re all set to continue
             </Text>
           </View>
         )}
       </View>
       
-      <View style={styles.footer}>
+      <View className="py-lg">
         <Button 
           title="Continue"
           disabled={!canContinue}
           onPress={() => {
             router.push('/final');
           }}
-          style={ 
-            !canContinue
-              ? [styles.continueButton, styles.disabledButton]
-              : [styles.continueButton]
-          }
+          style={{ 
+            backgroundColor: !canContinue ? '#ccc' : '#582a5a'
+          }}
         />
       </View>
 
@@ -127,81 +122,4 @@ export default function OnboardingWelcomeScreen() {
 
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.light.background,
-    padding: spacing.lg,
-  },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.xl,
-  },
-  logo: {
-    width: '40%',
-    height: '40%',
-    marginBottom: spacing.lg,
-    ...shadows.large,
-  },
-  title: {
-    ...typography.header,
-    color: colors.light.text,
-    marginBottom: spacing.md,
-    textAlign: 'center',
-  },
-  subtitle: {
-    ...typography.subheader,
-    color: colors.light.secondary,
-    marginBottom: spacing.md,
-    textAlign: 'center',
-    lineHeight: lineHeights.subheader,
-  },
-  agreementContainer: {
-    width: '100%',
-    marginBottom: spacing.xl,
-  },
-  agreementItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  agreementText: {
-    ...typography.copyBold,
-    color: colors.light.primary,
-    flex: 1,
-  },
-  agreementButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: 8,
-    backgroundColor: colors.light.flag,
-    color: colors.light.white,
-  },
-  acceptedButton: {
-    backgroundColor: colors.light.accent,
-  },
-  successContainer: {
-    backgroundColor: colors.light.accent,
-    borderRadius: 8,
-    padding: spacing.md,
-    alignItems: 'center',
-    marginTop: spacing.sm,
-  },
-  successText: {
-    ...typography.copyBold,
-    color: colors.light.text,
-    textAlign: 'center',
-  },
-  footer: {
-    paddingVertical: spacing.lg,
-  },
-  continueButton: {
-    backgroundColor: colors.light.primary,
-  },
-  disabledButton: {
-    backgroundColor: colors.light.red || '#ccc',
-  },
-});
+

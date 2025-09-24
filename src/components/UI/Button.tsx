@@ -1,18 +1,39 @@
 import { forwardRef } from 'react';
 import { Text, TouchableOpacity, TouchableOpacityProps, Pressable, PressableProps, View, ViewStyle } from 'react-native';
-import { cn } from 'utils/cn';
+import { cn } from '~/utils/cn';
 
 type ButtonProps = {
   title?: string;
-  variant?: 'touch' | 'press';
+  variant?: 'touch' | 'press' | 'primary' | 'secondary' | 'accent';
   style?: ViewStyle | ViewStyle[] | ((state: { pressed: boolean }) => ViewStyle | ViewStyle[]);
   className?: string;
 } & Omit<(TouchableOpacityProps | PressableProps), 'style' | 'className'>;
 
-export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch', style, className, ...touchableProps }, ref) => {
-  const baseClassName = "items-center bg-purple-900 rounded-lg flex-row justify-center p-4 shadow-lg";
+export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'primary', style, className, ...touchableProps }, ref) => {
+  // Define variant-based classes that match your design system
+  const getVariantClasses = (variant: string) => {
+    switch (variant) {
+      case 'primary':
+        return 'bg-app-primary shadow-app-medium';
+      case 'secondary':
+        return 'bg-app-secondary shadow-app-medium';
+      case 'accent':
+        return 'bg-app-accent shadow-app-medium';
+      case 'touch':
+      case 'press':
+      default:
+        return 'bg-app-primary shadow-app-medium';
+    }
+  };
 
-  if (variant === 'press') {
+  const baseClassName = cn(
+    'items-center rounded-lg flex-row justify-center p-md',
+    getVariantClasses(variant)
+  );
+
+  const textClassName = 'typography-cta text-app-white text-center';
+
+  if (variant === 'press' || (!['primary', 'secondary', 'accent'].includes(variant))) {
     return (
       <Pressable 
         ref={ref} 
@@ -24,7 +45,7 @@ export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch',
         )}
         className={cn(baseClassName, className)}
       >
-        <Text className="color-white text-center font-mono text-xs">{title}</Text>
+        <Text className={textClassName}>{title}</Text>
       </Pressable>
     );
   }
@@ -36,7 +57,7 @@ export const Button = forwardRef<View, ButtonProps>(({ title, variant = 'touch',
       style={typeof style === 'function' ? undefined : style}
       className={cn(baseClassName, className)}
     >
-      <Text className="color-white text-center font-mono text-xs">{title}</Text>
+      <Text className={textClassName}>{title}</Text>
     </TouchableOpacity>
   );
 });

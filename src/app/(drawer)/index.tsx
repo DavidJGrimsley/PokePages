@@ -1,11 +1,10 @@
 import { Stack, Link } from 'expo-router';
 import { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable } from 'react-native';
 
 import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
-import { theme } from 'constants/style/theme';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -53,11 +52,9 @@ export default function Home() {
     <>
       <Stack.Screen options={{ title: 'Poké Pages' }} />
       <Container>
-        <ScrollView contentContainerStyle={styles.container}>
-          
-
-          <View style={styles.newsSection}>
-            <Text style={styles.sectionTitle}>🎉 Latest Features</Text>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }}>
+          <View className="p-lg bg-app-white">
+            <Text className="typography-header text-app-text mb-md">🎉 Latest Features</Text>
             
             {/* Featured newest feature */}
             <NewestFeature
@@ -66,36 +63,35 @@ export default function Home() {
               path="/(drawer)/resources/top50"
             />
 
-            <Text style={styles.sectionTitle}>🎉 Latest Events</Text>
+            <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>
             
             {/* Multiple Active Event Buttons */}
             {activeCounterEvents.map((event) => (
               <Link key={event.key} href={event.href} asChild>
-                <Pressable style={styles.featuredButton}>
-                  <Text style={styles.featuredButtonText}>{event.buttonText}</Text>
-                  <Text style={styles.featuredButtonSubtext}>Click to contribute to the global counter</Text>
+                <Pressable className="bg-red-500 py-lg px-lg rounded-lg items-center mt-md mb-sm shadow-app-medium">
+                  <Text className="typography-cta text-app-white text-center mb-xs">{event.buttonText}</Text>
+                  <Text className="typography-copy text-app-white text-center opacity-90">Click to contribute to the global counter</Text>
                 </Pressable>
               </Link>
             ))}
            
-
             <Link href="/(drawer)/events" asChild>
-              <Pressable style={styles.eventsButton}>
-                <Text style={styles.eventsButtonText}>View All Events</Text>
+              <Pressable className="bg-app-secondary py-md px-lg rounded-md items-center mt-sm">
+                <Text className="typography-cta text-app-white">View All Events</Text>
               </Pressable>
             </Link>
             
-            <Text style={styles.sectionTitle}>🎉 Latest News</Text>
+            <Text className="typography-header text-app-text mb-md">🎉 Latest News</Text>
           
             {/* Dynamic News Cards for Active Events */}
             {activeCounterEvents.map((event) => (
-              <View key={event.key} style={styles.newsCard}>
-                <Text style={styles.newsTitle}>{event.pokemonName} Global Challenge is LIVE!</Text>
-                <Text style={styles.newsContent}>
+              <View key={event.key} className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
+                <Text className="typography-subheader text-app-text mb-sm">{event.pokemonName} Global Challenge is LIVE!</Text>
+                <Text className="typography-copy text-app-brown mb-sm">
                   Join trainers worldwide in defeating {event.pokemonName} to unlock special Mystery Gift rewards. 
                   We need {event.targetCount.toLocaleString()} defeats by the event deadline!
                 </Text>
-                <Text style={styles.newsDate}>
+                <Text className="text-xs text-red-500 font-medium">
                   Active until {formatEventDate(event.endDate)}
                 </Text>
               </View>
@@ -103,53 +99,53 @@ export default function Home() {
 
             {/* Static fallback if no active events */}
             {activeCounterEvents.length === 0 && (
-              <View style={styles.newsCard}>
-                <Text style={styles.newsTitle}>Treasures of Ruin Event Series</Text>
-                <Text style={styles.newsContent}>
+              <View className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
+                <Text className="typography-subheader text-app-text mb-sm">Treasures of Ruin Event Series</Text>
+                <Text className="typography-copy text-app-brown mb-sm">
                   No events are currently active. Check back for new events featuring the legendary Treasures of Ruin!
                 </Text>
-                <Text style={styles.newsDate}>Check back soon!</Text>
+                <Text className="text-xs text-red-500 font-medium">Check back soon!</Text>
               </View>
             )}
 
-            <View style={styles.newsCard}>
-              <Text style={styles.newsTitle}>Treasures of Ruin Event Series</Text>
-              <Text style={styles.newsContent}>
+            <View className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
+              <Text className="typography-subheader text-app-text mb-sm">Treasures of Ruin Event Series</Text>
+              <Text className="typography-copy text-app-brown mb-sm">
                 Four legendary Pokemon challenges featuring Wo-Chien, Chien-Pao, Ting-Lu, and Chi-Yu! 
                 Each event runs for two weeks with different Tera Types and special rewards.
               </Text>
-              <Text style={styles.newsDate}>Ongoing Series</Text>
+              <Text className="text-xs text-red-500 font-medium">Ongoing Series</Text>
             </View>
           </View>
 
-          <View style={styles.featuresSection}>
-            <Text style={styles.sectionTitle}>🌟 Features</Text>
+          <View className="p-lg bg-app-background">
+            <Text className="typography-header text-app-text mb-md">🌟 Features</Text>
             
-            <View style={styles.featureGrid}>
-              <View style={styles.featureCard}>
-                <Text style={styles.featureTitle}>Global Counters</Text>
-                <Text style={styles.featureText}>
+            <View className="flex-row flex-wrap justify-between">
+              <View className="bg-app-white p-md rounded-lg w-[48%] mb-md shadow-app-small">
+                <Text className="typography-subheader text-app-text mb-sm">Global Counters</Text>
+                <Text className="text-xs text-app-brown">
                   Track community progress on Pokemon defeat challenges with real-time counters
                 </Text>
               </View>
               
-              <View style={styles.featureCard}>
-                <Text style={styles.featureTitle}>Event Updates</Text>
-                <Text style={styles.featureText}>
+              <View className="bg-app-white p-md rounded-lg w-[48%] mb-md shadow-app-small">
+                <Text className="typography-subheader text-app-text mb-sm">Event Updates</Text>
+                <Text className="text-xs text-app-brown">
                   Stay informed about the latest Pokemon events and distribution news
                 </Text>
               </View>
               
-              <View style={styles.featureCard}>
-                <Text style={styles.featureTitle}>Battle Strategies</Text>
-                <Text style={styles.featureText}>
+              <View className="bg-app-white p-md rounded-lg w-[48%] mb-md shadow-app-small">
+                <Text className="typography-subheader text-app-text mb-sm">Battle Strategies</Text>
+                <Text className="text-xs text-app-brown">
                   Get tips and team recommendations for event Pokemon battles
                 </Text>
               </View>
               
-              <View style={styles.featureCard}>
-                <Text style={styles.featureTitle}>Community Driven</Text>
-                <Text style={styles.featureText}>
+              <View className="bg-app-white p-md rounded-lg w-[48%] mb-md shadow-app-small">
+                <Text className="typography-subheader text-app-text mb-sm">Community Driven</Text>
+                <Text className="text-xs text-app-brown">
                   Join thousands of trainers working together towards common goals
                 </Text>
               </View>
@@ -161,112 +157,4 @@ export default function Home() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 0,
-  },
-  header: {
-    backgroundColor: theme.colors.light.primary,
-    padding: theme.spacing.lg,
-    alignItems: 'center',
-  },
-  title: {
-    ...theme.typography.header,
-    color: theme.colors.light.white,
-    marginBottom: theme.spacing.sm,
-    textAlign: 'center',
-  },
-  newsSection: {
-    padding: theme.spacing.lg,
-    backgroundColor: theme.colors.light.white,
-  },
-  sectionTitle: {
-    ...theme.typography.header,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.md,
-  },
-  newsCard: {
-    backgroundColor: theme.colors.light.background,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: theme.spacing.md,
-    borderLeftWidth: 4,
-    borderLeftColor: theme.colors.light.red,
-  },
-  newsTitle: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.sm,
-  },
-  newsContent: {
-    ...theme.typography.copy,
-    color: theme.colors.light.brown,
-    marginBottom: theme.spacing.sm,
-  },
-  newsDate: {
-    fontSize: theme.fontSizes.xs,
-    color: theme.colors.light.red,
-    fontWeight: '500',
-  },
-  eventsButton: {
-    backgroundColor: theme.colors.light.secondary,
-    paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.borderRadius.md,
-    alignItems: 'center',
-    marginTop: theme.spacing.sm,
-  },
-  eventsButtonText: {
-    ...theme.typography.callToAction,
-    color: theme.colors.light.white,
-  },
-  featuredButton: {
-    backgroundColor: theme.colors.light.red,
-    paddingVertical: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.lg,
-    borderRadius: theme.borderRadius.lg,
-    alignItems: 'center',
-    marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm,
-    ...theme.shadows.medium,
-  },
-  featuredButtonText: {
-    ...theme.typography.callToAction,
-    color: theme.colors.light.white,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xs,
-  },
-  featuredButtonSubtext: {
-    ...theme.typography.copy,
-    color: theme.colors.light.white,
-    textAlign: 'center',
-    opacity: 0.9,
-  },
-  featuresSection: {
-    padding: theme.spacing.lg,
-    backgroundColor: theme.colors.light.background,
-  },
-  featureGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  featureCard: {
-    backgroundColor: theme.colors.light.white,
-    padding: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-    width: '48%',
-    marginBottom: theme.spacing.md,
-    ...theme.shadows.small,
-  },
-  featureTitle: {
-    ...theme.typography.subheader,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.sm,
-  },
-  featureText: {
-    fontSize: theme.fontSizes.xs,
-    color: theme.colors.light.brown,
-  },
-});
+

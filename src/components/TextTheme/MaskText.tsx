@@ -1,56 +1,26 @@
 import React from 'react';
-import { theme } from 'constants/style/theme';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 export function MaskText({ text }: { text: string }) {
   return (
-    <View style={styles.container}>
+    <View className="h-[140px] w-full">
       <MaskedView
-        style={styles.maskedView}
+        style={{ flex: 1, flexDirection: 'row' }}
         maskElement={
-          <View style={styles.maskContainer}>
-            <Text style={[theme.typography.display, styles.maskText]}>{text}</Text>
+          <View className="bg-transparent flex-1 items-center justify-center">
+            <Text className="typography-display text-center">{text}</Text>
           </View>
         }
       >
         {/* Content shown through the text mask: three colored panels side-by-side */}
-        <View style={styles.row}>
-          <View style={[styles.box, { backgroundColor: '#f00' }]} />
-          <View style={[styles.box, { backgroundColor: '#0f0' }]} />
-          <View style={[styles.box, { backgroundColor: '#00f' }]} />
+        <View className="flex-1 flex-row">
+          <View className="flex-1 bg-red-500" />
+          <View className="flex-1 bg-green-500" />
+          <View className="flex-1 bg-blue-500" />
         </View>
       </MaskedView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // Give the masked example an explicit height so it renders predictably
-    height: 140,
-    width: '100%',
-  },
-  maskedView: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  maskContainer: {
-    // Transparent background because mask is based on alpha channel
-    backgroundColor: 'transparent',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  maskText: {
-    textAlign: 'center',
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  box: {
-    flex: 1,
-  },
-});
 

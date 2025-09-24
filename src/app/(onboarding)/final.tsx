@@ -1,17 +1,13 @@
 import { Stack, router } from 'expo-router';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import Theme, { typography, shadows, lineHeights } from 'constants/style/theme';
+import { View, Text, Image, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRef, useState, useCallback } from 'react';
-
 
 import { Button } from 'components/UI/Button';
 import { useOnboardingStore } from '~/store/onboardingStore';
 import { useAuthStore } from '~/store/authStore';
 
 import { PrettyText } from 'components/TextTheme/PrettyText';
-
-const { colors, fontSizes, spacing } = Theme;
 export default function OnboardingFinalScreen() {
   const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
   const { isLoggedIn } = useAuthStore();
@@ -35,63 +31,69 @@ export default function OnboardingFinalScreen() {
 
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-app-background p-lg">
       <Stack.Screen options={{ title: '' }} />
       <StatusBar style="auto" />
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
+        className="flex-1 w-full"
+        contentContainerStyle={{ 
+          flexGrow: 1, 
+          alignItems: 'center', 
+          justifyContent: 'space-around', 
+          paddingVertical: 32, // xl spacing
+          width: '100%' 
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* <Image 
           source={require('@/assets/icon.png')} 
-          style={styles.logo}
+          className="w-[100px] h-[100px] mb-lg shadow-app-large"
           resizeMode="contain"
         /> */}
         {/* <PrettyText text="Poké Pages" /> */}
-        <Text style={styles.title}>You&apos;re All Set!</Text>
-        <Text style={styles.subtitle}>
+        <Text className="typography-header text-app-text text-center mb-sm">You&apos;re All Set!</Text>
+        <Text className="typography-subheader text-app-secondary text-center mb-xl leading-tight">
           Welcome to the Poké Pages community, trainer!
           {'\n'}
           Here you will find all sorts of helpful tools for your Pokémon journey including: 
         </Text>
-        <View style={styles.featuresContainer}>
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>🎯</Text>
-            <Text style={styles.featureText}>
-              <Text style={styles.featureTitle}>Raid Builds</Text>
+        <View className="w-full mb-xl">
+          <View className="flex-row items-start mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center mt-0.5">🎯</Text>
+            <Text className="flex-1 typography-copy text-app-primary leading-tight">
+              <Text className="typography-copy-bold text-app-text">Raid Builds</Text>
               {'\n'}Access counter strategies for tough raids
             </Text>
           </View>
           
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>📊</Text>
-            <Text style={styles.featureText}>
-              <Text style={styles.featureTitle}>Event Counters</Text>
+          <View className="flex-row items-start mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center mt-0.5">📊</Text>
+            <Text className="flex-1 typography-copy text-app-primary leading-tight">
+              <Text className="typography-copy-bold text-app-text">Event Counters</Text>
               {'\n'}Track community progress on special events
             </Text>
           </View>
           
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>📚</Text>
-            <Text style={styles.featureText}>
-              <Text style={styles.featureTitle}>Resources</Text>
+          <View className="flex-row items-start mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center mt-0.5">📚</Text>
+            <Text className="flex-1 typography-copy text-app-primary leading-tight">
+              <Text className="typography-copy-bold text-app-text">Resources</Text>
               {'\n'}Find maps, guides, tips, and battle strategies
             </Text>
           </View>
           
-          <View style={styles.featureItem}>
-            <Text style={styles.featureEmoji}>🧠</Text>
-            <Text style={styles.featureText}>
-              <Text style={styles.featureTitle}>In the know</Text>
+          <View className="flex-row items-start mb-md px-lg">
+            <Text className="typography-header mr-md w-8 text-center mt-0.5">🧠</Text>
+            <Text className="flex-1 typography-copy text-app-primary leading-tight">
+              <Text className="typography-copy-bold text-app-text">In the know</Text>
               {'\n'}Avoid FOMO by getting notified of events and promo codes
             </Text>
           </View>
         </View>
         
-        {!isLoggedIn && (<View style={styles.authInfo}>
-          <Text style={styles.authTitle}>💡 Tip</Text>
-          <Text style={styles.authDescription}>
+        {!isLoggedIn && (<View className="bg-app-accent rounded-xl p-md w-full mb-md">
+          <Text className="typography-copy-bold text-app-primary mb-sm">💡 Tip</Text>
+          <Text className="typography-copy text-app-primary leading-tight">
             Some features like social interactions will require creating an account, 
             but you can explore most of the app without signing up!
           </Text>
@@ -103,107 +105,16 @@ export default function OnboardingFinalScreen() {
             />
         </View>)}
       </ScrollView>
-      <View style={styles.footer}>
+      <View className="w-full items-center py-lg">
         <Button
           ref={exploreBtnRef}
           title="Start Exploring"
           onPress={handleCompleteOnboarding}
-          style={styles.completeButton}
+          style={{ backgroundColor: '#582a5a', width: '100%', borderRadius: 12, marginTop: 16 }}
         />
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.light.background,
-    padding: spacing.lg,
-  },
-  scroll: {
-    flex: 1,
-    width: '100%',
-  },
-  content: {
-    flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: spacing.xl,
-    width: '100%',
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    marginBottom: spacing.lg,
-    ...shadows.large,
-  },
-  title: {
-    ...typography.header,
-    color: colors.light.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.subheader,
-    color: colors.light.secondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-    lineHeight: lineHeights.subheader,
-  },
-  featuresContainer: {
-    width: '100%',
-    marginBottom: spacing.xl,
-  },
-  featureItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  featureEmoji: {
-    fontSize: fontSizes.header,
-    marginRight: spacing.md,
-    width: 32,
-    textAlign: 'center',
-    marginTop: 2,
-  },
-  featureText: {
-    flex: 1,
-    ...typography.copy,
-    color: colors.light.primary,
-    lineHeight: lineHeights.copy,
-  },
-  featureTitle: {
-    ...typography.copyBold,
-    color: colors.light.text,
-  },
-  authInfo: {
-    backgroundColor: colors.light.accent,
-    borderRadius: 12,
-    padding: spacing.md,
-    width: '100%',
-    marginBottom: spacing.md,
-  },
-  authTitle: {
-    ...typography.copyBold,
-    color: colors.light.primary,
-    marginBottom: spacing.sm,
-  },
-  authDescription: {
-    ...typography.copy,
-    color: colors.light.primary,
-    lineHeight: lineHeights.copy,
-  },
-  footer: {
-    width: '100%',
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-  },
-  completeButton: {
-    backgroundColor: colors.light.primary,
-    width: '100%',
-    borderRadius: 12,
-    marginTop: spacing.md,
-  },
-});
+
