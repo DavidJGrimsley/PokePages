@@ -1,141 +1,9 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
+  "id": "6d2a7429-5a2e-4d89-9fe6-b5ad40371baa",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.user_event_participation": {
-      "name": "user_event_participation",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "event_id": {
-          "name": "event_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "contribution_count": {
-          "name": "contribution_count",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "last_contributed_at": {
-          "name": "last_contributed_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "idx_user_event_participation_user_id": {
-          "name": "idx_user_event_participation_user_id",
-          "columns": [
-            {
-              "expression": "user_id",
-              "asc": true,
-              "nulls": "last",
-              "opclass": "uuid_ops",
-              "isExpression": false
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "user_event_participation_event_id_fkey": {
-          "name": "user_event_participation_event_id_fkey",
-          "tableFrom": "user_event_participation",
-          "tableTo": "event_counters",
-          "schemaTo": "public",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "user_event_participation_user_id_fkey": {
-          "name": "user_event_participation_user_id_fkey",
-          "tableFrom": "user_event_participation",
-          "tableTo": "users",
-          "schemaTo": "auth",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "user_event_participation_user_id_event_id_key": {
-          "columns": [
-            "user_id",
-            "event_id"
-          ],
-          "nullsNotDistinct": false,
-          "name": "user_event_participation_user_id_event_id_key"
-        }
-      },
-      "checkConstraints": {},
-      "policies": {
-        "Enable read access for all users": {
-          "name": "Enable read access for all users",
-          "as": "PERMISSIVE",
-          "for": "SELECT",
-          "to": [
-            "public"
-          ],
-          "using": "true"
-        },
-        "user_participation_upsert_own": {
-          "name": "user_participation_upsert_own",
-          "as": "PERMISSIVE",
-          "for": "ALL",
-          "to": [
-            "public"
-          ]
-        }
-      },
-      "isRLSEnabled": true
-    },
     "public.anonymous_event_participation": {
       "name": "anonymous_event_participation",
       "schema": "",
@@ -193,7 +61,6 @@
           "name": "anonymous_event_participation_event_id_fkey",
           "tableFrom": "anonymous_event_participation",
           "tableTo": "event_counters",
-          "schemaTo": "public",
           "columnsFrom": [
             "event_id"
           ],
@@ -207,15 +74,14 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "anonymous_event_participation_event_id_anonymous_id_key": {
+          "name": "anonymous_event_participation_event_id_anonymous_id_key",
+          "nullsNotDistinct": false,
           "columns": [
             "event_id",
             "anonymous_id"
-          ],
-          "nullsNotDistinct": false,
-          "name": "anonymous_event_participation_event_id_anonymous_id_key"
+          ]
         }
       },
-      "checkConstraints": {},
       "policies": {
         "anon_participation_insert_all": {
           "name": "anon_participation_insert_all",
@@ -243,7 +109,8 @@
           ]
         }
       },
-      "isRLSEnabled": true
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
     "public.event_counters": {
       "name": "event_counters",
@@ -339,14 +206,13 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "event_counters_event_key_key": {
+          "name": "event_counters_event_key_key",
+          "nullsNotDistinct": false,
           "columns": [
             "event_key"
-          ],
-          "nullsNotDistinct": false,
-          "name": "event_counters_event_key_key"
+          ]
         }
       },
-      "checkConstraints": {},
       "policies": {
         "event_counters_select_all": {
           "name": "event_counters_select_all",
@@ -358,7 +224,8 @@
           "using": "true"
         }
       },
-      "isRLSEnabled": true
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
     "public.profiles": {
       "name": "profiles",
@@ -410,36 +277,15 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "profiles_id_fkey": {
-          "name": "profiles_id_fkey",
-          "tableFrom": "profiles",
-          "tableTo": "users",
-          "schemaTo": "auth",
-          "columnsFrom": [
-            "id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "profiles_username_key": {
+          "name": "profiles_username_key",
+          "nullsNotDistinct": false,
           "columns": [
             "username"
-          ],
-          "nullsNotDistinct": false,
-          "name": "profiles_username_key"
-        }
-      },
-      "checkConstraints": {
-        "username_length": {
-          "name": "username_length",
-          "value": "(username IS NULL) OR (char_length(username) >= 3)"
+          ]
         }
       },
       "policies": {
@@ -469,7 +315,143 @@
           ]
         }
       },
-      "isRLSEnabled": true
+      "checkConstraints": {
+        "username_length": {
+          "name": "username_length",
+          "value": "(username IS NULL) OR (char_length(username) >= 3)"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.user_event_participation": {
+      "name": "user_event_participation",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contribution_count": {
+          "name": "contribution_count",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "last_contributed_at": {
+          "name": "last_contributed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_user_event_participation_user_id": {
+          "name": "idx_user_event_participation_user_id",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "user_event_participation_event_id_fkey": {
+          "name": "user_event_participation_event_id_fkey",
+          "tableFrom": "user_event_participation",
+          "tableTo": "event_counters",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_event_participation_user_id_fkey": {
+          "name": "user_event_participation_user_id_fkey",
+          "tableFrom": "user_event_participation",
+          "tableTo": "profiles",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_event_participation_user_id_event_id_key": {
+          "name": "user_event_participation_user_id_event_id_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id",
+            "event_id"
+          ]
+        }
+      },
+      "policies": {
+        "Enable read access for all users": {
+          "name": "Enable read access for all users",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "true"
+        },
+        "user_participation_upsert_own": {
+          "name": "user_participation_upsert_own",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {},
@@ -479,11 +461,8 @@
   "policies": {},
   "views": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
     "tables": {}
   }
 }

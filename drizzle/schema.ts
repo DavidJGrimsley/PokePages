@@ -21,7 +21,7 @@ export const userEventParticipation = pgTable("user_event_participation", {
 		}).onDelete("cascade"),
 	foreignKey({
 			columns: [table.userId],
-			foreignColumns: [users.id],
+			foreignColumns: [profiles.id],
 			name: "user_event_participation_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("user_event_participation_user_id_event_id_key").on(table.userId, table.eventId),
@@ -81,11 +81,7 @@ export const profiles = pgTable("profiles", {
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
-	foreignKey({
-			columns: [table.id],
-			foreignColumns: [users.id],
-			name: "profiles_id_fkey"
-		}).onDelete("cascade"),
+	// Note: profiles.id references auth.users.id (Supabase auth table not in public schema)
 	unique("profiles_username_key").on(table.username),
 	pgPolicy("Public profiles are viewable by everyone.", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
 	pgPolicy("Users can insert their own profile.", { as: "permissive", for: "insert", to: ["public"] }),

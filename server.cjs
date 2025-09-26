@@ -1,3 +1,8 @@
+// LEGACY SERVER - NOT CURRENTLY USED BY THE APP
+// The Expo app (EventCounter.tsx) now uses Supabase directly
+// This server provides a file-based API for Pokemon counters
+// Keep for reference/debugging, but main app uses Supabase + Drizzle
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs').promises;

@@ -1,16 +1,14 @@
-// src/db/relations.ts
-// Drizzle relations for your PokePages database
 import { relations } from "drizzle-orm/relations";
-import { eventCounters, userEventParticipation, users, anonymousEventParticipation, profiles } from "./schema";
+import { eventCounters, userEventParticipation, anonymousEventParticipation, profiles } from "./schema";
 
 export const userEventParticipationRelations = relations(userEventParticipation, ({one}) => ({
 	eventCounter: one(eventCounters, {
 		fields: [userEventParticipation.eventId],
 		references: [eventCounters.id]
 	}),
-	user: one(users, {
+	profile: one(profiles, {
 		fields: [userEventParticipation.userId],
-		references: [users.id]
+		references: [profiles.id]
 	}),
 }));
 
@@ -19,9 +17,8 @@ export const eventCountersRelations = relations(eventCounters, ({many}) => ({
 	anonymousEventParticipations: many(anonymousEventParticipation),
 }));
 
-export const usersRelations = relations(users, ({many}) => ({
+export const profilesRelations = relations(profiles, ({many}) => ({
 	userEventParticipations: many(userEventParticipation),
-	profiles: many(profiles),
 }));
 
 export const anonymousEventParticipationRelations = relations(anonymousEventParticipation, ({one}) => ({
@@ -31,9 +28,4 @@ export const anonymousEventParticipationRelations = relations(anonymousEventPart
 	}),
 }));
 
-export const profilesRelations = relations(profiles, ({one}) => ({
-	user: one(users, {
-		fields: [profiles.id],
-		references: [users.id]
-	}),
-}));
+// Note: profiles.id actually references auth.users.id (not included in public schema)

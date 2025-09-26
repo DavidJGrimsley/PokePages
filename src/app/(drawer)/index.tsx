@@ -5,6 +5,7 @@ import { View, Text, ScrollView, Pressable } from 'react-native';
 import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
+import DrizzleCounter from 'components/Events/DrizzleCounter';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -62,6 +63,8 @@ export default function Home() {
               description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
               path="/(drawer)/resources/top50"
             />
+            <DrizzleCounter pokemon="wo-chien" />
+
 
             <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>
             

@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
+    "build": "tsc",
+    "start:prod": "node dist/index.js",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -11,7 +13,11 @@
     "db:pull": "NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",
     "db:pull:debug": "DEBUG=drizzle:* NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "server": "npx tsx src/index.ts",
+    "server:dev": "npx tsx --watch src/index.ts",
+    "server:build": "tsc --project tsconfig.server.json",
+    "server:start": "node dist/server/index.js"
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
@@ -30,6 +36,7 @@
     "axios": "^1.11.0",
     "axios-cache-interceptor": "^1.8.0",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "dotenv": "^17.2.2",
@@ -47,6 +54,7 @@
     "expo-status-bar": "~3.0.8",
     "expo-symbols": "~1.0.7",
     "expo-web-browser": "~15.0.7",
+    "express": "^5.1.0",
     "lottie-react-native": "~7.3.1",
     "modern-screenshot": "^4.6.6",
     "nativewind": "^4.1.23",
@@ -72,6 +80,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/react": "~19.1.10",
     "ajv": "^8.17.1",
     "drizzle-kit": "^0.31.4",
