@@ -17,7 +17,8 @@
     "server": "npx tsx src/index.ts",
     "server:dev": "npx tsx --watch src/index.ts",
     "server:build": "tsc --project tsconfig.server.json",
-    "server:start": "node dist/server/index.js"
+    "server:start": "node dist/server/index.js",
+    "generate:types": "npx tsx scripts/generateTypeChart.ts"
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
