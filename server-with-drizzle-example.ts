@@ -4,7 +4,7 @@ import cors from 'cors';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { eq } from 'drizzle-orm';
-import { eventCounters, userEventParticipation, anonymousEventParticipation } from './src/db/schema';
+import { eventCounters, userEventParticipation, anonymousEventParticipation } from './src/db/profilesSchema';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

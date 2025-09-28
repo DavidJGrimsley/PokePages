@@ -4,11 +4,13 @@ import {
   eventCounters, 
   userEventParticipation, 
   anonymousEventParticipation,
-  profiles,
   type EventCounter,
   type UserEventParticipation,
   type AnonymousEventParticipation
-} from '~/db/schema';
+} from '~/db/eventsSchema';
+import { 
+  profiles,
+} from '~/db/profilesSchema';
 
 // Get all event counters
 export async function getEventCounters(): Promise<EventCounter[]> {
