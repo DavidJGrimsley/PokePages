@@ -1,5 +1,5 @@
 import { eq, and, sql } from 'drizzle-orm';
-import { db } from '~/db/index';
+import { db } from './index';
 import { 
   eventCounters, 
   userEventParticipation, 
@@ -7,10 +7,10 @@ import {
   type EventCounter,
   type UserEventParticipation,
   type AnonymousEventParticipation
-} from '~/db/eventsSchema';
+} from './eventsSchema';
 import { 
   profiles,
-} from '~/db/profilesSchema';
+} from './profilesSchema';
 
 // Get all event counters
 export async function getEventCounters(): Promise<EventCounter[]> {

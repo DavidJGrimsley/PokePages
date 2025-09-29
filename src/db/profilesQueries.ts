@@ -1,12 +1,11 @@
 import { eq, sql } from 'drizzle-orm';
-import { db } from '~/db/index';
-import { 
+import { db } from './index';
+import {
   profiles,
   type Profile,
-  type NewProfile
-} from '~/db/profilesSchema';
+  type NewProfile,
+} from './profilesSchema';// Get profile by user ID
 
-// Get profile by user ID
 export async function getProfile(userId: string): Promise<Profile | null> {
   try {
     const [profile] = await db

@@ -1,0 +1,36 @@
+# Source code - never serve these to browsers
+/src/
+/scripts/
+/data/
+
+# Server build output - run separately, don't serve
+/dist/server/
+
+# Environment and config
+.env*
+tsconfig*.json
+drizzle.config.ts
+babel.config.js
+metro.config.js
+
+# Package management
+package*.json
+node_modules/
+
+# Development files
+.git/
+.gitignore
+.eslintrc*
+.prettierrc*
+*.md
+
+# Database and migration files
+/drizzle/
+backup-database.js
+
+# Test files
+/tests/
+/temp/
+
+# Only serve the built web app from /dist/
+# Your Plesk document root should point to /dist/ only

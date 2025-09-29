@@ -1,7 +1,8 @@
 import { pgTable, index, foreignKey, unique, pgPolicy, uuid, bigint, timestamp, text, integer, check, date } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
+import { z } from "zod"
 
-import { profiles } from "~/db/profilesSchema";
+import { profiles } from "./profilesSchema";
 
 export const userEventParticipation = pgTable("user_event_participation", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -83,3 +84,15 @@ export type NewUserEventParticipation = typeof userEventParticipation.$inferInse
 // Anonymous Event Participation types  
 export type AnonymousEventParticipation = typeof anonymousEventParticipation.$inferSelect;
 export type NewAnonymousEventParticipation = typeof anonymousEventParticipation.$inferInsert;
+
+
+
+// Zod Schemas
+
+// Schema for incrementing event counter - only needs user identification
+export const incrementEventSchema = z.object({
+  userId: z.uuid().optional(),
+  anonymousId: z.uuid().optional(),
+}).refine(data => data.userId || data.anonymousId, {
+  message: 'Either userId or anonymousId is required',
+});

@@ -5,7 +5,7 @@ import {
   incrementEventCounter as dbIncrementEventCounter,
   getUserParticipation as dbGetUserParticipation,
   getEventStats as dbGetEventStats,
-} from '~/db/eventsQueries';
+} from '../../db/eventsQueries';
 
 export async function listEvents(req: Request, res: Response) {
   try {

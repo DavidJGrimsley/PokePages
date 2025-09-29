@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const controller_1 = require("./controller");
+const validationMiddleware_1 = require("../../middlewares/validationMiddleware");
+const authMiddleware_1 = require("../../middlewares/authMiddleware");
+const profilesSchema_1 = require("../../db/profilesSchema");
+const profileRouter = (0, express_1.Router)();
+profileRouter.get('/search', (0, validationMiddleware_1.validateQuery)(profilesSchema_1.searchQuerySchema), controller_1.searchProfiles);
+profileRouter.get('/all', authMiddleware_1.verifySupabaseAuth, authMiddleware_1.requireAdmin, (0, validationMiddleware_1.validateQuery)(profilesSchema_1.paginationQuerySchema), controller_1.getAllProfiles);
+profileRouter.get('/by-username/:username', (0, validationMiddleware_1.validateParams)(profilesSchema_1.usernameParamsSchema), controller_1.getProfileByUsername);
+profileRouter.get('/:userId', (0, validationMiddleware_1.validateParams)(profilesSchema_1.userIdParamsSchema), controller_1.getProfile);
+profileRouter.post('/', (0, validationMiddleware_1.validateData)(profilesSchema_1.signupProfileSchema), controller_1.createProfile);
+profileRouter.put('/:userId', authMiddleware_1.verifySupabaseAuth, authMiddleware_1.verifyResourceOwnership, (0, validationMiddleware_1.validateParams)(profilesSchema_1.userIdParamsSchema), (0, validationMiddleware_1.validateData)(profilesSchema_1.updateProfileSchema), controller_1.updateProfile);
+profileRouter.delete('/:userId', authMiddleware_1.verifySupabaseAuth, authMiddleware_1.verifyResourceOwnership, (0, validationMiddleware_1.validateParams)(profilesSchema_1.userIdParamsSchema), controller_1.deleteProfile);
+exports.default = profileRouter;

@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const eventsController_1 = require("./eventsController");
+const validationMiddleware_1 = require("../../middlewares/validationMiddleware");
+const eventsSchema_1 = require("../../db/eventsSchema");
+const eventRouter = (0, express_1.Router)();
+eventRouter.get('/', eventsController_1.listEvents);
+eventRouter.get('/:eventKey', eventsController_1.getEvent);
+eventRouter.post('/:eventKey/increment', (0, validationMiddleware_1.validateData)(eventsSchema_1.incrementEventSchema), eventsController_1.incrementEvent);
+eventRouter.get('/:eventKey/participation/:userId', eventsController_1.getUserParticipation);
+eventRouter.get('/:eventKey/stats', eventsController_1.getEventStats);
+exports.default = eventRouter;

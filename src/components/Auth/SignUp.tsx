@@ -1,228 +1,223 @@
-import { StyleSheet, View, TextInput, ScrollView, Alert, Text } from 'react-native'
-import React, { useState } from 'react'
-import { router, useLocalSearchParams } from 'expo-router'
+import { useState } from 'react'
+import { View, Text, TextInput, Alert, Platform } from 'react-native'
 import { supabase } from "~/utils/supabaseClient"
+import { router } from 'expo-router'
+import { useAuthStore } from "~/store/authStore"
+
 import { Button } from 'components/UI/Button'
-import { theme } from 'constants/style/theme'
 import ErrorMessage from 'components/Meta/Error'
 
+// Cross-platform alert function
+const showAlert = (title: string, message?: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(message ? `${title}\n${message}` : title)
+  } else {
+    Alert.alert(title, message)
+  }
+}
+
 export default function SignUp() {
-  const params = useLocalSearchParams()
-  
-  // Pre-fill from sign-in screen
-  const [email, setEmail] = useState(params.email as string || '')
-  const [password, setPassword] = useState(params.password as string || '')
-  
-  // Additional profile fields
+  const { setProfile } = useAuthStore()
+  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [birthdate, setBirthdate] = useState('')
-  const [bio, setBio] = useState('')
-  
-  const [loading, setLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const validateInputs = () => {
+    if (!email.trim()) {
+      setErrorMessage('Email is required')
+      return false
+    }
+    if (!password || password.length < 6) {
+      setErrorMessage('Password must be at least 6 characters')
+      return false
+    }
+    if (!username.trim() || username.length < 3) {
+      setErrorMessage('Username must be at least 3 characters')
+      return false
+    }
+    if (!birthdate.trim()) {
+      setErrorMessage('Birthdate is required')
+      return false
+    }
+    // Basic date format validation (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(birthdate)) {
+      setErrorMessage('Birthdate must be in YYYY-MM-DD format')
+      return false
+    }
+    return true
+  }
+
   async function signUpWithProfile() {
+    if (!validateInputs()) return
+
     setLoading(true)
     setErrorMessage(null)
 
     try {
-      // First, create the auth user
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: email,
+      // Step 1: Create auth user with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
         password: password,
       })
 
-      if (signUpError) {
-        setErrorMessage(signUpError.message)
+      if (authError) {
+        setErrorMessage(authError.message)
         setLoading(false)
         return
       }
 
-      // If signup successful and we have a user, create the profile
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([
-            {
-              id: data.user.id,
-              username: username,
-              birthdate: birthdate || null,
-              bio: bio || null,
-              updated_at: new Date().toISOString(),
-              created_at: new Date().toISOString(),
-            },
-          ])
-
-        if (profileError) {
-          setErrorMessage(`Profile creation failed: ${profileError.message}`)
-          setLoading(false)
-          return
-        }
-
-        Alert.alert(
-          'Success!',
-          'Please check your inbox for email verification!',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.back(),
-            },
-          ]
-        )
-      } else if (!signUpError) {
-        setErrorMessage('Please check your inbox for email verification!')
+      if (!authData.user) {
+        setErrorMessage('Failed to create user account')
+        setLoading(false)
+        return
       }
-    } catch {
-      setErrorMessage('An unexpected error occurred')
-    }
 
-    setLoading(false)
+      // Step 2: Create profile via our API
+      const profileResponse = await fetch('http://localhost:3001/api/profiles', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: authData.user.id,
+          username: username.trim(),
+          birthdate: birthdate,
+        }),
+      })
+
+      const profileResult = await profileResponse.json()
+
+      if (!profileResponse.ok || !profileResult.success) {
+        // If profile creation fails, we should clean up the auth user
+        await supabase.auth.signOut()
+        setErrorMessage(profileResult.error || 'Failed to create profile')
+        setLoading(false)
+        return
+      }
+
+      // Update local store
+      setProfile({
+        username: username.trim(),
+        birthdate: birthdate,
+        bio: null,
+        avatar_url: null,
+      })
+
+      showAlert('Success', 'Account created successfully! Please check your email for verification.')
+      
+      // Redirect to sign in or onboarding
+      router.replace('/(onboarding)')
+      
+    } catch (error) {
+      console.error('Sign up error:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const canSubmit = email.length > 0 && password.length > 0 && username.length > 0
+  const navigateToSignIn = () => {
+    router.replace('/sign-in')
+  }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.title}>Create Your Account</Text>
-      <Text style={styles.subtitle}>
-        Fill in the additional details to complete your profile
-      </Text>
-
+    <View className="mt-16 p-4">
       {errorMessage && (
-        <ErrorMessage
-          title="Sign Up Error"
-          description="There was a problem creating your account."
-          error={errorMessage}
-        />
+        <View className="mb-6">
+          <ErrorMessage
+            title="Sign Up Error"
+            description="There was a problem creating your account."
+            error={errorMessage}
+          />
+        </View>
       )}
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Email *</Text>
+      <Text className="text-2xl font-bold text-center mb-8 text-gray-800">
+        Create Your Account
+      </Text>
+
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Email</Text>
         <TextInput
-          onChangeText={(text) => setEmail(text)}
           value={email}
+          onChangeText={setEmail}
           placeholder="email@address.com"
-          autoCapitalize={'none'}
+          autoCapitalize="none"
+          autoCorrect={false}
           keyboardType="email-address"
-          style={styles.input}
-          editable={!loading}
+          textContentType="emailAddress"
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Email"
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Password *</Text>
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Password</Text>
         <TextInput
-          onChangeText={(text) => setPassword(text)}
           value={password}
+          onChangeText={setPassword}
+          placeholder="Password (min 6 characters)"
           secureTextEntry={true}
-          placeholder="Choose a secure password"
-          autoCapitalize={'none'}
-          style={styles.input}
-          editable={!loading}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="password"
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Password"
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Username *</Text>
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Username</Text>
         <TextInput
-          onChangeText={(text) => setUsername(text)}
           value={username}
-          placeholder="Choose a unique username"
-          autoCapitalize={'none'}
-          style={styles.input}
-          editable={!loading}
+          onChangeText={setUsername}
+          placeholder="Your username (min 3 characters)"
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="username"
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Username"
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Birthdate (Optional)</Text>
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Birthdate</Text>
         <TextInput
-          onChangeText={(text) => setBirthdate(text)}
           value={birthdate}
+          onChangeText={setBirthdate}
           placeholder="YYYY-MM-DD"
-          style={styles.input}
-          editable={!loading}
+          autoCapitalize="none"
+          autoCorrect={false}
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Birthdate"
         />
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Bio (Optional)</Text>
-        <TextInput
-          onChangeText={(text) => setBio(text)}
-          value={bio}
-          placeholder="Tell us about yourself..."
-          multiline
-          numberOfLines={4}
-          style={[styles.input, styles.textArea]}
-          editable={!loading}
+      <View className="py-2 self-stretch mt-8">
+        <Button
+          title={loading ? 'Creating Account...' : 'Create Account'}
+          onPress={signUpWithProfile}
+          disabled={loading}
         />
       </View>
 
-      <View style={styles.buttonContainer}>
-        <Button 
-          title="Create Account" 
-          disabled={loading || !canSubmit} 
-          onPress={signUpWithProfile} 
-        />
-        <Button 
-          title="Back to Sign In" 
-          disabled={loading} 
-          onPress={() => router.back()}
-          style={styles.secondaryButton}
+      {/* Already have account section */}
+      <View className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <Text className="text-center text-gray-600 mb-3">
+          Already have an account?
+        </Text>
+        <Button
+          title="Click here to sign in"
+          onPress={navigateToSignIn}
+          disabled={loading}
         />
       </View>
-    </ScrollView>
+    </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.light.background,
-  },
-  contentContainer: {
-    padding: theme.spacing.lg,
-    paddingBottom: theme.spacing.xxl,
-  },
-  title: {
-    ...theme.typography.header,
-    color: theme.colors.light.primary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.sm,
-  },
-  subtitle: {
-    ...theme.typography.copy,
-    color: theme.colors.light.secondary,
-    textAlign: 'center',
-    marginBottom: theme.spacing.xl,
-  },
-  section: {
-    marginBottom: theme.spacing.lg,
-  },
-  label: {
-    ...theme.typography.copyBold,
-    color: theme.colors.light.text,
-    marginBottom: theme.spacing.xs,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: theme.colors.light.secondary,
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.light.white,
-    color: theme.colors.light.text,
-    ...theme.typography.copy,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  buttonContainer: {
-    gap: theme.spacing.md,
-    marginTop: theme.spacing.lg,
-  },
-  secondaryButton: {
-    backgroundColor: theme.colors.light.secondary,
-  },
-})
+

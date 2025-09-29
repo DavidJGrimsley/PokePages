@@ -64,7 +64,7 @@ export default function Home() {
               description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
               path="/(drawer)/resources/top50"
             />
-            <DrizzleCounter pokemon="wo-chien" />
+            {/* <DrizzleCounter pokemon="wo-chien" /> */}
 
 
             <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>

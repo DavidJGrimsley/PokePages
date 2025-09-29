@@ -94,8 +94,8 @@ const DrawerLayout = () => {
           ),
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/appInfo" asChild>
-              <HeaderButton iconName="info-circle" />
+            <Link href="/editProfile" asChild>
+              <HeaderButton iconName="user-circle" />
             </Link>
           ),
           headerTitleAlign: 'center',
@@ -113,7 +113,7 @@ const DrawerLayout = () => {
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
             <Link href="/editProfile" asChild>
-              <HeaderButton iconName="user" />
+              <HeaderButton iconName="user-circle" />
             </Link>
           ),
           headerTitleAlign: 'center',
@@ -145,12 +145,30 @@ const DrawerLayout = () => {
           drawerLabel: 'Tools',
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/resourcesInfo" asChild>
-              <HeaderButton iconName="wrench" />
+            <Link href="/editProfile" asChild>
+              <HeaderButton iconName="user-circle" />
             </Link>
           ),
           drawerIcon: ({ size, color }) => (
             <MaterialIcons name="build" size={iconSize} color={color} />
+          ),
+          headerTitleAlign: 'center',
+          headerStyle: headerStyle,
+        }}
+      />
+      <Drawer.Screen
+        name="guides"
+        options={{
+          headerTitle: () => <HeaderTitle title="Guides" />,
+          drawerLabel: 'Guides',
+          headerLeft: () => <DrawerToggle />, 
+          headerRight: () => (
+            <Link href="/editProfile" asChild>
+              <HeaderButton iconName="user-circle" />
+            </Link>
+          ),
+          drawerIcon: ({ size, color }) => (
+            <MaterialIcons name="book" size={iconSize} color={color} />
           ),
           headerTitleAlign: 'center',
           headerStyle: headerStyle,

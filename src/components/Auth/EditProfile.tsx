@@ -16,7 +16,7 @@ const showAlert = (title: string, message?: string) => {
   }
 }
 
-export default function Account({ session, isSignUp = false }: { session: Session; isSignUp?: boolean }) {
+export default function EditProfile({ session }: { session: Session }) {
   const { signOut, setProfile, profile } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
@@ -51,38 +51,56 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
     bio: string
     avatar_url: string
   }) {
+    console.log('🔄 updateProfile called with:', { username, birthdate, bio, avatar_url })
     setLoading(true)
     setError(null)
     try {
       if (!session?.user) throw new Error('No user on the session!')
-      if (username && username.length < 3) {
-        const errorMsg = 'Username must be at least 3 characters long'
-        setError(errorMsg)
-        showAlert('Validation Error', errorMsg)
-        return
-      }
-      const updates = {
-        id: session?.user.id,
-        username: username || null,
-        birthdate: birthdate || null,
-        bio: bio || null,
-        avatar_url: avatar_url || null,
-        updated_at: new Date().toISOString(),
-      }
-      const { data, error } = await supabase.from('profiles').upsert(updates)
-      if (error) {
-        setError(error.message)
-        showAlert('Update Failed', error.message)
-        return
-      }
-      setProfile({
-        username: username || null,
-        birthdate: birthdate || null,
-        bio: bio || null,
-        avatar_url: avatar_url || null,
+      console.log('✅ Session user found:', session.user.id)
+    
+      
+
+      // Prepare the update data (only include non-empty fields)
+      const updates: any = {}
+      if (username?.trim()) updates.username = username.trim()
+      if (birthdate?.trim()) updates.birthdate = birthdate.trim()
+      if (bio?.trim()) updates.bio = bio.trim()
+      if (avatar_url?.trim()) updates.avatar_url = avatar_url.trim()
+      console.log('📝 Update payload:', updates)
+
+      // Update profile via Express API
+      const apiUrl = `http://localhost:3001/api/profiles/${session.user.id}`
+      console.log('🌐 Making API call to:', apiUrl)
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(updates),
       })
-      showAlert('Success', isSignUp ? 'Profile created successfully!' : 'Profile updated successfully!')
+
+      console.log('📡 API Response status:', response.status, response.statusText)
+      const result = await response.json()
+      console.log('📦 API Response data:', result)
+
+      if (!response.ok || !result.success) {
+        console.error('❌ API Error:', result.error || 'Failed to update profile')
+        throw new Error(result.error || 'Failed to update profile')
+      }
+
+      // Update local store with the returned profile data
+      setProfile({
+        username: result.data.username || null,
+        birthdate: result.data.birthdate || null,
+        bio: result.data.bio || null,
+        avatar_url: result.data.avatar_url || null,
+      })
+      console.log('✅ Profile updated successfully in store')
+
+      showAlert('Success', 'Profile updated successfully!')
     } catch (error) {
+      console.error('💥 UpdateProfile error:', error)
       if (error instanceof Error) {
         setError(error.message)
         showAlert('Update Failed', error.message)
@@ -93,9 +111,13 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
   }
 
   async function handleSignOut() {
+    console.log('🚪 Sign Out button pressed!')
     try {
+      console.log('🔄 Calling signOut function...')
       await signOut()
+      console.log('✅ Sign out successful!')
     } catch (error) {
+      console.error('💥 Sign out error:', error)
       if (error instanceof Error) {
         showAlert('Sign Out Error', error.message)
       }
@@ -162,13 +184,22 @@ export default function Account({ session, isSignUp = false }: { session: Sessio
       </View>
       <View className="py-2 self-stretch mt-8">
         <Button
-          title={loading ? 'Loading ...' : (isSignUp ? 'Complete Profile' : 'Update')}
-          onPress={() => updateProfile({ username, birthdate, bio, avatar_url: avatarUrl })}
+          title={loading ? 'Loading ...' : 'Update Profile'}
+          onPress={() => {
+            console.log('🔘 Update Profile button pressed!')
+            updateProfile({ username, birthdate, bio, avatar_url: avatarUrl })
+          }}
           disabled={loading}
         />
       </View>
       <View className="py-2 self-stretch">
-        <Button title="Sign Out" onPress={handleSignOut} />
+        <Button 
+          title="Sign Out" 
+          onPress={() => {
+            console.log('🔘 Sign Out button UI pressed!')
+            handleSignOut()
+          }}
+        />
       </View>
     </View>
   )

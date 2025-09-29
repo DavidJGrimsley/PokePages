@@ -3,9 +3,9 @@ import { Platform, Text } from 'react-native';
 
 import { useAuthStore } from '~/store/authStore';
 import { ScreenContent } from 'components/UI/ScreenContent';
-import Account from 'components/Auth/Account';
+import EditProfile from 'components/Auth/EditProfile';
 
-export default function EditProfile() {
+export default function EditProfileScreen() {
   const { user, session, isLoggedIn } = useAuthStore();
 
 
@@ -17,7 +17,7 @@ export default function EditProfile() {
         <Text className="text-xl text-center mt-lg">
           Edit your profile information below. Soon we will have more information on your profile such as your gamertag in certain games.
         </Text>
-        {isLoggedIn && user && session && <Account session={session} />}
+        {isLoggedIn && user && session && <EditProfile session={session} />}
       </ScreenContent>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </>

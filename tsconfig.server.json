@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "outDir": "./server",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": false,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "~/*": ["src/*"],
+      "app/*": ["src/app/*"],
+      "constants/*": ["src/constants/*"],
+      "components/*": ["./src/components/*"],
+      "utils/*": ["src/utils/*"]
+    }
+  },
+  "include": [
+    "src/server.ts",
+    "src/routes/**/*",
+    "src/db/**/*",
+    "src/middlewares/**/*",
+    "data/**/*"
+  ],
+  "exclude": [
+    "src/app/**/*",
+    "src/components/**/*",
+    "src/hooks/**/*",
+    "dist",
+    "node_modules"
+  ]
+}

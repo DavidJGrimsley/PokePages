@@ -369,12 +369,25 @@ export const useAuthStore = create(
       },
       
       signOut: async () => {
+        console.log('🏪 AuthStore: signOut function called')
         try {
-          const { error } = await supabase.auth.signOut();
+          console.log('🔄 AuthStore: Calling supabase.auth.signOut()...')
+          
+          // Add timeout to prevent hanging
+          const signOutPromise = supabase.auth.signOut();
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Supabase signOut timeout after 5 seconds')), 5000)
+          );
+          
+          const { error } = await Promise.race([signOutPromise, timeoutPromise]) as any;
+          console.log('📡 AuthStore: Supabase signOut response - error:', error)
+          
           if (error) {
-            throw error;
+            console.error('❌ AuthStore: Supabase signOut error:', error)
+            // Don't throw - still clear local state
           }
           
+          console.log('🧹 AuthStore: Clearing local state...')
           set((state) => ({
             ...state,
             user: null,
@@ -383,9 +396,21 @@ export const useAuthStore = create(
             isVip: false,
             profile: null, // Clear profile data on sign out
           }));
+          console.log('✅ AuthStore: Local state cleared successfully')
         } catch (error) {
-          console.error("Error signing out:", error);
-          throw error;
+          console.error("💥 AuthStore: Error signing out:", error);
+          
+          // Even if Supabase fails, still clear local state for better UX
+          console.log('🧹 AuthStore: Clearing local state despite error...')
+          set((state) => ({
+            ...state,
+            user: null,
+            session: null,
+            isLoggedIn: false,
+            isVip: false,
+            profile: null,
+          }));
+          console.log('✅ AuthStore: Local state cleared after error')
         }
       },
       
@@ -480,16 +505,18 @@ setTimeout(async () => {
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-  console.log('Auth state changed:', event, session?.user?.email);
+  console.log('🔔 Auth state changed:', event, 'user:', session?.user?.email || 'none');
   const { setUser, setSession, setProfile } = useAuthStore.getState();
+  
+  console.log('🔄 Auth listener: Setting session and user in store...')
   setSession(session);
   setUser(session?.user ?? null);
   
   // Handle profile fetching for sign-in events and session restoration
   if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-    console.log('Auth state handler: Fetching profile for user:', session.user.id);
+    console.log('🔑 Auth state handler: Fetching profile for user:', session.user.id);
     const profileData = await fetchUserProfile(session.user.id);
-    console.log('Auth state handler: Profile data fetched:', profileData);
+    console.log('👤 Auth state handler: Profile data fetched:', profileData);
     setProfile(profileData);
     
     // Only migrate on actual sign-in, not token refresh
@@ -497,9 +524,10 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
       await migrateAnonymousData(session.user.id);
     }
   } else if (event === 'SIGNED_OUT') {
-    console.log('Auth state handler: Clearing profile on sign out');
+    console.log('🚪 Auth state handler: SIGNED_OUT event - Clearing profile');
     setProfile(null); // Clear profile on sign out
   }
+  console.log('✅ Auth listener: Completed handling', event, 'event')
 });
 
 // Selector hooks for easier access to computed properties
