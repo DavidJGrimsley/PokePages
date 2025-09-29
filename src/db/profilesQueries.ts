@@ -111,9 +111,10 @@ export async function deleteProfile(userId: string): Promise<boolean> {
   try {
     const result = await db
       .delete(profiles)
-      .where(eq(profiles.id, userId));
+      .where(eq(profiles.id, userId))
+      .returning();
     
-    return result.rowCount > 0;
+    return result.length > 0;
   } catch (error) {
     console.error('Error deleting profile:', error);
     throw error;

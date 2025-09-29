@@ -14,7 +14,7 @@ export async function listEvents(req: Request, res: Response) {
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({
-      success: false,
+      success: false,     
       error: error instanceof Error ? error.message : 'Unknown error',
     });
   }

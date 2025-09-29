@@ -6,7 +6,7 @@ import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
 import DrizzleCounter from 'components/Events/DrizzleCounter';
-import TypeChartDisplay from '@/src/components/Pokemon/TypeChartDisplay';
+import TypeChartDisplay from '@/src/components/Resources/TypeChartDisplay';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();

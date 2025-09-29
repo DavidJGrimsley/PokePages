@@ -23,6 +23,9 @@ expo-env.d.ts
 # Metro
 .metro-health-check*
 
+# DB Backups
+backup-database.js
+
 # Debug
 npm-debug.*
 yarn-debug.*

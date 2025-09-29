@@ -14,9 +14,9 @@ export default function ResourcesTabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="ask"
+        name="top50"
         options={{
-          title: 'Ask AI',
+          title: 'Raid Counters',
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="barbell-outline" size={size} color={color} />
@@ -30,6 +30,16 @@ export default function ResourcesTabsLayout() {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="calculate" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="raid-counter"
+        options={{
+          title: 'Raid Counters',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="shield-outline" size={size} color={color} />
           ),
         }}
       />
