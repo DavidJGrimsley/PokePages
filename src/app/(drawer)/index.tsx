@@ -62,26 +62,9 @@ export default function Home() {
             <NewestFeature
               title="Top Raid builds"
               description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
-              path="/(drawer)/resources/top50"
+              path="/(drawer)/resources/type-calculator"
             />
-            <DrizzleCounter pokemon="wo-chien" />
-            
-            {/* Test API Button */}
-            <Pressable 
-              className="bg-blue-500 py-md px-lg rounded-md items-center mb-md"
-              onPress={async () => {
-                try {
-                  const response = await fetch('https://api.pokepages.app/test');
-                  const data = await response.json();
-                  alert(`API Test: ${data.message}`);
-                } catch (error) {
-                  alert(`API Test Failed: ${error}`);
-                }
-              }}
-            >
-              <Text className="typography-cta text-white">🧪 Test API Connection</Text>
-            </Pressable>
-
+          
             <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>
             
             {/* Multiple Active Event Buttons */}
