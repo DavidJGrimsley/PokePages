@@ -6,6 +6,7 @@ import { Session } from '@supabase/supabase-js'
 
 import { Button } from 'components/UI/Button'
 import ErrorMessage from 'components/Meta/Error'
+import { buildApiUrl } from '~/utils/apiConfig'
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -22,7 +23,7 @@ export default function EditProfile({ session }: { session: Session }) {
   const [username, setUsername] = useState('')
   const [birthdate, setBirthdate] = useState('')
   const [bio, setBio] = useState('')
-  const [avatarUrl, setAvatarUrl] = useState('')
+  const [avatar_url, setAvatar_url] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   // Sync form fields with profile data from store
@@ -31,26 +32,26 @@ export default function EditProfile({ session }: { session: Session }) {
       setUsername(profile.username || '')
       setBirthdate(profile.birthdate || '')
       setBio(profile.bio || '')
-      setAvatarUrl(profile.avatar_url || '')
+      setAvatar_url(profile.avatar_url || '')
     } else {
       setUsername('')
       setBirthdate('')
       setBio('')
-      setAvatarUrl('')
+      setAvatar_url('')
     }
   }, [profile])
 
-  async function updateProfile({
-    username,
-    birthdate,
-    bio,
+  const updateProfile = async ({ 
+    username, 
+    birthdate, 
+    bio, 
     avatar_url,
   }: {
     username: string
     birthdate: string
     bio: string
     avatar_url: string
-  }) {
+  }) => {
     console.log('🔄 updateProfile called with:', { username, birthdate, bio, avatar_url })
     setLoading(true)
     setError(null)
@@ -65,11 +66,11 @@ export default function EditProfile({ session }: { session: Session }) {
       if (username?.trim()) updates.username = username.trim()
       if (birthdate?.trim()) updates.birthdate = birthdate.trim()
       if (bio?.trim()) updates.bio = bio.trim()
-      if (avatar_url?.trim()) updates.avatar_url = avatar_url.trim()
+      if (avatar_url?.trim()) updates.avatarUrl = avatar_url.trim()
       console.log('📝 Update payload:', updates)
 
       // Update profile via Express API
-      const apiUrl = `http://localhost:3001/api/profiles/${session.user.id}`
+      const apiUrl = buildApiUrl(`profiles/${session.user.id}`)
       console.log('🌐 Making API call to:', apiUrl)
       const response = await fetch(apiUrl, {
         method: 'PUT',
@@ -94,7 +95,7 @@ export default function EditProfile({ session }: { session: Session }) {
         username: result.data.username || null,
         birthdate: result.data.birthdate || null,
         bio: result.data.bio || null,
-        avatar_url: result.data.avatar_url || null,
+        avatar_url: result.data.avatarUrl || null,
       })
       console.log('✅ Profile updated successfully in store')
 
@@ -182,12 +183,24 @@ export default function EditProfile({ session }: { session: Session }) {
           accessibilityLabel="Bio"
         />
       </View>
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Avatar URL</Text>
+        <TextInput
+          value={avatar_url}
+          onChangeText={setAvatar_url}
+          placeholder="https://example.com/avatar.jpg"
+          autoCapitalize="none"
+          autoCorrect={false}
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Avatar URL"
+        />
+      </View>
       <View className="py-2 self-stretch mt-8">
         <Button
           title={loading ? 'Loading ...' : 'Update Profile'}
           onPress={() => {
             console.log('🔘 Update Profile button pressed!')
-            updateProfile({ username, birthdate, bio, avatar_url: avatarUrl })
+            updateProfile({ username, birthdate, bio, avatar_url })
           }}
           disabled={loading}
         />

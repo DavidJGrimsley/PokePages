@@ -1,10 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifySupabaseAuth = verifySupabaseAuth;
-exports.verifyResourceOwnership = verifyResourceOwnership;
-exports.requireAdmin = requireAdmin;
-const supabaseServerClient_1 = require("../utils/supabaseServerClient");
-async function verifySupabaseAuth(req, res, next) {
+import { supabase } from '../utils/supabaseServerClient.js';
+export async function verifySupabaseAuth(req, res, next) {
     const authHeader = req.header('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({
@@ -14,7 +9,7 @@ async function verifySupabaseAuth(req, res, next) {
     }
     const token = authHeader.slice(7);
     try {
-        const { data: { user }, error } = await supabaseServerClient_1.supabase.auth.getUser(token);
+        const { data: { user }, error } = await supabase.auth.getUser(token);
         if (error || !user) {
             return res.status(401).json({
                 success: false,
@@ -36,7 +31,7 @@ async function verifySupabaseAuth(req, res, next) {
         });
     }
 }
-function verifyResourceOwnership(req, res, next) {
+export function verifyResourceOwnership(req, res, next) {
     const requestedUserId = req.params.userId;
     const authenticatedUserId = req.user?.id;
     if (!authenticatedUserId) {
@@ -53,7 +48,7 @@ function verifyResourceOwnership(req, res, next) {
         error: 'Access denied. You can only access your own resources.'
     });
 }
-function requireAdmin(req, res, next) {
+export function requireAdmin(req, res, next) {
     if (req.user?.role !== 'admin') {
         return res.status(403).json({
             success: false,

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2020",
     "target": "ES2020",
     "outDir": "./server",
     "strict": true,
@@ -23,16 +23,19 @@
     }
   },
   "include": [
-    "src/server.ts",
+    "server.ts",
     "src/routes/**/*",
     "src/db/**/*",
     "src/middlewares/**/*",
+    "src/utils/supabaseServerClient.ts",
     "data/**/*"
   ],
   "exclude": [
     "src/app/**/*",
     "src/components/**/*",
     "src/hooks/**/*",
+    "src/utils/supabaseClient.ts",
+    "src/utils/cn.ts",
     "dist",
     "node_modules"
   ]

@@ -1,52 +1,13 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.chat = chat;
-const fs_1 = require("fs");
-const path_1 = __importDefault(require("path"));
-const pokenode_ts_1 = require("pokenode-ts");
-const openai_1 = __importDefault(require("openai"));
-const openai = new openai_1.default({
+import { promises as fs } from 'fs';
+import path from 'path';
+import { PokemonClient } from 'pokenode-ts';
+import OpenAI from 'openai';
+const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const loadNationalDex = async () => {
     try {
-        const { nationalDex } = await Promise.resolve().then(() => __importStar(require('../../../data/Pokemon/NationalDex')));
+        const { nationalDex } = await import('../../../data/Pokemon/NationalDex');
         return nationalDex;
     }
     catch (error) {
@@ -59,7 +20,7 @@ const findPokemonInMessage = (message, pokemonList) => {
     const foundPokemon = pokemonList.filter(pokemon => normalizedMessage.includes(pokemon.name.toLowerCase()));
     return foundPokemon.length > 0 ? foundPokemon[0] : null;
 };
-async function chat(req, res) {
+export async function chat(req, res) {
     const { messages, pokemonName } = req.body;
     if (!messages || !Array.isArray(messages)) {
         return res.status(400).json({
@@ -69,10 +30,10 @@ async function chat(req, res) {
     }
     try {
         const pokemonList = await loadNationalDex();
-        const strategiesPath = path_1.default.join(process.cwd(), 'data/ML', 'supervision.md');
+        const strategiesPath = path.join(process.cwd(), 'data/ML', 'supervision.md');
         let customStrategies = '';
         try {
-            customStrategies = await fs_1.promises.readFile(strategiesPath, 'utf-8');
+            customStrategies = await fs.readFile(strategiesPath, 'utf-8');
         }
         catch {
             customStrategies = 'No custom strategies available.';
@@ -89,7 +50,7 @@ async function chat(req, res) {
         }
         if (targetPokemon) {
             try {
-                const pokemonClient = new pokenode_ts_1.PokemonClient();
+                const pokemonClient = new PokemonClient();
                 const pokemonData = await pokemonClient.getPokemonByName(targetPokemon.name.toLowerCase());
                 pokemonInfo = {
                     name: pokemonData.name,
@@ -153,9 +114,59 @@ Provide helpful advice about Pokémon battles, team building, and Tera Raid stra
     }
     catch (error) {
         console.error('Error in chat:', error);
+        if (error instanceof OpenAI.APIError) {
+            let errorMessage = 'AI service error';
+            let statusCode = 500;
+            switch (error.status) {
+                case 401:
+                    errorMessage = 'AI service authentication failed. Please contact support.';
+                    statusCode = 502;
+                    break;
+                case 429:
+                    if (error.message.toLowerCase().includes('quota') ||
+                        error.message.toLowerCase().includes('insufficient') ||
+                        error.message.toLowerCase().includes('credits')) {
+                        errorMessage = 'AI service has insufficient credits. Please try again later or contact support.';
+                    }
+                    else {
+                        errorMessage = 'AI service is currently busy. Please try again in a moment.';
+                    }
+                    statusCode = 503;
+                    break;
+                case 400:
+                    errorMessage = 'Invalid request to AI service. Please try rephrasing your message.';
+                    statusCode = 400;
+                    break;
+                case 500:
+                case 502:
+                case 503:
+                    errorMessage = 'AI service is temporarily unavailable. Please try again later.';
+                    statusCode = 503;
+                    break;
+                default:
+                    errorMessage = `AI service error: ${error.message}`;
+                    statusCode = 502;
+            }
+            return res.status(statusCode).json({
+                success: false,
+                error: errorMessage,
+                errorType: 'ai_service_error'
+            });
+        }
+        if (error instanceof Error && (error.message.includes('ECONNREFUSED') ||
+            error.message.includes('ETIMEDOUT') ||
+            error.message.includes('network') ||
+            error.message.includes('connection'))) {
+            return res.status(503).json({
+                success: false,
+                error: 'Unable to connect to AI service. Please check your internet connection and try again.',
+                errorType: 'network_error'
+            });
+        }
         res.status(500).json({
             success: false,
-            error: error instanceof Error ? error.message : 'AI chat error'
+            error: 'An unexpected error occurred while processing your request. Please try again.',
+            errorType: 'unknown_error'
         });
     }
 }

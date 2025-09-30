@@ -1,14 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.listEvents = listEvents;
-exports.getEvent = getEvent;
-exports.incrementEvent = incrementEvent;
-exports.getUserParticipation = getUserParticipation;
-exports.getEventStats = getEventStats;
-const eventsQueries_1 = require("../../db/eventsQueries");
-async function listEvents(req, res) {
+import { getEventCounters as dbGetEventCounters, getEventCounter as dbGetEventCounter, incrementEventCounter as dbIncrementEventCounter, getUserParticipation as dbGetUserParticipation, getEventStats as dbGetEventStats, } from '../../db/eventsQueries.js';
+export async function listEvents(req, res) {
     try {
-        const events = await (0, eventsQueries_1.getEventCounters)();
+        const events = await dbGetEventCounters();
         res.json({ success: true, data: events });
     }
     catch (error) {
@@ -19,10 +12,10 @@ async function listEvents(req, res) {
         });
     }
 }
-async function getEvent(req, res) {
+export async function getEvent(req, res) {
     try {
         const { eventKey } = req.params;
-        const event = await (0, eventsQueries_1.getEventCounter)(eventKey);
+        const event = await dbGetEventCounter(eventKey);
         if (!event) {
             return res.status(404).json({
                 success: false,
@@ -39,7 +32,7 @@ async function getEvent(req, res) {
         });
     }
 }
-async function incrementEvent(req, res) {
+export async function incrementEvent(req, res) {
     try {
         const { eventKey } = req.params;
         const { userId, anonymousId } = req.body;
@@ -49,7 +42,7 @@ async function incrementEvent(req, res) {
                 error: 'Either userId or anonymousId is required',
             });
         }
-        const result = await (0, eventsQueries_1.incrementEventCounter)(eventKey, userId, anonymousId);
+        const result = await dbIncrementEventCounter(eventKey, userId, anonymousId);
         res.json({ success: true, data: result });
     }
     catch (error) {
@@ -60,10 +53,10 @@ async function incrementEvent(req, res) {
         });
     }
 }
-async function getUserParticipation(req, res) {
+export async function getUserParticipation(req, res) {
     try {
         const { eventKey, userId } = req.params;
-        const participation = await (0, eventsQueries_1.getUserParticipation)(eventKey, userId);
+        const participation = await dbGetUserParticipation(eventKey, userId);
         res.json({ success: true, data: participation });
     }
     catch (error) {
@@ -74,10 +67,10 @@ async function getUserParticipation(req, res) {
         });
     }
 }
-async function getEventStats(req, res) {
+export async function getEventStats(req, res) {
     try {
         const { eventKey } = req.params;
-        const stats = await (0, eventsQueries_1.getEventStats)(eventKey);
+        const stats = await dbGetEventStats(eventKey);
         res.json({ success: true, data: stats });
     }
     catch (error) {

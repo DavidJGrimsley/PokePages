@@ -1,22 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProfile = getProfile;
-exports.getProfileByUsername = getProfileByUsername;
-exports.createProfile = createProfile;
-exports.updateProfile = updateProfile;
-exports.upsertProfile = upsertProfile;
-exports.deleteProfile = deleteProfile;
-exports.searchProfilesByUsername = searchProfilesByUsername;
-exports.getAllProfiles = getAllProfiles;
-const drizzle_orm_1 = require("drizzle-orm");
-const index_1 = require("./index");
-const profilesSchema_1 = require("./profilesSchema");
-async function getProfile(userId) {
+import { eq, sql } from 'drizzle-orm';
+import { db } from './index.js';
+import { profiles, } from './profilesSchema.js';
+export async function getProfile(userId) {
     try {
-        const [profile] = await index_1.db
+        const [profile] = await db
             .select()
-            .from(profilesSchema_1.profiles)
-            .where((0, drizzle_orm_1.eq)(profilesSchema_1.profiles.id, userId));
+            .from(profiles)
+            .where(eq(profiles.id, userId));
         return profile || null;
     }
     catch (error) {
@@ -24,12 +14,12 @@ async function getProfile(userId) {
         throw error;
     }
 }
-async function getProfileByUsername(username) {
+export async function getProfileByUsername(username) {
     try {
-        const [profile] = await index_1.db
+        const [profile] = await db
             .select()
-            .from(profilesSchema_1.profiles)
-            .where((0, drizzle_orm_1.eq)(profilesSchema_1.profiles.username, username));
+            .from(profiles)
+            .where(eq(profiles.username, username));
         return profile || null;
     }
     catch (error) {
@@ -37,14 +27,14 @@ async function getProfileByUsername(username) {
         throw error;
     }
 }
-async function createProfile(profileData) {
+export async function createProfile(profileData) {
     try {
-        const [newProfile] = await index_1.db
-            .insert(profilesSchema_1.profiles)
+        const [newProfile] = await db
+            .insert(profiles)
             .values({
             ...profileData,
-            updatedAt: (0, drizzle_orm_1.sql) `NOW()`,
-            createdAt: (0, drizzle_orm_1.sql) `NOW()`,
+            updatedAt: sql `NOW()`,
+            createdAt: sql `NOW()`,
         })
             .returning();
         return newProfile;
@@ -54,15 +44,15 @@ async function createProfile(profileData) {
         throw error;
     }
 }
-async function updateProfile(userId, updates) {
+export async function updateProfile(userId, updates) {
     try {
-        const [updatedProfile] = await index_1.db
-            .update(profilesSchema_1.profiles)
+        const [updatedProfile] = await db
+            .update(profiles)
             .set({
             ...updates,
-            updatedAt: (0, drizzle_orm_1.sql) `NOW()`,
+            updatedAt: sql `NOW()`,
         })
-            .where((0, drizzle_orm_1.eq)(profilesSchema_1.profiles.id, userId))
+            .where(eq(profiles.id, userId))
             .returning();
         return updatedProfile || null;
     }
@@ -71,23 +61,23 @@ async function updateProfile(userId, updates) {
         throw error;
     }
 }
-async function upsertProfile(profileData) {
+export async function upsertProfile(profileData) {
     try {
-        const [profile] = await index_1.db
-            .insert(profilesSchema_1.profiles)
+        const [profile] = await db
+            .insert(profiles)
             .values({
             ...profileData,
-            updatedAt: (0, drizzle_orm_1.sql) `NOW()`,
-            createdAt: (0, drizzle_orm_1.sql) `NOW()`,
+            updatedAt: sql `NOW()`,
+            createdAt: sql `NOW()`,
         })
             .onConflictDoUpdate({
-            target: profilesSchema_1.profiles.id,
+            target: profiles.id,
             set: {
                 username: profileData.username,
                 birthdate: profileData.birthdate,
                 avatarUrl: profileData.avatarUrl,
                 bio: profileData.bio,
-                updatedAt: (0, drizzle_orm_1.sql) `NOW()`,
+                updatedAt: sql `NOW()`,
             },
         })
             .returning();
@@ -98,11 +88,11 @@ async function upsertProfile(profileData) {
         throw error;
     }
 }
-async function deleteProfile(userId) {
+export async function deleteProfile(userId) {
     try {
-        const result = await index_1.db
-            .delete(profilesSchema_1.profiles)
-            .where((0, drizzle_orm_1.eq)(profilesSchema_1.profiles.id, userId))
+        const result = await db
+            .delete(profiles)
+            .where(eq(profiles.id, userId))
             .returning();
         return result.length > 0;
     }
@@ -111,12 +101,12 @@ async function deleteProfile(userId) {
         throw error;
     }
 }
-async function searchProfilesByUsername(query, limit = 20) {
+export async function searchProfilesByUsername(query, limit = 20) {
     try {
-        const searchResults = await index_1.db
+        const searchResults = await db
             .select()
-            .from(profilesSchema_1.profiles)
-            .where((0, drizzle_orm_1.sql) `${profilesSchema_1.profiles.username} ILIKE ${'%' + query + '%'}`)
+            .from(profiles)
+            .where(sql `${profiles.username} ILIKE ${'%' + query + '%'}`)
             .limit(limit);
         return searchResults;
     }
@@ -125,14 +115,14 @@ async function searchProfilesByUsername(query, limit = 20) {
         throw error;
     }
 }
-async function getAllProfiles(limit = 100, offset = 0) {
+export async function getAllProfiles(limit = 100, offset = 0) {
     try {
-        const allProfiles = await index_1.db
+        const allProfiles = await db
             .select()
-            .from(profilesSchema_1.profiles)
+            .from(profiles)
             .limit(limit)
             .offset(offset)
-            .orderBy(profilesSchema_1.profiles.createdAt);
+            .orderBy(profiles.createdAt);
         return allProfiles;
     }
     catch (error) {

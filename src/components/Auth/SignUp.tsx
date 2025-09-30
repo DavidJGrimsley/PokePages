@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { View, Text, TextInput, Alert, Platform } from 'react-native'
-import { supabase } from "~/utils/supabaseClient"
+import { supabase } from 'utils/supabaseClient'
+import { buildApiUrl } from '~/utils/apiConfig'
 import { router } from 'expo-router'
 import { useAuthStore } from "~/store/authStore"
 
@@ -77,7 +78,7 @@ export default function SignUp() {
       }
 
       // Step 2: Create profile via our API
-      const profileResponse = await fetch('http://localhost:3001/api/profiles', {
+            const profileResponse = await fetch(buildApiUrl('profiles'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

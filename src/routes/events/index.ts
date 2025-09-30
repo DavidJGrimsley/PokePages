@@ -6,9 +6,9 @@ import {
   incrementEvent,
   getUserParticipation,
   getEventStats,
-} from './eventsController';
-import { validateData } from '../../middlewares/validationMiddleware';
-import { incrementEventSchema } from '../../db/eventsSchema';
+} from './eventsController.js';
+import { validateData } from '../../middlewares/validationMiddleware.js';
+import { incrementEventSchema } from '../../db/eventsSchema.js';
 
 const eventRouter = Router();
 

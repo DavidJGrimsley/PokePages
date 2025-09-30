@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm/relations";
-import { eventCounters, userEventParticipation, anonymousEventParticipation } from "./eventsSchema";
-import { profiles } from "./profilesSchema";
+import { eventCounters, userEventParticipation, anonymousEventParticipation } from "./eventsSchema.js";
+import { profiles } from "./profilesSchema.js";
 
 export const userEventParticipationRelations = relations(userEventParticipation, ({one}) => ({
 	eventCounter: one(eventCounters, {

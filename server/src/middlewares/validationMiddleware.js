@@ -1,11 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateParams = exports.validateQuery = exports.validateBody = void 0;
-exports.validateData = validateData;
-const zod_1 = require("zod");
-function validateData(schema, options = {}) {
+import { z } from 'zod';
+export function validateData(schema, options = {}) {
     const { target = 'body', attach = true, statusCode = 400, stripUnknown = false, } = options;
-    const effectiveSchema = stripUnknown && schema instanceof zod_1.z.ZodObject
+    const effectiveSchema = stripUnknown && schema instanceof z.ZodObject
         ? schema.strip()
         : schema;
     return (req, res, next) => {
@@ -36,9 +32,6 @@ function validateData(schema, options = {}) {
         return next();
     };
 }
-const validateBody = (schema, opts) => validateData(schema, { ...opts, target: 'body' });
-exports.validateBody = validateBody;
-const validateQuery = (schema, opts) => validateData(schema, { ...opts, target: 'query' });
-exports.validateQuery = validateQuery;
-const validateParams = (schema, opts) => validateData(schema, { ...opts, target: 'params' });
-exports.validateParams = validateParams;
+export const validateBody = (schema, opts) => validateData(schema, { ...opts, target: 'body' });
+export const validateQuery = (schema, opts) => validateData(schema, { ...opts, target: 'query' });
+export const validateParams = (schema, opts) => validateData(schema, { ...opts, target: 'params' });

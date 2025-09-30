@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchPokemon = exports.findPokemonByType = exports.findPokemonByName = exports.findPokemonById = exports.nationalDex = void 0;
-exports.nationalDex = [
+export const nationalDex = [
     { id: 11, name: "Metapod", type1: "Bug" },
     { id: 12, name: "Butterfree", type1: "Bug", type2: "Flying" },
     { id: 13, name: "Weedle", type1: "Bug", type2: "Poison" },
@@ -1018,23 +1015,19 @@ exports.nationalDex = [
     { id: 1024, name: "Terapagos", type1: "Normal" },
     { id: 1025, name: "Pecharunt", type1: "Poison", type2: "Ghost" },
 ];
-const findPokemonById = (id) => {
-    return exports.nationalDex.find(pokemon => pokemon.id === id);
+export const findPokemonById = (id) => {
+    return nationalDex.find(pokemon => pokemon.id === id);
 };
-exports.findPokemonById = findPokemonById;
-const findPokemonByName = (name) => {
-    return exports.nationalDex.find(pokemon => pokemon.name.toLowerCase() === name.toLowerCase());
+export const findPokemonByName = (name) => {
+    return nationalDex.find(pokemon => pokemon.name.toLowerCase() === name.toLowerCase());
 };
-exports.findPokemonByName = findPokemonByName;
-const findPokemonByType = (type) => {
-    return exports.nationalDex.filter(pokemon => pokemon.type1.toLowerCase() === type.toLowerCase() ||
+export const findPokemonByType = (type) => {
+    return nationalDex.filter(pokemon => pokemon.type1.toLowerCase() === type.toLowerCase() ||
         pokemon.type2?.toLowerCase() === type.toLowerCase());
 };
-exports.findPokemonByType = findPokemonByType;
-const searchPokemon = (query) => {
+export const searchPokemon = (query) => {
     const lowerQuery = query.toLowerCase();
-    return exports.nationalDex.filter(pokemon => pokemon.name.toLowerCase().includes(lowerQuery) ||
+    return nationalDex.filter(pokemon => pokemon.name.toLowerCase().includes(lowerQuery) ||
         pokemon.type1.toLowerCase().includes(lowerQuery) ||
         pokemon.type2?.toLowerCase().includes(lowerQuery));
 };
-exports.searchPokemon = searchPokemon;

@@ -7,8 +7,8 @@ import {
   deleteProfile as dbDeleteProfile,
   searchProfilesByUsername as dbSearchProfilesByUsername,
   getAllProfiles as dbGetAllProfiles,
-} from '../../db/profilesQueries';
-import type { NewProfile } from '../../db/profilesSchema';
+} from '../../db/profilesQueries.js';
+import type { NewProfile } from '../../db/profilesSchema.js';
 
 // Get profile by ID
 export async function getProfile(req: Request, res: Response) {

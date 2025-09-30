@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { supabase } from '../utils/supabaseServerClient';
+import { supabase } from '../utils/supabaseServerClient.js';
 
 // Extend Express Request interface to include authenticated user
 declare module 'express-serve-static-core' {

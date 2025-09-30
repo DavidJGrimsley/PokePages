@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { buildApiUrl } from '~/utils/apiConfig';
 import { 
   Text, 
   View, 
@@ -37,7 +38,7 @@ interface EventData {
 
 const DrizzleCounter: React.FC<DrizzleCounterProps> = ({ 
   pokemon, 
-  apiUrl = 'http://localhost:3001/api' 
+    apiUrl = buildApiUrl('') 
 }) => {
   const { user, isLoggedIn } = useAuthStore();
   const [eventData, setEventData] = useState<EventData | null>(null);

@@ -154,7 +154,6 @@ export default function RootLayout() {
               <Stack.Screen name="sign-in" options={{ headerShown: false }} />
               <Stack.Screen name="sign-up" options={{ headerShown: false }} />
             </Stack.Protected>
-            <Stack.Protected guard={isLoggedIn}>
               <Stack.Screen 
                 name="editProfile" 
                 options={{ 
@@ -163,7 +162,6 @@ export default function RootLayout() {
                   headerStyle: headerStyle,
                 }} 
               />
-            </Stack.Protected>
           </Stack.Protected>
         </Stack>
       </GestureHandlerRootView>

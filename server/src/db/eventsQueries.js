@@ -1,18 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEventCounters = getEventCounters;
-exports.getEventCounter = getEventCounter;
-exports.incrementEventCounter = incrementEventCounter;
-exports.getUserParticipation = getUserParticipation;
-exports.getAnonymousParticipation = getAnonymousParticipation;
-exports.getEventStats = getEventStats;
-const drizzle_orm_1 = require("drizzle-orm");
-const index_1 = require("./index");
-const eventsSchema_1 = require("./eventsSchema");
-const profilesSchema_1 = require("./profilesSchema");
-async function getEventCounters() {
+import { eq, and, sql } from 'drizzle-orm';
+import { db } from './index.js';
+import { eventCounters, userEventParticipation, anonymousEventParticipation } from './eventsSchema.js';
+import { profiles, } from './profilesSchema.js';
+export async function getEventCounters() {
     try {
-        const events = await index_1.db.select().from(eventsSchema_1.eventCounters).orderBy(eventsSchema_1.eventCounters.createdAt);
+        const events = await db.select().from(eventCounters).orderBy(eventCounters.createdAt);
         return events;
     }
     catch (error) {
@@ -20,12 +12,12 @@ async function getEventCounters() {
         throw error;
     }
 }
-async function getEventCounter(eventKey) {
+export async function getEventCounter(eventKey) {
     try {
-        const [event] = await index_1.db
+        const [event] = await db
             .select()
-            .from(eventsSchema_1.eventCounters)
-            .where((0, drizzle_orm_1.eq)(eventsSchema_1.eventCounters.eventKey, eventKey));
+            .from(eventCounters)
+            .where(eq(eventCounters.eventKey, eventKey));
         return event || null;
     }
     catch (error) {
@@ -33,47 +25,47 @@ async function getEventCounter(eventKey) {
         throw error;
     }
 }
-async function incrementEventCounter(eventKey, userId, anonymousId) {
+export async function incrementEventCounter(eventKey, userId, anonymousId) {
     try {
         const event = await getEventCounter(eventKey);
         if (!event) {
             throw new Error(`Event not found: ${eventKey}`);
         }
         let userContribution = 0;
-        const result = await index_1.db.transaction(async (tx) => {
+        const result = await db.transaction(async (tx) => {
             const [updatedEvent] = await tx
-                .update(eventsSchema_1.eventCounters)
+                .update(eventCounters)
                 .set({
-                totalCount: (0, drizzle_orm_1.sql) `${eventsSchema_1.eventCounters.totalCount} + 1`,
-                updatedAt: (0, drizzle_orm_1.sql) `NOW()`
+                totalCount: sql `${eventCounters.totalCount} + 1`,
+                updatedAt: sql `NOW()`
             })
-                .where((0, drizzle_orm_1.eq)(eventsSchema_1.eventCounters.eventKey, eventKey))
+                .where(eq(eventCounters.eventKey, eventKey))
                 .returning();
             if (userId) {
                 const [existingParticipation] = await tx
                     .select()
-                    .from(eventsSchema_1.userEventParticipation)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.userId, userId)));
+                    .from(userEventParticipation)
+                    .where(and(eq(userEventParticipation.eventId, event.id), eq(userEventParticipation.userId, userId)));
                 if (existingParticipation) {
                     const [updated] = await tx
-                        .update(eventsSchema_1.userEventParticipation)
+                        .update(userEventParticipation)
                         .set({
-                        contributionCount: (0, drizzle_orm_1.sql) `${eventsSchema_1.userEventParticipation.contributionCount} + 1`,
-                        lastContributedAt: (0, drizzle_orm_1.sql) `NOW()`,
-                        updatedAt: (0, drizzle_orm_1.sql) `NOW()`
+                        contributionCount: sql `${userEventParticipation.contributionCount} + 1`,
+                        lastContributedAt: sql `NOW()`,
+                        updatedAt: sql `NOW()`
                     })
-                        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.userId, userId)))
+                        .where(and(eq(userEventParticipation.eventId, event.id), eq(userEventParticipation.userId, userId)))
                         .returning();
                     userContribution = updated.contributionCount ?? 0;
                 }
                 else {
                     const [created] = await tx
-                        .insert(eventsSchema_1.userEventParticipation)
+                        .insert(userEventParticipation)
                         .values({
                         eventId: event.id,
                         userId: userId,
                         contributionCount: 1,
-                        lastContributedAt: (0, drizzle_orm_1.sql) `NOW()`,
+                        lastContributedAt: sql `NOW()`,
                     })
                         .returning();
                     userContribution = created.contributionCount ?? 1;
@@ -82,28 +74,28 @@ async function incrementEventCounter(eventKey, userId, anonymousId) {
             else if (anonymousId) {
                 const [existingAnonymous] = await tx
                     .select()
-                    .from(eventsSchema_1.anonymousEventParticipation)
-                    .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.anonymousId, anonymousId)));
+                    .from(anonymousEventParticipation)
+                    .where(and(eq(anonymousEventParticipation.eventId, event.id), eq(anonymousEventParticipation.anonymousId, anonymousId)));
                 if (existingAnonymous) {
                     const [updated] = await tx
-                        .update(eventsSchema_1.anonymousEventParticipation)
+                        .update(anonymousEventParticipation)
                         .set({
-                        contributionCount: (0, drizzle_orm_1.sql) `${eventsSchema_1.anonymousEventParticipation.contributionCount} + 1`,
-                        lastContributedAt: (0, drizzle_orm_1.sql) `NOW()`,
-                        updatedAt: (0, drizzle_orm_1.sql) `NOW()`
+                        contributionCount: sql `${anonymousEventParticipation.contributionCount} + 1`,
+                        lastContributedAt: sql `NOW()`,
+                        updatedAt: sql `NOW()`
                     })
-                        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.anonymousId, anonymousId)))
+                        .where(and(eq(anonymousEventParticipation.eventId, event.id), eq(anonymousEventParticipation.anonymousId, anonymousId)))
                         .returning();
                     userContribution = updated.contributionCount ?? 0;
                 }
                 else {
                     const [created] = await tx
-                        .insert(eventsSchema_1.anonymousEventParticipation)
+                        .insert(anonymousEventParticipation)
                         .values({
                         eventId: event.id,
                         anonymousId: anonymousId,
                         contributionCount: 1,
-                        lastContributedAt: (0, drizzle_orm_1.sql) `NOW()`,
+                        lastContributedAt: sql `NOW()`,
                     })
                         .returning();
                     userContribution = created.contributionCount ?? 1;
@@ -122,16 +114,16 @@ async function incrementEventCounter(eventKey, userId, anonymousId) {
         throw error;
     }
 }
-async function getUserParticipation(eventKey, userId) {
+export async function getUserParticipation(eventKey, userId) {
     try {
         const event = await getEventCounter(eventKey);
         if (!event) {
             return null;
         }
-        const [participation] = await index_1.db
+        const [participation] = await db
             .select()
-            .from(eventsSchema_1.userEventParticipation)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.userId, userId)));
+            .from(userEventParticipation)
+            .where(and(eq(userEventParticipation.eventId, event.id), eq(userEventParticipation.userId, userId)));
         return participation || null;
     }
     catch (error) {
@@ -139,16 +131,16 @@ async function getUserParticipation(eventKey, userId) {
         throw error;
     }
 }
-async function getAnonymousParticipation(eventKey, anonymousId) {
+export async function getAnonymousParticipation(eventKey, anonymousId) {
     try {
         const event = await getEventCounter(eventKey);
         if (!event) {
             return null;
         }
-        const [participation] = await index_1.db
+        const [participation] = await db
             .select()
-            .from(eventsSchema_1.anonymousEventParticipation)
-            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.eventId, event.id), (0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.anonymousId, anonymousId)));
+            .from(anonymousEventParticipation)
+            .where(and(eq(anonymousEventParticipation.eventId, event.id), eq(anonymousEventParticipation.anonymousId, anonymousId)));
         return participation || null;
     }
     catch (error) {
@@ -156,39 +148,39 @@ async function getAnonymousParticipation(eventKey, anonymousId) {
         throw error;
     }
 }
-async function getEventStats(eventKey) {
+export async function getEventStats(eventKey) {
     try {
         const event = await getEventCounter(eventKey);
         if (!event) {
             return null;
         }
-        const [userCount] = await index_1.db
-            .select({ count: (0, drizzle_orm_1.sql) `count(*)` })
-            .from(eventsSchema_1.userEventParticipation)
-            .where((0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.eventId, event.id));
-        const [anonCount] = await index_1.db
-            .select({ count: (0, drizzle_orm_1.sql) `count(*)` })
-            .from(eventsSchema_1.anonymousEventParticipation)
-            .where((0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.eventId, event.id));
-        const topUsers = await index_1.db
+        const [userCount] = await db
+            .select({ count: sql `count(*)` })
+            .from(userEventParticipation)
+            .where(eq(userEventParticipation.eventId, event.id));
+        const [anonCount] = await db
+            .select({ count: sql `count(*)` })
+            .from(anonymousEventParticipation)
+            .where(eq(anonymousEventParticipation.eventId, event.id));
+        const topUsers = await db
             .select({
-            userId: eventsSchema_1.userEventParticipation.userId,
-            username: profilesSchema_1.profiles.username,
-            contributionCount: eventsSchema_1.userEventParticipation.contributionCount,
+            userId: userEventParticipation.userId,
+            username: profiles.username,
+            contributionCount: userEventParticipation.contributionCount,
         })
-            .from(eventsSchema_1.userEventParticipation)
-            .leftJoin(profilesSchema_1.profiles, (0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.userId, profilesSchema_1.profiles.id))
-            .where((0, drizzle_orm_1.eq)(eventsSchema_1.userEventParticipation.eventId, event.id))
-            .orderBy((0, drizzle_orm_1.sql) `${eventsSchema_1.userEventParticipation.contributionCount} DESC`)
+            .from(userEventParticipation)
+            .leftJoin(profiles, eq(userEventParticipation.userId, profiles.id))
+            .where(eq(userEventParticipation.eventId, event.id))
+            .orderBy(sql `${userEventParticipation.contributionCount} DESC`)
             .limit(10);
-        const topAnonymous = await index_1.db
+        const topAnonymous = await db
             .select({
-            anonymousId: eventsSchema_1.anonymousEventParticipation.anonymousId,
-            contributionCount: eventsSchema_1.anonymousEventParticipation.contributionCount,
+            anonymousId: anonymousEventParticipation.anonymousId,
+            contributionCount: anonymousEventParticipation.contributionCount,
         })
-            .from(eventsSchema_1.anonymousEventParticipation)
-            .where((0, drizzle_orm_1.eq)(eventsSchema_1.anonymousEventParticipation.eventId, event.id))
-            .orderBy((0, drizzle_orm_1.sql) `${eventsSchema_1.anonymousEventParticipation.contributionCount} DESC`)
+            .from(anonymousEventParticipation)
+            .where(eq(anonymousEventParticipation.eventId, event.id))
+            .orderBy(sql `${anonymousEventParticipation.contributionCount} DESC`)
             .limit(5);
         const topContributors = [
             ...topUsers.map(user => ({

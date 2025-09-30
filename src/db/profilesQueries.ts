@@ -1,10 +1,12 @@
 import { eq, sql } from 'drizzle-orm';
-import { db } from './index';
+import { db } from './index.js';
 import {
   profiles,
   type Profile,
   type NewProfile,
-} from './profilesSchema';// Get profile by user ID
+} from './profilesSchema.js';
+
+// Get profile by user ID
 
 export async function getProfile(userId: string): Promise<Profile | null> {
   try {

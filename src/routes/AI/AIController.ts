@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { PokemonClient } from 'pokenode-ts';
 import OpenAI from 'openai';
-import type { Pokemon } from '../../../data/Pokemon/NationalDex';
+import type { Pokemon } from '../../../data/Pokemon/NationalDex.js';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -143,9 +143,68 @@ Provide helpful advice about Pokémon battles, team building, and Tera Raid stra
     });
   } catch (error) {
     console.error('Error in chat:', error);
+    
+    // Handle specific OpenAI API errors
+    if (error instanceof OpenAI.APIError) {
+      let errorMessage = 'AI service error';
+      let statusCode = 500;
+      
+      switch (error.status) {
+        case 401:
+          errorMessage = 'AI service authentication failed. Please contact support.';
+          statusCode = 502; // Bad Gateway - external service issue
+          break;
+        case 429:
+          if (error.message.toLowerCase().includes('quota') || 
+              error.message.toLowerCase().includes('insufficient') ||
+              error.message.toLowerCase().includes('credits')) {
+            errorMessage = 'AI service has insufficient credits. Please try again later or contact support.';
+          } else {
+            errorMessage = 'AI service is currently busy. Please try again in a moment.';
+          }
+          statusCode = 503; // Service Unavailable
+          break;
+        case 400:
+          errorMessage = 'Invalid request to AI service. Please try rephrasing your message.';
+          statusCode = 400;
+          break;
+        case 500:
+        case 502:
+        case 503:
+          errorMessage = 'AI service is temporarily unavailable. Please try again later.';
+          statusCode = 503;
+          break;
+        default:
+          errorMessage = `AI service error: ${error.message}`;
+          statusCode = 502;
+      }
+      
+      return res.status(statusCode).json({
+        success: false,
+        error: errorMessage,
+        errorType: 'ai_service_error'
+      });
+    }
+    
+    // Handle network/connection errors
+    if (error instanceof Error && (
+      error.message.includes('ECONNREFUSED') ||
+      error.message.includes('ETIMEDOUT') ||
+      error.message.includes('network') ||
+      error.message.includes('connection')
+    )) {
+      return res.status(503).json({
+        success: false,
+        error: 'Unable to connect to AI service. Please check your internet connection and try again.',
+        errorType: 'network_error'
+      });
+    }
+    
+    // Generic error fallback
     res.status(500).json({ 
       success: false,
-      error: error instanceof Error ? error.message : 'AI chat error' 
+      error: 'An unexpected error occurred while processing your request. Please try again.',
+      errorType: 'unknown_error'
     });
   }
 }

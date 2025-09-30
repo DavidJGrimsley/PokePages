@@ -1,8 +1,7 @@
-import { pgTable, index, foreignKey, unique, pgPolicy, uuid, bigint, timestamp, text, integer, check, date } from "drizzle-orm/pg-core"
-import { sql } from "drizzle-orm"
+import { pgTable, index, foreignKey, unique, uuid, bigint, timestamp, text, integer } from "drizzle-orm/pg-core"
 import { z } from "zod"
 
-import { profiles } from "./profilesSchema";
+import { profiles } from "./profilesSchema.js";
 
 export const userEventParticipation = pgTable("user_event_participation", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -26,8 +25,7 @@ export const userEventParticipation = pgTable("user_event_participation", {
 			name: "user_event_participation_user_id_fkey"
 		}).onDelete("cascade"),
 	unique("user_event_participation_user_id_event_id_key").on(table.userId, table.eventId),
-	pgPolicy("Enable read access for all users", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
-	pgPolicy("user_participation_upsert_own", { as: "permissive", for: "all", to: ["public"] }),
+	// RLS policies handled in Supabase
 ]);
 
 export const anonymousEventParticipation = pgTable("anonymous_event_participation", {
@@ -46,9 +44,7 @@ export const anonymousEventParticipation = pgTable("anonymous_event_participatio
 			name: "anonymous_event_participation_event_id_fkey"
 		}).onDelete("cascade"),
 	unique("anonymous_event_participation_event_id_anonymous_id_key").on(table.eventId, table.anonymousId),
-	pgPolicy("anon_participation_insert_all", { as: "permissive", for: "insert", to: ["public"], withCheck: sql`true`  }),
-	pgPolicy("anon_participation_select_all", { as: "permissive", for: "select", to: ["public"] }),
-	pgPolicy("anon_participation_update_all", { as: "permissive", for: "update", to: ["public"] }),
+	// RLS policies handled in Supabase
 ]);
 
 export const eventCounters = pgTable("event_counters", {
@@ -70,7 +66,7 @@ export const eventCounters = pgTable("event_counters", {
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
 	unique("event_counters_event_key_key").on(table.eventKey),
-	pgPolicy("event_counters_select_all", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
+	// RLS policies handled in Supabase
 ]);
 
 // Event Counter types
@@ -91,8 +87,8 @@ export type NewAnonymousEventParticipation = typeof anonymousEventParticipation.
 
 // Schema for incrementing event counter - only needs user identification
 export const incrementEventSchema = z.object({
-  userId: z.uuid().optional(),
-  anonymousId: z.uuid().optional(),
+  userId: z.string().uuid().optional(),
+  anonymousId: z.string().uuid().optional(),
 }).refine(data => data.userId || data.anonymousId, {
   message: 'Either userId or anonymousId is required',
 });

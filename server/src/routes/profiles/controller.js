@@ -1,17 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProfile = getProfile;
-exports.getProfileByUsername = getProfileByUsername;
-exports.createProfile = createProfile;
-exports.updateProfile = updateProfile;
-exports.deleteProfile = deleteProfile;
-exports.searchProfiles = searchProfiles;
-exports.getAllProfiles = getAllProfiles;
-const profilesQueries_1 = require("../../db/profilesQueries");
-async function getProfile(req, res) {
+import { getProfile as dbGetProfile, getProfileByUsername as dbGetProfileByUsername, createProfile as dbCreateProfile, updateProfile as dbUpdateProfile, deleteProfile as dbDeleteProfile, searchProfilesByUsername as dbSearchProfilesByUsername, getAllProfiles as dbGetAllProfiles, } from '../../db/profilesQueries.js';
+export async function getProfile(req, res) {
     try {
         const { userId } = req.params;
-        const profile = await (0, profilesQueries_1.getProfile)(userId);
+        const profile = await dbGetProfile(userId);
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -28,10 +19,10 @@ async function getProfile(req, res) {
         });
     }
 }
-async function getProfileByUsername(req, res) {
+export async function getProfileByUsername(req, res) {
     try {
         const { username } = req.params;
-        const profile = await (0, profilesQueries_1.getProfileByUsername)(username);
+        const profile = await dbGetProfileByUsername(username);
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -48,10 +39,10 @@ async function getProfileByUsername(req, res) {
         });
     }
 }
-async function createProfile(req, res) {
+export async function createProfile(req, res) {
     try {
         const profileData = req.validated;
-        const newProfile = await (0, profilesQueries_1.createProfile)(profileData);
+        const newProfile = await dbCreateProfile(profileData);
         res.status(201).json({ success: true, data: newProfile });
     }
     catch (error) {
@@ -62,11 +53,11 @@ async function createProfile(req, res) {
         });
     }
 }
-async function updateProfile(req, res) {
+export async function updateProfile(req, res) {
     try {
         const { userId } = req.params;
         const updates = req.validated;
-        const updatedProfile = await (0, profilesQueries_1.updateProfile)(userId, updates);
+        const updatedProfile = await dbUpdateProfile(userId, updates);
         if (!updatedProfile) {
             return res.status(404).json({
                 success: false,
@@ -83,10 +74,10 @@ async function updateProfile(req, res) {
         });
     }
 }
-async function deleteProfile(req, res) {
+export async function deleteProfile(req, res) {
     try {
         const { userId } = req.params;
-        const deleted = await (0, profilesQueries_1.deleteProfile)(userId);
+        const deleted = await dbDeleteProfile(userId);
         if (!deleted) {
             return res.status(404).json({
                 success: false,
@@ -103,7 +94,7 @@ async function deleteProfile(req, res) {
         });
     }
 }
-async function searchProfiles(req, res) {
+export async function searchProfiles(req, res) {
     try {
         const { q: query, limit = '20' } = req.query;
         if (!query || typeof query !== 'string') {
@@ -112,7 +103,7 @@ async function searchProfiles(req, res) {
                 error: 'Query parameter "q" is required',
             });
         }
-        const profiles = await (0, profilesQueries_1.searchProfilesByUsername)(query, parseInt(limit));
+        const profiles = await dbSearchProfilesByUsername(query, parseInt(limit));
         res.json({ success: true, data: profiles });
     }
     catch (error) {
@@ -123,10 +114,10 @@ async function searchProfiles(req, res) {
         });
     }
 }
-async function getAllProfiles(req, res) {
+export async function getAllProfiles(req, res) {
     try {
         const { limit = '100', offset = '0' } = req.query;
-        const profiles = await (0, profilesQueries_1.getAllProfiles)(parseInt(limit), parseInt(offset));
+        const profiles = await dbGetAllProfiles(parseInt(limit), parseInt(offset));
         res.json({ success: true, data: profiles });
     }
     catch (error) {

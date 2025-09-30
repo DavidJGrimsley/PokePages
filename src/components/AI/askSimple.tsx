@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, TextInput, Pressable, ScrollView, View, ActivityIndicator } from 'react-native';
 import ErrorMessage from 'components/Meta/Error';
+import { buildApiUrl } from '~/utils/apiConfig';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -34,7 +35,7 @@ export default function AskSimple() {
 
     try {
       // Call your backend - adjust URL as needed
-      const response = await fetch('http://localhost:3001/api/ai/chat', {
+            const response = await fetch(buildApiUrl('ai/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),

@@ -1,4 +1,4 @@
-import { pgTable, index, foreignKey, unique, pgPolicy, uuid, bigint, timestamp, text, integer, check, date } from "drizzle-orm/pg-core"
+import { pgTable, unique, uuid, timestamp, text, check, date } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 import { createInsertSchema, createSelectSchema } from "drizzle-zod"
 import { z } from "zod"
@@ -14,9 +14,7 @@ export const profiles = pgTable("profiles", {
 }, (table) => [
 	// Note: profiles.id references auth.users.id (Supabase auth table not in public schema)
 	unique("profiles_username_key").on(table.username),
-	pgPolicy("Public profiles are viewable by everyone.", { as: "permissive", for: "select", to: ["public"], using: sql`true` }),
-	pgPolicy("Users can insert their own profile.", { as: "permissive", for: "insert", to: ["public"] }),
-	pgPolicy("Users can update own profile.", { as: "permissive", for: "update", to: ["public"] }),
+	// Row Level Security (RLS) policies are handled in Supabase dashboard/SQL
 	check("username_length", sql`(username IS NULL) OR (char_length(username) >= 3)`),
 ]);
 
@@ -51,7 +49,7 @@ export const signupProfileSchema = createProfileSchema.pick({
 
 // Validation schemas for params and query
 export const userIdParamsSchema = z.object({
-  userId: z.uuid(),
+  userId: z.string().uuid(),
 });
 
 export const usernameParamsSchema = z.object({

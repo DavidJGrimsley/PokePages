@@ -8,9 +8,9 @@ import {
   deleteProfile,
   searchProfiles,
   getAllProfiles,
-} from './controller';
-import { validateData, validateParams, validateQuery } from '../../middlewares/validationMiddleware';
-import { verifySupabaseAuth, verifyResourceOwnership, requireAdmin } from '../../middlewares/authMiddleware';
+} from './controller.js';
+import { validateData, validateParams, validateQuery } from '../../middlewares/validationMiddleware.js';
+import { verifySupabaseAuth, verifyResourceOwnership, requireAdmin } from '../../middlewares/authMiddleware.js';
 import { 
   updateProfileSchema,
   userEditableProfileSchema,
@@ -19,7 +19,7 @@ import {
   usernameParamsSchema,
   searchQuerySchema,
   paginationQuerySchema,
-} from '../../db/profilesSchema';
+} from '../../db/profilesSchema.js';
 
 const profileRouter = Router();
 
