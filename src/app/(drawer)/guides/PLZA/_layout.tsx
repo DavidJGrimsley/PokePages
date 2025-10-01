@@ -14,6 +14,16 @@ export default function Gen10Layout() {
       }}
     >
       <Tabs.Screen
+        name="before-you-play"
+        options={{
+          title: 'Before You Play',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="map-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="map"
         options={{
           title: 'Map',

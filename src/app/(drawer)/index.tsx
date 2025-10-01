@@ -60,8 +60,8 @@ export default function Home() {
             
             {/* Featured newest feature */}
             <NewestFeature
-              title="Top Raid builds"
-              description="Use these pokemon in 5, 6, and 7 star tera raids in Pokemon Scarlet and Violet."
+              title="Type Calculator"
+              description="Use when battling to see type advantages."
               path="/(drawer)/resources/type-calculator"
             />
           

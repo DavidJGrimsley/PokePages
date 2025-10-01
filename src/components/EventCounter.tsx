@@ -13,8 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { PokemonClient } from 'pokenode-ts';
-import { supabase } from '~/utils/supabaseClient';
-import { diagnosticChecks } from '~/utils/supabaseDiagnostics';
+import { buildApiUrl } from '~/utils/apiConfig';
 import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 
@@ -42,6 +41,18 @@ interface PokemonStats {
   speed: number;
 }
 
+interface EventData {
+  id: string;
+  eventKey: string;
+  pokemonName: string;
+  totalCount: number;
+  targetCount: number;
+  maxRewards: number;
+  startDate: string;
+  endDate: string;
+  updatedAt: string;
+}
+
 interface EventCounterProps {
   pokemonName: string;
   pokemonId: number;
@@ -56,6 +67,7 @@ interface EventCounterProps {
   targetCount: number;
   maxRewards: number;
   colorScheme?: 'light' | 'dark';
+  apiUrl?: string; // Optional custom API URL
 }
 
 export const EventCounter: React.FC<EventCounterProps> = ({
@@ -71,9 +83,11 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   distributionEnd,
   targetCount,
   maxRewards,
-  colorScheme = 'light'
+  colorScheme = 'light',
+  apiUrl = buildApiUrl('')
 }) => {
   const { user, isLoggedIn } = useAuthStore();
+  const [eventData, setEventData] = useState<EventData | null>(null);
   const [globalCount, setGlobalCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -190,8 +204,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           return;
         }
        
-        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_shiny || 
-                          pokemon.sprites.front_shiny || 
+        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default || 
                           pokemon.sprites.front_default || '';
         setPokemonImage(imageUrl);
         
@@ -220,188 +233,65 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     loadPokemonData();
   }, [pokemonId]);
 
-  // Load event data and user participation
-  useEffect(() => {
-    const loadEventData = async () => {
-      console.log('🔍 Starting loadEventData for eventKey:', eventKey);
-      console.log('🔍 User status:', { isLoggedIn, userId: user?.id, anonymousId });
+  // Fetch event data from API
+  const fetchEventData = React.useCallback(async () => {
+    try {
+      const response = await fetch(`${apiUrl}/events/${eventKey}`);
+      const result = await response.json();
       
-      try {
-        // Test basic Supabase connection with timeout
-        console.log('🧪 Testing basic Supabase connection...');
-        
-        const connectionTest = Promise.race([
-          supabase
-            .from('event_counters')
-            .select('event_key')
-            .limit(1),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Connection timeout after 10 seconds')), 10000)
-          )
-        ]);
-
-        const { data: testData, error: testError } = await connectionTest as any;
-        
-        console.log('🧪 Connection test completed:', { testData, testError });
-        
-        if (testError) {
-          console.error('❌ Basic connection failed:', testError);
-          throw new Error(`Connection failed: ${testError.message}`);
-        }
-
-        // Get event data with timeout
-        console.log('📊 Fetching event data for eventKey:', eventKey);
-        
-        const eventQuery = Promise.race([
-          supabase
-            .from('event_counters')
-            .select('*')
-            .eq('event_key', eventKey)
-            .single(),
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Event query timeout after 10 seconds')), 10000)
-          )
-        ]);
-
-        const { data: eventData, error: eventError } = await eventQuery as any;
-
-        console.log('📊 Event query completed:', { 
-          eventData, 
-          eventError,
-          hasData: !!eventData,
-          errorCode: eventError?.code,
-          errorMessage: eventError?.message 
-        });
-
-        if (eventError) {
-          if (eventError.code === 'PGRST116') {
-            console.warn('⚠️ No event found for key:', eventKey);
-            setGlobalCount(0);
-            setEventError(`No event found for key: ${eventKey}`);
-            return;
-          }
-          throw new Error(`Event data error: ${eventError.message}`);
-        }
-
-        if (!eventData) {
-          console.warn('⚠️ No event data returned for key:', eventKey);
-          setGlobalCount(0);
-          setEventError(`No event data found for: ${eventKey}`);
-          return;
-        }
-
-        console.log('✅ Setting global count to:', eventData.total_count);
-        setGlobalCount(eventData.total_count || 0);
-        setLastUpdated(eventData.updated_at);
-
-        // Get user participation
-        if (isLoggedIn && user) {
-          console.log('👤 Fetching user participation for event_id:', eventData.id, 'user_id:', user.id);
-          
-          const userQuery = Promise.race([
-            supabase
-              .from('user_event_participation')
-              .select('contribution_count')
-              .eq('event_id', eventData.id)
-              .eq('user_id', user.id)
-              .maybeSingle(),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('User participation timeout')), 10000)
-            )
-          ]);
-
-          const { data: userParticipation, error: userError } = await userQuery as any;
-          console.log('👤 User participation response:', { userParticipation, userError });
-          
-          if (userError && userError.code !== 'PGRST116') {
-            console.error('❌ User participation error:', userError);
-          }
-
-          setUserCount(userParticipation?.contribution_count || 0);
-        } else if (anonymousId) {
-          console.log('👻 Fetching anonymous participation for event_id:', eventData.id, 'anonymous_id:', anonymousId);
-          
-          const { data: anonParticipation, error: anonError } = await supabase
-            .from('anonymous_event_participation')
-            .select('contribution_count')
-            .eq('event_id', eventData.id)
-            .eq('anonymous_id', anonymousId)
-            .maybeSingle();
-
-          console.log('👻 Anonymous participation response:', { 
-            anonParticipation, 
-            anonError,
-            hasData: !!anonParticipation 
-          });
-          
-          if (anonError && anonError.code !== 'PGRST116') {
-            console.error('❌ Anonymous participation error:', anonError);
-          }
-
-          setUserCount(anonParticipation?.contribution_count || 0);
-        }
-
+      if (result.success) {
+        const data = result.data;
+        setEventData(data);
+        setGlobalCount(data.totalCount || 0);
+        setLastUpdated(data.updatedAt);
         setError('');
         setEventError('');
-        console.log('✅ loadEventData completed successfully');
-        
-      } catch (error) {
-        console.error('💥 Failed to load event data:', error);
-        console.error('💥 Error stack:', error instanceof Error ? error.stack : 'No stack trace');
-        
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        setEventError(`Failed to load event data: ${errorMessage}`);
-        
-        // Run diagnostics only if user is logged in
-        if (isLoggedIn && user) {
-          console.log('🚀 Running diagnostics due to error...');
-          try {
-            await diagnosticChecks.runAllChecks();
-          } catch (diagError) {
-            console.error('🚀 Diagnostics failed:', diagError);
-          }
-        }
+      } else {
+        setEventError(result.error || 'Failed to fetch event data');
       }
-    };
-
-    if (eventKey && (isLoggedIn || anonymousId)) {
-      console.log('🚀 Conditions met, calling loadEventData...');
-      loadEventData();
-      
-      // Set up real-time subscription
-      const subscription = supabase
-        .channel(`event_${eventKey}`)
-        .on('postgres_changes', 
-          { 
-            event: 'UPDATE', 
-            schema: 'public', 
-            table: 'event_counters',
-            filter: `event_key=eq.${eventKey}`
-          }, 
-          (payload) => {
-            console.log('📡 Real-time update received:', payload);
-            if (payload.new) {
-              setGlobalCount(payload.new.total_count || 0);
-              setLastUpdated(payload.new.updated_at);
-            }
-          }
-        )
-        .subscribe((status) => {
-          console.log('📡 Subscription status:', status);
-        });
-
-      return () => {
-        console.log('🧹 Cleaning up subscription');
-        subscription.unsubscribe();
-      };
-    } else {
-      console.log('⏸️ Conditions not met:', { 
-        hasEventKey: !!eventKey, 
-        isLoggedIn, 
-        hasAnonymousId: !!anonymousId 
-      });
+    } catch (err) {
+      console.error('Error fetching event data:', err);
+      setEventError('Failed to connect to API server');
     }
-  }, [eventKey, isLoggedIn, user, anonymousId]);
+  }, [apiUrl, eventKey]);
+
+  // Fetch user participation from API
+  const fetchUserParticipation = React.useCallback(async () => {
+    if (!eventData?.id) return;
+    
+    try {
+      const userId = isLoggedIn && user ? user.id : null;
+      const anonId = !isLoggedIn && anonymousId ? anonymousId : null;
+      
+      if (!userId && !anonId) return;
+      
+      const endpoint = userId 
+        ? `${apiUrl}/events/${eventKey}/participation/${userId}`
+        : `${apiUrl}/events/${eventKey}/participation/anonymous/${anonId}`;
+        
+      const response = await fetch(endpoint);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        setUserCount(result.data.contributionCount || 0);
+      }
+    } catch (err) {
+      console.error('Error fetching user participation:', err);
+    }
+  }, [apiUrl, eventKey, eventData?.id, isLoggedIn, user, anonymousId]);
+
+  // Load event data and user participation
+  useEffect(() => {
+    if (eventKey) {
+      fetchEventData();
+    }
+  }, [eventKey, fetchEventData]);
+
+  useEffect(() => {
+    if (eventData && (isLoggedIn || anonymousId)) {
+      fetchUserParticipation();
+    }
+  }, [eventData, isLoggedIn, anonymousId, fetchUserParticipation]);
 
   // Format date to user-friendly format
   const formatUserFriendlyDate = (dateString: string) => {
@@ -469,60 +359,55 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   };
 
   const incrementCounter = async () => {
+    if (!eventData) return;
+    
     setLoading(true);
     setError('');
     
     try {
-      // Call the Supabase function with explicit parameters
-      const params = {
-        p_event_key: eventKey,  // Using p_ prefix to match SQL function parameter
-        p_pokemon_name: pokemonName,  // Add pokemon name parameter
-        p_user_id: isLoggedIn && user ? user.id : null,
-        p_anonymous_id: !isLoggedIn && anonymousId ? anonymousId : null
-      };
+      const response = await fetch(`${apiUrl}/events/${eventKey}/increment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: isLoggedIn && user ? user.id : undefined,
+          anonymousId: !isLoggedIn && anonymousId ? anonymousId : undefined
+        })
+      });
       
-      const { data, error } = await supabase.rpc('increment_counter', params);
+      const result = await response.json();
       
-      if (error) {
-        console.error('❌ increment_counter error:', error);
-        throw error;
-      }
-
-      if (data) {
-        if (data.success) {
-          // The function returns a JSON object
-          const eventCounter = data.event_counter;
-          const userContribution = data.user_contribution;
-          
-          setGlobalCount(eventCounter.current_count || 0);
-          setUserCount(userContribution || 0);
-          setLastUpdated(eventCounter.updated_at || new Date().toISOString());
-        } else {
-          // Function returned success: false
-          console.error('❌ Function returned error:', data.error);
-          throw new Error(data.error || 'Function returned unsuccessful result');
-        }
+      if (result.success) {
+        // Update local state with new values
+        setEventData(result.data.event);
+        setGlobalCount(result.data.event.totalCount);
+        setUserCount(result.data.userContribution);
+        setLastUpdated(result.data.event.updatedAt);
+        showAlert('Success!', `Counter incremented! You've contributed ${result.data.userContribution} times.`);
       } else {
-        console.error('❌ No data returned from function');
-        throw new Error('No data returned from increment_counter function');
+        throw new Error(result.error || 'Failed to increment counter');
       }
       
-    } catch (error) {
-      console.error('❌ Failed to increment counter:', error);
-      setError(`Failed to update counter: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      showAlert('Error', 'Failed to update counter. Please try again.');
+    } catch (err) {
+      console.error('Error incrementing counter:', err);
+      setError(err instanceof Error ? err.message : 'Failed to increment counter');
+      showAlert('Error', 'Failed to increment counter. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const getProgressPercentage = () => {
-    return Math.min(Number(((globalCount / targetCount) * 100).toFixed(3)), 100);
+    const target = eventData?.targetCount || targetCount;
+    return Math.min(Number(((globalCount / target) * 100).toFixed(3)), 100);
   };
 
   const getBonusRewards = () => {
-    const bonusLevels = Math.floor((globalCount - targetCount) / 100000);
-    return Math.min(bonusLevels, (maxRewards - targetCount) / 100000);
+    const target = eventData?.targetCount || targetCount;
+    const maxRew = eventData?.maxRewards || maxRewards;
+    const bonusLevels = Math.floor((globalCount - target) / 100000);
+    return Math.min(bonusLevels, (maxRew - target) / 100000);
   };
 
   return (
@@ -640,44 +525,48 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       )}
 
       {/* Congratulatory Banner - using exact original styling */}
-      {globalCount >= targetCount && (
-        <View className={cn(
-          "my-md mx-lg p-lg rounded-md border-2 items-center",
-          globalCount >= maxRewards 
-            ? "bg-app-background border-app-secondary" 
-            : "bg-app-background border-app-accent"
-        )}>
-          <Text className={cn(
-            "typography-subheader text-center mb-md",
-            globalCount >= maxRewards ? "text-orange-600" : "text-app-accent"
+      {(() => {
+        const target = eventData?.targetCount || targetCount;
+        const maxRew = eventData?.maxRewards || maxRewards;
+        return globalCount >= target && (
+          <View className={cn(
+            "my-md mx-lg p-lg rounded-md border-2 items-center",
+            globalCount >= maxRew 
+              ? "bg-app-background border-app-secondary" 
+              : "bg-app-background border-app-accent"
           )}>
-            🎉 {globalCount >= maxRewards ? 'MAXIMUM REWARDS UNLOCKED!' : 'MILESTONE REACHED!'} 🎉
-          </Text>
-          <Text className={cn(
-            "typography-copy text-center mb-sm",
-            globalCount >= maxRewards ? "text-orange-800" : "text-app-text"
-          )}>
-            {globalCount >= maxRewards 
-              ? `Incredible! We've defeated ${pokemonName} ${globalCount.toLocaleString()} times! All bonus rewards have been unlocked!`
-              : `Amazing! We've surpassed ${targetCount.toLocaleString()} defeats! Keep going to unlock even more bonus rewards!`
-            }
-          </Text>
-          <Text className={cn(
-            "typography-copy text-center italic",
-            globalCount >= maxRewards ? "text-orange-600" : "text-app-brown"
-          )}>
-            Don&apos;t forget to claim your {pokemonName} from Mystery Gift between {formatUserFriendlyDate(distributionStart)} and {formatUserFriendlyDate(distributionEnd)}!
-          </Text>
-          <View className="bg-app-background mx-lg my-md p-md rounded-md border border-app-secondary">
-            <Text className="typography-copy-bold text-app-brown text-center mb-sm">
-              Bonus Rewards Unlocked: {getBonusRewards()}
+            <Text className={cn(
+              "typography-subheader text-center mb-md",
+              globalCount >= maxRew ? "text-orange-600" : "text-app-accent"
+            )}>
+              🎉 {globalCount >= maxRew ? 'MAXIMUM REWARDS UNLOCKED!' : 'MILESTONE REACHED!'} 🎉
             </Text>
-            <Text className="typography-copy text-app-brown text-center">
-              Every 100,000 defeats beyond {targetCount.toLocaleString()} unlocks additional rewards!
+            <Text className={cn(
+              "typography-copy text-center mb-sm",
+              globalCount >= maxRew ? "text-orange-800" : "text-app-text"
+            )}>
+              {globalCount >= maxRew 
+                ? `Incredible! We've defeated ${pokemonName} ${globalCount.toLocaleString()} times! All bonus rewards have been unlocked!`
+                : `Amazing! We've surpassed ${target.toLocaleString()} defeats! Keep going to unlock even more bonus rewards!`
+              }
             </Text>
+            <Text className={cn(
+              "typography-copy text-center italic",
+              globalCount >= maxRew ? "text-orange-600" : "text-app-brown"
+            )}>
+              Don&apos;t forget to claim your {pokemonName} from Mystery Gift between {formatUserFriendlyDate(distributionStart)} and {formatUserFriendlyDate(distributionEnd)}!
+            </Text>
+            <View className="bg-app-background mx-lg my-md p-md rounded-md border border-app-secondary">
+              <Text className="typography-copy-bold text-app-brown text-center mb-sm">
+                Bonus Rewards Unlocked: {getBonusRewards()}
+              </Text>
+              <Text className="typography-copy text-app-brown text-center">
+                Every 100,000 defeats beyond {target.toLocaleString()} unlocks additional rewards!
+              </Text>
+            </View>
           </View>
-        </View>
-      )}
+        );
+      })()}
 
       {/* Progress Bar - using exact original styling */}
       <View className="mx-lg my-md">

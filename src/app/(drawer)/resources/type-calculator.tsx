@@ -1,13 +1,12 @@
 import React from 'react';
 import { Container } from 'components/UI/Container';
-import { ComingSoon } from 'components/Meta/ComingSoon';
-import TypeEffectivenessCalculator from 'components/Resources/TypeChartDisplay';
-
+import { TypeEffectivenessCalculator } from 'components/Resources/TypeCalculator';
+import { TypeAnalysis } from '@/src/components/Resources/TypeAnalysis';
 
 export default function TypeCalculator() {
   return (
     <Container>
-      <TypeEffectivenessCalculator showSpecialTypes={true} />
+      <TypeEffectivenessCalculator showSpecialTypes={false} />
     </Container>
   );
 }
