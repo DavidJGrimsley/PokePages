@@ -1,3 +1,6 @@
+/* stylelint-disable at-rule-no-unknown */
+/* eslint-disable */
+/* prettier-ignore */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

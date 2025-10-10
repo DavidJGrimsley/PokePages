@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, SplashScreen } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, View, Text } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { 
@@ -66,7 +66,6 @@ export default function RootLayout() {
 
   const {
     isLoggedIn,
-    shouldCreateAccount,
     _hasHydrated,
   } = useAuthStore();
 
