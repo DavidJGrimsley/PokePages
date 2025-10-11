@@ -44,16 +44,6 @@ export default function Gen9Layout() {
         }}
       />
       <Tabs.Screen
-        name="type-calculator"
-        options={{
-          title: 'Type Calculator',
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="calculate" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="raid-counter"
         options={{
           title: 'Raid Counters',

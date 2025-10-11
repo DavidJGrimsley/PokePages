@@ -1,26 +1,27 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Container } from 'components/UI/Container';
-import { ComingSoon } from 'components/Meta/ComingSoon';
 import { AppText } from '@/src/components/TextTheme/AppText';
-import { PrettyText } from '@/src/components/TextTheme/PrettyText';
+import { BouncyText } from '@/src/components/TextTheme/BouncyText';
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
+import { Collapsible } from '@/src/components/UI/Collapsible';
 import colors from '@/src/constants/style/colors';
+
+import { Platform } from 'react-native';
 
 export default function BeforeYouPlay() {
 
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
   return (
     <Container>
       <MultiLayerParallaxScrollView 
         headerBackgroundColor={{ dark: colors.light.secondary, light: colors.light.background }}
-        titleElement={<PrettyText text="Before You Play" />}
-        headerHeight={200}
+        titleElement={<BouncyText text="Before You Play" />}
+        headerHeight={ isMobile ? 75 : 150 }
         >
       
         {/* Story Recap Section */}
-        <View className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
-          <AppText className="text-2xl font-bold mb-md text-gray-800 dark:text-white">Story recap:</AppText>
+        <Collapsible title="Story recap:">
           <AppText className="text-l font-bold mb-md text-gray-700 dark:text-gray-200">In Pokémon X and Y, players explored the Kalos region and encountered new Pokémon, trainers, and challenges. The story followed the journey of a young trainer aiming to become the Pokémon Champion while uncovering the mysteries of Mega Evolution.</AppText>
           <AppText className="text-base mb-md text-gray-600 dark:text-gray-300">
             🌍 **Setting & Starting Out**: The game takes place in the Kalos Region, a beautiful Europe-inspired area based on France. You play as a young Trainer who moves to Vaniville Town and meets friends/rivals: Shauna, Tierno, Trevor, and your main rival (Serena or Calem).
@@ -37,26 +38,23 @@ export default function BeforeYouPlay() {
             {"\n\n"}
             🔍 **Post-Game**: Additional content includes detective missions with Looker, accessing Kiloude City, and finding more Mega Stones throughout the region.
           </AppText>
-        </View>
+        </Collapsible>
 
         {/* Characters Section */}
-        <View className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
-          <AppText className="text-2xl font-bold mb-md text-gray-800 dark:text-white">Characters</AppText>
+        <Collapsible title="Characters">
           <AppText className="text-l font-bold mb-md text-gray-600 dark:text-gray-300">These characters are returning from X and Y games and the Kalos region in Legends Z-A in Lumiose City</AppText>
-        </View>
+        </Collapsible>
         
         {/* Mechanics Section */}
-        <View className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
-          <AppText className="text-2xl font-bold mb-md text-gray-800 dark:text-white">Mechanics</AppText>
+        <Collapsible title="Mechanics">
           <AppText className="text-l font-bold mb-md text-gray-600 dark:text-gray-300">Time your mega evolution, move around, time your moves, learn your opponent.</AppText>
-        </View>
+        </Collapsible>
 
 
         {/* Maximize Efforts Section */}
-        <View className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-4 shadow-sm">
-          <AppText className="text-2xl font-bold mb-md text-gray-800 dark:text-white">Maximize efforts</AppText>
+        <Collapsible title="Maximize efforts">
           <AppText className="text-l font-bold mb-md text-gray-600 dark:text-gray-300">Use Pokemon Home, Play Pokemon Go during events and transfer. Turn your notifications on so you do not miss out on promo codes and events!</AppText>
-        </View>
+        </Collapsible>
       </MultiLayerParallaxScrollView>
 
     </Container>

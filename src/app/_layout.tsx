@@ -33,7 +33,7 @@ import {
 
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
-import { HeaderTitle, headerStyle } from 'components/UI/HeaderComponents';
+import { HeaderTitle } from 'components/UI/HeaderComponents';
 import Loading from 'components/Animation/LoadingAnim';
 
 const isWeb = Platform.OS === 'web';
@@ -128,27 +128,22 @@ export default function RootLayout() {
             <Stack.Screen 
               name="eventDisclaimer" 
               options={{ 
-                headerTitle: () => <HeaderTitle title="Event Disclaimer" />,
                 presentation: 'modal',
-                headerStyle: headerStyle,
+                headerTitle: '',
+                headerTransparent: true,
+                headerStyle: { backgroundColor: 'transparent' },
               }} 
             />
             <Stack.Screen 
               name="appInfo" 
               options={{ 
-                headerTitle: () => <HeaderTitle title="App Information" />,
                 presentation: 'modal',
-                headerStyle: headerStyle,
+                headerTitle: '',
+                headerTransparent: true,
+                headerStyle: { backgroundColor: 'transparent' },
               }} 
             />
-            <Stack.Screen 
-              name="resourcesInfo" 
-              options={{ 
-                headerTitle: () => <HeaderTitle title="Resources Info" />,
-                presentation: 'modal',
-                headerStyle: headerStyle,
-              }} 
-            />
+            
             <Stack.Protected guard={!isLoggedIn}>
               <Stack.Screen name="sign-in" options={{ headerShown: false }} />
               <Stack.Screen name="sign-up" options={{ headerShown: false }} />
@@ -156,10 +151,11 @@ export default function RootLayout() {
               <Stack.Screen 
                 name="editProfile" 
                 options={{ 
-                  headerTitle: () => <HeaderTitle title="Edit Profile" />,
-                  presentation: 'modal',
-                  headerStyle: headerStyle,
-                }} 
+                presentation: 'modal',
+                headerTitle: '',
+                headerTransparent: true,
+                headerStyle: { backgroundColor: 'transparent' },
+              }} 
               />
           </Stack.Protected>
         </Stack>

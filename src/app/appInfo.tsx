@@ -5,6 +5,8 @@ import { useState } from 'react';
 
 import { ScreenContent } from 'components/UI/ScreenContent';
 import { ShowAgreement } from 'components/Docs/ShowAgreement';
+import { Disclaimer } from 'components/Meta/Disclaimer';
+import { PayPal } from 'components/Paypal';
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
 
@@ -27,6 +29,12 @@ export default function AppInfo() {
     setShowAgreementModal(false);
   };
 
+  const thankYouMessage = `Hello fellow trainers, I appreciate you using PokéPages! This is and always will be free to use and free from ads as my gift to the community. 
+
+  If you'd like to support then please donate on PayPal. It does take a lot of time and effort to maintain this project, as well as server costs, so any contribution is greatly appreciated.`;
+
+  const followMeMessage = `Also follow my social media pages or view my portfolio website for more of my work and contact info. Go catch 'em all!`; 
+
   // const handleResetOnboarding = () => {
   //   resetOnboarding();
   //   // The app will automatically redirect to onboarding
@@ -37,36 +45,7 @@ export default function AppInfo() {
       <Stack.Screen options={{ title: '' }} />
       <ScreenContent path="app/modal.tsx" title="Thank you">
         <View className="p-lg gap-6 bg-app-background">
-          <Text className="typography-copy text-app-text text-center mb-sm leading-5">
-            Hello fellow trainers, I appreciate you using my app! This is and always will be free to use and free from ads. Consider it my gift to the community. If you&apos;d like to support then please follow my social media pages or view my portfolio website for more of my work and contact info. Go catch &apos;em all!
-          </Text>
-          <View className="flex-row flex-wrap justify-center gap-3">
-            <Pressable 
-              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#1DA1F2]"
-              onPress={() => handleLinkPress('https://twitter.com/MrDJ2U26')}
-            >
-              <Text className="text-white text-base font-semibold">🐦 Twitter</Text>
-            </Pressable>
-            <Pressable 
-              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#E4405F]"
-              onPress={() => handleLinkPress('https://instagram.com/OfficialMrDJ')}
-            >
-              <Text className="text-white text-base font-semibold">📸 Instagram</Text>
-            </Pressable>
-            <Pressable 
-              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#FF0000]"
-              onPress={() => handleLinkPress('https://youtube.com/@MrDJsArcade')}
-            >
-              <Text className="text-white text-base font-semibold">🎥 YouTube</Text>
-            </Pressable>
-          </View>
-          <Pressable 
-            className="bg-app-accent py-4 px-6 rounded-xl items-center shadow-app-large mt-sm"
-            onPress={() => handleLinkPress('https://www.DavidJGrimsley.com')}
-          >
-            <Text className="text-white text-lg font-bold mb-1">🌐 Visit My Portfolio</Text>
-            <Text className="text-app-secondary text-sm font-medium">www.DavidJGrimsley.com</Text>
-          </Pressable>
+          <Disclaimer />
           <View className="flex-row justify-between gap-3 mt-sm">
             <Pressable 
               className="flex-1 bg-app-secondary py-3 px-4 rounded-lg items-center shadow-app-small"
@@ -81,6 +60,40 @@ export default function AppInfo() {
               <Text className="text-white text-sm font-semibold text-center">🔒 Privacy Policy</Text>
             </Pressable>
           </View>
+          <Text className="typography-copy text-app-text text-center mb-sm leading-5">
+            {thankYouMessage}
+          </Text>
+          <PayPal/>
+          <Text className="typography-copy text-app-text text-center mb-sm leading-5">
+            {followMeMessage}
+          </Text>
+          <View className="flex-row flex-wrap justify-center gap-3">
+            <Pressable 
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#FF0000]"
+              onPress={() => handleLinkPress('https://youtube.com/@MrDJsArcade')}
+            >
+              <Text className="text-white text-base font-semibold">🎥 YouTube</Text>
+            </Pressable>
+            <Pressable 
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#1DA1F2]"
+              onPress={() => handleLinkPress('https://twitter.com/MrDJ2U26')}
+            >
+              <Text className="text-white text-base font-semibold">🐦 Twitter</Text>
+            </Pressable>
+            <Pressable 
+              className="py-3 px-5 rounded-3xl min-w-[120px] items-center shadow-app-small bg-[#E4405F]"
+              onPress={() => handleLinkPress('https://instagram.com/OfficialMrDJ')}
+            >
+              <Text className="text-white text-base font-semibold">📸 Instagram</Text>
+            </Pressable>
+          </View>
+          <Pressable 
+            className="bg-app-accent py-4 px-6 rounded-xl items-center shadow-app-large mt-sm"
+            onPress={() => handleLinkPress('https://www.DavidJGrimsley.com')}
+          >
+            <Text className="text-white text-lg font-bold mb-1">🌐 Visit My Portfolio</Text>
+            <Text className="text-app-secondary text-sm font-medium">www.DavidJGrimsley.com</Text>
+          </Pressable>
           {/* Development Helper */}
           {__DEV__ && (
             <View>

@@ -3,7 +3,7 @@ import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { Pressable, Text, Platform, View } from 'react-native';
-import { HeaderButton, HeaderTitle, headerStyle, drawerStyles } from 'components/UI/HeaderComponents';
+import { HeaderButton, HeaderTitle, headerStyle } from 'components/UI/HeaderComponents';
 import { theme } from 'constants/style/theme';
 import { useUserAge } from '~/hooks/useUserAge';
 
@@ -47,9 +47,28 @@ const DrawerLayout = () => {
     return (
       <Pressable
         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-        className={isMobile ? drawerStyles.mobile : drawerStyles.desktop}
+        style={{
+          margin: theme.spacing.sm,
+          backgroundColor: theme.colors.light.secondary,
+          borderRadius: theme.borderRadius.md,
+          paddingHorizontal: isMobile ? theme.spacing.md : theme.spacing.lg,
+          paddingVertical: isMobile ? theme.spacing.sm : theme.spacing.md,
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: 40,
+          minHeight: 40,
+        }}
       >
-        <Text className={drawerStyles.text} numberOfLines={1}>
+        <Text 
+          style={{
+            fontFamily: theme.fontFamilies.callToAction, // Use PressStart2P (CTA font)
+            fontSize: isMobile ? 18 : 24, // Increased mobile size for visibility
+            fontWeight: theme.fontWeights.regular,
+            color: theme.colors.light.primary, // Use dark purple for better contrast
+            textAlign: 'center',
+          }}
+          numberOfLines={1}
+        >
           PP
         </Text>
       </Pressable>
@@ -94,8 +113,8 @@ const DrawerLayout = () => {
           ),
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/editProfile" asChild>
-              <HeaderButton iconName="user-circle" />
+            <Link href="/appInfo" asChild>
+              <HeaderButton iconName="info-circle" />
             </Link>
           ),
           headerTitleAlign: 'center',

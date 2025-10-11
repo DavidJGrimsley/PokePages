@@ -12,6 +12,7 @@ import { ThemedView } from 'components/TextTheme/ThemedView';
 import { ThemedText } from 'components/TextTheme/ThemedText';
 import { useBottomTabOverflow } from 'components/UI/TabBarBackground';
 import { useColorScheme } from '~/hooks/useColorScheme';
+import { Footer } from '../Meta/Footer';
 
 const HEADER_HEIGHT = 350;
 
@@ -181,7 +182,7 @@ export default function MultiLayerParallaxScrollView({
   });
 
   // Default floating particles
-  const defaultParticles = ['⚛️', '🌌', '⭐', '✨', '💫', '🌊'];
+  const defaultParticles = ['⭐', '✨', '💫', '💫', '⭐', '✨', '💫'];
 
   return (
     <View style={{ flex: 1 }}>
@@ -294,6 +295,7 @@ export default function MultiLayerParallaxScrollView({
         {/* Content area */}
         <ThemedView className="p-8" style={{ gap: 16 }}>
           {children}
+          <Footer />
         </ThemedView>
       </Animated.ScrollView>
     </View>

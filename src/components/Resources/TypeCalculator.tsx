@@ -5,6 +5,7 @@ import {
   getDualTypeEffectiveness,
   type PokemonType 
 } from '~/constants/typeUtils';
+import Colors from '~/constants/style/colors';
 import { TypeSelector, TypeAnalysis } from './TypeAnalysis';
 
 // All available types including special ones
@@ -126,10 +127,10 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: Colors.light.background,
   },
   section: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.light.white,
     margin: 16,
     padding: 16,
     borderRadius: 12,
@@ -144,11 +145,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     textAlign: 'center',
+    color: Colors.light.text,
   },
   subtitle: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 12,
+    color: Colors.light.text,
   },
   inputSection: {
     marginBottom: 16,
@@ -157,6 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
+    color: Colors.light.text,
   },
   result: {
     padding: 16,
@@ -179,9 +183,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 8,
     lineHeight: 20,
+    color: Colors.light.text,
   },
   bold: {
     fontWeight: 'bold',
+    color: Colors.light.primary,
   },
 });
 

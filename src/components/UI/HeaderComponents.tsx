@@ -4,9 +4,10 @@ import { Pressable, Text, Platform } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { cn } from '~/utils/cn';
 
-const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+const isAndroid = Platform.OS === 'android';
+const isiOs = Platform.OS === 'ios';
 const isWeb = Platform.OS === 'web';
-const headerHeight = isMobile ? hp(10) : hp(9);
+const headerHeight = isAndroid ? hp(10.5) : isiOs ? hp(10.5) : hp(8);
 
 interface HeaderButtonProps {
   onPress?: () => void;
@@ -45,8 +46,8 @@ export const HeaderButton = forwardRef<typeof Pressable, HeaderButtonProps>(
 export const HeaderTitle = ({ title, className }: HeaderTitleProps) => (
   <Text 
     className={cn(
-      'text-center pt-md',
-      isMobile ? 'typography-display-outlined-mobile' : 'typography-display-outlined',
+      'text-center',
+      isAndroid ? 'typography-display-outlined-android' : isiOs ? 'typography-display-outlined-ios' : 'typography-display-outlined pt-xl',
       className
     )}
   >

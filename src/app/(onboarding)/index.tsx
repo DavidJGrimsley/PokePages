@@ -4,6 +4,7 @@ import { View, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Button } from "components/UI/Button";
 import { PrettyText } from 'components/TextTheme/PrettyText';
+import { Disclaimer } from 'components/Meta/Disclaimer';
 
 export default function OnboardingWelcomeScreen() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function OnboardingWelcomeScreen() {
         <Text className="typography-header text-app-secondary text-center mb-xl leading-6">
           Your ultimate (unofficial) Pokémon companion
         </Text>
+        <Disclaimer/>
         
         {/* <View className="w-full mb-xl">
           <View className="flex-row items-center mb-md px-lg">

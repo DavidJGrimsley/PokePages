@@ -30,7 +30,7 @@ export const lineHeights = {
 export const typography = {
   display: {
     fontFamily: fontFamilies.display,
-    fontSize: fontSizes.display,
+    fontSize: isMobile ? fontSizes.display * 0.8 : fontSizes.display,
     fontWeight: fontWeights.regular, // Modak only comes in regular weight
   },
   displayOutlined: {

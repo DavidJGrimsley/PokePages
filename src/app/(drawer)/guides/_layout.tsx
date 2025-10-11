@@ -49,7 +49,7 @@ function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownPr
   const renderGenerationItem = ({ item }: { item: GameGeneration }) => (
     <TouchableOpacity
       className={cn(
-        "flex-row justify-between items-center p-md border-b border-app-secondary",
+        "flex-row justify-between items-center px-sm py-xs border-b border-app-secondary",
         !item.available && "opacity-60",
         item.guardID === selectedGeneration.guardID && "bg-app-accent/15"
       )}
@@ -81,9 +81,9 @@ function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownPr
   );
 
   return (
-    <View className="px-md py-sm bg-app-white border-b border-app-secondary shadow-app-small">
+    <View className="px-sm py-xs bg-app-white border-b border-app-secondary shadow-app-small">
       <TouchableOpacity
-        className="bg-app-white border-2 border-app-accent rounded-lg p-md"
+        className="bg-app-white border-2 border-app-accent rounded-lg px-sm py-xs"
         onPress={() => setIsDropdownVisible(true)}
       >
         <View className="flex-row justify-between items-center">
@@ -110,12 +110,12 @@ function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownPr
         onRequestClose={() => setIsDropdownVisible(false)}
       >
         <TouchableOpacity
-          className="flex-1 bg-black/50 justify-center items-center p-lg"
+          className="flex-1 bg-black/50 justify-center items-center px-md py-sm"
           activeOpacity={1}
           onPress={() => setIsDropdownVisible(false)}
         >
           <View className="bg-app-white rounded-xl w-full max-h-[70%] shadow-app-large">
-            <Text className="typography-header text-app-text text-center py-lg border-b border-app-secondary">
+            <Text className="typography-header text-app-text text-center py-sm border-b border-app-secondary">
               Select Game
             </Text>
             <FlatList

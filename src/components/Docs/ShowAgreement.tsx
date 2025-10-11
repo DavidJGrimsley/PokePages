@@ -32,7 +32,7 @@ export const ShowAgreement: React.FC<ShowAgreementProps> = ({
     <Modal
       visible={visible}
       animationType="slide"
-      presentationStyle="pageSheet"
+      presentationStyle="fullScreen"
     >
       <SafeAreaView className="flex-1 bg-white">
         <View className="p-6 border-b border-app-secondary bg-app-background relative">

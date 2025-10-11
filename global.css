@@ -16,15 +16,22 @@
   
   .typography-display-outlined {
     font-family: 'Modak';
-    font-size: 56px;
+    font-size: 80px;
     font-weight: 400;
     color: rgba(251, 251, 251, 1);
     text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
   }
   
-  .typography-display-outlined-mobile {
+  .typography-display-outlined-ios {
     font-family: 'Modak';
-    font-size: 50px;
+    font-size: 32px;
+    font-weight: 400;
+    color: rgba(251, 251, 251, 1);
+    text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
+  }
+  .typography-display-outlined-android {
+    font-family: 'Modak';
+    font-size: 40px;
     font-weight: 400;
     color: rgba(251, 251, 251, 1);
     text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);

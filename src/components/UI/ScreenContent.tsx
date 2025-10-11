@@ -11,7 +11,7 @@ export const ScreenContent = ({ title, path, children }: ScreenContentProps) => 
   return (
     <ScrollView className="flex-1" contentContainerClassName="items-center bg-app-background flex-grow justify-center py-6">
       <PrettyText text={title} />
-      <View className="bg-app-secondary h-px my-6 w-4/5" />
+      <View className="bg-app-secondary h-px my-1 w-4/5" />
       {children}
     </ScrollView>
   );
