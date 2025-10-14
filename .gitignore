@@ -51,3 +51,12 @@ yarn-error.*
 *.temp
 
 app-example
+
+# Android
+android/
+ios/
+
+# Build artifacts
+*.apk
+*.aab
+*.ipa

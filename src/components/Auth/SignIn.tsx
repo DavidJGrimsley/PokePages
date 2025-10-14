@@ -4,7 +4,6 @@ import { supabase } from "~/utils/supabaseClient"
 import { router } from 'expo-router'
 
 import { Button } from 'components/UI/Button'
-import ErrorMessage from 'components/Meta/Error';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -56,12 +55,12 @@ export default function SignIn() {
       </Text>
 
       {errorMessage && (
-        <View className="mb-6">
-          <ErrorMessage
-            title="Sign In Error"
-            description="There was a problem signing in to your account."
-            error={errorMessage}
-          />
+        <View className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <Text className="text-red-700 text-sm text-center">
+            {errorMessage.includes('Invalid login credentials') || errorMessage.includes('Email not confirmed') 
+              ? 'Invalid email or password. Please check your credentials and try again.'
+              : errorMessage}
+          </Text>
         </View>
       )}
 
@@ -102,6 +101,21 @@ export default function SignIn() {
           onPress={signInWithEmail} 
         />
       </View>
+
+      {/* OAuth Options */}
+      {/* <View className="mt-8">
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1 h-px bg-gray-300" />
+          <Text className="mx-4 text-gray-500 text-sm">Or continue with</Text>
+          <View className="flex-1 h-px bg-gray-300" />
+        </View>
+        
+        <Button
+          title="OAuth"
+          onPress={() => router.push('/oAuth')}
+          disabled={loading}
+        />
+      </View> */}
 
       {/* Don't have account section */}
       <View className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">

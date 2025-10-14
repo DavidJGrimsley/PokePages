@@ -24,8 +24,6 @@ export default function BeforeYouPlay() {
         <Collapsible title="Story recap:">
           <AppText className="text-l font-bold mb-md text-gray-700 dark:text-gray-200">In Pokémon X and Y, players explored the Kalos region and encountered new Pokémon, trainers, and challenges. The story followed the journey of a young trainer aiming to become the Pokémon Champion while uncovering the mysteries of Mega Evolution.</AppText>
           <AppText className="text-base mb-md text-gray-600 dark:text-gray-300">
-            🌍 **Setting & Starting Out**: The game takes place in the Kalos Region, a beautiful Europe-inspired area based on France. You play as a young Trainer who moves to Vaniville Town and meets friends/rivals: Shauna, Tierno, Trevor, and your main rival (Serena or Calem).
-            {"\n\n"}
             ⚙️ **Beginning the Adventure**: In Aquacorde Town, you choose your starter Pokémon (Chespin, Fennekin, or Froakie). After traveling through early routes and Santalune Forest, you defeat Bug-type Gym Leader Viola for your first badge. You meet Professor Sycamore in Lumiose City, who introduces Mega Evolution - a new mechanic where certain Pokémon temporarily evolve during battle using Mega Stones.
             {"\n\n"}
             🦹 **Team Flare Conflict**: The villain Lysandre leads Team Flare, initially seeming focused on beauty and aesthetics, but later revealing a sinister plan to use the Ultimate Weapon to destroy humans who don&apos;t meet his vision of beauty and &quot;beautify&quot; the world.

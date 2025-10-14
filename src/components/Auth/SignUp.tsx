@@ -1,30 +1,25 @@
 import { useState } from 'react'
-import { View, Text, TextInput, Alert, Platform } from 'react-native'
+import { View, Text, TextInput } from 'react-native'
 import { supabase } from 'utils/supabaseClient'
 import { buildApiUrl } from '~/utils/apiConfig'
 import { router } from 'expo-router'
 import { useAuthStore } from "~/store/authStore"
 
 import { Button } from 'components/UI/Button'
-import ErrorMessage from 'components/Meta/Error'
+import SuccessMessage from 'components/UI/SuccessMessage'
 
-// Cross-platform alert function
-const showAlert = (title: string, message?: string) => {
-  if (Platform.OS === 'web') {
-    window.alert(message ? `${title}\n${message}` : title)
-  } else {
-    Alert.alert(title, message)
-  }
-}
+
 
 export default function SignUp() {
   const { setProfile } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [username, setUsername] = useState('')
   const [birthdate, setBirthdate] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showSuccess, setShowSuccess] = useState(false)
 
   const validateInputs = () => {
     if (!email.trim()) {
@@ -33,6 +28,10 @@ export default function SignUp() {
     }
     if (!password || password.length < 6) {
       setErrorMessage('Password must be at least 6 characters')
+      return false
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage('Passwords do not match')
       return false
     }
     if (!username.trim() || username.length < 3) {
@@ -108,10 +107,13 @@ export default function SignUp() {
         avatar_url: null,
       })
 
-      showAlert('Success', 'Account created successfully! Please check your email for verification.')
+      // Show success message instead of alert
+      setShowSuccess(true)
       
-      // Redirect to sign in or onboarding
-      router.replace('/(onboarding)')
+      // Redirect after a delay to let user see success message
+      setTimeout(() => {
+        router.replace('/(onboarding)')
+      }, 3000)
       
     } catch (error) {
       console.error('Sign up error:', error)
@@ -127,21 +129,28 @@ export default function SignUp() {
 
   return (
     <View className="mt-16 p-4">
-      {errorMessage && (
+      {showSuccess ? (
         <View className="mb-6">
-          <ErrorMessage
-            title="Sign Up Error"
-            description="There was a problem creating your account."
-            error={errorMessage}
+          <SuccessMessage
+            title="Account Created!"
+            message="Your account has been created successfully! Please check your email for verification. You'll be redirected to onboarding shortly."
           />
         </View>
-      )}
+      ) : errorMessage ? (
+        <View className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <Text className="text-red-700 text-sm text-center">
+            {errorMessage}
+          </Text>
+        </View>
+      ) : null}
 
-      <Text className="text-2xl font-bold text-center mb-8 text-gray-800">
-        Create Your Account
-      </Text>
+      {!showSuccess && (
+        <>
+          <Text className="text-2xl font-bold text-center mb-8 text-gray-800">
+            Create Your Account
+          </Text>
 
-      <View className="py-2 self-stretch">
+          <View className="py-2 self-stretch">
         <Text className="mb-2 text-gray-800 font-bold">Email</Text>
         <TextInput
           value={email}
@@ -168,6 +177,21 @@ export default function SignUp() {
           textContentType="password"
           className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
           accessibilityLabel="Password"
+        />
+      </View>
+
+      <View className="py-2 self-stretch">
+        <Text className="mb-2 text-gray-800 font-bold">Confirm Password</Text>
+        <TextInput
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholder="Confirm your password"
+          secureTextEntry={true}
+          autoCapitalize="none"
+          autoCorrect={false}
+          textContentType="password"
+          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
+          accessibilityLabel="Confirm Password"
         />
       </View>
 
@@ -206,17 +230,34 @@ export default function SignUp() {
         />
       </View>
 
-      {/* Already have account section */}
-      <View className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <Text className="text-center text-gray-600 mb-3">
-          Already have an account?
-        </Text>
+      {/* OAuth Options */}
+      {/* <View className="mt-8">
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1 h-px bg-gray-300" />
+          <Text className="mx-4 text-gray-500 text-sm">Or continue with</Text>
+          <View className="flex-1 h-px bg-gray-300" />
+        </View>
+        
         <Button
-          title="Click here to sign in"
-          onPress={navigateToSignIn}
+          title="OAuth"
+          onPress={() => router.push('/oAuth')}
           disabled={loading}
         />
-      </View>
+      </View> */}
+
+          {/* Already have account section */}
+          <View className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <Text className="text-center text-gray-600 mb-3">
+              Already have an account?
+            </Text>
+            <Button
+              title="Click here to sign in"
+              onPress={navigateToSignIn}
+              disabled={loading}
+            />
+          </View>
+        </>
+      )}
     </View>
   )
 }

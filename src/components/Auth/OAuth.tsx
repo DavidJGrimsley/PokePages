@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button, View, Text, Alert, Platform } from "react-native";
+import { Button, View, Text, Alert, Platform, NativeModules } from "react-native";
 import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { supabase } from "~/utils/supabaseClient";
 import { router } from "expo-router";
 import { debugLinking } from "~/utils/linkingConfig";
@@ -11,11 +12,39 @@ import { debugLinking } from "~/utils/linkingConfig";
 // Required for web only
 WebBrowser.maybeCompleteAuthSession();
 
-// Create redirect URI using your custom scheme
-const redirectTo = makeRedirectUri({
-  scheme: "pokepages",
-  path: "/auth/callback",
-});
+// Google Web Client ID (from your Google Cloud Console)
+// This is the Web client ID, not iOS or Android
+const GOOGLE_WEB_CLIENT_ID = "970928478495-o8j6evk7kp0hfaqvlucr01r3ahm94m46.apps.googleusercontent.com";
+
+// Configure Google Sign-In for native
+const hasNativeGoogleSignin =
+  Platform.OS !== 'web' && !!(NativeModules as any).RNGoogleSignin;
+
+if (hasNativeGoogleSignin) {
+  GoogleSignin.configure({
+    scopes: ["https://www.googleapis.com/auth/drive.readonly"],
+    webClientId: GOOGLE_WEB_CLIENT_ID,
+    iosClientId: "970928478495-55ufo85eolgh0f43p4j88b7cpjdkvvk7.apps.googleusercontent.com", // Your iOS client ID
+    offlineAccess: true, // To get refresh token
+    forceCodeForRefreshToken: true, // Force refresh token for better session management
+  });
+  console.log('🔧 GoogleSignin configured with webClientId:', GOOGLE_WEB_CLIENT_ID);
+} else {
+  console.log('ℹ️ RNGoogleSignin native module not available; will use browser OAuth.');
+}
+
+// Create redirect URI - different for web vs native
+const getRedirectUri = () => {
+  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    return `${window.location.origin}/auth/callback`;
+  }
+  return makeRedirectUri({
+    scheme: "pokepages",
+    path: "/auth/callback",
+  });
+};
+
+const redirectTo = getRedirectUri();
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -28,13 +57,18 @@ const showAlert = (title: string, message?: string) => {
 
 const createSessionFromUrl = async (url: string) => {
   try {
+    console.log("📥 Creating session from URL:", url);
     const { params, errorCode } = QueryParams.getQueryParams(url);
 
     if (errorCode) throw new Error(errorCode);
     const { access_token, refresh_token } = params;
 
-    if (!access_token) return;
+    if (!access_token) {
+      console.log("⚠️ No access token in URL");
+      return;
+    }
 
+    console.log("🔐 Setting session with tokens...");
     const { data, error } = await supabase.auth.setSession({
       access_token,
       refresh_token,
@@ -42,26 +76,54 @@ const createSessionFromUrl = async (url: string) => {
     
     if (error) throw error;
     
+    console.log("✅ Session set successfully:", data.session?.user?.email);
     showAlert("Success", "Successfully signed in!");
     
-    // Redirect to main app after successful authentication
-    router.replace("/(drawer)");
+    // Wait a moment for the auth state to propagate
+    setTimeout(() => {
+      console.log("🏠 Redirecting to home...");
+      router.replace("/(drawer)");
+    }, 500);
     
     return data.session;
   } catch (error) {
-    console.error("Error creating session from URL:", error);
+    console.error("❌ Error creating session from URL:", error);
     showAlert("Authentication Error", error instanceof Error ? error.message : "Failed to authenticate");
   }
 };
 
 const performOAuth = async (provider: 'github' | 'google' | 'discord') => {
   try {
-    console.log(`Starting ${provider} OAuth with redirect URI:`, redirectTo);
+    console.log(`Starting ${provider} OAuth`);
     
+    // Use native Google Sign-In for Google on native platforms
+    if (provider === 'google' && hasNativeGoogleSignin) {
+      return await performNativeGoogleSignIn();
+    }
+    
+    // For web or other providers, use browser OAuth
+    const redirectUri = getRedirectUri();
+    console.log(`Using redirect URI:`, redirectUri);
+    
+    // For web, use simple redirect (no WebBrowser needed)
+    if (Platform.OS === 'web') {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: redirectUri,
+        },
+      });
+      
+      if (error) throw error;
+      // On web, this will redirect the page automatically
+      return;
+    }
+    
+    // For native (iOS/Android) - other providers use WebBrowser
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo,
+        redirectTo: redirectUri,
         skipBrowserRedirect: true,
       },
     });
@@ -76,7 +138,7 @@ const performOAuth = async (provider: 'github' | 'google' | 'discord') => {
 
     const res = await WebBrowser.openAuthSessionAsync(
       data.url,
-      redirectTo
+      redirectUri
     );
 
     if (res.type === "success" && res.url) {
@@ -89,6 +151,62 @@ const performOAuth = async (provider: 'github' | 'google' | 'discord') => {
   } catch (error) {
     console.error(`${provider} OAuth error:`, error);
     showAlert("OAuth Error", error instanceof Error ? error.message : `Failed to sign in with ${provider}`);
+  }
+};
+
+// Native Google Sign-In implementation
+const performNativeGoogleSignIn = async () => {
+  try {
+    console.log("🔐 Starting native Google Sign-In...");
+    
+    // Check if Google Play Services are available (Android)
+    if (!hasNativeGoogleSignin) {
+      throw new Error('RNGoogleSignin native module not available');
+    }
+    await GoogleSignin.hasPlayServices();
+    
+    // Sign in with Google
+    const response = await GoogleSignin.signIn();
+    console.log("✅ Google Sign-In successful:", response.data?.user.email);
+    
+    // Get the ID token
+    const idToken = response.data?.idToken;
+    
+    if (!idToken) {
+      throw new Error("No ID token received from Google Sign-In");
+    }
+    
+    console.log("🔑 Got ID token, signing in with Supabase...");
+    
+    // Sign in to Supabase with the Google ID token
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+    
+    if (error) throw error;
+    
+    console.log("🎉 Supabase session created:", data.user?.email);
+    showAlert("Success", "Successfully signed in with Google!");
+    
+    // Wait a moment for the auth state to propagate
+    setTimeout(() => {
+      console.log("🏠 Redirecting to home...");
+      router.replace("/(drawer)");
+    }, 500);
+    
+  } catch (error: any) {
+    console.error("❌ Native Google Sign-In error:", error);
+    
+    if (error.code === 'SIGN_IN_CANCELLED') {
+      showAlert("Sign-In Cancelled", "You cancelled the Google sign-in process.");
+    } else if (error.code === 'IN_PROGRESS') {
+      showAlert("Sign-In In Progress", "A sign-in is already in progress.");
+    } else if (error.code === 'PLAY_SERVICES_NOT_AVAILABLE') {
+      showAlert("Google Play Services Required", "Google Play Services are not available on this device.");
+    } else {
+      showAlert("Google Sign-In Error", error.message || "Failed to sign in with Google");
+    }
   }
 };
 
@@ -115,7 +233,7 @@ const sendMagicLink = async (email: string) => {
   }
 };
 
-export default function Auth() {
+export default function OAuth() {
   const [debugInfo, setDebugInfo] = useState(false);
   
   // Handle linking into app from email app or OAuth redirect

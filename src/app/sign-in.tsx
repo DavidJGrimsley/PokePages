@@ -1,11 +1,10 @@
 import { ScreenContent } from 'components/UI/ScreenContent';
-import SignIn from 'components/Auth/SignIn';
-
+import EnhancedSignIn from 'components/Auth/EnhancedSignIn';
 
 export default function SignInScreen() {
   return (
     <ScreenContent path="app/sign-in.tsx" title="Welcome to Poke Pages">
-      <SignIn />
+      <EnhancedSignIn />
     </ScreenContent>
   );
 }

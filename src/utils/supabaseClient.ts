@@ -9,14 +9,34 @@ const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
 // Check if we're in a browser environment
 const isWeb = Platform.OS === 'web';
-const isBrowser = typeof window !== 'undefined';
+
+// Custom storage adapter for web
+const webStorage = {
+  getItem: (key: string) => {
+    if (typeof window !== 'undefined') {
+      return window.localStorage.getItem(key);
+    }
+    return null;
+  },
+  setItem: (key: string, value: string) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(key, value);
+    }
+  },
+  removeItem: (key: string) => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(key);
+    }
+  },
+};
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    storage: isBrowser ? AsyncStorage : undefined,
-    autoRefreshToken: isBrowser,
-    persistSession: isBrowser,
-    detectSessionInUrl: isWeb && isBrowser,
+    storage: isWeb ? webStorage : AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true, // Let Supabase automatically handle OAuth callback on web
+    flowType: 'implicit', // Use implicit flow for web OAuth
   },
   // Add explicit headers for content negotiation
   global: {

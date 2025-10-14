@@ -7,6 +7,7 @@ import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
 import DrizzleCounter from 'components/Events/DrizzleCounter';
 import TypeChartDisplay from '@/src/components/Resources/TypeChartDisplay';
+import AuthStatus from 'components/Auth/AuthStatus';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -55,6 +56,9 @@ export default function Home() {
       <Stack.Screen options={{ title: 'Poké Pages' }} />
       <Container>
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }}>
+          {/* Auth Status Debug Component */}
+          {/* <AuthStatus /> */}
+          
           <View className="p-lg bg-app-white">
             <Text className="typography-header text-app-text mb-md">🎉 Latest Features</Text>
             

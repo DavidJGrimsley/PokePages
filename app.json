@@ -30,7 +30,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "3082632d-cc95-42f2-a8cf-f457b1850272"
+        "projectId": "3a8638d9-4f22-4dba-b52f-8113340408f4"
       }
     },
     "web": {
@@ -41,23 +41,13 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/Modak-Regular.ttf",
-            "./assets/fonts/PressStart2P-Regular.ttf",
-            "./assets/fonts/Roboto-Regular.ttf",
-            "./assets/fonts/Roboto-Bold.ttf",
-            "./assets/fonts/Roboto-Medium.ttf"
-          ]
-        }
-      ],
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
-    }
+    },
+    "owner": "davidjgrimsley"
   }
 }

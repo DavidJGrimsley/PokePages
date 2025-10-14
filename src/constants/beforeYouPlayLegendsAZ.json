@@ -1,0 +1,193 @@
+{
+  "story": {
+    "title": "Backstory",
+    "caption": "Pokémon Legends: Z-A is a direct sequel of Pokémon X and Y (taking place 5-10 years after the events of X and Y). While most Pokémon games got a 3rd installment or a DLC to continue the story, 'Pokémon Z' never came out. So this game is the official continuation of the story of Kalos and its characters. This brief recap will get you 'caught up' so dialog and references in Z-A land with meaning. Spoiler warning: this summarizes major X & Y plot points.",
+    "body": "Takes place in the Kalos region (France-inspired). The player begins in Vaniville Town, chooses a starter (Chespin, Fennekin, or Froakie), travels across Kalos earning eight Gym badges, confronts Team Flare and its leader Lysandre, and eventually becomes Champion after stopping the use of the Ultimate Weapon. The ancient figure AZ and his special Floette are central to Kalos’ tragic past and tie directly to Team Flare’s scheme. Mega Evolution is a major gameplay/lore element introduced in X/Y.",
+    "bullets": [
+      "Starting point: Vaniville Town → choose one of three starters (Chespin, Fennekin, Froakie).",
+      "Core loop: travel across Kalos, defeat Gym Leaders, collect 8 badges, then challenge the Pokémon League.",
+      "New mechanics/lore introduced: Mega Evolution (Mega Stones, Mega Ring, Tower of Mastery).",
+      "Villain arc: Team Flare (leader Lysandre) builds an Ultimate Weapon to ‘beautify’ the world by destroying those he deems unfit.",
+      "Ancient tie-in: AZ used the Ultimate Weapon 3,000 years ago to try to revive a special Floette, which caused a massive war—his guilt and Floette’s fate are emotional anchors.",
+      "Climax: you infiltrate Team Flare HQ, stop the Ultimate Weapon, catch the legendary (Xerneas or Yveltal depending on version), and defeat Lysandre.",
+      "Post-game: Looker detective missions in Lumiose City, Emma/Essentia storyline, access to Kiloude City and additional endgame content.",
+      "Why it matters to Z-A: Lumiose and Kalos bear scars (political, social, and technological) from Team Flare and the Ultimate Weapon; characters and civic institutions from X/Y appear or are referenced in Z-A."
+    ],
+    "playPrimer": "Kalos rebuilt after a catastrophic event caused by an ancient weapon tied to AZ and a special Floette. Team Flare tried to replay that history, and you stopped them. Mega Evolution and the political fallout in Lumiose city are important background—Z-A explores the city after those events, so knowing the Ultimate Weapon, AZ, Floette, and Team Flare helps you understand NPC reactions and some story beats."
+  },
+  "characters": {
+    "caption": "Returning/important Kalos characters (short, bulleted reminders to prep you for Z-A)",
+    "AZ": {
+      "name": "AZ",
+      "info": "Ancient king of Kalos whose actions started the Ultimate Weapon story.",
+      "bullets": [
+        "Used the Ultimate Weapon 3,000 years ago trying to revive his Floette.",
+        "His action caused a massive war; he’s haunted by guilt and wanders Kalos.",
+        "Emotional touchstone for the region—his story explains why the weapon is such a loaded subject."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "EternalFlowerFloette": {
+      "name": "Eternal Flower Floette",
+      "info": "The special Floette AZ tried to revive; symbolic and tied to the Ultimate Weapon.",
+      "bullets": [
+        "Unique Floette tied to AZ’s past and to the moral core of Kalos’ history.",
+        "Its return/reappearance is a key emotional moment in X/Y and is referenced later in Lumiose lore."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Lysandre": {
+      "name": "Lysandre",
+      "info": "Leader of Team Flare and primary antagonist in X/Y.",
+      "bullets": [
+        "Presents as focused on beauty/fashion but reveals a plan to use the Ultimate Weapon to remake the world.",
+        "His actions directly cause the main conflict you stop in X/Y.",
+        "Team Flare’s ideology and remnants shape Lumiose’s politics after X/Y."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "TeamFlareAdmins": {
+      "name": "Team Flare Admins (Celosia, Mable, Bryony, Aliana)",
+      "info": "Key lieutenants who carry out Team Flare's plans.",
+      "bullets": [
+        "Appear throughout X/Y as bosses and mid-bosses you battle.",
+        "Their schemes (power outages, sabotage, weapon support) are tied into the larger plot.",
+        "Some individual admins (e.g., Mable) appear in later references and could be mentioned in Z-A."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "ProfessorSycamore": {
+      "name": "Professor Sycamore",
+      "info": "Kalos professor who introduces Mega Evolution and mentors the player and friends.",
+      "bullets": [
+        "Recruits the player and four others (Shauna, Trevor, Tierno, rival) early on.",
+        "Gives context on Mega Evolution and Kalos research—an authoritative local figure."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Shauna": {
+      "name": "Shauna",
+      "info": "Friend and traveling companion; cheerful and supportive.",
+      "bullets": [
+        "One of the player’s main companions during the X/Y journey.",
+        "Represents the friendly social circle you'll meet in Kalos."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Trevor": {
+      "name": "Trevor",
+      "info": "Friend who gifts the player the Pokédex early in the game.",
+      "bullets": [
+        "Part of the player’s initial group and helps establish the Pokédex role."
+      ],
+      "likelyRelevantInZA": false
+    },
+    "Tierno": {
+      "name": "Tierno",
+      "info": "Playful friend who accompanies the player on parts of the journey.",
+      "bullets": [
+        "Member of the player’s early party of peers; lighthearted presence in Kalos’ social fabric."
+      ],
+      "likelyRelevantInZA": false
+    },
+    "SerenaOrCalem": {
+      "name": "Serena / Calem (rival)",
+      "info": "Your on-screen rival (choice depends on player gender).",
+      "bullets": [
+        "Battles you at multiple story points and is a narrative foil.",
+        "Represents the player’s parallel growth as a Trainer."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Korrina": {
+      "name": "Korrina",
+      "info": "Gym Leader and Tower of Mastery/ Lucario connection.",
+      "bullets": [
+        "Introduces the player to Lucario’s aura sensing and gives the Rumble Badge.",
+        "Connected to the Mega Evolution subplot and the Tower of Mastery."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Gurkinn": {
+      "name": "Gurkinn",
+      "info": "Expert on Mega Evolution (Tower of Mastery).",
+      "bullets": [
+        "Explains the Mega Ring and Mega Stones; only had one Mega Ring to give in X/Y (which the player receives).",
+        "Part of the Mega Evolution institutional lore in Kalos."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Diantha": {
+      "name": "Diantha",
+      "info": "Champion of the Kalos League and celebrity actress.",
+      "bullets": [
+        "A powerful Trainer and public figure—appears in story beats and is referenced around Lumiose society."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Looker": {
+      "name": "Looker",
+      "info": "International Police detective who runs the post-game Looker Bureau in Lumiose City.",
+      "bullets": [
+        "Leads the post-game detective arc and mentors Emma.",
+        "Represents law & order and civic rebuilding after Team Flare's actions."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "EmmaEssentia": {
+      "name": "Emma / Essentia",
+      "info": "An orphan who becomes a city protector (Essentia) during the Looker arc.",
+      "bullets": [
+        "Central to the Looker Bureau post-game storyline.",
+        "Her vigilante/guardian role in Lumiose may be referenced in Z-A civic context."
+      ],
+      "likelyRelevantInZA": true
+    },
+    "Xerosic": {
+      "name": "Xerosic",
+      "info": "Criminal inventor tied to post-game trouble and Emma’s possession.",
+      "bullets": [
+        "Responsible for the Expansion Suit that controlled Emma; captured and sent to trial by Looker.",
+        "Represents residual criminal elements in Kalos after Team Flare."
+      ],
+      "likelyRelevantInZA": false
+    },
+    "OtherLegendsZACharacters": {
+      "name": "Urbain (Taunie), Jett, Vinnie, Corbeau, Mable (as referenced)",
+      "info": "Characters listed on the Legends: Z-A characters page (appear or are referenced in Z-A).",
+      "bullets": [
+        "Some are new to Z-A or returning NPCs with updated roles in Lumiose City’s present.",
+        "Expect to encounter old faces and new citizens who are shaped by the X/Y aftermath."
+      ],
+      "likelyRelevantInZA": true
+    }
+  },
+  "mechanics": {
+    "caption": "Mechanics & lore to be aware of from X & Y before starting Z-A",
+    "bullets": [
+      "Mega Evolution: introduced in X/Y (Mega Stones + Mega Ring + strong Trainer–Pokémon bond); it’s part of Kalos’ scientific history and may appear in references or mechanics.",
+      "Legendary context: Xerneas (X) and Yveltal (Y) are version-specific legendaries tied to the Ultimate Weapon story—know the broad idea that legendaries were central to Team Flare’s plan.",
+      "Ultimate Weapon lore: key historical device that reshaped Kalos’ politics and infrastructure—knowing this explains why some areas are sensitive or rebuilt.",
+      "City knowledge: Lumiose City landmarks (Prism Tower, Anistar City, Tower of Mastery, Lysandre Labs) are recurring locations—recognition makes Z-A navigation & story beats clearer.",
+      "Post-game systems: Looker Bureau missions and Kiloude City endgame content show how Kalos’ civic systems adapted; Z-A may reference these institutions or their outcomes."
+    ]
+  },
+  "maximizeEfforts": {
+    "caption": "Tips to make the most of Z-A (practical prep & ongoing activities)",
+    "bullets": [
+      "If you want continuity perks: link accounts/services where applicable (Pokémon HOME transfers may matter for future cross-game content).",
+      "Pokémon Unite has a Legends: Z-A event with bonuses for Legends:Z-A save data! This is the first time a mainline game has had a crossover with Unite, so it’s worth checking out.",
+      "Play/track events: enable notifications for timed events, transfer windows, and promo codes (Pokémon and partner events often have limited windows).",
+      "Collect context: if you have time, skim a short X/Y recap or the two-minute primer above; a little background makes character references hit harder.",
+      "Use community resources: Bulbapedia, official Pokémon news, and Legends: Z-A character pages are good reference points if you want deeper bios or location notes.",
+      "Keep the app non-official in branding: include a clear fan disclaimer and proper credits if you publish content derived from summaries and community wikis."
+    ]
+  }
+}
+
+
+
+
+
+
+
