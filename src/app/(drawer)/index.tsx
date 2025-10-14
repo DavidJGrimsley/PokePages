@@ -1,6 +1,6 @@
 import { Stack, Link } from 'expo-router';
 import { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
 
 import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
@@ -32,7 +32,7 @@ const formatEventDate = (dateString: string, userLocale: string = 'en-US'): stri
 };
 
 export default function Home() {
-
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   // Generate events from our configuration
   const activeCounterEvents = useMemo(() => 
     Object.entries(eventConfig)
@@ -56,6 +56,19 @@ export default function Home() {
       <Stack.Screen options={{ title: 'Poké Pages' }} />
       <Container>
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }}>
+          {/* Download App Banner */}
+         {!isMobile && (<Link href="/download" asChild>
+            <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
+              <View className="flex-row items-center">
+                <Text className="typography-cta text-app-white mr-sm">📱</Text>
+                <View>
+                  <Text className="typography-cta text-app-white">Download Poké Pages App</Text>
+                  <Text className="text-sm text-app-white opacity-90">Get early access - Sign up now!</Text>
+                </View>
+              </View>
+            </Pressable>
+          </Link>)}
+          
           {/* Auth Status Debug Component */}
           {/* <AuthStatus /> */}
           
