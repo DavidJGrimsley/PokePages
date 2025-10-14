@@ -323,28 +323,32 @@ export default function EnhancedSignUp() {
                 rules={{
                   required: 'Birthdate is required',
                 }}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    value={value.toISOString().split('T')[0]} // Format as YYYY-MM-DD
-                    onChangeText={(dateString) => {
-                      const newDate = new Date(dateString)
-                      if (!isNaN(newDate.getTime())) {
-                        onChange(newDate)
-                      }
-                    }}
-                    placeholder="YYYY-MM-DD"
-                    className={`border ${
-                      errors.birthdate ? 'border-red-300' : 'border-gray-300'
-                    } bg-white text-gray-800 rounded-md px-4 py-4`}
-                    // Web-specific props
-                    {...(Platform.OS === 'web' && {
-                      // @ts-ignore - Web-specific type attribute
-                      type: 'date',
-                      max: new Date().toISOString().split('T')[0],
-                      min: new Date(1900, 0, 1).toISOString().split('T')[0],
-                    })}
-                  />
-                )}
+                render={({ field: { onChange, value } }) => {
+                  const formattedValue = value.toISOString().split('T')[0]; // YYYY-MM-DD format
+                  
+                  return (
+                    <input
+                      type="date"
+                      value={formattedValue}
+                      onChange={(e) => {
+                        const dateString = e.target.value;
+                        if (dateString) {
+                          const newDate = new Date(dateString + 'T00:00:00.000Z'); // Ensure UTC to avoid timezone issues
+                          onChange(newDate);
+                        }
+                      }}
+                      max={new Date().toISOString().split('T')[0]}
+                      min={new Date(1900, 0, 1).toISOString().split('T')[0]}
+                      className={`border ${
+                        errors.birthdate ? 'border-red-300' : 'border-gray-300'
+                      } bg-white text-gray-800 rounded-md px-4 py-4 w-full text-base`}
+                      style={{
+                        fontSize: '16px',
+                        fontFamily: 'inherit',
+                      }}
+                    />
+                  );
+                }}
               />
             ) : (
               <>
