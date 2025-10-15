@@ -1,5 +1,5 @@
 import { PropsWithChildren, useState } from 'react';
-import { TouchableOpacity, View, Text, Image } from 'react-native';
+import { TouchableOpacity, View, Text, Image, Platform } from 'react-native';
 import Animated, { 
   FadeIn, 
   FadeInDown, 
@@ -26,6 +26,7 @@ interface CollapsibleProps extends PropsWithChildren {
 export function Collapsible({ children, title, isOpen: externalIsOpen, onToggle, animatedOpen = false, rightContent, invertColors = false, backgroundImage }: CollapsibleProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   const isControlledExternally = externalIsOpen !== undefined;
   const isOpen = isControlledExternally ? externalIsOpen : internalIsOpen;
   
@@ -66,11 +67,11 @@ export function Collapsible({ children, title, isOpen: externalIsOpen, onToggle,
           source={{ uri: backgroundImage }}
           style={{ 
             position: 'absolute',
-            width: '60%',
-            height: '80%',
-            top: '10%',
-            right: '5%',
-            opacity: 0.9,
+            width: '70%',
+            height: '90%',
+            top: '5%',
+            right: -10,
+            opacity: isMobile ? 0.5 :0.9,
             zIndex: 0
           }}
           resizeMode="contain"

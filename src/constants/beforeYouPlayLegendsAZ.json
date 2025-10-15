@@ -28,7 +28,7 @@
         "He sacrificed many Pokémon; he's haunted by guilt and wanders Kalos",
         "Emotional touchstone for the region—his story explains why the weapon is such a loaded subject"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Faz%2Faz-2x.png&w=384&q=75"
     },
     "EternalFlowerFloette": {
@@ -39,7 +39,7 @@
         "Its return/reappearance is a key emotional moment in X/Y and is referenced later in Lumiose lore",
         "It has never been obtainable in previous games and still isn't in Z-A(that we know of)"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Feternal-flower-florette%2Feternal-flower-florette-2x.png&w=384&q=75"
     },
     "Lysandre": {
@@ -50,7 +50,7 @@
         "His actions directly cause the main conflict you stop in X/Y",
         "Team Flare's ideology and remnants shape Lumiose's politics after X/Y"
       ],
-      "likelyRelevantInZA": true
+      "likelyRelevantInZA": false
     },
     "TeamFlareAdmins": {
       "name": "Team Flare Admins (Celosia, Mable, Bryony, Aliana)",
@@ -60,7 +60,7 @@
         "Their schemes (power outages, sabotage, weapon support) are tied into the larger plot.",
         "Some individual admins (e.g., Mable) appear in later such as Mable's new role in Z-A"
       ],
-      "likelyRelevantInZA": true
+      "likelyRelevantInZA": false
     },
     "Mable": {
       "name": "Mable",
@@ -70,7 +70,7 @@
         "Now researching Pokémon behavior and the surge in Pokémon population in Lumiose City.",
         "Seeks the player's help in her investigation, offering research opportunities and rewards"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Fmable%2Fmable-2x.png&w=384&q=75"
     },
     "ProfessorSycamore": {
@@ -80,7 +80,7 @@
         "Recruits the player (you) and four others (Shauna, Trevor, Tierno, rival) early on.",
         "Gives context on Mega Evolution and Kalos research in Pokémon X & Y"
       ],
-      "likelyRelevantInZA": true
+      "likelyRelevantInZA": false
     },
     "SerenaOrCalem": {
       "name": "Rival",
@@ -91,7 +91,7 @@
         "Legends: Z-A keeps this opposite gender mechanic"
       ],
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Furbain-taunie%2Furbain-taunie-2x.png&w=384&q=75",
-      "likelyRelevantInZA": true
+      "likelyRelevantInZA": false
     },
    
     "Looker": {
@@ -101,7 +101,7 @@
         "Leads the post-game detective arc and mentors Emma.",
         "Represents law & order and civic rebuilding after Team Flare's actions"
       ],
-      "likelyRelevantInZA": true
+      "likelyRelevantInZA": false
     },
     "EmmaEssentia": {
       "name": "Emma / Essentia",
@@ -110,7 +110,7 @@
         "Central to the Looker Bureau post-game storyline.",
         "Her vigilante/guardian role in Lumiose may be referenced in Z-A civic context"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Femma%2Femma-2x.png&w=384&q=75"
     },
     "Xerosic": {
@@ -129,7 +129,7 @@
         "New character",
         "Part of the redevelopment team in Z-A"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Fjett%2Fjett-2x.png&w=384&q=75"
     },
     "Vinnie": {
@@ -138,7 +138,7 @@
       "bullets": [
         "New character"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Fvinnie%2Fvinnie-2x.png&w=384&q=75"
     },
     "Corbeau": {
@@ -148,7 +148,7 @@
         "New character",
         "Specializes in Poison-type Pokémon"
       ],
-      "likelyRelevantInZA": true,
+      "likelyRelevantInZA": false,
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Fcorbeau%2Fcorbeau-2x.png&w=384&q=75"
     }
   },

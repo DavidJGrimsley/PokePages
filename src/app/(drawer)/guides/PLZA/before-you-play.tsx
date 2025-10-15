@@ -6,22 +6,87 @@ import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerPa
 import { Collapsible } from '@/src/components/UI/Collapsible';
 import colors from '@/src/constants/style/colors';
 import beforeYouPlayData from '@/src/constants/beforeYouPlayLegendsAZ.json';
+import Head from 'expo-router/head';
 
-import { Platform, Linking, TouchableOpacity } from 'react-native';
+import { Platform, Linking, TouchableOpacity, View, Image } from 'react-native';
 
 export default function BeforeYouPlay() {
 
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
+  // SEO meta content
+  const title = 'Before You Play Pokémon Legends Z-A: Complete Guide & Pokémon X & Y Story Recap | PokePages';
+  const description = 'Essential guide before playing Pokémon Legends Z-A. Complete Pokémon X & Y story recap, character backgrounds, mechanics, and everything you need to know about the Kalos region, Team Flare, AZ, Ultimate Weapon, and Mega Evolution.';
+  const keywords = 'before you play pokemon legends z-a, pokemon x y story recap, pokemon legends za guide, kalos region story, team flare ultimate weapon, az floette story, mega evolution guide, pokemon xy recap, legends za preparation, lumiose city story';
+  
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": title,
+    "description": description,
+    "author": {
+      "@type": "Organization",
+      "name": "PokePages"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "PokePages"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://pokepages.app/guides/PLZA/before-you-play"
+    },
+    "keywords": keywords,
+    "about": [
+      {
+        "@type": "VideoGame",
+        "name": "Pokémon Legends: Z-A"
+      },
+      {
+        "@type": "VideoGame", 
+        "name": "Pokémon X and Y"
+      }
+    ],
+    "articleSection": "Game Guide",
+    "genre": "Gaming Guide"
+  };
+
   return (
-    <Container>
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://pokepages.app/guides/PLZA/before-you-play" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="robots" content="index, follow" />
+        <meta property="article:section" content="Gaming Guide" />
+        <meta property="article:tag" content="Pokémon Legends Z-A" />
+        <meta property="article:tag" content="Pokémon X Y" />
+        <meta property="article:tag" content="Game Guide" />
+        <meta property="article:tag" content="Story Recap" />
+        <link rel="canonical" href="https://pokepages.app/guides/PLZA/before-you-play" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
+      </Head>
+      <Container>
       <MultiLayerParallaxScrollView 
         headerBackgroundColor={{ dark: colors.light.secondary, light: colors.light.background }}
         titleElement={<BouncyText text="Before You Play" />}
         headerHeight={ isMobile ? 75 : 150 }
         >
       
-          <AppText className="text-xl font-bold mb-md dark:text-gray-700 text-gray-200">
+          <AppText className="text-xl font-bold mb-md text-gray-700">
             {beforeYouPlayData.story.caption}
           </AppText>
           
@@ -52,28 +117,33 @@ export default function BeforeYouPlay() {
             if (key === 'caption' || typeof character === 'string') return null;
             
             return (
-              <div key={key} className="mb-md">
+              <View key={key} className="mb-md">
                 <Collapsible 
                   title={character.name}
                   invertColors={true}
                   animatedOpen={true}
-                  backgroundImage={(character as any).imageUrl}
-                  rightContent={character.likelyRelevantInZA ? (
-                    <AppText className="text-sm text-green-400 dark:text-green-800 font-semibold">
-                      ✓ Likely relevant in Z-A
-                    </AppText>
+                  rightContent={(character as any).imageUrl ? (
+                    <Image
+                      source={{ uri: (character as any).imageUrl }}
+                      style={{ 
+                        width: 60,
+                        height: 60,
+                        borderRadius: 8
+                      }}
+                      resizeMode="contain"
+                    />
                   ) : undefined}
                 >
-                  <AppText className="text-base mb-sm text-gray-600 dark:text-app-secondary">
+                  <AppText className="text-base mb-sm text-app-white dark:text-app-secondary">
                     {character.info}
                   </AppText>
                   {character.bullets.map((bullet: string, index: number) => (
-                    <AppText key={index} className="text-base mb-sm text-gray-600 dark:text-gray-800">
+                    <AppText key={index} className="text-base mb-sm text-app-background dark:text-gray-800">
                       • {bullet}
                     </AppText>
                   ))}
                 </Collapsible>
-              </div>
+              </View>
             );
           })}
         </Collapsible>
@@ -149,6 +219,7 @@ export default function BeforeYouPlay() {
       </MultiLayerParallaxScrollView>
 
     </Container>
+    </>
   );
 }
 
