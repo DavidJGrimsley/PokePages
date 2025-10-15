@@ -147,9 +147,35 @@
   }
 }
 
-/* Fix for iOS Safari viewport */
+/* Fix for iOS Safari viewport - critical for flex layouts */
 html {
+  height: 100%;
+  height: 100vh;
   height: -webkit-fill-available;
+}
+
+body {
+  height: 100%;
+  height: 100vh;
+  height: -webkit-fill-available;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure root elements fill viewport on mobile Safari (prevents white screen
+   when using flex-1 layouts with React Native Web) */
+#root {
+  height: 100%;
+  /* Ensure viewport height is respected across browsers */
+  min-height: 100vh;
+  min-height: 100dvh; /* dynamic viewport height for iOS 16+ */
+  min-height: -webkit-fill-available;
+  position: relative; /* anchor for absolute overlays */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Prevent zoom on input focus for iOS */
@@ -159,3 +185,4 @@ input[type="password"],
 textarea {
   font-size: 16px !important;
 }
+

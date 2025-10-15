@@ -27,18 +27,28 @@ export default function Loading() {
   }, []);
 
   return (
-    <View className="flex-1 justify-center items-center bg-app-background">
+    <View style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#E6e6fa', // app-background
+    }}>
       <Animated.View 
         style={{
           transform: [{ scale: isScaled ? 5 : 1 }],
           transitionProperty: 'transform',
           transitionDuration: '1000ms',
           transitionTimingFunction: 'ease-in-out',
-          // Add these for better web compatibility
-          willChange: 'transform', // Hint to browser for optimization
+          willChange: 'transform',
         }}
       >
-        <Text className="text-6xl font-modak text-app-primary select-none drop-shadow-lg">
+        <Text style={{
+          fontSize: 60,
+          fontFamily: 'Modak',
+          color: '#582a5a', // app-primary
+          // @ts-ignore - textShadow is valid on web
+          userSelect: 'none',
+        }}>
           PP
         </Text>
       </Animated.View>

@@ -70,7 +70,7 @@ export default function Strategies() {
           titleElement={<BouncyText text="Strategies" />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <AppText className="text-xl font-bold mb-lg text-gray-700 dark:text-gray-200">
+          <AppText className="text-xl font-bold mb-lg text-gray-200 dark:text-gray-800">
             Master Pokémon Legends Z-A with these comprehensive guides
           </AppText>
           

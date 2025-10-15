@@ -1,13 +1,26 @@
 import { forwardRef } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Pressable, Text, Platform } from 'react-native';
+import { Pressable, Text, Platform, Dimensions } from 'react-native';
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { cn } from '~/utils/cn';
 
 const isAndroid = Platform.OS === 'android';
 const isiOs = Platform.OS === 'ios';
 const isWeb = Platform.OS === 'web';
-const headerHeight = isAndroid ? hp(10.5) : isiOs ? hp(10.5) : hp(8);
+
+// Detect mobile web using RN Web Dimensions (more reliable than window.innerWidth)
+const { width: winW } = Dimensions.get('window');
+const isMobileWeb = isWeb && winW <= 768;
+
+// Header heights
+// - Native mobile (iOS/Android): ~10.5% of screen height (existing behavior)
+// - Mobile web: fixed px close to native appearance (prevents iOS Safari viewport quirks)
+// - Desktop web: slightly taller than mobile
+const headerHeight = isAndroid || isiOs
+  ? hp(10.5)
+  : isMobileWeb
+    ? 64 // px, tuned for mobile Safari/Chrome
+    : 72; // desktop web
 
 interface HeaderButtonProps {
   onPress?: () => void;
@@ -47,7 +60,11 @@ export const HeaderTitle = ({ title, className }: HeaderTitleProps) => (
   <Text 
     className={cn(
       'text-center',
-      isAndroid ? 'typography-display-outlined-android' : isiOs ? 'typography-display-outlined-ios' : 'typography-display-outlined pt-xl',
+      isAndroid
+        ? 'typography-display-outlined-android'
+        : (isiOs || isMobileWeb)
+          ? 'typography-display-outlined-ios'
+          : 'typography-display-outlined pt-xl',
       className
     )}
   >

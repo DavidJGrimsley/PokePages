@@ -5,7 +5,7 @@ import { Stack, SplashScreen } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { 
   PressStart2P_400Regular,
@@ -36,6 +36,26 @@ import { useOnboardingStore } from '~/store/onboardingStore';
 import { HeaderTitle } from 'components/UI/HeaderComponents';
 import Loading from 'components/Animation/LoadingAnim';
 
+// Add mobile debugging console ONLY in development
+if (__DEV__ && Platform.OS === 'web' && typeof window !== 'undefined') {
+  // Detect mobile devices
+  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (isMobileDevice) {
+    // Load Eruda for mobile debugging
+  const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/eruda@3.0.1/eruda.js';
+    script.onload = () => {
+      // @ts-ignore
+      if (window.eruda) {
+        // @ts-ignore
+        window.eruda.init();
+      }
+    };
+    document.head.appendChild(script);
+  }
+}
+
 const isWeb = Platform.OS === 'web';
 
 if (!isWeb) {
@@ -64,6 +84,21 @@ export default function RootLayout() {
     'Roboto Mono-Bold': RobotoMono_700Bold,
   });
 
+  // Add fallback for slow font loading on mobile
+  const [fontLoadingTimedOut, setFontLoadingTimedOut] = useState(false);
+  
+  useEffect(() => {
+    // Set a timeout for font loading (5 seconds)
+    const fontTimeout = setTimeout(() => {
+      if (!fontsLoaded) {
+        console.log('📱 Font loading timed out, proceeding without fonts');
+        setFontLoadingTimedOut(true);
+      }
+    }, 5000);
+
+    return () => clearTimeout(fontTimeout);
+  }, [fontsLoaded]);
+
   const {
     isLoggedIn,
     _hasHydrated,
@@ -72,12 +107,22 @@ export default function RootLayout() {
   const { hasCompletedOnboarding, _hasHydratedOnboarding } = useOnboardingStore();
 
   // https://zustand.docs.pmnd.rs/integrations/persisting-store-data#how-can-i-check-if-my-store-has-been-hydrated
-  // Hide the splash screen after both stores have been hydrated AND fonts are loaded
+  // Hide the splash screen after both stores have been hydrated AND fonts are loaded (or timed out)
   useEffect(() => {
-    if (_hasHydrated && _hasHydratedOnboarding && fontsLoaded) {
+    console.log('📱 Mobile Debug - Hydration Check:', {
+      _hasHydrated,
+      _hasHydratedOnboarding,
+      fontsLoaded,
+      fontLoadingTimedOut,
+      platform: Platform.OS,
+      userAgent: Platform.OS === 'web' ? navigator.userAgent : 'native'
+    });
+    
+    if (_hasHydrated && _hasHydratedOnboarding && (fontsLoaded || fontLoadingTimedOut)) {
+      console.log('✅ All conditions met, hiding splash screen');
       SplashScreen.hideAsync();
     }
-  }, [_hasHydrated, _hasHydratedOnboarding, fontsLoaded]);
+  }, [_hasHydrated, _hasHydratedOnboarding, fontsLoaded, fontLoadingTimedOut]);
 
   // You'll need to update your root layout to handle hydration properly
   // Add this to prevent infinite re-renders:
@@ -85,7 +130,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Set a timeout to ensure hydration completes
+    console.log('📱 Starting hydration timer...');
     const timer = setTimeout(() => {
+      console.log('📱 Hydration timer completed, setting isHydrated to true');
       setIsHydrated(true);
     }, 1000);
     
@@ -93,8 +140,25 @@ export default function RootLayout() {
   }, []);
 
   if (!isHydrated) {
+    console.log('📱 Showing loading screen - isHydrated is false');
+    const overlayStyleWeb = {
+      position: 'absolute' as const,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      backgroundColor: '#E6e6fa',
+    };
+    const overlayStyleNative = {
+      flex: 1,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      backgroundColor: '#E6e6fa',
+    };
     return (
-      <View className="flex-1 justify-center items-center bg-app-background">
+  <View style={Platform.OS === 'web' ? (overlayStyleWeb as any) : overlayStyleNative}>
         {/* <LottieView
           autoPlay={true}
           loop={true}
@@ -106,17 +170,31 @@ export default function RootLayout() {
     );
   }
 
-  if ((!_hasHydrated || !_hasHydratedOnboarding || !fontsLoaded) && !isWeb) {
+  if ((!_hasHydrated || !_hasHydratedOnboarding || (!fontsLoaded && !fontLoadingTimedOut)) && !isWeb) {
     return null;
   }
 
   // Skip onboarding on web platform
   const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
-  console.log('User has completed onboarding: ', hasCompletedOnboarding);
-  console.log('Is Dev mode', __DEV__);
-  
+  console.log('📱 Onboarding check:', {
+    hasCompletedOnboarding,
+    isLoggedIn,
+    shouldShowOnboarding,
+    platform: Platform.OS,
+    isDev: __DEV__
+  });
+  console.log('Hydration states:', { 
+    _hasHydrated, 
+    _hasHydratedOnboarding, 
+    fontsLoaded, 
+    isHydrated 
+  });
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider
+      // Make sure provider has full height and avoids SSR mismatch
+      style={{ flex: 1 }}
+      initialMetrics={Platform.OS === 'web' ? initialWindowMetrics ?? undefined : undefined}
+    >
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar style="auto" />
         <Stack>
