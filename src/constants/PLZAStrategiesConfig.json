@@ -1,0 +1,252 @@
+{
+  "shiny-hunting": {
+    "id": "shiny-hunting",
+    "title": "Shiny Hunting Guide",
+    "subtitle": "Master the art of finding shiny Pokémon in Legends Z-A",
+    "icon": "✨",
+    "description": "Complete guide to shiny hunting in Pokémon Legends Z-A, including methods, odds, and tips for finding rare shiny Pokémon.",
+    "sections": [
+      {
+        "title": "Shiny Odds & Mechanics",
+        "content": "Base shiny odds in Legends Z-A are 1/4096. However, various methods can significantly increase your chances.",
+        "bullets": [
+          "Base odds: 1/4096 (same as recent mainline games)",
+          "Shiny Charm: Increases odds to approximately 1/1365",
+          "Mass Outbreaks: Increased shiny rates during special spawns",
+          "Research Level: Higher research levels may improve odds"
+        ]
+      },
+      {
+        "title": "Best Shiny Hunting Methods",
+        "content": "Several proven methods can help you find shinies more efficiently.",
+        "bullets": [
+          "Mass Outbreaks: Check for outbreak notifications and hunt during these events",
+          "Research Tasks: Complete species research to potentially increase encounter rates",
+          "Static Encounters: Save before legendary encounters for guaranteed shiny hunting",
+          "Sandwich Method: Use café bonuses to increase spawn rates"
+        ]
+      },
+      {
+        "title": "Tips & Best Practices",
+        "content": "Maximize your shiny hunting efficiency with these tips.",
+        "bullets": [
+          "Always carry the Shiny Charm once obtained",
+          "Use audio cues - shinies have a distinct sparkle sound",
+          "Save frequently when hunting static encounters",
+          "Join community events for increased outbreak spawns",
+          "Consider time of day for specific Pokémon spawns"
+        ]
+      }
+    ]
+  },
+  "real-time-battles": {
+    "id": "real-time-battles",
+    "title": "Real-Time Battle Guide",
+    "subtitle": "Master the new action combat system",
+    "icon": "⚔️",
+    "description": "Learn how to excel in Pokémon Legends Z-A's revolutionary real-time battle system, including combat mechanics, timing, and strategy.",
+    "sections": [
+      {
+        "title": "Combat Basics",
+        "content": "Legends Z-A introduces real-time action combat, a departure from traditional turn-based battles.",
+        "bullets": [
+          "Dodge incoming attacks with precise timing",
+          "Chain attacks for combo damage bonuses",
+          "Manage stamina for both offense and defense",
+          "Switch Pokémon mid-combat for tactical advantages",
+          "Use the environment to your advantage"
+        ]
+      },
+      {
+        "title": "Strong & Agile Styles",
+        "content": "Master the two battle styles for different situations.",
+        "bullets": [
+          "Strong Style: More damage but slower execution, leaves you vulnerable",
+          "Agile Style: Faster attacks with reduced damage, better for combos",
+          "Style mastery unlocks at higher research levels",
+          "Mix styles based on opponent patterns and openings"
+        ]
+      },
+      {
+        "title": "Advanced Techniques",
+        "content": "Take your combat skills to the next level.",
+        "bullets": [
+          "Perfect dodge: Time dodges perfectly for slow-motion windows",
+          "Combo chains: Link multiple attacks for damage multipliers",
+          "Status effects: Paralyze/Sleep for easier damage windows",
+          "Team synergy: Build movesets that complement your playstyle",
+          "Alpha battles: Unique patterns requiring adapted strategies"
+        ]
+      }
+    ]
+  },
+  "competitive-ranking": {
+    "id": "competitive-ranking",
+    "title": "Competitive Ranking Guide",
+    "subtitle": "Climb the ranked ladder efficiently",
+    "icon": "🏆",
+    "description": "Strategies and tips for climbing the competitive ranks in Pokémon Legends Z-A, including team building and meta analysis.",
+    "sections": [
+      {
+        "title": "Understanding the Ranked System",
+        "content": "Learn how the ranking system works and what it takes to climb.",
+        "bullets": [
+          "Ranked tiers: Beginner, Great, Ultra, Master",
+          "Points system: Wins grant points, losses deduct them",
+          "Seasonal resets: Rankings reset periodically with rewards",
+          "Matchmaking: Based on current rank and win rate"
+        ]
+      },
+      {
+        "title": "Meta Team Building",
+        "content": "Build competitive teams that can handle the current meta.",
+        "bullets": [
+          "Core roles: Sweeper, Tank, Support balanced composition",
+          "Type coverage: Ensure team covers major threats",
+          "Speed tiers: Understand which Pokémon outspeed others",
+          "Synergy: Moves and abilities that complement each other",
+          "Adapt to meta shifts: Stay updated on popular strategies"
+        ]
+      },
+      {
+        "title": "Climbing Strategies",
+        "content": "Practical tips for efficient rank progression.",
+        "bullets": [
+          "Master 2-3 teams instead of constantly switching",
+          "Study replays: Learn from losses and refine strategy",
+          "Time your sessions: Play when you're focused and alert",
+          "Track your record: Identify which teams/strategies work best",
+          "Take breaks: Avoid tilt and maintain peak performance"
+        ]
+      }
+    ]
+  },
+  "team-building": {
+    "id": "team-building",
+    "title": "Team Building Guide",
+    "subtitle": "Create balanced and effective teams",
+    "icon": "👥",
+    "description": "Comprehensive guide to building effective Pokémon teams in Legends Z-A, covering roles, synergies, and optimal compositions.",
+    "sections": [
+      {
+        "title": "Team Roles & Composition",
+        "content": "Every successful team needs balance between different roles.",
+        "bullets": [
+          "Physical Sweeper: High attack, focuses on physical moves",
+          "Special Sweeper: High special attack for special moves",
+          "Tank/Wall: High defenses to absorb damage",
+          "Support: Healing, buffs, status effects",
+          "Pivot: Flexible role that adapts to situations",
+          "Recommended: 2 sweepers, 1 tank, 1 support, 2 flexible"
+        ]
+      },
+      {
+        "title": "Type Coverage",
+        "content": "Ensure your team can handle all threats effectively.",
+        "bullets": [
+          "Cover each other's weaknesses: No shared vulnerabilities",
+          "Offensive coverage: Hit most types for super-effective damage",
+          "Defensive synergy: Resist common attacking types",
+          "Priority moves: Have at least one Pokémon with priority",
+          "Weather/terrain: Consider weather team strategies"
+        ]
+      },
+      {
+        "title": "Movesets & Abilities",
+        "content": "Optimize individual Pokémon for their roles.",
+        "bullets": [
+          "STAB moves: Same Type Attack Bonus for reliable damage",
+          "Coverage moves: Handle type disadvantages",
+          "Status moves: One utility move per Pokémon minimum",
+          "Ability synergy: Abilities that support team strategy",
+          "Held items: Choose items that enhance role effectiveness"
+        ]
+      }
+    ]
+  },
+  "resource-farming": {
+    "id": "resource-farming",
+    "title": "Resource Farming Guide",
+    "subtitle": "Efficiently gather items and materials",
+    "icon": "💎",
+    "description": "Optimize your resource gathering in Pokémon Legends Z-A to get items, money, and materials efficiently.",
+    "sections": [
+      {
+        "title": "Money Making",
+        "content": "Best methods for earning money quickly.",
+        "bullets": [
+          "Sell duplicate items and materials",
+          "Complete research tasks for monetary rewards",
+          "Battle wealthy trainers in Lumiose City",
+          "Participate in daily/weekly events",
+          "Use Amulet Coin item to double battle earnings"
+        ]
+      },
+      {
+        "title": "Item Farming",
+        "content": "Locations and methods for farming essential items.",
+        "bullets": [
+          "Evolution stones: Specific areas and wild Pokémon drops",
+          "Berries: Plant and harvest at café locations",
+          "Poké Balls: Craft materials or purchase in bulk",
+          "Mints: Battle Tower rewards and special vendors",
+          "Rare items: Complete research paths and side quests"
+        ]
+      },
+      {
+        "title": "Efficient Routes",
+        "content": "Optimized paths for gathering materials.",
+        "bullets": [
+          "Create farming routes that hit multiple resource nodes",
+          "Use flying mounts to quickly travel between areas",
+          "Time-based spawns: Note what appears at different times",
+          "Reset methods: Some items respawn daily or hourly",
+          "Maximize inventory: Upgrade bag space early"
+        ]
+      }
+    ]
+  },
+  "alpha-pokemon": {
+    "id": "alpha-pokemon",
+    "title": "Alpha Pokémon Guide",
+    "subtitle": "Find and catch powerful Alpha Pokémon",
+    "icon": "⭐",
+    "description": "Everything you need to know about Alpha Pokémon in Legends Z-A, including locations, catching strategies, and benefits.",
+    "sections": [
+      {
+        "title": "What Are Alpha Pokémon?",
+        "content": "Alpha Pokémon are larger, stronger variants with special properties.",
+        "bullets": [
+          "Significantly larger than normal Pokémon",
+          "Higher stats and better starting moves",
+          "Glowing red eyes and aggressive behavior",
+          "Can have effort levels already raised",
+          "Rare spawns in specific locations"
+        ]
+      },
+      {
+        "title": "Finding Alpha Pokémon",
+        "content": "Locations and spawn conditions for Alpha encounters.",
+        "bullets": [
+          "Fixed spawn locations: Same Alphas appear in set locations",
+          "Random spawns: Some areas have rotating Alpha spawns",
+          "Weather conditions: Certain Alphas only appear in specific weather",
+          "Time of day: Some Alphas are time-exclusive",
+          "Check community maps for confirmed Alpha locations"
+        ]
+      },
+      {
+        "title": "Catching Strategies",
+        "content": "Tips for successfully catching Alpha Pokémon.",
+        "bullets": [
+          "Use Heavy Balls for better catch rates on large Pokémon",
+          "Approach from behind for easier first throws",
+          "Lower HP significantly before attempting capture",
+          "Status effects greatly improve catch rates",
+          "Save before attempting rare Alpha encounters",
+          "Consider battling to weaken instead of stealth catching"
+        ]
+      }
+    ]
+  }
+}
