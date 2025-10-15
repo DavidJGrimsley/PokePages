@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { Button } from "components/UI/Button";
 import { ShowAgreement } from 'components/Docs/ShowAgreement';
+import { PayPal } from 'components/Paypal';
 import { useOnboardingStore } from "~/store/onboardingStore";
 
 export default function OnboardingWelcomeScreen() {
@@ -87,6 +88,18 @@ export default function OnboardingWelcomeScreen() {
             </Text>
           </View>
         )}
+      </View>
+
+      {/* Community Support Section */}
+      <View className="bg-app-surface rounded-lg p-lg mb-lg border border-app-border">
+        <Text className="typography-copy-bold text-app-primary text-center mb-sm">
+          💙 Community Supported
+        </Text>
+        <Text className="typography-caption text-app-secondary text-center mb-md leading-5">
+          Poké Pages is a passion project that runs entirely on community support. 
+          Your donations help keep the servers running and the app free for everyone!
+        </Text>
+        <PayPal />
       </View>
       
       <View className="py-lg">

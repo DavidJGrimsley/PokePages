@@ -17,8 +17,7 @@ config.resolver.alias = {
   "utils": path.resolve(__dirname, "src/utils"),
 };
 
-// Re-enable NativeWind with minimal CSS input to avoid problematic global CSS rules
+// Configure NativeWind with proper settings
 module.exports = withNativeWind(config, {
-  // Use the sanitized global.css directly so all layers are applied
   input: "./global.css",
 });

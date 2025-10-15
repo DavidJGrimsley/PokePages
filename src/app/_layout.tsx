@@ -1,4 +1,4 @@
-import '@/global.css';  // Add this at the very top
+import '@/global.css';  // Import global CSS
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, SplashScreen } from 'expo-router';
