@@ -1,0 +1,44 @@
+{
+  "markers": [
+    {
+      "id": 1,
+      "name": "Poke Center",
+      "category": "Buildings",
+      "coordinates": {
+        "latitude": 35.6895,
+        "longitude": 139.6917
+      },
+      "completed": false
+    },
+    {
+      "id": 2,
+      "name": "Ancient Ruins",
+      "category": "Ruins",
+      "coordinates": {
+        "latitude": 35.6890,
+        "longitude": 139.6920
+      },
+      "completed": false
+    },
+    {
+      "id": 3,
+      "name": "Fast Travel Point",
+      "category": "Fast travel locations",
+      "coordinates": {
+        "latitude": 35.6885,
+        "longitude": 139.6930
+      },
+      "completed": false
+    },
+    {
+      "id": 4,
+      "name": "Hidden Item",
+      "category": "Other",
+      "coordinates": {
+        "latitude": 35.6875,
+        "longitude": 139.6940
+      },
+      "completed": false
+    }
+  ]
+}
