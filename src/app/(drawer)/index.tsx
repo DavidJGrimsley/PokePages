@@ -77,9 +77,14 @@ export default function Home() {
             
             {/* Featured newest feature */}
             <NewestFeature
-              title="Type Calculator"
-              description="Use when battling to see type advantages."
-              path="/(drawer)/resources/type-calculator"
+              title="Before you Play"
+              description="Get caught up on the Lore of Kalos and Lumiose City before diving into Pokémon Legends Z-A!"
+              path="/(drawer)/guides/PLZA/before-you-play"
+            />
+            <NewestFeature
+              title="Legends Z-A Strategies"
+              description="Get caught up on the latest strategies for Pokémon Legends Z-A!"
+              path="/(drawer)/guides/PLZA/strategies"
             />
           
             <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>

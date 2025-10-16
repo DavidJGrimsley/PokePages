@@ -91,11 +91,11 @@ export default function StrategyDetail() {
           titleElement={<BouncyText text={`${finalConfig.icon} ${finalConfig.title}`} />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <AppText className="text-xl font-bold mb-md text-gray-700 dark:text-gray-200">
+          <AppText className="text-xl font-bold mb-md text-app-secondary">
             {finalConfig.subtitle}
           </AppText>
-          
-          <AppText className="text-base mb-lg text-gray-600 dark:text-gray-300">
+
+          <AppText className="text-base mb-lg text-app-text">
             {finalConfig.description}
           </AppText>
 

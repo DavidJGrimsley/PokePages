@@ -1,81 +1,478 @@
 {
+  "general-tips": {
+    "id": "general-tips",
+    "title": "General Tips & Settings",
+    "subtitle": "Essential tips for getting started",
+    "icon": "💡",
+    "description": "Important settings and general advice for playing Pokémon Legends Z-A effectively.",
+    "sections": [
+      {
+        "title": "Settings & Quality of Life",
+        "content": "Optimize your game settings for the best experience.",
+        "bullets": [
+          "Set text speed to fast for quicker reading",
+          "Tweak camera sensitivity for your 'sweet spot'",
+          "AUTOSAVE cannot be turned off! (First title in the series?)",
+          "Feeling lost? Check the map and look for an exclamation point and press A to turn on navigation guidance"
+        ]
+      },
+      {
+        "title": "Collectibles",
+        "content": "Maximize your item resource gathering effectiveness throughout your playthrough.",
+        "bullets": [
+          "Collect Mega Shards (pink clusters) early on and throughout your playthrough by targeting with ZL and attacking with any attack",
+          "Red Pokéballs and sparkles on the ground contain various random common items",
+          "Glowing Yellow Pokéballs on the ground contain TMs",
+          "Glowing Purple Pokéballs on the ground contain Colorful Screws (used for upgrading Plushes)",
+          "Use Pokémon moves to clear obstacles and collect items",
+          "Rock piles can be destroyed by Fighting moves (Rock is weak to Fighting); piles of Poison sludge can be cleared with Psychic moves, etc.",
+          "Climb scaffolding and explore behind buildings to find the best items"
+        ]
+      },
+      {
+        "title": "Money Making",
+        "content": "Best methods for earning money quickly.",
+        "bullets": [
+          "*This info is not confirmed yet*",
+          "Sell duplicate items and materials",
+          "Complete research tasks for monetary rewards",
+          "Battle wealthy trainers in Lumiose City",
+          "Participate in daily/weekly events",
+          "Use Amulet Coin item to double battle earnings"
+        ]
+      },
+      {
+        "title": "Item Farming",
+        "content": "Locations and methods for farming essential items.",
+        "bullets": [
+          "Evolution stones: Specific areas and wild Pokémon drops",
+          "Berries: Plant and harvest at café locations",
+          "Mints: Battle Tower rewards and special vendors",
+          "Rare items: Complete research paths and side quests"
+        ]
+      },
+      {
+        "title": "Efficient Routes",
+        "content": "Optimized paths for gathering materials.",
+        "bullets": [
+          "Create farming routes that hit multiple resource nodes",
+          "Use flying mounts to quickly travel between areas",
+          "Time-based spawns: Note what appears at different times",
+          "Reset methods: Some items respawn daily or hourly",
+          "Maximize inventory: Upgrade bag space early"
+        ]
+      },
+      {
+        "title": "Extra Tips",
+        "content": "Additional helpful advice for your journey.",
+        "bullets": [
+          "Collect the Pokéballs with which you missed your target from an NPC outside Pokémon Centers"
+        ]
+      }
+    ]
+  },
+  "battle-system": {
+    "id": "battle-system",
+    "title": "Battle System Guide",
+    "subtitle": "Master the new real-time combat mechanics",
+    "icon": "⚔️",
+    "description": "Complete guide to Pokémon Legends Z-A's unique battle system, including controls, movement, and combat strategies.",
+    "sections": [
+      {
+        "title": "Movement & Controls",
+        "content": "Master the basic controls for combat.",
+        "bullets": [
+          "Lock on using ZL to see your moves and attack",
+          "Use the joystick to move your character",
+          "Hit Y to dodge attacks",
+          "Use your 4 moves with the corresponding buttons (A, B, X, Y)"
+        ]
+      },
+      {
+        "title": "Party Management",
+        "content": "Efficiently manage your Pokémon during battle.",
+        "bullets": [
+          "Use D-Pad left and right to cycle through your party",
+          "Press up on the D-Pad to throw out the selected Pokémon right away",
+          "Press down on the D-Pad to recall your Pokémon on the field",
+          "Recalling comes at a cost: your next Pokémon has a cooldown",
+          "When your current Pokémon faints, you have a second ro"
+        ]
+      },
+      {
+        "title": "Pokémon Move Mechanics",
+        "content": "Understand how moves work in real-time battles.",
+        "bullets": [
+          "All moves have cooldowns shown on their move icon",
+          "Moves with less PP in other mainline games have longer cooldowns",
+          "Status moves and stronger moves (like Hyperbeam) have longer cooldowns",
+          "Check cooldown times on the move summary screen",
+          "Ranged moves can be done from much farther away than melee moves",
+          "Moves like Quick Attack happen very fast, giving the opponent little time to react",
+          "Plan which moves to use in order, then adjust based on results",
+          "Moves have an upgraded '+' variation unlocked by using them in battle",
+          "When a Pokémon is Mega Evolved, all moves are automatically '+'"
+        ]
+      },
+      {
+        "title": "Advanced Techniques",
+        "content": "Understand how moves work in real-time battles.",
+        "bullets": [
+          "Use the full arena and obstacles to your advantage",
+          "Hit your opponent with a close range move, then quickly move away and use a ranged attack(example, could be mixed with status moves)",
+          "You can easily set up status conditions and stat debuffs with one or two Pokémon, then switch to a sweeper to finish them off; this can be quicker and safer than waiting for moves to recharge"
+        ]
+      }
+    ]
+  },
+  "training-evolution": {
+    "id": "training-evolution",
+    "title": "Training & Evolution",
+    "subtitle": "Level up and evolve your Pokémon",
+    "icon": "📈",
+    "description": "Important information about how training and evolution work in Legends Z-A.",
+    "sections": [
+      {
+        "title": "Training",
+        "content": "Natures remain while Abilities and Effort Values (EVs) are not present in Legends Z-A.",
+        "bullets": [
+          "Use Exp. Candy and Rare Candy to level up your Pokémon quickly",
+          "Unlock the Red Canari Plush to gain extra Exp. Points by progressing the story",
+          "You can see the effect of the nature with the red up arrow or blue down arrow on the stats summary screen (no arrows is a neutral Nature)"
+        ]
+      },
+      {
+        "title": "Learning Moves",
+        "content": "Pokémon don't learn moves automatically in this game.",
+        "bullets": [
+          "Pokémon get the 'idea' for new moves by level up",
+          "You must teach moves to them manually in the menu",
+          "Plan your moveset strategically as you progress"
+        ]
+      },
+      {
+        "title": "Evolution",
+        "content": "Evolution works differently in Legends Z-A.",
+        "bullets": [
+          "Pokémon do NOT evolve on their own",
+          "You must evolve them manually in the menu",
+          "Check evolution requirements for any species with special conditions below"
+        ]
+      },
+      {
+        "title": "Special Evolution Requirements",
+        "content": "Some Pokémon have unique evolution methods.",
+        "bullets": [
+          "Coming soon!"
+        ]
+      }
+    ]
+  },
+  "plushes-charms": {
+    "id": "plushes-charms",
+    "title": "Plushes & Charms",
+    "subtitle": "Boost your abilities with Canari Plushes",
+    "icon": "🧸",
+    "description": "Guide to collecting and upgrading Canari Plushes that replace traditional held items and provide various bonuses.",
+    "sections": [
+      {
+        "title": "Canari Plush Types",
+        "content": "Different colored plushes provide different bonuses.",
+        "bullets": [
+          "Red Canari Plush: Increases Exp. Points",
+          "Gold Canari Plush: Increases prize money from battles",
+          "Pink Canari Plush: Increases number of Mega Shards after smashing Mega Crystals",
+          "Green Canari Plush: Makes you less likely to black out from taking damage",
+          "Blue Canari Plush: More likely you'll succeed at catching Pokémon"
+        ]
+      },
+      {
+        "title": "Obtaining & Upgrading",
+        "content": "How to get and improve your plushes.",
+        "bullets": [
+          "You'll get the Red Canari Plush while progressing the main story",
+          "Trade colorful screws to the NPC outside Racine Construction in Vert Sector 7",
+          "Plushes can be leveled from level 1 to level 3",
+          "Each level costs 3 to 8 colorful screws",
+          "Maxing all plushes requires 80 colorful screws total"
+        ]
+      },
+      {
+        "title": "Shiny Charm",
+        "content": "Increases the chance of encountering shiny Pokémon.",
+        "bullets": [
+          "Shiny Charm is obtained through Mable's Research Level 50 Reward",
+          "See the Pokédex section for more details on research tasks"
+        ]
+      }
+    ]
+  },
+  "pokedex-research": {
+    "id": "pokedex-research",
+    "title": "Pokédex & Research",
+    "subtitle": "Complete Mable's research tasks",
+    "icon": "📚",
+    "description": "Everything about the Pokédex research system and how to level it up for rewards.",
+    "sections": [
+      {
+        "title": "Research System",
+        "content": "How Mable's research tasks work",
+        "bullets": [
+          "Mable's research tasks level up your Pokédex from 1 to 50",
+          "Level rewards include TMs, Exp. Candy, Bottle Caps",
+          "Master Ball at level 49",
+          "Shiny Charm at level 50",
+          "Check the tasks for specific requirements"
+        ]
+      },
+      {
+        "title": "Best Approach",
+        "content": "Optimal strategy for completing research",
+        "bullets": [
+          "Catching a variety and large number of Pokémon throughout the playthrough is the way to go",
+          "Focus on diverse species rather than just quantity",
+          "Complete species-specific tasks as you encounter them"
+        ]
+      },
+      {
+        "title": "Pokédex Completion",
+        "content": "Fill your Pokédex fast for the quickest way to level up",
+        "bullets": [
+          "Explore every corner of each Wild Zone during the day and night",
+          "Use the map to track how many species remain to be caught in each zone",
+          "Trade with people online for missing species (you should catch extra of each species you find, especially rare spawns)",
+          "Use Pokémon HOME to transfer over any Pokémon you have from other games that are in Legends Z-A"
+        ]
+      }
+    ]
+  },
+  "wild-pokemon": {
+    "id": "wild-pokemon",
+    "title": "Wild Pokémon Guide",
+    "subtitle": "Catch Pokémon effectively in the wild",
+    "icon": "🌿",
+    "description": "Master the art of catching wild Pokémon with stealth mechanics, battle strategies, and catch rate optimization.",
+    "sections": [
+      {
+        "title": "Spawning",
+        "content": "How spawning works for wild Pokémon.",
+        "bullets": [
+          "Pokémon will despawn if you leave their area",
+          "Pokémon respawn after a certain amount of time",
+          "Some Pokémon spawn in specific zones or at certain times of day",
+          "Some Pokémon will disappear if you get too close without stealth",
+          "Shiny Pokémon don't despawn until caught or defeated"
+        ]
+      },
+      {
+        "title": "Stealth Catching",
+        "content": "Use stealth to your advantage when catching wild Pokémon",
+        "bullets": [
+          "Lock on to wild Pokémon using ZL",
+          "Crouch and use bushes to stay hidden",
+          "Wild Pokémon can be caught without battling by throwing a Poké Ball at them",
+          "Strike them in the back for an improved chance of success",
+          "If they don't stay in the ball, they may become angry and require battling",
+          "The red X indicates the Pokémon is angry - Poké Balls won't work until you battle it",
+          "The red eye just indicates they are targeting you but you still may be able to throw a Poké Ball",
+          "Angry Pokémon will calm down if you run out of their sight for a moment"
+        ]
+      },
+      {
+        "title": "Battle Catching",
+        "content": "Strategies for catching Pokémon during battles",
+        "bullets": [
+          "Throw your Pokémon (in its Poké Ball) at a wild Pokémon to initiate battle",
+          "You can throw a Poké Ball at any point during battle to try to catch it",
+          "Low level Pokémon under level 10 can often be caught without damage",
+          "Dealing damage and/or inflicting status conditions increases catch chances",
+          "When you knock a Pokémon to 0 HP, there's a small window for an increased catch while it is dazed, indicated by the stars are spinning",
+          "Certain balls have higher catch rates or work better in specific circumstances"
+        ]
+      },
+      {
+        "title": "Important Warnings",
+        "content": "Be careful when catching rare or shiny Pokémon",
+        "bullets": [
+          "Be CAREFUL when battling a Pokémon you intend to catch (especially Shinies)",
+          "Don't knock it out accidentally by using moves that are too strong",
+          "Watch for recoil moves in the Pokémon's movepool",
+          "If they use a move like Self-Destruct, throw better Poké Balls early to avoid it",
+          "The dazed state the Pokémon enters when knocked out is a saving grace for these situations, be ready to throw a Poké Ball"
+        ]
+      }
+    ]
+  },
   "shiny-hunting": {
     "id": "shiny-hunting",
     "title": "Shiny Hunting Guide",
     "subtitle": "Master the art of finding shiny Pokémon in Legends Z-A",
     "icon": "✨",
-    "description": "Complete guide to shiny hunting in Pokémon Legends Z-A, including methods, odds, and tips for finding rare shiny Pokémon.",
+    "description": "Complete guide to shiny hunting in Pokémon Legends Z-A, including identification, methods, and tips for finding rare shiny Pokémon.",
     "sections": [
       {
         "title": "Shiny Odds & Mechanics",
         "content": "Base shiny odds in Legends Z-A are 1/4096. However, various methods can significantly increase your chances.",
         "bullets": [
           "Base odds: 1/4096 (same as recent mainline games)",
-          "Shiny Charm: Increases odds to approximately 1/1365",
-          "Mass Outbreaks: Increased shiny rates during special spawns",
-          "Research Level: Higher research levels may improve odds"
+          "Shiny Charm: Increases odds to approximately 1/1024.38",
+          "Defeating all Pokémon in a wild zone and waiting for the next wave may increase shiny chance (my hypothesis - needs confirmation)",
         ]
       },
       {
-        "title": "Best Shiny Hunting Methods",
-        "content": "Several proven methods can help you find shinies more efficiently.",
+        "title": "Identifying Shinies",
+        "content": "How to recognize when you've encountered a shiny Pokémon.",
         "bullets": [
-          "Mass Outbreaks: Check for outbreak notifications and hunt during these events",
-          "Research Tasks: Complete species research to potentially increase encounter rates",
-          "Static Encounters: Save before legendary encounters for guaranteed shiny hunting",
-          "Sandwich Method: Use café bonuses to increase spawn rates"
+          "Shinies appear shiny in the overworld before battle",
+          "Stars appear and a pleasant sound plays when a Shiny spawns",
+          "Look and listen for these visual and audio cues while exploring",
+          "Shiny Pokémon don't despawn until caught, defeated, you run away after starting a battle, or it runs away due to it's species behaviors",
+          "Up to 10 shiny Pokémon can exist in the world at once",
+          "Save when you see a shiny in case something goes wrong and during the battle if things start to go south",
+          "If you knock the Pokémon out, and you throw a ball while it is stunned and it breaks out, soft reset (close the game and restart) to try again",
+          "Check you have balls, healed Pokémon, and healing items before engaging"
         ]
       },
       {
-        "title": "Tips & Best Practices",
-        "content": "Maximize your shiny hunting efficiency with these tips.",
+        "title": "Shiny Hunting Methods",
+        "content": "Techniques to increase your chances of finding shinies.",
         "bullets": [
-          "Always carry the Shiny Charm once obtained",
-          "Use audio cues - shinies have a distinct sparkle sound",
-          "Save frequently when hunting static encounters",
-          "Join community events for increased outbreak spawns",
-          "Consider time of day for specific Pokémon spawns"
+          "Defeat all Pokémon in a wild zone, then wait for the next wave to respawn",
+          "This may increase your shiny chance (hypothesis - needs confirmation)",
+          "Use the Shiny Charm obtained at Research Level 50 for better odds",
+          "Check Wild Zones at different times of day for different spawns",
+          "No breeding or so therefore no \"Masuda Method\" in this game",
+          "Shiny Charm does not effect fossils, but they can be shiny"
+        ]
+      },
+      {
+        "title": "Catching Shiny Pokémon",
+        "content": "Special precautions when catching shinies.",
+        "bullets": [
+          "Be extremely careful not to knock out the shiny",
+          "Consider using stealth and not battling if possible",
+          "Use weaker moves to chip away HP safely",
+          "Avoid using very strong attacks that might KO in one hit",
+          "Watch for the Pokémon using Self-Destruct or recoil moves",
+          "Consider using status moves like Sleep or Paralysis",
+          "Throw high-quality Poké Balls early if concerned about fainting"
         ]
       }
     ]
   },
-  "real-time-battles": {
-    "id": "real-time-battles",
-    "title": "Real-Time Battle Guide",
-    "subtitle": "Master the new action combat system",
-    "icon": "⚔️",
-    "description": "Learn how to excel in Pokémon Legends Z-A's revolutionary real-time battle system, including combat mechanics, timing, and strategy.",
+  "wild-zones": {
+    "id": "wild-zones",
+    "title": "Wild Zones Guide",
+    "subtitle": "Navigate and explore Wild Zones effectively",
+    "icon": "🗺️",
+    "description": "Information about Wild Zones, their mechanics, and what to expect when exploring them.",
     "sections": [
       {
-        "title": "Combat Basics",
-        "content": "Legends Z-A introduces real-time action combat, a departure from traditional turn-based battles.",
+        "title": "Wild Zone Basics",
+        "content": "Understanding how Wild Zones work.",
         "bullets": [
-          "Dodge incoming attacks with precise timing",
-          "Chain attacks for combo damage bonuses",
-          "Manage stamina for both offense and defense",
-          "Switch Pokémon mid-combat for tactical advantages",
-          "Use the environment to your advantage"
+          "Have a level cap on the wild Pokémon that spawn there",
+          "A recommended level appears on the door when you walk up to it",
+          "Some Pokémon spawn in certain zones or during certain times",
+          "Use benches to change the time of day",
+          "Look around thoroughly - some Pokémon are small or hiding or only spawn on rooftops (find ladders)",
+          "No Pokémon Centers inside Wild Zones"
         ]
       },
       {
-        "title": "Strong & Agile Styles",
-        "content": "Master the two battle styles for different situations.",
+        "title": "Exploration Tips",
+        "content": "Make the most of your Wild Zone visits.",
         "bullets": [
-          "Strong Style: More damage but slower execution, leaves you vulnerable",
-          "Agile Style: Faster attacks with reduced damage, better for combos",
-          "Style mastery unlocks at higher research levels",
-          "Mix styles based on opponent patterns and openings"
+          "Check the recommended level before entering",
+          "Bring healing items since there are no centers inside",
+          "Explore thoroughly to find hidden Pokémon",
+          "Return at different times of day for different spawns",
+          "Wild Zones are active during the day and night"
+        ]
+      }
+    ]
+  },
+  "z-a-royale": {
+    "id": "z-a-royale",
+    "title": "Z-A Royale Guide",
+    "subtitle": "Compete in the battle royale mode",
+    "icon": "👑",
+    "description": "Complete guide to Z-A Royale mode, including mechanics, progression, and rewards.",
+    "sections": [
+      {
+        "title": "Royale Basics",
+        "content": "How Z-A Royale works.",
+        "bullets": [
+          "Only takes place at night",
+          "Your rival will be there to heal your Pokémon near the entrance",
+          "Has a built-in fast travel system",
+          "Earn points and medals by defeating trainers",
+          "Ascend ranks from Z to A by earning points",
+          "Each rank requires more points than the last"
+        ]
+      },
+      {
+        "title": "Bonus Cards",
+        "content": "Use Bonus Cards to unlock special research tasks.",
+        "bullets": [
+          "Collect Bonus Cards to unlock specific research tasks",
+          "Research tasks give additional points and medals",
+          "You can carry up to 3 Bonus Cards at a time",
+          "Swap out one Bonus Card for a different one you find",
+          "Bonus Cards do NOT carry over after the Royale ends",
+          "Complete a card to pick up another and start working on it"
+        ]
+      },
+      {
+        "title": "Rewards",
+        "content": "What you can earn in Z-A Royale",
+        "bullets": [
+          "Prize Medals can be found on the ground during matches",
+          "You are rewarded Poké Dollars at the end of the match",
+          "Higher ranks provide better rewards",
+          "Focus on completing Bonus Cards for maximum points"
         ]
       },
       {
         "title": "Advanced Techniques",
-        "content": "Take your combat skills to the next level.",
+        "content": "Tips for excelling in Z-A Royale",
         "bullets": [
-          "Perfect dodge: Time dodges perfectly for slow-motion windows",
-          "Combo chains: Link multiple attacks for damage multipliers",
-          "Status effects: Paralyze/Sleep for easier damage windows",
-          "Team synergy: Build movesets that complement your playstyle",
-          "Alpha battles: Unique patterns requiring adapted strategies"
+          "Utilize the environment: Use obstacles for cover",
+          "Be quick and decisive with your actions",
+          "Heal between trainers",
+          "Swap to a good type matchup before engaging",
+          "Use stealth to sneak up on opponents, target their Pokémon, and attack for a chance to leave them stunned at the beginning of battle (you must act fast to capitalize on this)",
+          "Keep an eye on the timer: Matches are time-limited",
+          "Focus on completing Bonus Cards for maximum points"
+        ]
+      }
+    ]
+  },
+  "day-night-cycle": {
+    "id": "day-night-cycle",
+    "title": "Day/Night Cycle",
+    "subtitle": "Control time to access different content",
+    "icon": "🌓",
+    "description": "How the day/night cycle works and how to change it to access time-exclusive content.",
+    "sections": [
+      {
+        "title": "Changing Time",
+        "content": "How to switch between day and night.",
+        "bullets": [
+          "Change time by sitting on a bench",
+          "There is a bench next to each Pokémon Center and inside each Wild Zone",
+          "Use this to access time-exclusive content",
+          "Although sometimes changed to suit the story's needs, the day lasts roughly 10 minutes in real time, and the night lasts about 10 minutes as well (need to test to confirm specific times)"
+        ]
+      },
+      {
+        "title": "Time-Exclusive Content",
+        "content": "What's available at different times.",
+        "bullets": [
+          "Battle Royale is only available at night",
+          "Wild Zones are active during the day and night",
+          "Some Pokémon only spawn at certain times",
+          "Plan your activities around the time of day"
         ]
       }
     ]
@@ -88,11 +485,24 @@
     "description": "Strategies and tips for climbing the competitive ranks in Pokémon Legends Z-A, including team building and meta analysis.",
     "sections": [
       {
+        "title": "Core Gameplay Mechanics",
+        "content": "All out battle with 4 trainers in a free-for-all format",
+        "bullets": [
+          "You must bring EXACTLY 3 Pokémon in your party to battle",
+          "You and 3 other trainers battle for three minutes",
+          "Each Knockout grants you one point",
+          "You are able to swap Pokémon 3 times; choose wisely (keep an eye on health and swap when health is low or type mismatch)",
+          "Any time your current Pokémon faints, you are reset after a 5 second cooldown",
+          "Use the space to your advantage: obstacles can block line of sight and give you cover",
+        ]
+      },
+      {
         "title": "Understanding the Ranked System",
         "content": "Learn how the ranking system works and what it takes to climb.",
         "bullets": [
-          "Ranked tiers: Beginner, Great, Ultra, Master",
-          "Points system: Wins grant points, losses deduct them",
+          "Ranked tiers: From Z to A",
+          "Events: Special rewards given out for reaching rank K (as of right now) each season!",
+          "Progress: Progress or regress based on match point outcomes",
           "Seasonal resets: Rankings reset periodically with rewards",
           "Matchmaking: Based on current rank and win rate"
         ]
@@ -104,7 +514,7 @@
           "Core roles: Sweeper, Tank, Support balanced composition",
           "Type coverage: Ensure team covers major threats",
           "Speed tiers: Understand which Pokémon outspeed others",
-          "Synergy: Moves and abilities that complement each other",
+          "Synergy: Moves and types that complement each other",
           "Adapt to meta shifts: Stay updated on popular strategies"
         ]
       },
@@ -117,6 +527,17 @@
           "Time your sessions: Play when you're focused and alert",
           "Track your record: Identify which teams/strategies work best",
           "Take breaks: Avoid tilt and maintain peak performance"
+        ]
+      },
+      {
+        "title": "Advanced Techniques",
+        "content": "In-depth strategies for experienced players.",
+        "bullets": [
+          "Mind games: Predict opponent moves and adapt",
+          "Baiting: Use certain Pokémon to lure out threats",
+          "Setup: Use status moves and buffs to gain advantage (can be done with First Pokemon and then switch to a Sweeper)",
+          "Stay aware: Avoid getting caught off-guard by multiple opponents",
+          "See more in the team-building section"
         ]
       }
     ]
@@ -137,7 +558,7 @@
           "Tank/Wall: High defenses to absorb damage",
           "Support: Healing, buffs, status effects",
           "Pivot: Flexible role that adapts to situations",
-          "Recommended: 2 sweepers, 1 tank, 1 support, 2 flexible"
+          "Recommended: one of each role for a balanced team (3 Pokémon means some roles may be combined)"
         ]
       },
       {
@@ -148,7 +569,8 @@
           "Offensive coverage: Hit most types for super-effective damage",
           "Defensive synergy: Resist common attacking types",
           "Priority moves: Have at least one Pokémon with priority",
-          "Weather/terrain: Consider weather team strategies"
+          "Weather/terrain: Consider weather team strategies (may not be in this game)",
+          "Non-STAB moves: Teach your Pokémon coverage moves to handle type disadvantages ; An example is Ice Beam on a Water type which would give it a SuperEffective move against Grass-types, it's normal weakness"
         ]
       },
       {
@@ -159,49 +581,7 @@
           "Coverage moves: Handle type disadvantages",
           "Status moves: One utility move per Pokémon minimum",
           "Ability synergy: Abilities that support team strategy",
-          "Held items: Choose items that enhance role effectiveness"
-        ]
-      }
-    ]
-  },
-  "resource-farming": {
-    "id": "resource-farming",
-    "title": "Resource Farming Guide",
-    "subtitle": "Efficiently gather items and materials",
-    "icon": "💎",
-    "description": "Optimize your resource gathering in Pokémon Legends Z-A to get items, money, and materials efficiently.",
-    "sections": [
-      {
-        "title": "Money Making",
-        "content": "Best methods for earning money quickly.",
-        "bullets": [
-          "Sell duplicate items and materials",
-          "Complete research tasks for monetary rewards",
-          "Battle wealthy trainers in Lumiose City",
-          "Participate in daily/weekly events",
-          "Use Amulet Coin item to double battle earnings"
-        ]
-      },
-      {
-        "title": "Item Farming",
-        "content": "Locations and methods for farming essential items.",
-        "bullets": [
-          "Evolution stones: Specific areas and wild Pokémon drops",
-          "Berries: Plant and harvest at café locations",
-          "Poké Balls: Craft materials or purchase in bulk",
-          "Mints: Battle Tower rewards and special vendors",
-          "Rare items: Complete research paths and side quests"
-        ]
-      },
-      {
-        "title": "Efficient Routes",
-        "content": "Optimized paths for gathering materials.",
-        "bullets": [
-          "Create farming routes that hit multiple resource nodes",
-          "Use flying mounts to quickly travel between areas",
-          "Time-based spawns: Note what appears at different times",
-          "Reset methods: Some items respawn daily or hourly",
-          "Maximize inventory: Upgrade bag space early"
+          "Held items: Choose items that enhance role effectiveness or berries that heal a status that this Pokémon is likely to suffer from"
         ]
       }
     ]
@@ -211,13 +591,13 @@
     "title": "Alpha Pokémon Guide",
     "subtitle": "Find and catch powerful Alpha Pokémon",
     "icon": "⭐",
-    "description": "Everything you need to know about Alpha Pokémon in Legends Z-A, including locations, catching strategies, and benefits.",
+    "description": "*This information needs to be verified* Everything you need to know about Alpha Pokémon in Legends Z-A, including locations, catching strategies, and benefits.",
     "sections": [
       {
         "title": "What Are Alpha Pokémon?",
         "content": "Alpha Pokémon are larger, stronger variants with special properties.",
         "bullets": [
-          "Significantly larger than normal Pokémon",
+          "Significantly larger than normal Pokémon (the largest that species can be)",
           "Higher stats and better starting moves",
           "Glowing red eyes and aggressive behavior",
           "Can have effort levels already raised",
@@ -232,14 +612,14 @@
           "Random spawns: Some areas have rotating Alpha spawns",
           "Weather conditions: Certain Alphas only appear in specific weather",
           "Time of day: Some Alphas are time-exclusive",
-          "Check community maps for confirmed Alpha locations"
+          "Check the map tab for confirmed Alpha locations"
         ]
       },
       {
         "title": "Catching Strategies",
         "content": "Tips for successfully catching Alpha Pokémon.",
         "bullets": [
-          "Use Heavy Balls for better catch rates on large Pokémon",
+          "Use Heavy Balls*might not be in this game* for better catch rates on large Pokémon",
           "Approach from behind for easier first throws",
           "Lower HP significantly before attempting capture",
           "Status effects greatly improve catch rates",

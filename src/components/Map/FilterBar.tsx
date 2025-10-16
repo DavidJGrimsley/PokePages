@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Chip } from './Chip';
 import { useFilters } from '../../hooks/Map/useFilters';
-import { categories } from '../../data/Map/categories';
+import { categories } from '../../constants/Map/categories';
 
 export const FilterBar: React.FC = () => {
   const { selectedFilters, toggleFilter } = useFilters();

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { lumioseCityMarkers } from '../../data/Map/lumioseCityMarkers';
+import { lumioseCityMarkers } from '../../constants/Map/lumioseCityMarkers';
 
 export interface Marker {
   id: string;

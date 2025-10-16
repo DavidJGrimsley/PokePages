@@ -18,6 +18,12 @@ export const categories = [
     color: '#03dac6',
   },
   {
+    id: 'cafes',
+    label: 'Cafes',
+    icon: '☕',
+    color: '#03dac6',
+  },
+  {
     id: 'wildZones',
     label: 'Wild Zones',
     icon: '🌳',
@@ -42,10 +48,15 @@ export const categories = [
     color: '#4caf50',
   },
   {
+  id: 'AlphaPokemon',
+  label: 'Alpha Pokémon',
+  icon: '🦠',
+  color: '#4caf50',
+  },
+  {
   id: 'zygardeCells',
   label: 'Zygarde Cells',
   icon: '🦠',
   color: '#4caf50',
-  },
-  
+  }  
 ];
