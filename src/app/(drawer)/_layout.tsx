@@ -182,8 +182,8 @@ const DrawerLayout = () => {
       <Drawer.Screen
         name="guides"
         options={{
-          headerTitle: () => <HeaderTitle title="Guides" />,
-          drawerLabel: 'Guides',
+          headerTitle: () => <HeaderTitle title="Game Guide" />,
+          drawerLabel: 'Games',
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
             <Link href="/editProfile" asChild>
