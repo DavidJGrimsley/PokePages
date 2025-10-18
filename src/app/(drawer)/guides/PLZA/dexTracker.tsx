@@ -6,6 +6,7 @@ import { AppText } from '@/src/components/TextTheme/AppText';
 import { BouncyText } from '@/src/components/TextTheme/BouncyText';
 import { SidebarCollapsible } from '@/src/components/UI/SidebarCollapsible';
 import { ProgressSidebar } from '@/src/components/UI/ProgressSidebar';
+import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
 import colors from '@/src/constants/style/colors';
 import { cn } from '@/src/utils/cn';
@@ -192,6 +193,7 @@ export default function DexTrackerPage() {
         }
       >
         <Container>
+          {/* <InProgressDisclaimer /> */}
           {/* Filter Buttons */}
           <View className="flex-row gap-2 mb-6">
             <FilterButton 
@@ -225,6 +227,7 @@ export default function DexTrackerPage() {
             <Text className="text-xs text-app-brown mb-1">• ✨ Shiny: Caught the shiny version (non-alpha) at least once</Text>
             <Text className="text-xs text-app-brown mb-1">• 🔴 Alpha: Caught the alpha version (non-shiny) at least once</Text>
             <Text className="text-xs text-app-brown mb-3">• 👑 Alpha ✨: Caught the shiny alpha version at least once</Text>
+            <Text className="text-xs text-app-text mb-3">**If you catch a shiny or alpha and evolve it, toggle the previous entry to indicate to false and the current one to true**</Text>
             
             {/* Badges section */}
             <Text className="text-sm font-semibold text-app-text mb-2">🏷️ Badges:</Text>

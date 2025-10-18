@@ -7,13 +7,25 @@
     "description": "Important settings and general advice for playing Pokémon Legends Z-A effectively.",
     "sections": [
       {
-        "title": "Settings & Quality of Life",
+        "title": "Settings",
         "content": "Optimize your game settings for the best experience.",
         "bullets": [
           "Set text speed to fast for quicker reading",
           "Tweak camera sensitivity for your 'sweet spot'",
           "AUTOSAVE cannot be turned off! (First title in the series?)",
           "Feeling lost? Check the map and look for an exclamation point and press A to turn on navigation guidance"
+        ]
+      },
+      {
+        "title": "Early Game Tips",
+        "content": "Essential strategies for the beginning of your journey.",
+        "bullets": [
+          "Focus on the story missions to unlock key features quickly",
+          "Don't explore until you get the ability to do a Rotom Phone jump between buildings",
+          "Battle Pokémon nearby your walking path to gain experience and level up",
+          "Throw Pokéballs at wild Pokémon you see on your path",
+          "After you see the first Rogue Mega Absol, then you can start exploring more freely",
+          "This ensures that you get the most of your exploration time and possibly see Alphas and Mega Evolved Pokémon in the wild"
         ]
       },
       {
@@ -165,6 +177,22 @@
         "bullets": [
           "Coming soon!"
         ]
+      },
+      {
+        "title": "Trade Evolution Pokémon",
+        "content": "These Pokémon require trading to evolve in Legends Z-A.",
+        "bullets": [
+          "Kadabra → Alakazam ",
+          "Haunter → Gengar ",
+          "Machoke → Machamp ",
+          "Slowpoke → Slowking (trade while holding King's Rock)",
+          "Onyx → Steelix (trade while holding Metal Coat)",
+          "Scyther → Scizor (trade while holding Metal Coat)",
+          "Spritzee → Aromatisse (trade while holding Sachet)",
+          "Swirlix → Slurpuff (trade while holding Whipped Dream)",
+          "Phantump → Trevenant ",
+          "Pumpkaboo → Gourgeist "
+        ]
       }
     ]
   },
@@ -222,6 +250,7 @@
           "Level rewards include TMs, Exp. Candy, Bottle Caps",
           "Master Ball at level 49",
           "Shiny Charm at level 50",
+          "Level 50 requires completing all research tasks including battle tasks (The points may work out slightly differently, but you must complete most tasks and it is not an easy task; Good luck)",
           "Check the tasks for specific requirements"
         ]
       },
@@ -356,6 +385,20 @@
           "Watch for the Pokémon using Self-Destruct or recoil moves",
           "Consider using status moves like Sleep or Paralysis",
           "Throw high-quality Poké Balls early if concerned about fainting"
+        ]
+      },
+      {
+        "title": "Shiny Locked Pokémon",
+        "content": "These Pokémon cannot be shiny.",
+        "bullets": [
+          "Your starters",
+          "Kanto Starter gift",
+          "All gift Pokémon",
+          "Trades with NPCs",
+          "Rogue Mega Absol in storyline",
+          "Kalos Starter Mission rewards",
+          "The fossil Pokémon restored in the storyline",
+          "Static Pokemon in the storyline (like Alphas and Legendaries)"
         ]
       }
     ]

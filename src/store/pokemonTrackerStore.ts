@@ -54,6 +54,11 @@ interface PokemonTrackerState {
     total: number;
     percentage: number;
   };
+  getAlphaShinyMegaDexProgress: (pokemonList: {id: number, hasMega: boolean}[]) => {
+    obtained: number;
+    total: number;
+    percentage: number;
+  };
   getOverallProgress: (pokemonList: {id: number, canBeAlpha: boolean}[]) => {
     obtainedForms: number;
     totalForms: number;
@@ -141,13 +146,22 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           
           console.log(`[TRACKER_STORE] #${dex} ${form}: ${current[form]} -> ${newValue}`);
           
+          // Calculate the new status object
+          const newStatus = {
+            ...current,
+            [form]: newValue,
+          };
+          
+          // Auto-set normal to true if any special form is true
+          // (If you caught shiny, alpha, or alphaShiny, you've definitely registered it)
+          if (newStatus.shiny || newStatus.alpha || newStatus.alphaShiny) {
+            newStatus.normal = true;
+          }
+          
           return {
             pokemon: {
               ...state.pokemon,
-              [dex]: {
-                ...current,
-                [form]: newValue,
-              },
+              [dex]: newStatus,
             },
           };
         });
@@ -178,7 +192,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
         pokemonList.forEach(({ id }) => {
           const status = pokemon[id];
-          if (status?.normal) obtained++;
+          // Count as obtained if normal is true OR if any special form is obtained
+          if (status?.normal || status?.shiny || status?.alpha || status?.alphaShiny) {
+            obtained++;
+          }
         });
 
         const percentage = total > 0 ? Math.round((obtained / total) * 100) : 0;
@@ -253,6 +270,21 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         megaCapable.forEach(({ id }) => {
           const status = pokemon[id];
           if (status?.shiny) obtained++;
+        });
+
+        const percentage = total > 0 ? Math.round((obtained / total) * 100) : 0;
+        return { obtained, total, percentage };
+      },
+
+      getAlphaShinyMegaDexProgress: (pokemonList) => {
+        const pokemon = get().pokemon;
+        let obtained = 0;
+        const megaCapable = pokemonList.filter(p => p.hasMega);
+        const total = megaCapable.length;
+
+        megaCapable.forEach(({ id }) => {
+          const status = pokemon[id];
+          if (status?.alphaShiny) obtained++;
         });
 
         const percentage = total > 0 ? Math.round((obtained / total) * 100) : 0;

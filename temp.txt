@@ -1,0 +1,318 @@
+#	Name	Types	HP	Atk	Def	SpA	SpD	Spe
+1	Chikorita	Grass	45	49	65	49	65	45
+2	Bayleef	Grass	60	62	80	63	80	60
+3	Meganium	Grass	80	82	100	83	100	80
+3	Mega Meganium	Grass Fairy	80	92	115	143	115	80
+4	Tepig	Fire	65	63	45	45	45	45
+5	Pignite	Fire Fighting	90	93	55	70	55	55
+6	Emboar	Fire Fighting	110	123	65	100	65	65
+6	Mega Emboar	Fire Fighting	110	148	75	110	110	75
+7	Totodile	Water	50	65	64	44	48	43
+8	Croconaw	Water	65	80	80	59	63	58
+9	Feraligatr	Water	85	105	100	79	83	78
+9	Mega Feraligatr	Water Dragon	85	160	125	89	93	78
+10	Fletchling	Normal Flying	45	50	43	40	38	62
+11	Fletchinder	Fire Flying	62	73	55	56	52	84
+12	Talonflame	Fire Flying	78	81	71	74	69	126
+13	Bunnelby	Normal	38	36	38	32	36	57
+14	Diggersby	Normal Ground	85	56	77	50	77	78
+15	Scatterbug	Bug	38	35	40	27	25	35
+16	Spewpa	Bug	45	22	60	27	30	29
+17	Vivillon	Bug Flying	80	52	50	90	50	89
+18	Weedle	Bug Poison	40	35	30	20	20	50
+19	Kakuna	Bug Poison	45	25	50	25	25	35
+20	Beedrill	Bug Poison	65	90	40	45	80	75
+20	Mega Beedrill	Bug Poison	65	150	40	15	80	145
+21	Pidgey	Normal Flying	40	45	40	35	35	56
+22	Pidgeotto	Normal Flying	63	60	55	50	50	71
+23	Pidgeot	Normal Flying	83	80	75	70	70	101
+23	Mega Pidgeot	Normal Flying	83	80	80	135	80	121
+24	Mareep	Electric	55	40	40	65	45	35
+25	Flaaffy	Electric	70	55	55	80	60	45
+26	Ampharos	Electric	90	75	85	115	90	55
+26	Mega Ampharos	Electric Dragon	90	95	105	165	110	45
+27	Patrat	Normal	45	55	39	35	39	42
+28	Watchog	Normal	60	85	69	60	69	77
+29	Budew	Grass Poison	40	30	35	50	70	55
+30	Roselia	Grass Poison	50	60	45	100	80	65
+31	Roserade	Grass Poison	60	70	65	125	105	90
+32	Magikarp	Water	20	10	55	15	20	80
+33	Gyarados	Water Flying	95	125	79	60	100	81
+33	Mega Gyarados	Water Dark	95	155	109	70	130	81
+34	Binacle	Rock Water	42	52	67	39	56	50
+35	Barbaracle	Rock Water	72	105	115	54	86	68
+35	Mega Barbaracle	Rock Fighting	72	140	130	64	106	88
+36	Staryu	Water	30	45	55	70	55	85
+37	Starmie	Water Psychic	60	75	85	100	85	115
+37	Mega Starmie	Water Psychic	60	140	105	130	105	120
+38	Flabébé	Fairy	44	38	39	61	79	42
+39	Floette	Fairy	54	45	47	75	98	52
+40	Florges	Fairy	78	65	68	112	154	75
+41	Skiddo	Grass	66	65	48	62	57	52
+42	Gogoat	Grass	123	100	62	97	81	68
+43	Espurr	Psychic	62	48	54	63	60	68
+44	Meowstic	Psychic	74	48	76	83	81	104
+44	Meowstic (Female)	Psychic	74	48	76	83	81	104
+45	Litleo	Fire Normal	62	50	58	73	54	72
+46	Pyroar	Fire Normal	86	68	72	109	66	106
+46	Mega Pyroar	Fire Normal	86	88	92	129	86	126
+47	Pancham	Fighting	67	82	62	46	48	43
+48	Pangoro	Fighting Dark	95	124	78	69	71	58
+49	Trubbish	Poison	50	50	62	40	62	65
+50	Garbodor	Poison	80	95	82	60	82	75
+51	Dedenne	Electric Fairy	67	58	57	81	67	101
+52	Pichu	Electric	20	40	15	35	35	60
+53	Pikachu	Electric	35	55	40	50	50	90
+54	Raichu	Electric	60	90	55	90	80	110
+54	Alolan Raichu	Electric Psychic	60	85	50	95	85	110
+55	Cleffa	Fairy	50	25	28	45	55	15
+56	Clefairy	Fairy	70	45	48	60	65	35
+57	Clefable	Fairy	95	70	73	95	90	60
+57	Mega Clefable	Fairy Flying	95	80	93	135	110	70
+58	Spinarak	Bug Poison	40	60	40	40	40	30
+59	Ariados	Bug Poison	70	90	70	60	70	40
+60	Ekans	Poison	35	60	44	40	54	55
+61	Arbok	Poison	60	95	69	65	79	80
+62	Abra	Psychic	25	20	15	105	55	90
+63	Kadabra	Psychic	40	35	30	120	70	105
+64	Alakazam	Psychic	55	50	45	135	95	120
+64	Mega Alakazam	Psychic	55	50	65	175	105	150
+65	Gastly	Ghost Poison	30	35	30	100	35	80
+66	Haunter	Ghost Poison	45	50	45	115	55	95
+67	Gengar	Ghost Poison	60	65	60	130	75	110
+67	Mega Gengar	Ghost Poison	60	65	80	170	95	130
+68	Venipede	Bug Poison	30	45	59	30	39	57
+69	Whirlipede	Bug Poison	40	55	99	40	79	47
+70	Scolipede	Bug Poison	60	100	89	55	69	112
+70	Mega Scolipede	Bug Poison	60	140	149	75	99	62
+71	Honedge	Steel Ghost	45	80	100	35	37	28
+72	Doublade	Steel Ghost	59	110	150	45	49	35
+73	Aegislash	Steel Ghost	60	50	140	50	140	60
+73	Aegislash (Sword)	Steel Ghost	60	140	50	140	50	60
+74	Bellsprout	Grass Poison	50	75	35	70	30	40
+75	Weepinbell	Grass Poison	65	90	50	85	45	55
+76	Victreebel	Grass Poison	80	105	65	100	70	70
+76	Mega Victreebel	Grass Poison	80	125	85	135	95	70
+77	Pansage	Grass	50	53	48	53	48	64
+78	Simisage	Grass	75	98	63	98	63	101
+79	Pansear	Fire	50	53	48	53	48	64
+80	Simisear	Fire	75	98	63	98	63	101
+81	Panpour	Water	50	53	48	53	48	64
+82	Simipour	Water	75	98	63	98	63	101
+83	Meditite	Fighting Psychic	30	56	55	40	55	60
+84	Medicham	Fighting Psychic	60	84	75	60	75	80
+84	Mega Medicham	Fighting Psychic	60	140	85	80	85	100
+85	Electrike	Electric	40	45	40	65	40	65
+86	Manectric	Electric	70	75	60	105	60	105
+86	Mega Manectric	Electric	70	75	80	135	80	135
+87	Ralts	Psychic Fairy	28	25	25	45	35	40
+88	Kirlia	Psychic Fairy	38	35	35	65	55	50
+89	Gardevoir	Psychic Fairy	68	65	65	125	115	80
+89	Mega Gardevoir	Psychic Fairy	68	85	65	165	135	100
+90	Gallade	Psychic Fighting	68	125	65	65	115	80
+90	Mega Gallade	Psychic Fighting	68	165	95	65	115	110
+91	Houndour	Dark Fire	45	60	30	80	50	65
+92	Houndoom	Dark Fire	75	90	50	110	80	95
+92	Mega Houndoom	Dark Fire	75	90	90	140	90	115
+93	Swablu	Normal Flying	45	40	60	40	75	50
+94	Altaria	Dragon Flying	75	70	90	70	105	80
+94	Mega Altaria	Dragon Fairy	75	110	110	110	105	80
+95	Audino	Normal	103	60	86	60	86	50
+95	Mega Audino	Normal Fairy	103	60	126	80	126	50
+96	Spritzee	Fairy	78	52	60	63	65	23
+97	Aromatisse	Fairy	101	72	72	99	89	29
+98	Swirlix	Fairy	62	48	66	59	57	49
+99	Slurpuff	Fairy	82	80	86	85	75	72
+100	Eevee	Normal	55	55	50	45	65	55
+101	Vaporeon	Water	130	65	60	110	95	65
+102	Jolteon	Electric	65	65	60	110	95	130
+103	Flareon	Fire	65	130	60	95	110	65
+104	Espeon	Psychic	65	65	60	130	95	110
+105	Umbreon	Dark	95	65	110	60	130	65
+106	Leafeon	Grass	65	110	130	60	65	95
+107	Glaceon	Ice	65	60	110	130	95	65
+108	Sylveon	Fairy	95	65	65	110	130	60
+109	Buneary	Normal	55	66	44	44	56	85
+110	Lopunny	Normal	65	76	84	54	96	105
+110	Mega Lopunny	Normal Fighting	65	136	94	54	96	135
+111	Shuppet	Ghost	44	75	35	63	33	45
+112	Banette	Ghost	64	115	65	83	63	65
+112	Mega Banette	Ghost	64	165	75	93	83	75
+113	Vanillite	Ice	36	50	50	65	60	44
+114	Vanillish	Ice	51	65	65	80	75	59
+115	Vanilluxe	Ice	71	95	85	110	95	79
+116	Numel	Fire Ground	60	60	40	65	45	35
+117	Camerupt	Fire Ground	70	100	70	105	75	40
+117	Mega Camerupt	Fire Ground	70	120	100	145	105	20
+118	Hippopotas	Ground	68	72	78	38	42	32
+119	Hippowdon	Ground	108	112	118	68	72	47
+120	Drilbur	Ground	60	85	40	30	45	68
+121	Excadrill	Ground Steel	110	135	60	50	65	88
+121	Mega Excadrill	Ground Steel	110	165	100	65	65	103
+122	Sandile	Ground Dark	50	72	35	35	35	65
+123	Krokorok	Ground Dark	60	82	45	45	45	74
+124	Krookodile	Ground Dark	95	117	80	65	70	92
+125	Machop	Fighting	70	80	50	35	35	35
+126	Machoke	Fighting	80	100	70	50	60	45
+127	Machamp	Fighting	90	130	80	65	85	55
+128	Gible	Dragon Ground	58	70	45	40	45	42
+129	Gabite	Dragon Ground	68	90	65	50	55	82
+130	Garchomp	Dragon Ground	108	130	95	80	85	102
+130	Mega Garchomp	Dragon Ground	108	170	115	120	95	92
+131	Carbink	Rock Fairy	50	50	150	50	150	50
+132	Sableye	Dark Ghost	50	75	75	65	65	50
+132	Mega Sableye	Dark Ghost	50	85	125	85	115	20
+133	Mawile	Steel Fairy	50	85	85	55	55	50
+133	Mega Mawile	Steel Fairy	50	147	125	55	95	50
+134	Absol	Dark	65	130	60	75	60	75
+134	Mega Absol	Dark	65	150	60	115	60	115
+135	Riolu	Fighting	40	70	40	35	40	60
+136	Lucario	Fighting Steel	70	110	70	115	70	90
+136	Mega Lucario	Fighting Steel	70	145	88	140	70	112
+137	Slowpoke	Water Psychic	90	65	65	40	40	15
+137	Galarian Slowpoke	Psychic	90	65	65	40	40	15
+138	Slowbro	Water Psychic	95	75	110	100	80	30
+138	Mega Slowbro	Water Psychic	95	75	180	130	80	30
+138	Galarian Slowbro	Poison Psychic	95	100	95	100	70	30
+139	Slowking	Water Psychic	95	75	80	100	110	30
+139	Galarian Slowking	Poison Psychic	95	65	80	110	110	30
+140	Carvanha	Water Dark	45	90	20	65	20	65
+141	Sharpedo	Water Dark	70	120	40	95	40	95
+141	Mega Sharpedo	Water Dark	70	140	70	110	65	105
+142	Tynamo	Electric	35	55	40	45	40	60
+143	Eelektrik	Electric	65	85	70	75	70	40
+144	Eelektross	Electric	85	115	80	105	80	50
+144	Mega Eelektross	Electric	85	145	80	135	90	80
+145	Dratini	Dragon	41	64	45	50	50	50
+146	Dragonair	Dragon	61	84	65	70	70	70
+147	Dragonite	Dragon Flying	91	134	95	100	100	80
+147	Mega Dragonite 	Dragon Flying	91	124	115	145	125	100
+148	Bulbasaur	Grass Poison	45	49	49	65	65	45
+149	Ivysaur	Grass Poison	60	62	63	80	80	60
+150	Venusaur	Grass Poison	80	82	83	100	100	80
+150	Mega Venusaur	Grass Poison	80	100	123	122	120	80
+151	Charmander	Fire	39	52	43	60	50	65
+152	Charmeleon	Fire	58	64	58	80	65	80
+153	Charizard	Fire Flying	78	84	78	109	85	100
+153	Mega Charizard X	Fire Dragon	78	130	111	130	85	100
+153	Mega Charizard Y	Fire Flying	78	104	78	159	115	100
+154	Squirtle	Water	44	48	65	50	64	43
+155	Wartortle	Water	59	63	80	65	80	58
+156	Blastoise	Water	79	83	100	85	105	78
+156	Mega Blastoise	Water	79	103	120	135	115	78
+157	Stunfisk	Ground Electric	109	66	84	81	99	32
+157	Galarian Stunfisk	Ground Steel	109	81	99	66	84	32
+158	Furfrou	Normal	75	80	60	65	90	102
+159	Inkay	Dark Psychic	53	54	53	37	46	45
+160	Malamar	Dark Psychic	86	92	88	68	75	73
+160	Mega Malamar	Dark Psychic	86	102	88	98	120	88
+161	Skrelp	Poison Water	50	60	60	60	60	30
+162	Dragalge	Poison Dragon	65	75	90	97	123	44
+162	Mega Dragalge	Poison Dragon	65	85	105	132	163	44
+163	Clauncher	Water	50	53	62	58	63	44
+164	Clawitzer	Water	71	73	88	120	89	59
+165	Goomy	Dragon	45	50	35	55	75	40
+166	Sliggoo	Dragon	68	75	53	83	113	60
+166	Hisuian Sliggoo	Steel Dragon	58	75	83	83	113	40
+167	Goodra	Dragon	90	100	70	110	150	80
+167	Hisuian Goodra	Steel Dragon	80	100	100	110	150	60
+168	Delibird	Ice Flying	45	55	45	65	45	75
+169	Snorunt	Ice	50	50	50	50	50	50
+170	Glalie	Ice	80	80	80	80	80	80
+170	Mega Glalie	Ice	80	120	80	120	80	100
+171	Froslass	Ice Ghost	70	80	70	80	70	110
+171	Mega Froslass	Ice Ghost	70	80	70	140	100	120
+172	Snover	Grass Ice	60	62	50	62	60	40
+173	Abomasnow	Grass Ice	90	92	75	92	85	60
+173	Mega Abomasnow	Grass Ice	90	132	105	132	105	30
+174	Bergmite	Ice	55	69	85	32	35	28
+175	Avalugg	Ice	95	117	184	44	46	28
+175	Hisuian Avalugg	Ice Rock	95	127	184	34	36	38
+176	Scyther	Bug Flying	70	110	80	55	80	105
+177	Scizor	Bug Steel	70	130	100	55	80	65
+177	Mega Scizor	Bug Steel	70	150	140	65	100	75
+178	Pinsir	Bug	65	125	100	55	70	85
+178	Mega Pinsir	Bug Flying	65	155	120	65	90	105
+179	Heracross	Bug Fighting	80	125	75	40	95	85
+179	Mega Heracross	Bug Fighting	80	185	115	40	105	75
+180	Emolga	Electric Flying	55	75	60	75	60	103
+181	Hawlucha	Fighting Flying	78	92	75	74	63	118
+181	Mega Hawlucha	Fighting Flying	78	137	100	74	93	118
+182	Phantump	Ghost Grass	43	70	48	50	60	38
+183	Trevenant	Ghost Grass	85	110	76	65	82	56
+184	Scraggy	Dark Fighting	50	75	70	35	70	48
+185	Scrafty	Dark Fighting	65	90	115	45	115	58
+185	Mega Scrafty	Dark Fighting	65	130	135	55	135	68
+186	Noibat	Flying Dragon	40	30	35	45	40	55
+187	Noivern	Flying Dragon	85	70	80	97	80	123
+188	Klefki	Steel Fairy	57	80	91	80	87	75
+189	Litwick	Ghost Fire	50	30	55	65	55	20
+190	Lampent	Ghost Fire	60	40	60	95	60	55
+191	Chandelure	Ghost Fire	60	55	90	145	90	80
+191	Mega Chandelure	Ghost Fire	60	75	110	175	110	90
+192	Aerodactyl	Rock Flying	80	105	65	60	75	130
+192	Mega Aerodactyl	Rock Flying	80	135	85	70	95	150
+193	Tyrunt	Rock Dragon	58	89	77	45	45	48
+194	Tyrantrum	Rock Dragon	82	121	119	69	59	71
+195	Amaura	Rock Ice	77	59	50	67	63	46
+196	Aurorus	Rock Ice	123	77	72	99	92	58
+197	Onix	Rock Ground	35	45	160	30	45	70
+198	Steelix	Steel Ground	75	85	200	55	65	30
+198	Mega Steelix	Steel Ground	75	125	230	55	95	30
+199	Aron	Steel Rock	50	70	100	40	40	30
+200	Lairon	Steel Rock	60	90	140	50	50	40
+201	Aggron	Steel Rock	70	110	180	60	60	50
+201	Mega Aggron	Steel	70	140	230	60	80	50
+202	Helioptile	Electric Normal	44	38	33	61	43	70
+203	Heliolisk	Electric Normal	62	55	52	109	94	109
+204	Pumpkaboo	Ghost Grass	49	66	70	44	55	51
+205	Gourgeist	Ghost Grass	65	90	122	58	75	84
+206	Larvitar	Rock Ground	50	64	50	45	50	41
+207	Pupitar	Rock Ground	70	84	70	65	70	51
+208	Tyranitar	Rock Dark	100	134	110	95	100	61
+208	Mega Tyranitar	Rock Dark	100	164	150	95	120	71
+209	Froakie	Water	41	56	40	62	44	71
+210	Frogadier	Water	54	63	52	83	56	97
+211	Greninja	Water Dark	72	95	67	103	71	122
+211	Ash Greninja	Water Dark	72	95	67	103	71	122
+211	Mega Greninja	Water Dark	72	125	77	133	81	142
+212	Falinks	Fighting	65	100	100	70	60	75
+212	Mega Falinks	Fighting	65	135	135	70	65	100
+213	Chespin	Grass	56	61	65	48	45	38
+214	Quilladin	Grass	61	78	95	56	58	57
+215	Chesnaught	Grass Fighting	88	107	122	74	75	64
+215	Mega Chesnaught	Grass Fighting	88	137	172	74	115	44
+216	Skarmory	Steel Flying	65	80	140	40	70	70
+216	Mega Skarmory	Steel Flying	65	140	110	40	100	110
+217	Fennekin	Fire	40	45	40	62	60	60
+218	Braixen	Fire	59	59	58	90	70	73
+219	Delphox	Fire Psychic	75	69	72	114	100	104
+219	Mega Delphox	Fire Psychic	75	69	72	159	125	134
+220	Bagon	Dragon	45	75	60	40	30	50
+221	Shelgon	Dragon	65	95	100	60	50	50
+222	Salamence	Dragon Flying	95	135	80	110	80	100
+222	Mega Salamence	Dragon Flying	95	145	130	120	90	120
+223	Kangaskhan	Normal	105	95	80	40	80	90
+223	Mega Kangaskhan	Normal	105	125	100	60	100	100
+224	Drampa	Normal Dragon	78	60	85	135	91	36
+224	Mega Drampa	Normal Dragon	78	85	110	160	116	36
+225	Beldum	Steel Psychic	40	55	80	35	60	30
+226	Metang	Steel Psychic	60	75	100	55	80	50
+227	Metagross	Steel Psychic	80	135	130	95	90	70
+227	Mega Metagross	Steel Psychic	80	145	150	105	110	110
+228	Xerneas	Fairy	126	131	95	131	98	99
+229	Yveltal	Dark Flying	126	131	95	131	98	99
+230	Zygarde	Dragon Ground	108	100	121	81	95	95
+230	Zygarde (Cell)	Dragon Ground	54	100	71	61	85	115
+230	Zygarde (Core)	Dragon Ground	54	100	71	61	85	115
+230	Zygarde (10%)	Dragon Ground	108	100	121	81	95	95
+230	Zygarde (50%)	Dragon Ground	216	100	121	91	95	85
+230	Mega Zygarde	Dragon Ground	216	70	91	216	85	100
+231	Diancie	Rock Fairy	50	100	150	100	150	50
+231	Mega Diancie	Rock Fairy	50	160	110	160	110	110
+232	Mewtwo	Psychic	106	110	90	154	90	130
+232	Mega Mewtwo X	Psychic Fighting	106	190	100	154	100	130
+232	Mega Mewtwo Y	Psychic	106	150	70	194	120	140
+234	Hoopa	Psychic Ghost	80	110	60	150	130	70
+235	Hoopa Unbound	Psychic Dark	80	160	60	170	130	80
+236	Volcanion	Fire Water	80	110	120	130	90	70

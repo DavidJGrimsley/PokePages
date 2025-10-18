@@ -9,6 +9,8 @@ import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
 
+import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
+
 export default function Strategies() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
@@ -73,6 +75,7 @@ export default function Strategies() {
           <AppText className="text-xl font-bold mb-lg text-gray-800">
             Master Pokémon Legends Z-A with these comprehensive guides
           </AppText>
+          <InProgressDisclaimer />
           
           {Object.values(strategiesConfig).map((strategy) => (
             <StrategyCard

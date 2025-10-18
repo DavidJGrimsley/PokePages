@@ -51,7 +51,8 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
     getAlphaDexProgress,
     getShinyAlphaDexProgress,
     getMegaDexProgress,
-    getMegaShinyDexProgress
+    getMegaShinyDexProgress,
+    getAlphaShinyMegaDexProgress
   } = usePokemonTrackerStore(
     useShallow((state) => ({
       getPokedexProgress: state.getPokedexProgress,
@@ -60,16 +61,18 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
       getShinyAlphaDexProgress: state.getShinyAlphaDexProgress,
       getMegaDexProgress: state.getMegaDexProgress,
       getMegaShinyDexProgress: state.getMegaShinyDexProgress,
+      getAlphaShinyMegaDexProgress: state.getAlphaShinyMegaDexProgress,
     }))
   );
 
   // Calculate all progress metrics - will re-calculate when pokemon state changes
-  const pokedexProgress = React.useMemo(() => getPokedexProgress(pokemonList), [pokemonList, getPokedexProgress, pokemon]);
-  const shinyDexProgress = React.useMemo(() => getShinyDexProgress(pokemonList), [pokemonList, getShinyDexProgress, pokemon]);
-  const alphaDexProgress = React.useMemo(() => getAlphaDexProgress(pokemonList), [pokemonList, getAlphaDexProgress, pokemon]);
-  const shinyAlphaDexProgress = React.useMemo(() => getShinyAlphaDexProgress(pokemonList), [pokemonList, getShinyAlphaDexProgress, pokemon]);
-  const megaDexProgress = React.useMemo(() => getMegaDexProgress(pokemonList), [pokemonList, getMegaDexProgress, pokemon]);
-  const megaShinyDexProgress = React.useMemo(() => getMegaShinyDexProgress(pokemonList), [pokemonList, getMegaShinyDexProgress, pokemon]);
+  const pokedexProgress = React.useMemo(() => getPokedexProgress(pokemonList), [getPokedexProgress, pokemonList, pokemon]);
+  const shinyDexProgress = React.useMemo(() => getShinyDexProgress(pokemonList), [getShinyDexProgress, pokemonList, pokemon]);
+  const alphaDexProgress = React.useMemo(() => getAlphaDexProgress(pokemonList), [getAlphaDexProgress, pokemonList, pokemon]);
+  const shinyAlphaDexProgress = React.useMemo(() => getShinyAlphaDexProgress(pokemonList), [getShinyAlphaDexProgress, pokemonList, pokemon]);
+  const megaDexProgress = React.useMemo(() => getMegaDexProgress(pokemonList), [getMegaDexProgress, pokemonList, pokemon]);
+  const megaShinyDexProgress = React.useMemo(() => getMegaShinyDexProgress(pokemonList), [getMegaShinyDexProgress, pokemonList, pokemon]);
+  const alphaShinyMegaDexProgress = React.useMemo(() => getAlphaShinyMegaDexProgress(pokemonList), [getAlphaShinyMegaDexProgress, pokemonList, pokemon]);
 
   return (
     <SidebarCollapsible 
@@ -124,6 +127,14 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
           total={megaShinyDexProgress.total}
           percentage={megaShinyDexProgress.percentage}
           color="bg-pink-500"
+        />
+        
+        <ProgressBar
+          title="👑💎 Alpha Shiny Mega Dex"
+          obtained={alphaShinyMegaDexProgress.obtained}
+          total={alphaShinyMegaDexProgress.total}
+          percentage={alphaShinyMegaDexProgress.percentage}
+          color="bg-gradient-to-r from-purple-600 to-pink-600"
         />
       </View>
     </SidebarCollapsible>
