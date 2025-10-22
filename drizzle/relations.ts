@@ -1,5 +1,17 @@
 import { relations } from "drizzle-orm/relations";
-import { eventCounters, userEventParticipation, anonymousEventParticipation, profiles } from "./schema";
+import { profiles, legendsZaTracker, eventCounters, userEventParticipation, anonymousEventParticipation } from "./schema";
+
+export const legendsZaTrackerRelations = relations(legendsZaTracker, ({one}) => ({
+	profile: one(profiles, {
+		fields: [legendsZaTracker.userId],
+		references: [profiles.id]
+	}),
+}));
+
+export const profilesRelations = relations(profiles, ({many}) => ({
+	legendsZaTrackers: many(legendsZaTracker),
+	userEventParticipations: many(userEventParticipation),
+}));
 
 export const userEventParticipationRelations = relations(userEventParticipation, ({one}) => ({
 	eventCounter: one(eventCounters, {
@@ -17,15 +29,9 @@ export const eventCountersRelations = relations(eventCounters, ({many}) => ({
 	anonymousEventParticipations: many(anonymousEventParticipation),
 }));
 
-export const profilesRelations = relations(profiles, ({many}) => ({
-	userEventParticipations: many(userEventParticipation),
-}));
-
 export const anonymousEventParticipationRelations = relations(anonymousEventParticipation, ({one}) => ({
 	eventCounter: one(eventCounters, {
 		fields: [anonymousEventParticipation.eventId],
 		references: [eventCounters.id]
 	}),
 }));
-
-// Note: profiles.id actually references auth.users.id (not included in public schema)

@@ -10,33 +10,121 @@ import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
 import colors from '@/src/constants/style/colors';
 import { cn } from '@/src/utils/cn';
-import { usePokemonTrackerStore, type FormType } from '@/src/store/pokemonTrackerStore';
+import { usePokemonTrackerStore} from '@/src/store/pokemonTrackerStoreEnhanced';
 import { useShallow } from 'zustand/react/shallow';
 import { nationalDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { type FormType }from '~/types/tracker';
+import SearchBar from '@/src/components/Pokedex/SearchBar';
+
 
 type FilterType = 'all' | 'alpha' | 'mega';
 
 export default function DexTrackerPage() {
   const hasHydrated = usePokemonTrackerStore((state) => state._hasHydrated);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [query, setQuery] = useState('');
 
-  // Filter Pokemon based on selected filter
+  // Filter Pokemon based on selected filter + search query
   const filteredPokemon = React.useMemo(() => {
+    if (!nationalDex || !Array.isArray(nationalDex)) {
+      console.error('[DEX TRACKER] nationalDex is not available or not an array:', nationalDex);
+      return [];
+    }
+    
+    let base = nationalDex;
     switch (filter) {
       case 'alpha':
-        return nationalDex.filter(p => p.canBeAlpha);
+        base = base.filter(p => p?.canBeAlpha);
+        break;
       case 'mega':
-        return nationalDex.filter(p => p.hasMega);
+        base = base.filter(p => p?.hasMega);
+        break;
       default:
-        return nationalDex;
+        break;
     }
-  }, [filter]);
+
+    const q = query.trim().toLowerCase();
+    if (!q) return base;
+
+    return base.filter(p => {
+      const nameMatch = p.name?.toLowerCase().includes(q);
+      const idMatch = String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q);
+      return nameMatch || idMatch;
+    });
+  }, [filter, query]);
 
   // Debug: Log the current pokemon tracker state (only on mount)
   useEffect(() => {
-    const pokemon = usePokemonTrackerStore.getState().pokemon;
-    console.log('[DEX TRACKER PAGE] Current pokemon tracker state:', pokemon);
-    console.log('[DEX TRACKER PAGE] Has hydrated:', hasHydrated);
+    const state = usePokemonTrackerStore.getState();
+    console.log('[DEX TRACKER TEST] Current pokemon tracker state:', state.pokemon);
+    console.log('[DEX TRACKER TEST] Pokemon count:', Object.keys(state.pokemon).length);
+    console.log('[DEX TRACKER TEST] Has hydrated:', hasHydrated);
+    console.log('[DEX TRACKER TEST] Is syncing:', state.isSyncing);
+    console.log('[DEX TRACKER TEST] Last sync time:', state.lastSyncTime);
+    console.log('[DEX TRACKER TEST] Pending updates:', state.pendingUpdates);
+    console.log('__DEV__ flag:', __DEV__);
+    
+    // Test direct API call for debugging
+    if (hasHydrated && typeof fetch !== 'undefined') {
+      console.log('[DEX TRACKER TEST] Running direct API test...');
+      import('@/src/utils/supabaseClient').then(({ supabase }) => {
+        import('@/src/utils/apiConfig').then(({ buildApiUrl, API_BASE_URL }) => {
+          console.log('[DEX TRACKER TEST] API_BASE_URL from apiConfig:', API_BASE_URL);
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.access_token) {
+              const testUrl = buildApiUrl('legends-za-tracker');
+              console.log('[DEX TRACKER TEST] Testing API with token present, URL:', testUrl);
+              
+              // Test the actual API endpoint
+              fetch(testUrl, {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${session.access_token}`,
+                },
+              })
+              .then(res => {
+                console.log('[DEX TRACKER TEST] Direct API test response status:', res.status, 'ok:', res.ok);
+                return res.text(); // Get as text first to see raw response
+              })
+              .then(text => {
+                console.log('[DEX TRACKER TEST] Direct API test raw response:', text);
+                try {
+                  const data = JSON.parse(text);
+                  console.log('[DEX TRACKER TEST] Direct API test parsed data:', data);
+                  if (data.data && Array.isArray(data.data)) {
+                    console.log('[DEX TRACKER TEST] Direct API test - found', data.data.length, 'records');
+                    data.data.forEach((record: any, i: number) => {
+                      console.log(`[DEX TRACKER TEST] Record ${i}:`, record);
+                    });
+                  }
+                } catch (e) {
+                  console.error('[DEX TRACKER TEST] Failed to parse response as JSON:', e);
+                }
+              })
+              .catch(err => {
+                console.error('[DEX TRACKER TEST] Direct API test error:', err);
+              });
+            } else {
+              console.log('[DEX TRACKER TEST] No token available for API test');
+            }
+          });
+        });
+      });
+    }
+  }, [hasHydrated]);
+
+  // After hydration completes, explicitly load from database to avoid race conditions
+  useEffect(() => {
+    if (hasHydrated) {
+      console.log('[DEX TRACKER PAGE] Hydrated=true -> calling loadFromDatabase');
+      try {
+        usePokemonTrackerStore.getState().loadFromDatabase();
+        console.log('[DEX TRACKER PAGE] Successfully triggered loadFromDatabase');
+      } catch (e) {
+        console.error('[DEX TRACKER PAGE] Failed to trigger loadFromDatabase:', e);
+      }
+    }
   }, [hasHydrated]);
 
   const FilterButton = ({ filterType, label, count }: { filterType: FilterType; label: string; count: number }) => (
@@ -149,7 +237,7 @@ export default function DexTrackerPage() {
         </View>
         
         <View className="flex-row gap-2">
-          <FormButton dex={dex} form="normal" label="Registered" emoji="⚪" />
+          <FormButton dex={dex} form="normal" label="Normal" emoji="⚪" />
           <FormButton dex={dex} form="shiny" label="Shiny" emoji="✨" />
           {canBeAlpha && (
             <>
@@ -183,6 +271,7 @@ export default function DexTrackerPage() {
       <MultiLayerParallaxScrollView
         headerBackgroundColor={{ light: colors.light.background, dark: colors.dark.background }}
         headerHeight={180}
+        showsVerticalScrollIndicator={true}
         titleElement={
           <View className="flex-1 justify-center items-center px-4">
             <BouncyText text="Pokédex Tracker" />
@@ -193,7 +282,8 @@ export default function DexTrackerPage() {
         }
       >
         <Container>
-          {/* <InProgressDisclaimer /> */}
+          <InProgressDisclaimer />
+          <SearchBar value={query} onChange={setQuery} />
           {/* Filter Buttons */}
           <View className="flex-row gap-2 mb-6">
             <FilterButton 
@@ -262,10 +352,10 @@ export default function DexTrackerPage() {
           {/* Footer Note */}
           <View className="mt-6 mb-4">
             <Text className="text-xs text-center text-app-brown italic">
-              💾 Your progress is automatically saved locally
+              💾 Your progress is saved locally and synced to your account
             </Text>
             <Text className="text-xs text-center text-app-brown italic mt-1">
-              (Supabase sync coming soon!)
+              🔄 Automatically syncs when online
             </Text>
           </View>
         </Container>

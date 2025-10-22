@@ -18,6 +18,7 @@ const HEADER_HEIGHT = 350;
 
 type Props = PropsWithChildren<{
   headerBackgroundColor: { dark: string; light: string };
+  showsVerticalScrollIndicator?: boolean;
   backgroundGrid?: ReactNode; // Optional background grid
   headerHeight?: number; // Optional header height
   titleElement?: ReactNode; // Optional title/logo element
@@ -28,6 +29,7 @@ type Props = PropsWithChildren<{
 export default function MultiLayerParallaxScrollView({
   children,
   headerBackgroundColor,
+  showsVerticalScrollIndicator = false,
   backgroundGrid,
   titleElement,
   spinningElement,
@@ -192,7 +194,7 @@ export default function MultiLayerParallaxScrollView({
         scrollEventThrottle={16}
         scrollIndicatorInsets={{ bottom }}
         contentContainerStyle={{ paddingBottom: bottom }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={showsVerticalScrollIndicator}
         scrollEnabled={true}
       >
         <View

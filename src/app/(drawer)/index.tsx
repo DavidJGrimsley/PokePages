@@ -5,7 +5,7 @@ import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
 import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
-import DrizzleCounter from 'components/Events/DrizzleCounter';
+// ...existing code...
 import TypeChartDisplay from '@/src/components/Resources/TypeChartDisplay';
 import AuthStatus from 'components/Auth/AuthStatus';
 

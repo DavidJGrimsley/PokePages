@@ -8,6 +8,13 @@
       "when": 1758918736534,
       "tag": "0000_yielding_loa",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760755435072,
+      "tag": "0001_demonic_tarot",
+      "breakpoints": true
     }
   ]
 }

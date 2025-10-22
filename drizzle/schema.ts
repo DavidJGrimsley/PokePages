@@ -1,7 +1,31 @@
-import { pgTable, index, foreignKey, unique, pgPolicy, uuid, bigint, timestamp, text, integer, check, date } from "drizzle-orm/pg-core"
+import { pgTable, index, foreignKey, unique, pgPolicy, uuid, integer, boolean, timestamp, bigint, text, check, date } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
+
+export const legendsZaTracker = pgTable("legends_za_tracker", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	userId: uuid("user_id").notNull(),
+	pokemonId: integer("pokemon_id").notNull(),
+	normal: boolean().default(false).notNull(),
+	shiny: boolean().default(false).notNull(),
+	alpha: boolean().default(false).notNull(),
+	alphaShiny: boolean("alpha_shiny").default(false).notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow(),
+}, (table) => [
+	index("idx_legends_za_tracker_user_id").using("btree", table.userId.asc().nullsLast().op("uuid_ops")),
+	foreignKey({
+			columns: [table.userId],
+			foreignColumns: [profiles.id],
+			name: "legends_za_tracker_user_id_fkey"
+		}).onDelete("cascade"),
+	unique("legends_za_tracker_user_id_pokemon_id_key").on(table.userId, table.pokemonId),
+	pgPolicy("Users can view their own legends za tracker data", { as: "permissive", for: "select", to: ["public"], using: sql`(auth.uid() = user_id)` }),
+	pgPolicy("Users can insert their own legends za tracker data", { as: "permissive", for: "insert", to: ["public"] }),
+	pgPolicy("Users can update their own legends za tracker data", { as: "permissive", for: "update", to: ["public"] }),
+	pgPolicy("Users can delete their own legends za tracker data", { as: "permissive", for: "delete", to: ["public"] }),
+]);
 
 export const userEventParticipation = pgTable("user_event_participation", {
 	id: uuid().defaultRandom().primaryKey().notNull(),

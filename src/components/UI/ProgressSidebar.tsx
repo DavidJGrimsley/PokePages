@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { SidebarCollapsible } from '@/src/components/UI/SidebarCollapsible';
-import { usePokemonTrackerStore } from '@/src/store/pokemonTrackerStore';
+import { usePokemonTrackerStore } from '@/src/store/pokemonTrackerStoreEnhanced';
 import { useShallow } from 'zustand/react/shallow';
 import { type Pokemon } from '@/data/Pokemon/LumioseDex';
 
@@ -47,6 +47,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
   
   const {
     getPokedexProgress,
+    getNormalDexProgress,
     getShinyDexProgress,
     getAlphaDexProgress,
     getShinyAlphaDexProgress,
@@ -56,6 +57,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
   } = usePokemonTrackerStore(
     useShallow((state) => ({
       getPokedexProgress: state.getPokedexProgress,
+      getNormalDexProgress: state.getNormalDexProgress,
       getShinyDexProgress: state.getShinyDexProgress,
       getAlphaDexProgress: state.getAlphaDexProgress,
       getShinyAlphaDexProgress: state.getShinyAlphaDexProgress,
@@ -67,6 +69,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
 
   // Calculate all progress metrics - will re-calculate when pokemon state changes
   const pokedexProgress = React.useMemo(() => getPokedexProgress(pokemonList), [getPokedexProgress, pokemonList, pokemon]);
+  const normalDexProgress = React.useMemo(() => getNormalDexProgress(pokemonList), [getNormalDexProgress, pokemonList, pokemon]);
   const shinyDexProgress = React.useMemo(() => getShinyDexProgress(pokemonList), [getShinyDexProgress, pokemonList, pokemon]);
   const alphaDexProgress = React.useMemo(() => getAlphaDexProgress(pokemonList), [getAlphaDexProgress, pokemonList, pokemon]);
   const shinyAlphaDexProgress = React.useMemo(() => getShinyAlphaDexProgress(pokemonList), [getShinyAlphaDexProgress, pokemonList, pokemon]);
@@ -82,11 +85,19 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
     >
       <View className="space-y-2">
         <ProgressBar
-          title="📖 Pokédex Completion"
+          title="📖 Pokédex (any form) Completion"
           obtained={pokedexProgress.obtained}
           total={pokedexProgress.total}
           percentage={pokedexProgress.percentage}
           color="bg-blue-500"
+        />
+        
+        <ProgressBar
+          title="⚪ Normal Dex"
+          obtained={normalDexProgress.obtained}
+          total={normalDexProgress.total}
+          percentage={normalDexProgress.percentage}
+          color="bg-yellow-500"
         />
         
         <ProgressBar

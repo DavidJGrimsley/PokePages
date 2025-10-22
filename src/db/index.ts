@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from './profilesSchema.js';
+import * as profilesSchema from './profilesSchema.js';
+import * as eventsSchema from './eventsSchema.js';
+import * as legendsZATrackerSchema from './legendsZATrackerSchema.js';
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is missing');
@@ -15,4 +17,9 @@ export const client = postgres(connectionString, {
   ssl: 'require'
 });
 
-export const db = drizzle(client, { schema });
+// Merge schemas so drizzle has the full set of tables
+export const db = drizzle(client, { schema: {
+  ...profilesSchema,
+  ...eventsSchema,
+  ...legendsZATrackerSchema,
+} });

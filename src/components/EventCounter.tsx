@@ -84,7 +84,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   targetCount,
   maxRewards,
   colorScheme = 'light',
-  apiUrl = buildApiUrl('')
+  apiUrl = buildApiUrl('events')
 }) => {
   const { user, isLoggedIn } = useAuthStore();
   const [eventData, setEventData] = useState<EventData | null>(null);
@@ -236,7 +236,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   // Fetch event data from API
   const fetchEventData = React.useCallback(async () => {
     try {
-      const response = await fetch(`${apiUrl}/events/${eventKey}`);
+      const response = await fetch(`${apiUrl}/${eventKey}`);
+      console.log('Api URL called:', `${apiUrl}${eventKey}`);
       const result = await response.json();
       
       if (result.success) {
@@ -264,10 +265,10 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       const anonId = !isLoggedIn && anonymousId ? anonymousId : null;
       
       if (!userId && !anonId) return;
-      
+
       const endpoint = userId 
-        ? `${apiUrl}/events/${eventKey}/participation/${userId}`
-        : `${apiUrl}/events/${eventKey}/participation/anonymous/${anonId}`;
+        ? `${apiUrl}${eventKey}/participation/${userId}`
+        : `${apiUrl}${eventKey}/participation/anonymous/${anonId}`;
         
       const response = await fetch(endpoint);
       const result = await response.json();

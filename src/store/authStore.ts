@@ -90,13 +90,11 @@ const fetchUserProfile = async (userId: string) => {
     console.log('fetchUserProfile: Starting fetch for userId:', userId);
     console.log('fetchUserProfile: Supabase client exists:', !!supabase);
     
-    // First, let's test if Supabase is working at all
-    console.log('fetchUserProfile: Testing basic Supabase connection...');
-    try {
-      const { data: testData, error: testError } = await supabase.from('profiles').select('id').limit(1);
-      console.log('fetchUserProfile: Basic connection test - data:', testData, 'error:', testError);
-    } catch (testErr) {
-      console.error('fetchUserProfile: Basic connection failed:', testErr);
+    // Skip profile fetching in production for now to avoid crashes
+    // This allows the tracker to work while we debug the Supabase issue
+    if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+      console.log('fetchUserProfile: Skipping profile fetch in production to avoid crash');
+      return null;
     }
     
     console.log('fetchUserProfile: About to execute main query...');
@@ -522,6 +520,25 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
     // Only migrate on actual sign-in, not token refresh
     if (event === 'SIGNED_IN') {
       await migrateAnonymousData(session.user.id);
+    }
+    
+    // Load tracker data on both SIGNED_IN and TOKEN_REFRESHED events
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      try {
+        console.log('🔁 Auth handler: Triggering tracker load/sync for user', session.user.id, 'event:', event);
+        const mod = await import('./pokemonTrackerStoreEnhanced');
+        const trackerStore = mod.usePokemonTrackerStore;
+        if (trackerStore && trackerStore.getState) {
+          // Load from DB and then run a full sync
+          await trackerStore.getState().loadFromDatabase();
+          await trackerStore.getState().syncWithDatabase();
+          console.log('🔁 Auth handler: Tracker load/sync complete');
+        } else {
+          console.warn('🔁 Auth handler: trackerStore not available after import');
+        }
+      } catch (err) {
+        console.error('🔁 Auth handler: failed to trigger tracker load/sync', err);
+      }
     }
   } else if (event === 'SIGNED_OUT') {
     console.log('🚪 Auth state handler: SIGNED_OUT event - Clearing profile');

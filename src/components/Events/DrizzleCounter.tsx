@@ -52,10 +52,13 @@ const DrizzleCounter: React.FC<DrizzleCounterProps> = ({
     return 'drizzle_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
   };
 
+  // Clean API URL to avoid double slashes
+  const cleanApiUrl = apiUrl.endsWith('/') ? apiUrl.slice(0, -1) : apiUrl;
+
   // Fetch event data
   const fetchEventData = React.useCallback(async () => {
     try {
-      const response = await fetch(`${apiUrl}/events/${pokemon}`);
+      const response = await fetch(`${cleanApiUrl}/events/${pokemon}`);
       const result = await response.json();
       
       if (result.success) {
@@ -67,14 +70,14 @@ const DrizzleCounter: React.FC<DrizzleCounterProps> = ({
       console.error('Error fetching event data:', err);
       setError('Failed to connect to API server');
     }
-  }, [apiUrl, pokemon]);
+  }, [cleanApiUrl, pokemon]);
 
   // Fetch user participation
   const fetchUserParticipation = React.useCallback(async () => {
     if (!isLoggedIn || !user?.id) return;
     
     try {
-      const response = await fetch(`${apiUrl}/events/${pokemon}/participation/${user.id}`);
+      const response = await fetch(`${cleanApiUrl}/events/${pokemon}/participation/${user.id}`);
       const result = await response.json();
       
       if (result.success && result.data) {
@@ -83,7 +86,7 @@ const DrizzleCounter: React.FC<DrizzleCounterProps> = ({
     } catch (err) {
       console.error('Error fetching user participation:', err);
     }
-  }, [apiUrl, pokemon, isLoggedIn, user?.id]);
+  }, [cleanApiUrl, pokemon, isLoggedIn, user?.id]);
 
   // Initialize anonymous ID
   useEffect(() => {
@@ -116,7 +119,7 @@ const DrizzleCounter: React.FC<DrizzleCounterProps> = ({
     setError('');
     
     try {
-      const response = await fetch(`${apiUrl}/events/${pokemon}/increment`, {
+      const response = await fetch(`${cleanApiUrl}/events/${pokemon}/increment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

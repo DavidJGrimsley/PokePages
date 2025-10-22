@@ -6,10 +6,11 @@ import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerPa
 import { StrategyCard } from '@/src/components/UI/StrategyCard';
 import colors from '@/src/constants/style/colors';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import Head from 'expo-router/head';
 
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
+import { Frame } from 'components/UI/Frame';
 
 export default function Strategies() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
@@ -86,6 +87,18 @@ export default function Strategies() {
               icon={strategy.icon}
             />
           ))}
+          
+          <View className="items-center justify-center w-full mt-8 mb-8">
+            <Frame
+              src="https://www.youtube.com/embed/mE3xS2Myzq4?si=Mytvv4gVc-KVODoC"
+              title="YouTube video player"
+              width={isMobile ? '100%' : 560}
+              height={isMobile ? 200 : 315}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="rounded-lg shadow-lg"
+            />
+          </View>
         </MultiLayerParallaxScrollView>
       </Container>
     </>

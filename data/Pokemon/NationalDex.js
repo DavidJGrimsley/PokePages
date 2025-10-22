@@ -1,4 +1,7 @@
-export const nationalDex = [
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.searchPokemon = exports.findPokemonByType = exports.findPokemonByName = exports.findPokemonById = exports.nationalDex = void 0;
+exports.nationalDex = [
     { id: 11, name: "Metapod", type1: "Bug" },
     { id: 12, name: "Butterfree", type1: "Bug", type2: "Flying" },
     { id: 13, name: "Weedle", type1: "Bug", type2: "Poison" },
@@ -1015,19 +1018,32 @@ export const nationalDex = [
     { id: 1024, name: "Terapagos", type1: "Normal" },
     { id: 1025, name: "Pecharunt", type1: "Poison", type2: "Ghost" },
 ];
-export const findPokemonById = (id) => {
-    return nationalDex.find(pokemon => pokemon.id === id);
+// Helper functions for easier searching
+var findPokemonById = function (id) {
+    return exports.nationalDex.find(function (pokemon) { return pokemon.id === id; });
 };
-export const findPokemonByName = (name) => {
-    return nationalDex.find(pokemon => pokemon.name.toLowerCase() === name.toLowerCase());
+exports.findPokemonById = findPokemonById;
+var findPokemonByName = function (name) {
+    return exports.nationalDex.find(function (pokemon) {
+        return pokemon.name.toLowerCase() === name.toLowerCase();
+    });
 };
-export const findPokemonByType = (type) => {
-    return nationalDex.filter(pokemon => pokemon.type1.toLowerCase() === type.toLowerCase() ||
-        pokemon.type2?.toLowerCase() === type.toLowerCase());
+exports.findPokemonByName = findPokemonByName;
+var findPokemonByType = function (type) {
+    return exports.nationalDex.filter(function (pokemon) {
+        var _a;
+        return pokemon.type1.toLowerCase() === type.toLowerCase() ||
+            ((_a = pokemon.type2) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === type.toLowerCase();
+    });
 };
-export const searchPokemon = (query) => {
-    const lowerQuery = query.toLowerCase();
-    return nationalDex.filter(pokemon => pokemon.name.toLowerCase().includes(lowerQuery) ||
-        pokemon.type1.toLowerCase().includes(lowerQuery) ||
-        pokemon.type2?.toLowerCase().includes(lowerQuery));
+exports.findPokemonByType = findPokemonByType;
+var searchPokemon = function (query) {
+    var lowerQuery = query.toLowerCase();
+    return exports.nationalDex.filter(function (pokemon) {
+        var _a;
+        return pokemon.name.toLowerCase().includes(lowerQuery) ||
+            pokemon.type1.toLowerCase().includes(lowerQuery) ||
+            ((_a = pokemon.type2) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(lowerQuery));
+    });
 };
+exports.searchPokemon = searchPokemon;

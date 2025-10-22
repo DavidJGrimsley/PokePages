@@ -13,7 +13,8 @@
           "Set text speed to fast for quicker reading",
           "Tweak camera sensitivity for your 'sweet spot'",
           "AUTOSAVE cannot be turned off! (First title in the series?)",
-          "Feeling lost? Check the map and look for an exclamation point and press A to turn on navigation guidance"
+          "Feeling lost? Check the map and look for an exclamation point and press A to turn on navigation guidance",
+          "When Shiny hunting, turn down the Music and Pokémon cries volume to hear the shiny sound better"
         ]
       },
       {
@@ -21,11 +22,11 @@
         "content": "Essential strategies for the beginning of your journey.",
         "bullets": [
           "Focus on the story missions to unlock key features quickly",
-          "Don't explore until you get the ability to do a Rotom Phone jump between buildings",
+          "Resist the urge to start catching a bunch of Pokémon until you have seen your first Alpha, or you could have been catching Alphas and feel like you wasted your time",
           "Battle Pokémon nearby your walking path to gain experience and level up",
-          "Throw Pokéballs at wild Pokémon you see on your path",
-          "After you see the first Rogue Mega Absol, then you can start exploring more freely",
-          "This ensures that you get the most of your exploration time and possibly see Alphas and Mega Evolved Pokémon in the wild"
+          "Quickly throw Pokéballs at wild Pokémon as you're walking",
+          "After you unlock the ability to do a Rotom Phone jump between buildings, then you can start exploring more freely",
+          "This ensures that you get the most of your exploration time, can access most everything, and possibly see Alphas and Mega Evolved Pokémon in the wild"
         ]
       },
       {
@@ -108,7 +109,7 @@
           "Press up on the D-Pad to throw out the selected Pokémon right away",
           "Press down on the D-Pad to recall your Pokémon on the field",
           "Recalling comes at a cost: your next Pokémon has a cooldown",
-          "When your current Pokémon faints, you have a second ro"
+          "When your current Pokémon faints, you have a second to pick your next one before it is automatically sent out"
         ]
       },
       {
@@ -294,6 +295,20 @@
         ]
       },
       {
+        "title": "States",
+        "content": "The 4 states of wild Pokémon and how they behave",
+        "bullets": [
+          "1. Unaware: Pokémon are not actively searching for you and has not noticed you yet",
+          "2. Aware: Pokémon have noticed you and are investigating",
+          "The next state depends on the species' behavior type",
+          "3. Timid: Pokémon runs away and despawns within 5 seconds",
+          "3. Curious: Pokémon stare at you",
+          "3. Indifferent: Pokémon ignore you",
+          "3. Battle/Aggro: Pokémon are actively trying to attack you",
+          "4. Angry: Pokémon are actively attacking you and will not be able to be caught with Poké Balls until calmed down by running out of sight or attacking them"
+        ]
+      },
+      {
         "title": "Stealth Catching",
         "content": "Use stealth to your advantage when catching wild Pokémon",
         "bullets": [
@@ -346,6 +361,8 @@
           "Base odds: 1/4096 (same as recent mainline games)",
           "Shiny Charm: Increases odds to approximately 1/1024.38",
           "Defeating all Pokémon in a wild zone and waiting for the next wave may increase shiny chance (my hypothesis - needs confirmation)",
+          "Since this game will not despawn your Shiny, the more you walk around and spawn in new Pokémon, the better your chances",
+          "Resetting zones by going in and out of a stairway resets all spawns nearby"
         ]
       },
       {

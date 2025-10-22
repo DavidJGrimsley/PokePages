@@ -33,28 +33,13 @@ import {
 
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
-import { HeaderTitle } from 'components/UI/HeaderComponents';
+// HeaderTitle removed from root layout (not used here)
 import Loading from 'components/Animation/LoadingAnim';
 
 // Add mobile debugging console ONLY in development
-if (__DEV__ && Platform.OS === 'web' && typeof window !== 'undefined') {
-  // Detect mobile devices
-  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (isMobileDevice) {
-    // Load Eruda for mobile debugging
-  const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/eruda@3.0.1/eruda.js';
-    script.onload = () => {
-      // @ts-ignore
-      if (window.eruda) {
-        // @ts-ignore
-        window.eruda.init();
-      }
-    };
-    document.head.appendChild(script);
-  }
-}
+// In development we previously added a mobile in-browser console (eruda).
+// Removed noisy dev-only script injection to avoid interfering with automated tests
+// and user debugging sessions. Keep hydration and splash-screen logic below intact.
 
 const isWeb = Platform.OS === 'web';
 
@@ -91,7 +76,6 @@ export default function RootLayout() {
     // Set a timeout for font loading (5 seconds)
     const fontTimeout = setTimeout(() => {
       if (!fontsLoaded) {
-        console.log('📱 Font loading timed out, proceeding without fonts');
         setFontLoadingTimedOut(true);
       }
     }, 5000);
@@ -99,27 +83,42 @@ export default function RootLayout() {
     return () => clearTimeout(fontTimeout);
   }, [fontsLoaded]);
 
+  // Global error diagnostics for web to surface silent failures in production
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      const onError = (event: ErrorEvent) => {
+        console.error('[GLOBAL onerror]', event.message, {
+          error: event.error,
+          file: event.filename,
+          line: event.lineno,
+          column: event.colno,
+        });
+      };
+      const onUnhandledRejection = (event: PromiseRejectionEvent) => {
+        console.error('[GLOBAL unhandledrejection]', event.reason);
+      };
+      window.addEventListener('error', onError);
+      window.addEventListener('unhandledrejection', onUnhandledRejection);
+      return () => {
+        window.removeEventListener('error', onError);
+        window.removeEventListener('unhandledrejection', onUnhandledRejection);
+      };
+    }
+    return;
+  }, []);
+
   const {
     isLoggedIn,
     _hasHydrated,
   } = useAuthStore();
 
   const { hasCompletedOnboarding, _hasHydratedOnboarding } = useOnboardingStore();
-
+  console.log('Is Development mode active?', __DEV__);
   // https://zustand.docs.pmnd.rs/integrations/persisting-store-data#how-can-i-check-if-my-store-has-been-hydrated
   // Hide the splash screen after both stores have been hydrated AND fonts are loaded (or timed out)
   useEffect(() => {
-    console.log('📱 Mobile Debug - Hydration Check:', {
-      _hasHydrated,
-      _hasHydratedOnboarding,
-      fontsLoaded,
-      fontLoadingTimedOut,
-      platform: Platform.OS,
-      userAgent: Platform.OS === 'web' ? navigator.userAgent : 'native'
-    });
-    
+    // Hide the splash screen once stores and fonts are ready (or timed out)
     if (_hasHydrated && _hasHydratedOnboarding && (fontsLoaded || fontLoadingTimedOut)) {
-      console.log('✅ All conditions met, hiding splash screen');
       SplashScreen.hideAsync();
     }
   }, [_hasHydrated, _hasHydratedOnboarding, fontsLoaded, fontLoadingTimedOut]);
@@ -130,17 +129,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     // Set a timeout to ensure hydration completes
-    console.log('📱 Starting hydration timer...');
-    const timer = setTimeout(() => {
-      console.log('📱 Hydration timer completed, setting isHydrated to true');
-      setIsHydrated(true);
-    }, 1000);
+    const timer = setTimeout(() => setIsHydrated(true), 1000);
     
     return () => clearTimeout(timer);
   }, []);
 
   if (!isHydrated) {
-    console.log('📱 Showing loading screen - isHydrated is false');
+  // Showing loading screen while hydration completes
     const overlayStyleWeb = {
       position: 'absolute' as const,
       top: 0,
@@ -176,19 +171,7 @@ export default function RootLayout() {
 
   // Skip onboarding on web platform
   const shouldShowOnboarding = (Platform.OS !== 'web' && !hasCompletedOnboarding) || (isLoggedIn && !hasCompletedOnboarding);
-  console.log('📱 Onboarding check:', {
-    hasCompletedOnboarding,
-    isLoggedIn,
-    shouldShowOnboarding,
-    platform: Platform.OS,
-    isDev: __DEV__
-  });
-  console.log('Hydration states:', { 
-    _hasHydrated, 
-    _hasHydratedOnboarding, 
-    fontsLoaded, 
-    isHydrated 
-  });
+  // Minimal checks logged only in dev (noisy logs removed)
   return (
     <SafeAreaProvider
       // Make sure provider has full height and avoids SSR mismatch
