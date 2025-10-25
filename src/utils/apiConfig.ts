@@ -5,7 +5,7 @@ const getApiUrl = (): string => {
   // Allow environment variable to override
   if (process.env.EXPO_PUBLIC_API_BASE_URL) {
     console.log('[CONFIG] Using environment variable API base URL:', process.env.EXPO_PUBLIC_API_BASE_URL);
-    return process.env.EXPO_PUBLIC_API_BASE_URL;
+    // return process.env.EXPO_PUBLIC_API_BASE_URL;
   }
   
   // More robust development detection
@@ -22,9 +22,11 @@ const getApiUrl = (): string => {
     Platform: Platform.OS,
     isDev
   });
+
+  console.log('[API CONFIG] is dev:', isDev);
   
   if (isDev) {
-    console.log('[CONFIG] Using development API base URL');
+    console.log('[CONFIG] Using test development API base URL');
     // For Android emulator, use 10.0.2.2 instead of localhost
     // For iOS simulator and web, localhost works fine
     if (Platform.OS === 'android') {

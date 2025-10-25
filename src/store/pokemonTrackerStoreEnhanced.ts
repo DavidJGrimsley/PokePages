@@ -205,11 +205,6 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         const updatedStatus: RegisteredStatus = { ...currentStatus };
         updatedStatus[form] = newValue;
 
-        // Apply auto-registration logic: if any special form is true, set normal to true
-        if (form !== 'normal' && newValue === true) {
-          updatedStatus.normal = true;
-        }
-
         set((state) => ({
           pokemon: {
             ...state.pokemon,
@@ -223,14 +218,14 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         if (isOnline) {
           try {
             const userId = getUserId();
-            console.log('[TRACKER] sync PUT -> ', buildApiUrl(`legendsza/${dex}`), { userIdPresent: !!userId });
+            console.log('[TRACKER] sync PUT -> ', buildApiUrl(`legends-za/${dex}`), { userIdPresent: !!userId });
             
             if (!userId) {
               console.log('[TRACKER] No user ID available, cannot sync to server - queuing as pending');
               throw new Error('No user ID - user may not be logged in');
             }
 
-            const res = await fetch(buildApiUrl(`legendsza/${dex}`), {
+            const res = await fetch(buildApiUrl(`legends-za/${dex}`), {
               method: 'PUT',
               headers: authHeaders(), // include bearer
               body: JSON.stringify({ userId, formType: form, value: newValue }),
@@ -276,7 +271,7 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
             return;
           }
 
-          const url = buildApiUrl(`legendsza?userId=${userId}`);
+          const url = buildApiUrl(`legends-za?userId=${userId}`);
           console.log('[TRACKER] GET ->', url);
           
           // Add timeout to fetch request
@@ -355,8 +350,8 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
               stack: error.stack,
       
 
-               url: buildApiUrl('legendsza'),
-              // url: buildApiUrl('legendsza'),
+               url: buildApiUrl('legends-za'),
+              // url: buildApiUrl('legends-za'),
               userAgent: navigator?.userAgent || 'unknown'
             });
           }
@@ -386,7 +381,7 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
           // Full sync: compare local data with database
           const localPokemon = get().pokemon;
-          const res = await fetch(buildApiUrl(`legendsza?userId=${userId}`), {
+          const res = await fetch(buildApiUrl(`legends-za?userId=${userId}`), {
             headers: authHeaders(), // include bearer
           });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -420,7 +415,7 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           // Batch update if there are changes
           if (updates.length > 0) {
             console.log('[TRACKER] syncWithDatabase: sending batch updates', updates.length);
-            const res2 = await fetch(buildApiUrl('legendsza/batch'), {
+            const res2 = await fetch(buildApiUrl('legends-za/batch'), {
                method: 'POST',
                headers: authHeaders(), // include bearer
                body: JSON.stringify({ userId, updates }),
@@ -458,7 +453,6 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           for (const u of pendingUpdates) {
             const current = map.get(u.pokemonId) ?? { normal: false, shiny: false, alpha: false, alphaShiny: false };
             (current as any)[u.form] = u.value;
-            if (u.form !== 'normal' && u.value) current.normal = true;
             map.set(u.pokemonId, current);
           }
 
@@ -466,7 +460,7 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           if (updates.length === 0) return;
 
           console.log('[TRACKER] processPendingUpdates: sending batch of', updates.length);
-          const res = await fetch(buildApiUrl(`legendsza/batch?userId=${userId}`), {
+          const res = await fetch(buildApiUrl(`legends-za/batch?userId=${userId}`), {
              method: 'POST',
              headers: authHeaders(), // include bearer
              body: JSON.stringify({ userId, updates }),

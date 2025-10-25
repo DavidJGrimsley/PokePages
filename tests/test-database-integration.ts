@@ -5,7 +5,7 @@ import {
   getUserPokemonTrackerData,
   updatePokemonForm,
   getUserPokemonStats
-} from '../src/db/legendsZATrackerQueries';
+} from '../src/db/legends-zaTrackerQueries';
 
 async function testDatabaseIntegration() {
   console.log('🧪 Testing Legends Z-A Tracker Database Integration...\n');

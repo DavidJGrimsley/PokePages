@@ -38,8 +38,8 @@ function useLocalTracker() {
         }
 
         // Auth middleware handles user ID from token
-        // const url = buildApiUrl('legends-za-tracker');
-        const url = 'http://localhost:3001/legends-za-tracker';
+        // const url = buildApiUrl('legends-za');
+        const url = 'http://localhost:3001/legends-za';
         console.log('[LocalTracker] Fetching from:', url);
         
         const res = await fetch(url, {
@@ -101,11 +101,6 @@ function useLocalTracker() {
     
     const newValue = !currentStatus[form];
     const updatedStatus: RegisteredStatus = { ...currentStatus, [form]: newValue };
-    
-    // Apply auto-registration logic: if any special form is true, set normal to true
-    if (form !== 'normal' && newValue === true) {
-      updatedStatus.normal = true;
-    }
 
     // Optimistic update - immediately update UI
     setData(prev => ({
@@ -119,8 +114,8 @@ function useLocalTracker() {
         throw new Error('User not authenticated');
       }
 
-      // Backend expects: PUT /legends-za-tracker/:pokemonId with body { formType, value }
-      const url = `http://localhost:3001/legends-za-tracker/${dex}`;
+      // Backend expects: PUT /legends-za/:pokemonId with body { formType, value }
+      const url = `http://localhost:3001/legends-za/${dex}`;
       const res = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -367,7 +362,7 @@ export { useLocalTracker };
 
 // Example usage in your dex tracker page:
 /*
-import { useLocalTracker, PokemonRow, ProgressStats } from '@/src/components/Pokedex/legendsZATracker';
+import { useLocalTracker, PokemonRow, ProgressStats } from '@/src/components/Pokedex/legends-zaTracker';
 
 export default function DexTrackerPage() {
   const tracker = useLocalTracker();

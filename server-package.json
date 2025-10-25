@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "restart": "./start-server.sh"
   },
   "dependencies": {
     "express": "^5.1.0",

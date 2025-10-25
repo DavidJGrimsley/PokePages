@@ -4,7 +4,7 @@ import cors from 'cors';
 import eventRouter from './src/routes/events/index.js';
 import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
-import legendsZARouter from './src/routes/legendsza/index.js';
+import legendsZARouter from './src/routes/legends-za/index.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -60,6 +60,7 @@ app.use('/events', (req, res, next) => {
   next();
 });
 
+// Event Counter Routes
 app.use('/events', eventRouter);
 
 // AI Routes
@@ -68,17 +69,8 @@ app.use('/ai', aiRouter);
 // Profile Routes
 app.use('/profiles', profileRouter);
 
-// Legends Z-A Tracker Routes - with debugging middleware
-console.log('🔧 Registering legendsza route...');
-
-// Debug middleware to see all requests
-app.use('/legendsza', (req, res, next) => {
-  console.log(`[TRACKER DEBUG] ${req.method} ${req.originalUrl} | Path: ${req.path} | BaseUrl: ${req.baseUrl}`);
-  next();
-});
-
-app.use('/legendsza', legendsZARouter);
-console.log('✅ legendsza route registered');
+// Legends Z-A Dex & Form Tracker Routes
+app.use('/legends-za', legendsZARouter);
 
 // Test route
 app.get('/test', (req, res) => {
@@ -124,7 +116,7 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`   Events: ${apiBaseUrl}/events`);
   console.log(`   AI: ${apiBaseUrl}/ai`);
   console.log(`   Profiles: ${apiBaseUrl}/profiles`);
-  console.log(`   Legends Z-A Tracker: ${apiBaseUrl}/legendsza`);
+  console.log(`   Legends Z-A Tracker: ${apiBaseUrl}/legends-za`);
   console.log('legendsZARouter router loaded:', typeof legendsZARouter);
 });
 

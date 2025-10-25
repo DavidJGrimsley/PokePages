@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.legendsZATracker = void 0;
+exports.legends-zaTracker = void 0;
 var pg_core_1 = require("drizzle-orm/pg-core");
 var profilesSchema_js_1 = require("./profilesSchema.js");
-exports.legendsZATracker = (0, pg_core_1.pgTable)('legends_za_tracker', {
+exports.legends-zaTracker = (0, pg_core_1.pgTable)('legends_za_tracker', {
     id: (0, pg_core_1.uuid)('id').defaultRandom().primaryKey(),
     userId: (0, pg_core_1.uuid)('user_id').notNull(),
     pokemonId: (0, pg_core_1.integer)('pokemon_id').notNull(),

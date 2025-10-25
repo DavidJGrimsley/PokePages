@@ -73,7 +73,7 @@ export default function DexTrackerPage() {
           console.log('[DEX TRACKER TEST] API_BASE_URL from apiConfig:', API_BASE_URL);
           supabase.auth.getSession().then(({ data: { session } }) => {
             if (session?.access_token) {
-              const testUrl = buildApiUrl('legends-za-tracker');
+              const testUrl = buildApiUrl('legends-za');
               console.log('[DEX TRACKER TEST] Testing API with token present, URL:', testUrl);
               
               // Test the actual API endpoint
@@ -212,7 +212,12 @@ export default function DexTrackerPage() {
     return (
       <View className="mb-3">
         <View className="flex-row items-center mb-2">
-          <Text className="text-sm font-bold text-app-text w-12">#{String(dex).padStart(4, '0')}</Text>
+          <Text
+            className="text-sm font-bold text-app-text w-12"
+            numberOfLines={1}
+          >
+            #{String(dex).padStart(3, '0')}
+          </Text>
           <Text className="text-lg font-semibold text-app-text flex-1">{name}</Text>
           
           {/* Show badges for special abilities */}
@@ -317,7 +322,7 @@ export default function DexTrackerPage() {
             <Text className="text-xs text-app-brown mb-1">• ✨ Shiny: Caught the shiny version (non-alpha) at least once</Text>
             <Text className="text-xs text-app-brown mb-1">• 🔴 Alpha: Caught the alpha version (non-shiny) at least once</Text>
             <Text className="text-xs text-app-brown mb-3">• 👑 Alpha ✨: Caught the shiny alpha version at least once</Text>
-            <Text className="text-xs text-app-text mb-3">**If you catch a shiny or alpha and evolve it, toggle the previous entry to indicate to false and the current one to true**</Text>
+            <Text className="text-xs text-app-text mb-3">**If you catch a shiny or alpha and evolve it, toggle the previous entry to false and the current one to true**</Text>
             
             {/* Badges section */}
             <Text className="text-sm font-semibold text-app-text mb-2">🏷️ Badges:</Text>

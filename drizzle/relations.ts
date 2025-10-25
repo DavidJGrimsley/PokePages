@@ -1,15 +1,15 @@
 import { relations } from "drizzle-orm/relations";
-import { profiles, legendsZaTracker, eventCounters, userEventParticipation, anonymousEventParticipation } from "./schema";
+import { profiles, legends-zaTracker, eventCounters, userEventParticipation, anonymousEventParticipation } from "./schema";
 
-export const legendsZaTrackerRelations = relations(legendsZaTracker, ({one}) => ({
+export const legends-zaTrackerRelations = relations(legends-zaTracker, ({one}) => ({
 	profile: one(profiles, {
-		fields: [legendsZaTracker.userId],
+		fields: [legends-zaTracker.userId],
 		references: [profiles.id]
 	}),
 }));
 
 export const profilesRelations = relations(profiles, ({many}) => ({
-	legendsZaTrackers: many(legendsZaTracker),
+	legends-zaTrackers: many(legends-zaTracker),
 	userEventParticipations: many(userEventParticipation),
 }));
 

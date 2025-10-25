@@ -1,6 +1,8 @@
 import { pgTable, uuid, integer, boolean, timestamp, unique, index, foreignKey } from 'drizzle-orm/pg-core';
 import { profiles } from './profilesSchema.js';
 
+
+
 export const legendsZATracker = pgTable('legends_za_tracker', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id').notNull(),

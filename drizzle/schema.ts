@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm"
 
 
 
-export const legendsZaTracker = pgTable("legends_za_tracker", {
+export const legends-zaTracker = pgTable("legends_za_tracker", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	userId: uuid("user_id").notNull(),
 	pokemonId: integer("pokemon_id").notNull(),

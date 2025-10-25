@@ -7,6 +7,7 @@ import {
   getUserParticipation,
   getEventStats,
 } from './eventsController.js';
+
 import { validateData } from '../../middlewares/validationMiddleware.js';
 import { incrementEventSchema } from '../../db/eventsSchema.js';
 

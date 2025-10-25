@@ -17,7 +17,7 @@ var postgres_js_1 = require("drizzle-orm/postgres-js");
 var postgres_1 = require("postgres");
 var profilesSchema = require("./profilesSchema.js");
 var eventsSchema = require("./eventsSchema.js");
-var legendsZATrackerSchema = require("./legendsZATrackerSchema.js");
+var legends-zaTrackerSchema = require("./legends-zaTrackerSchema.js");
 if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is missing');
 }
@@ -28,4 +28,4 @@ exports.client = (0, postgres_1.default)(connectionString, {
     ssl: 'require'
 });
 // Merge schemas so drizzle has the full set of tables
-exports.db = (0, postgres_js_1.drizzle)(exports.client, { schema: __assign(__assign(__assign({}, profilesSchema), eventsSchema), legendsZATrackerSchema) });
+exports.db = (0, postgres_js_1.drizzle)(exports.client, { schema: __assign(__assign(__assign({}, profilesSchema), eventsSchema), legends-zaTrackerSchema) });

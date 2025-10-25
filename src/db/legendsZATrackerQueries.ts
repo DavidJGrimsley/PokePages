@@ -5,6 +5,8 @@ import { RegisteredStatus } from '@/src/types/tracker';
 
 // RegisteredStatus is now shared from src/types/tracker
 
+console.log('[DEBUG] legendsZATrackerQueries.ts loaded');
+
 export type PokemonTrackerRecord = {
   id: string;
   userId: string;
@@ -138,11 +140,6 @@ export async function updatePokemonForm(
       alphaShiny: currentRecord.alphaShiny,
     };
     updatedFormData[formType] = value;
-    
-    // Apply auto-registration logic: if any special form is true, set normal to true
-    if (formType !== 'normal' && value === true) {
-      updatedFormData.normal = true;
-    }
     
     return await upsertPokemonRecord(userId, pokemonId, updatedFormData);
   } catch (error) {

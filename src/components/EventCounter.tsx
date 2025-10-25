@@ -236,7 +236,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   // Fetch event data from API
   const fetchEventData = React.useCallback(async () => {
     try {
-      const response = await fetch(`${apiUrl}/${eventKey}`);
+      const response = await fetch(`${apiUrl}${eventKey}`);
       console.log('Api URL called:', `${apiUrl}${eventKey}`);
       const result = await response.json();
       

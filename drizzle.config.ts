@@ -6,7 +6,7 @@ export default defineConfig({
   schema: [
     './src/db/eventsSchema.ts',
     './src/db/profilesSchema.ts',
-    './src/db/legendsZATrackerSchema.ts'
+    './src/db/legends-zaTrackerSchema.ts'
   ],
   dialect: 'postgresql',
   dbCredentials: {

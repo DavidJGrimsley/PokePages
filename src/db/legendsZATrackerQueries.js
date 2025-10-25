@@ -56,7 +56,7 @@ exports.deletePokemonRecord = deletePokemonRecord;
 exports.getUserPokemonStats = getUserPokemonStats;
 var drizzle_orm_1 = require("drizzle-orm");
 var index_js_1 = require("./index.js");
-var legendsZATrackerSchema_js_1 = require("./legendsZATrackerSchema.js");
+var legends-zaTrackerSchema_js_1 = require("./legends-zaTrackerSchema.js");
 /**
  * Get all Pokemon tracker records for a user
  */
@@ -69,8 +69,8 @@ function getUserPokemonTrackerData(userId) {
                     _a.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, index_js_1.db
                             .select()
-                            .from(legendsZATrackerSchema_js_1.legendsZATracker)
-                            .where((0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.userId, userId))];
+                            .from(legends-zaTrackerSchema_js_1.legends-zaTracker)
+                            .where((0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.userId, userId))];
                 case 1:
                     result = _a.sent();
                     return [2 /*return*/, result];
@@ -95,8 +95,8 @@ function getUserPokemonRecord(userId, pokemonId) {
                     _a.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, index_js_1.db
                             .select()
-                            .from(legendsZATrackerSchema_js_1.legendsZATracker)
-                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.userId, userId), (0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.pokemonId, pokemonId)))
+                            .from(legends-zaTrackerSchema_js_1.legends-zaTracker)
+                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.userId, userId), (0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.pokemonId, pokemonId)))
                             .limit(1)];
                 case 1:
                     result = _a.sent();
@@ -125,15 +125,15 @@ function upsertPokemonRecord(userId, pokemonId, formData) {
                     existingRecord = _a.sent();
                     if (!existingRecord) return [3 /*break*/, 3];
                     return [4 /*yield*/, index_js_1.db
-                            .update(legendsZATrackerSchema_js_1.legendsZATracker)
+                            .update(legends-zaTrackerSchema_js_1.legends-zaTracker)
                             .set(__assign(__assign({}, formData), { updatedAt: new Date() }))
-                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.userId, userId), (0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.pokemonId, pokemonId)))
+                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.userId, userId), (0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.pokemonId, pokemonId)))
                             .returning()];
                 case 2:
                     result = _a.sent();
                     return [2 /*return*/, result[0]];
                 case 3: return [4 /*yield*/, index_js_1.db
-                        .insert(legendsZATrackerSchema_js_1.legendsZATracker)
+                        .insert(legends-zaTrackerSchema_js_1.legends-zaTracker)
                         .values(__assign({ userId: userId, pokemonId: pokemonId }, formData))
                         .returning()];
                 case 4:
@@ -180,10 +180,6 @@ function updatePokemonForm(userId, pokemonId, formType, value) {
                         alphaShiny: currentRecord.alphaShiny,
                     };
                     updatedFormData[formType] = value;
-                    // Apply auto-registration logic: if any special form is true, set normal to true
-                    if (formType !== 'normal' && value === true) {
-                        updatedFormData.normal = true;
-                    }
                     return [4 /*yield*/, upsertPokemonRecord(userId, pokemonId, updatedFormData)];
                 case 4: return [2 /*return*/, _a.sent()];
                 case 5:
@@ -240,8 +236,8 @@ function deletePokemonRecord(userId, pokemonId) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
                     return [4 /*yield*/, index_js_1.db
-                            .delete(legendsZATrackerSchema_js_1.legendsZATracker)
-                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.userId, userId), (0, drizzle_orm_1.eq)(legendsZATrackerSchema_js_1.legendsZATracker.pokemonId, pokemonId)))];
+                            .delete(legends-zaTrackerSchema_js_1.legends-zaTracker)
+                            .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.userId, userId), (0, drizzle_orm_1.eq)(legends-zaTrackerSchema_js_1.legends-zaTracker.pokemonId, pokemonId)))];
                 case 1:
                     _a.sent();
                     return [3 /*break*/, 3];

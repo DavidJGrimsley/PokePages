@@ -11,7 +11,7 @@
     "web": "expo start --web",
     "lint": "eslint .",
     "build:web": "expo export -p web",
-    "build:server": "tsc --project tsconfig.server.json && if not exist server mkdir server && copy server-package.json server\\package.json",
+    "build:server": "tsc --project tsconfig.server.json && if not exist server mkdir server && copy server-package.json server\\package.json && copy start-server.sh server\\start-server.sh",
     "build:production": "npm run build:web && npm run build:server",
     "db:pull": "NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",
     "db:pull:debug": "DEBUG=drizzle:* NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",

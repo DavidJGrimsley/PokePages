@@ -9,6 +9,8 @@ import {
 } from '../../db/legendsZATrackerQueries.js';
 import { RegisteredStatus } from '@/src/types/tracker';
 
+console.log('[DEBUG] legends-za/controller.ts loaded');
+
 /**
  * Get all Pokemon tracker data for the authenticated user
  */
