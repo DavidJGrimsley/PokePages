@@ -1,31 +1,38 @@
-import React from 'react';
-import { View, Text, Button } from 'react-native';
+
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { useAuthStore } from '~/store/authStore';
 import { router } from 'expo-router';
 
-export default function AuthStatus() {
-  const { user, isLoggedIn, profile, signOut } = useAuthStore();
 
-  if (!isLoggedIn || !user) {
-    return (
-      <View className="p-4 bg-yellow-100 border border-yellow-300 rounded-lg m-4">
-        <Text className="text-yellow-800 font-bold mb-2">Not Logged In</Text>
-        <Button title="Go to Sign In" onPress={() => router.push('/oAuth')} />
-      </View>
-    );
-  }
+
+
+export default function AuthStatus() {
+  const { isLoggedIn } = useAuthStore();
+  const [visible, setVisible] = useState(true);
+
+  if (!visible || isLoggedIn) return null;
+
+  const handleClose = () => {
+    setVisible(false);
+  };
 
   return (
-    <View className="p-4 bg-green-100 border border-green-300 rounded-lg m-4">
-      <Text className="text-green-800 font-bold mb-2">✅ Logged In!</Text>
-      <Text className="text-green-700 mb-1">Email: {user.email}</Text>
-      <Text className="text-green-700 mb-1">User ID: {user.id}</Text>
-      {profile?.username && (
-        <Text className="text-green-700 mb-1">Username: {profile.username}</Text>
-      )}
-      <View className="mt-3">
-        <Button title="Sign Out" onPress={signOut} />
-      </View>
+    <View className="flex-row items-center justify-between p-2 bg-yellow-100 border border-yellow-300 rounded-lg m-2 w-full">
+      <TouchableOpacity
+        className="flex-1 mr-2 px-3 py-2 bg-yellow-200 rounded-md items-center"
+        onPress={() => router.push('/sign-in')}
+        accessibilityLabel="Sign In"
+      >
+        <Text className="text-yellow-900 font-semibold">Sign In to save progress</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        className="px-3 py-2 rounded-full bg-transparent items-center justify-center"
+        onPress={handleClose}
+        accessibilityLabel="Close"
+      >
+        <Text className="text-yellow-900 text-xl font-bold">×</Text>
+      </TouchableOpacity>
     </View>
   );
 }
