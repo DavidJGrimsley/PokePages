@@ -4,7 +4,8 @@ import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
-  useScrollViewOffset,
+  useAnimatedScrollHandler,
+  useSharedValue,
   Extrapolation,
 } from 'react-native-reanimated';
 
@@ -13,6 +14,9 @@ import { ThemedText } from 'components/TextTheme/ThemedText';
 import { useBottomTabOverflow } from 'components/UI/TabBarBackground';
 import { useColorScheme } from '~/hooks/useColorScheme';
 import { Footer } from '../Meta/Footer';
+
+// Safely import scroll context hook
+import { useScrollContext } from '../../app/(drawer)/guides/_layout';
 
 const HEADER_HEIGHT = 350;
 
@@ -41,8 +45,26 @@ export default function MultiLayerParallaxScrollView({
   const dynamicHeaderHeight = headerHeight + (subTitles.length > 0 ? subTitles.length * titleHeight : 0);
   const colorScheme = useColorScheme() ?? 'light';
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
+  const scrollOffset = useSharedValue(0);
   const bottom = useBottomTabOverflow();
+
+  // Get scroll context (returns null if not in context)
+  const scrollContext = useScrollContext();
+
+  // Scroll handler to track scroll position
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollOffset.value = event.contentOffset.y;
+      
+      // Update parent scroll context when scrolling
+      if (scrollContext?.scrollY && scrollContext?.lastScrollY) {
+        scrollContext.lastScrollY.value = scrollContext.scrollY.value;
+        scrollContext.scrollY.value = event.contentOffset.y;
+      }
+    },
+  });
+
+  // Remove the old useAnimatedReaction since we're handling it in scrollHandler now
 
   // Layer 1: Background grid (slowest)
   const gridBackgroundAnimatedStyle = useAnimatedStyle(() => {
@@ -190,6 +212,7 @@ export default function MultiLayerParallaxScrollView({
     <View style={{ flex: 1 }}>
       <Animated.ScrollView
         ref={scrollRef}
+        onScroll={scrollHandler}
         style={{ flex: 1 }} 
         scrollEventThrottle={16}
         scrollIndicatorInsets={{ bottom }}

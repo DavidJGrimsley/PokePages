@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from 'constants/style/theme';
-import React, { useState } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { 
   View, 
   Text, 
@@ -9,7 +9,29 @@ import {
   Modal, 
   FlatList 
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  interpolate,
+  Extrapolate,
+  SharedValue,
+  useDerivedValue,
+} from 'react-native-reanimated';
 import { cn } from '~/utils/cn';
+
+// Create context for scroll handling
+interface ScrollContextType {
+  scrollY: SharedValue<number>;
+  lastScrollY: SharedValue<number>;
+}
+
+const ScrollContext = createContext<ScrollContextType | null>(null);
+
+export const useScrollContext = () => {
+  const context = useContext(ScrollContext);
+  return context; // Return null if not in context instead of throwing
+};
 
 interface GameGeneration {
   guardID: string;
@@ -34,10 +56,58 @@ const gameGenerations: GameGeneration[] = [
 interface GameDropdownProps {
   selectedGeneration: GameGeneration;
   onGenerationSelect: (generation: GameGeneration) => void;
+  scrollY: SharedValue<number>;
+  lastScrollY: SharedValue<number>;
 }
 
-function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownProps) {
+function GameDropdown({ selectedGeneration, onGenerationSelect, scrollY, lastScrollY }: GameDropdownProps) {
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  // Derive the hidden state from scroll values
+  const isHidden = useDerivedValue(() => {
+    const scrollDelta = scrollY.value - lastScrollY.value;
+    
+    // Near top of page - always show
+    if (scrollY.value <= 50) {
+      return 0;
+    }
+    
+    // Scrolling down - hide dropdown
+    if (scrollDelta > 3) {
+      return 1;
+    }
+    
+    // Scrolling up - show dropdown  
+    if (scrollDelta < -3) {
+      return 0;
+    }
+    
+    // No significant scroll, maintain based on position
+    return scrollY.value > 100 ? 1 : 0;
+  });
+
+  // Animated style for hiding/showing the dropdown based on scroll direction
+  const animatedStyle = useAnimatedStyle(() => {
+    const maxHeight = interpolate(
+      isHidden.value,
+      [0, 1],
+      [100, 0], // From full height to 0
+      Extrapolate.CLAMP
+    );
+
+    const opacity = interpolate(
+      isHidden.value,
+      [0, 1],
+      [1, 0],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      maxHeight: withTiming(maxHeight, { duration: 250 }),
+      opacity: withTiming(opacity, { duration: 250 }),
+      overflow: 'hidden',
+    };
+  });
 
   const handleGenerationSelect = (generation: GameGeneration) => {
     if (generation.available) {
@@ -81,7 +151,12 @@ function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownPr
   );
 
   return (
-    <View className="px-sm py-xs bg-app-white border-b border-app-secondary shadow-app-small">
+    <Animated.View 
+      style={[
+        animatedStyle,
+      ]} 
+      className="px-sm py-xs bg-app-white border-b border-app-secondary shadow-app-small"
+    >
       <TouchableOpacity
         className="bg-app-white border-2 border-app-accent rounded-lg px-sm py-xs"
         onPress={() => setIsDropdownVisible(true)}
@@ -128,7 +203,7 @@ function GameDropdown({ selectedGeneration, onGenerationSelect }: GameDropdownPr
           </View>
         </TouchableOpacity>
       </Modal>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -136,6 +211,10 @@ export default function GuidesLayout() {
   // State variables for controlling which screens are available
   const [gen9, setGen9] = useState(false);
   const [PLZA, setPLZA] = useState(true);
+  
+  // Shared values for scroll tracking
+  const scrollY = useSharedValue(0);
+  const lastScrollY = useSharedValue(0);
   
   // Default to Legends Z-A since it's available
   const [selectedGeneration, setSelectedGeneration] = useState(
@@ -156,19 +235,25 @@ export default function GuidesLayout() {
   };
 
   return (
-    <View className="flex-1 bg-app-background">
-      <GameDropdown 
-        selectedGeneration={selectedGeneration}
-        onGenerationSelect={handleGenerationSelect}
-      />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={gen9}>
-          <Stack.Screen name="gen9" options={{ headerShown: false }} />
-        </Stack.Protected>
-        <Stack.Protected guard={PLZA}>
-          <Stack.Screen name="PLZA" options={{ headerShown: false }} />
-        </Stack.Protected>
-      </Stack>
-    </View>
+    <ScrollContext.Provider value={{ scrollY, lastScrollY }}>
+      <View className="flex-1 bg-app-background">
+        <GameDropdown 
+          selectedGeneration={selectedGeneration}
+          onGenerationSelect={handleGenerationSelect}
+          scrollY={scrollY}
+          lastScrollY={lastScrollY}
+        />
+        <Animated.View style={[{ flex: 1 }]} className="flex-1">
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Protected guard={gen9}>
+              <Stack.Screen name="gen9" options={{ headerShown: false }} />
+            </Stack.Protected>
+            <Stack.Protected guard={PLZA}>
+              <Stack.Screen name="PLZA" options={{ headerShown: false }} />
+            </Stack.Protected>
+          </Stack>
+        </Animated.View>
+      </View>
+    </ScrollContext.Provider>
   );
 }

@@ -13,7 +13,6 @@ import { cn } from '@/src/utils/cn';
 import { usePokemonTrackerStore} from '@/src/store/pokemonTrackerStoreEnhanced';
 import { useShallow } from 'zustand/react/shallow';
 import { nationalDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { type FormType }from '~/types/tracker';
 import SearchBar from '@/src/components/Pokedex/SearchBar';
 
