@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { 
   getTypeMatchups,
   getWeaknesses,
@@ -60,47 +60,6 @@ function TypeGrid({ types, backgroundColor, emptyMessage = 'None' }: TypeGridPro
         </Text>
       )}
     </View>
-  );
-}
-
-interface TypeSelectorProps {
-  types: PokemonType[];
-  selectedType: PokemonType;
-  onTypeSelect: (type: PokemonType) => void;
-}
-
-export function TypeSelector({ types, selectedType, onTypeSelect }: TypeSelectorProps) {
-  return (
-    <ScrollView 
-      horizontal 
-      showsHorizontalScrollIndicator={false}
-      style={{ maxHeight: 50 }}
-    >
-      {types.map(type => (
-        <Pressable
-          key={type}
-          onPress={() => onTypeSelect(type)}
-          style={{
-            backgroundColor: selectedType === type ? '#2196F3' : '#e0e0e0',
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            marginRight: 8,
-            borderRadius: 20,
-            minWidth: 60,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{
-            fontSize: 12,
-            color: selectedType === type ? 'white' : '#333',
-            fontWeight: selectedType === type ? 'bold' : 'normal',
-            textTransform: 'capitalize',
-          }}>
-            {type}
-          </Text>
-        </Pressable>
-      ))}
-    </ScrollView>
   );
 }
 

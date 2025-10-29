@@ -1,4 +1,41 @@
 /** @type {import('tailwindcss').Config} */
+
+// Pokémon Type Colors - single source of truth loaded from JSON
+const TYPE_COLORS = require('./src/constants/style/typeColors.json');
+const TYPE_NORMAL = TYPE_COLORS.normal; // beige/white-ish
+const TYPE_FIGHTING = TYPE_COLORS.fighting; // red
+const TYPE_FLYING = TYPE_COLORS.flying; // light blue
+const TYPE_POISON = TYPE_COLORS.poison; // purple
+const TYPE_GROUND = TYPE_COLORS.ground; // brown
+const TYPE_ROCK = TYPE_COLORS.rock; // dark brown
+const TYPE_BUG = TYPE_COLORS.bug; // green
+const TYPE_GHOST = TYPE_COLORS.ghost; // purple
+const TYPE_STEEL = TYPE_COLORS.steel; // gray
+const TYPE_FIRE = TYPE_COLORS.fire; // orange
+const TYPE_WATER = TYPE_COLORS.water; // blue
+const TYPE_GRASS = TYPE_COLORS.grass; // light green
+const TYPE_ELECTRIC = TYPE_COLORS.electric; // yellow
+const TYPE_PSYCHIC = TYPE_COLORS.psychic; // pink
+const TYPE_ICE = TYPE_COLORS.ice; // cyan
+const TYPE_DRAGON = TYPE_COLORS.dragon; // purple
+const TYPE_DARK = TYPE_COLORS.dark; // brown
+const TYPE_FAIRY = TYPE_COLORS.fairy; // pink
+const TYPE_STELLAR = TYPE_COLORS.stellar; // teal
+
+// App Theme Colors (derived from type colors where applicable)
+const APP_PRIMARY = TYPE_POISON;        // #A33EA1 - Poison purple
+const APP_SECONDARY = TYPE_PSYCHIC;     // #F95587 - Psychic pink
+const APP_ACCENT = TYPE_GRASS;          // #7AC74C - Grass green
+const APP_BROWN = TYPE_GROUND;          // #E2BF65 - Ground brown
+const APP_FLAG = TYPE_FIRE;             // #EE8130 - Fire orange
+
+// Custom colors (not type-based)
+const LAVENDER = '#E6e6fa';
+const WHITE = '#fbfbfb';
+const BLACK = '#141115';
+const TINT_LIGHT = '#B39DDB';
+const TINT_DARK = '#a96710';
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -23,44 +60,65 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Main app theme colors based on your colors.ts
-        'app-primary': '#582a5a',        // darkPurple
-        'app-secondary': '#B39DDB',      // tintColorLight (light purple)
-        'app-accent': '#959F5C',         // accentColorLight (moss green)
-        'app-background': '#E6e6fa',     // lavender
-        'app-surface': '#fbfbfb',        // white
-        'app-text': '#141115',           // black
-        'app-white': '#fbfbfb',          // white
-        'app-brown': '#8d6346',          // raw umber (brown)
-        'app-flag': '#FF9800',           // flag orange
+        // Main app theme colors (using type colors for consistency)
+        'app-primary': APP_PRIMARY,          // Poison type color
+        'app-secondary': APP_SECONDARY,      // Psychic type color
+        'app-accent': APP_ACCENT,            // Grass type color
+        'app-background': LAVENDER,          // Custom lavender
+        'app-surface': WHITE,                // Custom white
+        'app-text': BLACK,                   // Custom black
+        'app-white': WHITE,                  // Custom white
+        'app-brown': APP_BROWN,              // Ground type color
+        'app-flag': APP_FLAG,                // Fire type color
         
         // Build card colors
-        'app-red': '#e74c3c',            // Physical Attacker
-        'app-red-bg': '#fdf2f2',         // Physical Attacker background
-        'app-purple': '#582a5a',         // Special Attacker (same as primary)
-        'app-purple-bg': '#E6e6fa',      // Special Attacker background (same as app-background)
-        'app-blue': '#3498db',           // Physical Wall
-        'app-blue-bg': '#f2f8fd',        // Physical Wall background
-        'app-green': '#959F5C',          // Special Wall (same as accent)
-        'app-green-bg': '#f2fdf5',       // Special Wall background
+        'app-red': '#e74c3c',                // Physical Attacker
+        'app-red-bg': '#fdf2f2',             // Physical Attacker background
+        'app-purple': APP_PRIMARY,           // Special Attacker (Poison type)
+        'app-purple-bg': LAVENDER,           // Special Attacker background
+        'app-blue': '#3498db',               // Physical Wall
+        'app-blue-bg': '#f2f8fd',            // Physical Wall background
+        'app-green': APP_ACCENT,             // Special Wall (Grass type)
+        'app-green-bg': '#f2fdf5',           // Special Wall background
         
-        // Tab colors
-        'app-tab-active': '#959F5C',     // accent for active tab
-        'app-tab-inactive': '#8d6346',   // brown for inactive tab
-        'app-tab-default': '#959F5C',    // accent
-        'app-tab-selected': '#B39DDB',   // tintColorLight
-        
+        // Tab colors (using type colors)
+        'app-tab-active': APP_ACCENT,        // Grass type color
+        'app-tab-inactive': APP_BROWN,       // Ground type color
+        'app-tab-default': APP_ACCENT,       // Grass type color
+        'app-tab-selected': TINT_LIGHT,      // Light purple tint
+
         // Dark mode variants
         dark: {
-          'app-primary': '#a96710',      // tintColorDark (orange)
-          'app-secondary': '#a96710',    // orange
-          'app-background': '#20182d',   // plum
-          'app-text': '#FEFEFE',         // white
-          'app-icon': '#9BA1A6',         // gray
-          'app-accent': '#321e3bb9',     // dark purple with alpha
-          'app-tab-default': '#321e3bb9', // accent with alpha
-          'app-tab-selected': '#a96710',  // tintColorDark
-        }
+          'app-primary': TINT_DARK,          // tintColorDark (orange)
+          'app-secondary': TINT_DARK,        // orange
+          'app-background': '#20182d',       // plum
+          'app-text': '#FEFEFE',             // white
+          'app-icon': '#9BA1A6',             // gray
+          'app-accent': '#321e3bb9',         // dark purple with alpha
+          'app-tab-default': '#321e3bb9',    // accent with alpha
+          'app-tab-selected': TINT_DARK,     // tintColorDark
+        },
+        
+        // Pokémon type colors (all 19 types)
+        'type-normal': TYPE_NORMAL,
+        'type-fighting': TYPE_FIGHTING,
+        'type-flying': TYPE_FLYING,
+        'type-poison': TYPE_POISON,
+        'type-ground': TYPE_GROUND,
+        'type-rock': TYPE_ROCK,
+        'type-bug': TYPE_BUG,
+        'type-ghost': TYPE_GHOST,
+        'type-steel': TYPE_STEEL,
+        'type-fire': TYPE_FIRE,
+        'type-water': TYPE_WATER,
+        'type-grass': TYPE_GRASS,
+        'type-electric': TYPE_ELECTRIC,
+        'type-psychic': TYPE_PSYCHIC,
+        'type-ice': TYPE_ICE,
+        'type-dragon': TYPE_DRAGON,
+        'type-dark': TYPE_DARK,
+        'type-fairy': TYPE_FAIRY,
+        'type-stellar': TYPE_STELLAR,
       },
       fontFamily: {
         'display': ['Modak'],                    // fontFamilies.display

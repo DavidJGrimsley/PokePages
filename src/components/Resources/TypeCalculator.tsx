@@ -3,23 +3,17 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { 
   getTypeEffectiveness, 
   getDualTypeEffectiveness,
-  type PokemonType 
+  type PokemonType,
+  ALL_STANDARD_TYPES
 } from '~/constants/typeUtils';
 import Colors from '~/constants/style/colors';
-import { TypeSelector, TypeAnalysis } from './TypeAnalysis';
+import { TypeAnalysis } from './TypeAnalysis';
+import { TypeSelector } from '@/src/components/Type/Selector';
 
 // All available types including special ones
 const ALL_TYPES: PokemonType[] = [
-  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy',
+  ...ALL_STANDARD_TYPES,
   'stellar', 'unknown', 'shadow'
-];
-
-const MAIN_TYPES: PokemonType[] = [
-  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
 ];
 
 interface TypeEffectivenessCalculatorProps {
@@ -32,7 +26,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
   const [defendingType2, setDefendingType2] = useState<PokemonType | null>(null);
   const [selectedAnalysis, setSelectedAnalysis] = useState<PokemonType>('fire');
 
-  const typesToShow = showSpecialTypes ? ALL_TYPES : MAIN_TYPES;
+  const typesToShow = showSpecialTypes ? ALL_TYPES : ALL_STANDARD_TYPES;
   
   const effectiveness = defendingType2 
     ? getDualTypeEffectiveness(attackingType, defendingType1, defendingType2)
@@ -58,7 +52,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
           <TypeSelector 
             types={typesToShow}
             selectedType={attackingType}
-            onTypeSelect={setAttackingType}
+            onTypeSelect={(t) => setAttackingType(t as PokemonType)}
           />
         </View>
 
@@ -67,7 +61,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
           <TypeSelector 
             types={typesToShow}
             selectedType={defendingType1}
-            onTypeSelect={setDefendingType1}
+            onTypeSelect={(t) => setDefendingType1(t as PokemonType)}
           />
         </View>
 
@@ -75,8 +69,9 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
           <Text style={styles.inputLabel}>Defending Type 2 (Optional):</Text>
           <TypeSelector 
             types={[...typesToShow]}
-            selectedType={defendingType2 || 'normal'}
-            onTypeSelect={(type) => setDefendingType2(type === defendingType2 ? null : type)}
+            selectedType={defendingType2}
+            allowNone={true}
+            onTypeSelect={(type) => setDefendingType2(type)}
           />
         </View>
 
@@ -99,7 +94,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
         <TypeSelector 
           types={typesToShow}
           selectedType={selectedAnalysis}
-          onTypeSelect={setSelectedAnalysis}
+          onTypeSelect={(t) => setSelectedAnalysis(t as PokemonType)}
         />
 
         <TypeAnalysis selectedType={selectedAnalysis} />

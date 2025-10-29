@@ -1,0 +1,862 @@
+{
+    "normal": {
+        "id": "normal",
+        "title": "Normal",
+        "description": "The base type and boring"
+    },
+    "fighting": {
+        "id": "fighting",
+        "title": "Fighting",
+        "description": "Represents martial arts"
+    },
+    "flying": {
+        "id": "flying",
+        "title": "Flying",
+        "description": "Masters of the skies"
+    },
+    "poison": {
+        "id": "poison",
+        "title": "Poison",
+        "description": "Toxic and dangerous"
+    },
+    "ground": {
+        "id": "ground",
+        "title": "Ground",
+        "description": "Masters of the earth"
+    },
+    "rock": {
+        "id": "rock",
+        "title": "Rock",
+        "description": "Solid and sturdy"
+    },
+    "bug": {
+        "id": "bug",
+        "title": "Bug",
+        "description": "Small but mighty"
+    },
+    "ghost": {
+        "id": "ghost",
+        "title": "Ghost",
+        "description": "Mysterious and spooky"
+    },
+    "steel": {
+        "id": "steel",
+        "title": "Steel",
+        "description": "Tough as nails"
+    },
+    "fire": {
+        "id": "fire",
+        "title": "Fire",
+        "description": "Burning with passion"
+    },
+    "water": {
+        "id": "water",
+        "title": "Water",
+        "description": "Fluid and adaptable"
+    },
+    "grass": {
+        "id": "grass",
+        "title": "Grass",
+        "description": "Nature's power"
+    },
+    "electric": {
+        "id": "electric",
+        "title": "Electric",
+        "description": "Shockingly powerful"
+    },
+    "psychic": {
+        "id": "psychic",
+        "title": "Psychic",
+        "description": "Mind over matter"
+    },
+    "ice": {
+        "id": "ice",
+        "title": "Ice",
+        "description": "Cold and calculating"
+    },
+    "dragon": {
+        "id": "dragon",
+        "title": "Dragon",
+        "description": "Legendary and powerful"
+    },
+    "dark": {
+        "id": "dark",
+        "title": "Dark",
+        "description": "Cunning and devious"
+    },
+    "fairy": {
+        "id": "fairy",
+        "title": "Fairy",
+        "description": "Magical and enchanting"
+    },
+    "stellar": {
+        "id": "stellar",
+        "title": "Stellar",
+        "description": "Cosmic and otherworldly"
+    },
+    "normal-fire": {
+        "id": "normal-fire",
+        "title": "Normal/Fire",
+        "description": "A blend of normal and fire elements"
+    },
+    "normal-water": {
+        "id": "normal-water",
+        "title": "Normal/Water",
+        "description": "A blend of normal and water elements"
+    },
+    "normal-grass": {
+        "id": "normal-grass",
+        "title": "Normal/Grass",
+        "description": "A blend of normal and grass elements"
+    },
+    "normal-electric": {
+        "id": "normal-electric",
+        "title": "Normal/Electric",
+        "description": "A blend of normal and electric elements"
+    },
+    "normal-ice": {
+        "id": "normal-ice",
+        "title": "Normal/Ice",
+        "description": "A blend of normal and ice elements"
+    },
+    "normal-fighting": {
+        "id": "normal-fighting",
+        "title": "Normal/Fighting",
+        "description": "A blend of normal and fighting elements"
+    },
+    "normal-poison": {
+        "id": "normal-poison",
+        "title": "Normal/Poison",
+        "description": "A blend of normal and poison elements"
+    },
+    "normal-ground": {
+        "id": "normal-ground",
+        "title": "Normal/Ground",
+        "description": "A blend of normal and ground elements"
+    },
+    "normal-flying": {
+        "id": "normal-flying",
+        "title": "Normal/Flying",
+        "description": "A blend of normal and flying elements"
+    },
+    "normal-psychic": {
+        "id": "normal-psychic",
+        "title": "Normal/Psychic",
+        "description": "A blend of normal and psychic elements"
+    },
+    "normal-bug": {
+        "id": "normal-bug",
+        "title": "Normal/Bug",
+        "description": "A blend of normal and bug elements"
+    },
+    "normal-rock": {
+        "id": "normal-rock",
+        "title": "Normal/Rock",
+        "description": "A blend of normal and rock elements"
+    },
+    "normal-ghost": {
+        "id": "normal-ghost",
+        "title": "Normal/Ghost",
+        "description": "A blend of normal and ghost elements"
+    },
+    "normal-dragon": {
+        "id": "normal-dragon",
+        "title": "Normal/Dragon",
+        "description": "A blend of normal and dragon elements"
+    },
+    "normal-dark": {
+        "id": "normal-dark",
+        "title": "Normal/Dark",
+        "description": "A blend of normal and dark elements"
+    },
+    "normal-steel": {
+        "id": "normal-steel",
+        "title": "Normal/Steel",
+        "description": "A blend of normal and steel elements"
+    },
+    "normal-fairy": {
+        "id": "normal-fairy",
+        "title": "Normal/Fairy",
+        "description": "A blend of normal and fairy elements"
+    },
+    "fire-water": {
+        "id": "fire-water",
+        "title": "Fire/Water",
+        "description": "A blend of fire and water elements"
+    },
+    "fire-grass": {
+        "id": "fire-grass",
+        "title": "Fire/Grass",
+        "description": "A blend of fire and grass elements"
+    },
+    "fire-electric": {
+        "id": "fire-electric",
+        "title": "Fire/Electric",
+        "description": "A blend of fire and electric elements"
+    },
+    "fire-ice": {
+        "id": "fire-ice",
+        "title": "Fire/Ice",
+        "description": "A blend of fire and ice elements"
+    },
+    "fire-fighting": {
+        "id": "fire-fighting",
+        "title": "Fire/Fighting",
+        "description": "A blend of fire and fighting elements"
+    },
+    "fire-poison": {
+        "id": "fire-poison",
+        "title": "Fire/Poison",
+        "description": "A blend of fire and poison elements"
+    },
+    "fire-ground": {
+        "id": "fire-ground",
+        "title": "Fire/Ground",
+        "description": "A blend of fire and ground elements"
+    },
+    "fire-flying": {
+        "id": "fire-flying",
+        "title": "Fire/Flying",
+        "description": "A blend of fire and flying elements"
+    },
+    "fire-psychic": {
+        "id": "fire-psychic",
+        "title": "Fire/Psychic",
+        "description": "A blend of fire and psychic elements"
+    },
+    "fire-bug": {
+        "id": "fire-bug",
+        "title": "Fire/Bug",
+        "description": "A blend of fire and bug elements"
+    },
+    "fire-rock": {
+        "id": "fire-rock",
+        "title": "Fire/Rock",
+        "description": "A blend of fire and rock elements"
+    },
+    "fire-ghost": {
+        "id": "fire-ghost",
+        "title": "Fire/Ghost",
+        "description": "A blend of fire and ghost elements"
+    },
+    "fire-dragon": {
+        "id": "fire-dragon",
+        "title": "Fire/Dragon",
+        "description": "A blend of fire and dragon elements"
+    },
+    "fire-dark": {
+        "id": "fire-dark",
+        "title": "Fire/Dark",
+        "description": "A blend of fire and dark elements"
+    },
+    "fire-steel": {
+        "id": "fire-steel",
+        "title": "Fire/Steel",
+        "description": "A blend of fire and steel elements"
+    },
+    "fire-fairy": {
+        "id": "fire-fairy",
+        "title": "Fire/Fairy",
+        "description": "A blend of fire and fairy elements"
+    },
+    "water-grass": {
+        "id": "water-grass",
+        "title": "Water/Grass",
+        "description": "A blend of water and grass elements"
+    },
+    "water-electric": {
+        "id": "water-electric",
+        "title": "Water/Electric",
+        "description": "A blend of water and electric elements"
+    },
+    "water-ice": {
+        "id": "water-ice",
+        "title": "Water/Ice",
+        "description": "A blend of water and ice elements"
+    },
+    "water-fighting": {
+        "id": "water-fighting",
+        "title": "Water/Fighting",
+        "description": "A blend of water and fighting elements"
+    },
+    "water-poison": {
+        "id": "water-poison",
+        "title": "Water/Poison",
+        "description": "A blend of water and poison elements"
+    },
+    "water-ground": {
+        "id": "water-ground",
+        "title": "Water/Ground",
+        "description": "A blend of water and ground elements"
+    },
+    "water-flying": {
+        "id": "water-flying",
+        "title": "Water/Flying",
+        "description": "A blend of water and flying elements"
+    },
+    "water-psychic": {
+        "id": "water-psychic",
+        "title": "Water/Psychic",
+        "description": "A blend of water and psychic elements"
+    },
+    "water-bug": {
+        "id": "water-bug",
+        "title": "Water/Bug",
+        "description": "A blend of water and bug elements"
+    },
+    "water-rock": {
+        "id": "water-rock",
+        "title": "Water/Rock",
+        "description": "A blend of water and rock elements"
+    },
+    "water-ghost": {
+        "id": "water-ghost",
+        "title": "Water/Ghost",
+        "description": "A blend of water and ghost elements"
+    },
+    "water-dragon": {
+        "id": "water-dragon",
+        "title": "Water/Dragon",
+        "description": "A blend of water and dragon elements"
+    },
+    "water-dark": {
+        "id": "water-dark",
+        "title": "Water/Dark",
+        "description": "A blend of water and dark elements"
+    },
+    "water-steel": {
+        "id": "water-steel",
+        "title": "Water/Steel",
+        "description": "A blend of water and steel elements"
+    },
+    "water-fairy": {
+        "id": "water-fairy",
+        "title": "Water/Fairy",
+        "description": "A blend of water and fairy elements"
+    },
+    "grass-electric": {
+        "id": "grass-electric",
+        "title": "Grass/Electric",
+        "description": "A blend of grass and electric elements"
+    },
+    "grass-ice": {
+        "id": "grass-ice",
+        "title": "Grass/Ice",
+        "description": "A blend of grass and ice elements"
+    },
+    "grass-fighting": {
+        "id": "grass-fighting",
+        "title": "Grass/Fighting",
+        "description": "A blend of grass and fighting elements"
+    },
+    "grass-poison": {
+        "id": "grass-poison",
+        "title": "Grass/Poison",
+        "description": "A blend of grass and poison elements"
+    },
+    "grass-ground": {
+        "id": "grass-ground",
+        "title": "Grass/Ground",
+        "description": "A blend of grass and ground elements"
+    },
+    "grass-flying": {
+        "id": "grass-flying",
+        "title": "Grass/Flying",
+        "description": "A blend of grass and flying elements"
+    },
+    "grass-psychic": {
+        "id": "grass-psychic",
+        "title": "Grass/Psychic",
+        "description": "A blend of grass and psychic elements"
+    },
+    "grass-bug": {
+        "id": "grass-bug",
+        "title": "Grass/Bug",
+        "description": "A blend of grass and bug elements"
+    },
+    "grass-rock": {
+        "id": "grass-rock",
+        "title": "Grass/Rock",
+        "description": "A blend of grass and rock elements"
+    },
+    "grass-ghost": {
+        "id": "grass-ghost",
+        "title": "Grass/Ghost",
+        "description": "A blend of grass and ghost elements"
+    },
+    "grass-dragon": {
+        "id": "grass-dragon",
+        "title": "Grass/Dragon",
+        "description": "A blend of grass and dragon elements"
+    },
+    "grass-dark": {
+        "id": "grass-dark",
+        "title": "Grass/Dark",
+        "description": "A blend of grass and dark elements"
+    },
+    "grass-steel": {
+        "id": "grass-steel",
+        "title": "Grass/Steel",
+        "description": "A blend of grass and steel elements"
+    },
+    "grass-fairy": {
+        "id": "grass-fairy",
+        "title": "Grass/Fairy",
+        "description": "A blend of grass and fairy elements"
+    },
+    "electric-ice": {
+        "id": "electric-ice",
+        "title": "Electric/Ice",
+        "description": "A blend of electric and ice elements"
+    },
+    "electric-fighting": {
+        "id": "electric-fighting",
+        "title": "Electric/Fighting",
+        "description": "A blend of electric and fighting elements"
+    },
+    "electric-poison": {
+        "id": "electric-poison",
+        "title": "Electric/Poison",
+        "description": "A blend of electric and poison elements"
+    },
+    "electric-ground": {
+        "id": "electric-ground",
+        "title": "Electric/Ground",
+        "description": "A blend of electric and ground elements"
+    },
+    "electric-flying": {
+        "id": "electric-flying",
+        "title": "Electric/Flying",
+        "description": "A blend of electric and flying elements"
+    },
+    "electric-psychic": {
+        "id": "electric-psychic",
+        "title": "Electric/Psychic",
+        "description": "A blend of electric and psychic elements"
+    },
+    "electric-bug": {
+        "id": "electric-bug",
+        "title": "Electric/Bug",
+        "description": "A blend of electric and bug elements"
+    },
+    "electric-rock": {
+        "id": "electric-rock",
+        "title": "Electric/Rock",
+        "description": "A blend of electric and rock elements"
+    },
+    "electric-ghost": {
+        "id": "electric-ghost",
+        "title": "Electric/Ghost",
+        "description": "A blend of electric and ghost elements"
+    },
+    "electric-dragon": {
+        "id": "electric-dragon",
+        "title": "Electric/Dragon",
+        "description": "A blend of electric and dragon elements"
+    },
+    "electric-dark": {
+        "id": "electric-dark",
+        "title": "Electric/Dark",
+        "description": "A blend of electric and dark elements"
+    },
+    "electric-steel": {
+        "id": "electric-steel",
+        "title": "Electric/Steel",
+        "description": "A blend of electric and steel elements"
+    },
+    "electric-fairy": {
+        "id": "electric-fairy",
+        "title": "Electric/Fairy",
+        "description": "A blend of electric and fairy elements"
+    },
+    "ice-fighting": {
+        "id": "ice-fighting",
+        "title": "Ice/Fighting",
+        "description": "A blend of ice and fighting elements"
+    },
+    "ice-poison": {
+        "id": "ice-poison",
+        "title": "Ice/Poison",
+        "description": "A blend of ice and poison elements"
+    },
+    "ice-ground": {
+        "id": "ice-ground",
+        "title": "Ice/Ground",
+        "description": "A blend of ice and ground elements"
+    },
+    "ice-flying": {
+        "id": "ice-flying",
+        "title": "Ice/Flying",
+        "description": "A blend of ice and flying elements"
+    },
+    "ice-psychic": {
+        "id": "ice-psychic",
+        "title": "Ice/Psychic",
+        "description": "A blend of ice and psychic elements"
+    },
+    "ice-bug": {
+        "id": "ice-bug",
+        "title": "Ice/Bug",
+        "description": "A blend of ice and bug elements"
+    },
+    "ice-rock": {
+        "id": "ice-rock",
+        "title": "Ice/Rock",
+        "description": "A blend of ice and rock elements"
+    },
+    "ice-ghost": {
+        "id": "ice-ghost",
+        "title": "Ice/Ghost",
+        "description": "A blend of ice and ghost elements"
+    },
+    "ice-dragon": {
+        "id": "ice-dragon",
+        "title": "Ice/Dragon",
+        "description": "A blend of ice and dragon elements"
+    },
+    "ice-dark": {
+        "id": "ice-dark",
+        "title": "Ice/Dark",
+        "description": "A blend of ice and dark elements"
+    },
+    "ice-steel": {
+        "id": "ice-steel",
+        "title": "Ice/Steel",
+        "description": "A blend of ice and steel elements"
+    },
+    "ice-fairy": {
+        "id": "ice-fairy",
+        "title": "Ice/Fairy",
+        "description": "A blend of ice and fairy elements"
+    },
+    "fighting-poison": {
+        "id": "fighting-poison",
+        "title": "Fighting/Poison",
+        "description": "A blend of fighting and poison elements"
+    },
+    "fighting-ground": {
+        "id": "fighting-ground",
+        "title": "Fighting/Ground",
+        "description": "A blend of fighting and ground elements"
+    },
+    "fighting-flying": {
+        "id": "fighting-flying",
+        "title": "Fighting/Flying",
+        "description": "A blend of fighting and flying elements"
+    },
+    "fighting-psychic": {
+        "id": "fighting-psychic",
+        "title": "Fighting/Psychic",
+        "description": "A blend of fighting and psychic elements"
+    },
+    "fighting-bug": {
+        "id": "fighting-bug",
+        "title": "Fighting/Bug",
+        "description": "A blend of fighting and bug elements"
+    },
+    "fighting-rock": {
+        "id": "fighting-rock",
+        "title": "Fighting/Rock",
+        "description": "A blend of fighting and rock elements"
+    },
+    "fighting-ghost": {
+        "id": "fighting-ghost",
+        "title": "Fighting/Ghost",
+        "description": "A blend of fighting and ghost elements"
+    },
+    "fighting-dragon": {
+        "id": "fighting-dragon",
+        "title": "Fighting/Dragon",
+        "description": "A blend of fighting and dragon elements"
+    },
+    "fighting-dark": {
+        "id": "fighting-dark",
+        "title": "Fighting/Dark",
+        "description": "A blend of fighting and dark elements"
+    },
+    "fighting-steel": {
+        "id": "fighting-steel",
+        "title": "Fighting/Steel",
+        "description": "A blend of fighting and steel elements"
+    },
+    "fighting-fairy": {
+        "id": "fighting-fairy",
+        "title": "Fighting/Fairy",
+        "description": "A blend of fighting and fairy elements"
+    },
+    "poison-ground": {
+        "id": "poison-ground",
+        "title": "Poison/Ground",
+        "description": "A blend of poison and ground elements"
+    },
+    "poison-flying": {
+        "id": "poison-flying",
+        "title": "Poison/Flying",
+        "description": "A blend of poison and flying elements"
+    },
+    "poison-psychic": {
+        "id": "poison-psychic",
+        "title": "Poison/Psychic",
+        "description": "A blend of poison and psychic elements"
+    },
+    "poison-bug": {
+        "id": "poison-bug",
+        "title": "Poison/Bug",
+        "description": "A blend of poison and bug elements"
+    },
+    "poison-rock": {
+        "id": "poison-rock",
+        "title": "Poison/Rock",
+        "description": "A blend of poison and rock elements"
+    },
+    "poison-ghost": {
+        "id": "poison-ghost",
+        "title": "Poison/Ghost",
+        "description": "A blend of poison and ghost elements"
+    },
+    "poison-dragon": {
+        "id": "poison-dragon",
+        "title": "Poison/Dragon",
+        "description": "A blend of poison and dragon elements"
+    },
+    "poison-dark": {
+        "id": "poison-dark",
+        "title": "Poison/Dark",
+        "description": "A blend of poison and dark elements"
+    },
+    "poison-steel": {
+        "id": "poison-steel",
+        "title": "Poison/Steel",
+        "description": "A blend of poison and steel elements"
+    },
+    "poison-fairy": {
+        "id": "poison-fairy",
+        "title": "Poison/Fairy",
+        "description": "A blend of poison and fairy elements"
+    },
+    "ground-flying": {
+        "id": "ground-flying",
+        "title": "Ground/Flying",
+        "description": "A blend of ground and flying elements"
+    },
+    "ground-psychic": {
+        "id": "ground-psychic",
+        "title": "Ground/Psychic",
+        "description": "A blend of ground and psychic elements"
+    },
+    "ground-bug": {
+        "id": "ground-bug",
+        "title": "Ground/Bug",
+        "description": "A blend of ground and bug elements"
+    },
+    "ground-rock": {
+        "id": "ground-rock",
+        "title": "Ground/Rock",
+        "description": "A blend of ground and rock elements"
+    },
+    "ground-ghost": {
+        "id": "ground-ghost",
+        "title": "Ground/Ghost",
+        "description": "A blend of ground and ghost elements"
+    },
+    "ground-dragon": {
+        "id": "ground-dragon",
+        "title": "Ground/Dragon",
+        "description": "A blend of ground and dragon elements"
+    },
+    "ground-dark": {
+        "id": "ground-dark",
+        "title": "Ground/Dark",
+        "description": "A blend of ground and dark elements"
+    },
+    "ground-steel": {
+        "id": "ground-steel",
+        "title": "Ground/Steel",
+        "description": "A blend of ground and steel elements"
+    },
+    "ground-fairy": {
+        "id": "ground-fairy",
+        "title": "Ground/Fairy",
+        "description": "A blend of ground and fairy elements"
+    },
+    "flying-psychic": {
+        "id": "flying-psychic",
+        "title": "Flying/Psychic",
+        "description": "A blend of flying and psychic elements"
+    },
+    "flying-bug": {
+        "id": "flying-bug",
+        "title": "Flying/Bug",
+        "description": "A blend of flying and bug elements"
+    },
+    "flying-rock": {
+        "id": "flying-rock",
+        "title": "Flying/Rock",
+        "description": "A blend of flying and rock elements"
+    },
+    "flying-ghost": {
+        "id": "flying-ghost",
+        "title": "Flying/Ghost",
+        "description": "A blend of flying and ghost elements"
+    },
+    "flying-dragon": {
+        "id": "flying-dragon",
+        "title": "Flying/Dragon",
+        "description": "A blend of flying and dragon elements"
+    },
+    "flying-dark": {
+        "id": "flying-dark",
+        "title": "Flying/Dark",
+        "description": "A blend of flying and dark elements"
+    },
+    "flying-steel": {
+        "id": "flying-steel",
+        "title": "Flying/Steel",
+        "description": "A blend of flying and steel elements"
+    },
+    "flying-fairy": {
+        "id": "flying-fairy",
+        "title": "Flying/Fairy",
+        "description": "A blend of flying and fairy elements"
+    },
+    "psychic-bug": {
+        "id": "psychic-bug",
+        "title": "Psychic/Bug",
+        "description": "A blend of psychic and bug elements"
+    },
+    "psychic-rock": {
+        "id": "psychic-rock",
+        "title": "Psychic/Rock",
+        "description": "A blend of psychic and rock elements"
+    },
+    "psychic-ghost": {
+        "id": "psychic-ghost",
+        "title": "Psychic/Ghost",
+        "description": "A blend of psychic and ghost elements"
+    },
+    "psychic-dragon": {
+        "id": "psychic-dragon",
+        "title": "Psychic/Dragon",
+        "description": "A blend of psychic and dragon elements"
+    },
+    "psychic-dark": {
+        "id": "psychic-dark",
+        "title": "Psychic/Dark",
+        "description": "A blend of psychic and dark elements"
+    },
+    "psychic-steel": {
+        "id": "psychic-steel",
+        "title": "Psychic/Steel",
+        "description": "A blend of psychic and steel elements"
+    },
+    "psychic-fairy": {
+        "id": "psychic-fairy",
+        "title": "Psychic/Fairy",
+        "description": "A blend of psychic and fairy elements"
+    },
+    "bug-rock": {
+        "id": "bug-rock",
+        "title": "Bug/Rock",
+        "description": "A blend of bug and rock elements"
+    },
+    "bug-ghost": {
+        "id": "bug-ghost",
+        "title": "Bug/Ghost",
+        "description": "A blend of bug and ghost elements"
+    },
+    "bug-dragon": {
+        "id": "bug-dragon",
+        "title": "Bug/Dragon",
+        "description": "A blend of bug and dragon elements"
+    },
+    "bug-dark": {
+        "id": "bug-dark",
+        "title": "Bug/Dark",
+        "description": "A blend of bug and dark elements"
+    },
+    "bug-steel": {
+        "id": "bug-steel",
+        "title": "Bug/Steel",
+        "description": "A blend of bug and steel elements"
+    },
+    "bug-fairy": {
+        "id": "bug-fairy",
+        "title": "Bug/Fairy",
+        "description": "A blend of bug and fairy elements"
+    },
+    "rock-ghost": {
+        "id": "rock-ghost",
+        "title": "Rock/Ghost",
+        "description": "A blend of rock and ghost elements"
+    },
+    "rock-dragon": {
+        "id": "rock-dragon",
+        "title": "Rock/Dragon",
+        "description": "A blend of rock and dragon elements"
+    },
+    "rock-dark": {
+        "id": "rock-dark",
+        "title": "Rock/Dark",
+        "description": "A blend of rock and dark elements"
+    },
+    "rock-steel": {
+        "id": "rock-steel",
+        "title": "Rock/Steel",
+        "description": "A blend of rock and steel elements"
+    },
+    "rock-fairy": {
+        "id": "rock-fairy",
+        "title": "Rock/Fairy",
+        "description": "A blend of rock and fairy elements"
+    },
+    "ghost-dragon": {
+        "id": "ghost-dragon",
+        "title": "Ghost/Dragon",
+        "description": "A blend of ghost and dragon elements"
+    },
+    "ghost-dark": {
+        "id": "ghost-dark",
+        "title": "Ghost/Dark",
+        "description": "A blend of ghost and dark elements"
+    },
+    "ghost-steel": {
+        "id": "ghost-steel",
+        "title": "Ghost/Steel",
+        "description": "A blend of ghost and steel elements"
+    },
+    "ghost-fairy": {
+        "id": "ghost-fairy",
+        "title": "Ghost/Fairy",
+        "description": "A blend of ghost and fairy elements"
+    },
+    "dragon-dark": {
+        "id": "dragon-dark",
+        "title": "Dragon/Dark",
+        "description": "A blend of dragon and dark elements"
+    },
+    "dragon-steel": {
+        "id": "dragon-steel",
+        "title": "Dragon/Steel",
+        "description": "A blend of dragon and steel elements"
+    },
+    "dragon-fairy": {
+        "id": "dragon-fairy",
+        "title": "Dragon/Fairy",
+        "description": "A blend of dragon and fairy elements"
+    },
+    "dark-steel": {
+        "id": "dark-steel",
+        "title": "Dark/Steel",
+        "description": "A blend of dark and steel elements"
+    },
+    "dark-fairy": {
+        "id": "dark-fairy",
+        "title": "Dark/Fairy",
+        "description": "A blend of dark and fairy elements"
+    },
+    "steel-fairy": {
+        "id": "steel-fairy",
+        "title": "Steel/Fairy",
+        "description": "A blend of steel and fairy elements"
+    }
+}

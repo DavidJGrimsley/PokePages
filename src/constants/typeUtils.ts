@@ -7,6 +7,13 @@ export type PokemonType =
   | 'rock' | 'ghost' | 'dragon' | 'dark' | 'steel' | 'fairy'
   | 'stellar' | 'unknown' | 'shadow';
 
+// All standard Pokemon types (excluding special types like stellar, unknown, shadow)
+export const ALL_STANDARD_TYPES: PokemonType[] = [
+  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
+  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
+  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
+];
+
 // Type effectiveness multipliers
 export const TYPE_EFFECTIVENESS = {
   SUPER_EFFECTIVE: 2.0,
@@ -228,6 +235,59 @@ export function getResistances(type1: PokemonType, type2?: PokemonType): Pokemon
       : getTypeEffectiveness(attackingType, type1);
     
     return effectiveness.multiplier < 1 && effectiveness.multiplier > 0;
+  });
+}
+
+/**
+ * Get types that both types in a combination are super effective against (4x damage when dual-typed attacks)
+ * @param type1 - First attacking type
+ * @param type2 - Second attacking type (optional)
+ * @returns Array of dual-type combinations that would take 4x damage
+ */
+export function getDualSuperEffectiveTargets(type1: PokemonType, type2?: PokemonType): PokemonType[] {
+  if (!type2) {
+    // For single type, return targets where type combos would take 4x
+    const superEffective = getTypeMatchups(type1).offensive.superEffectiveAgainst;
+    return ALL_STANDARD_TYPES.filter(targetType => {
+      return superEffective.includes(targetType);
+    });
+  }
+  
+  // For dual-type attacker, find targets weak to both
+  const type1Super = getTypeMatchups(type1).offensive.superEffectiveAgainst;
+  const type2Super = getTypeMatchups(type2).offensive.superEffectiveAgainst;
+  
+  // Return types that appear in both super effective lists
+  return type1Super.filter(type => type2Super.includes(type));
+}
+
+/**
+ * Get types that a dual-type Pokemon is 4x weak to (both types weak to the attacking type)
+ * @param type1 - First defending type
+ * @param type2 - Second defending type
+ * @returns Array of attacking types that deal 4x damage
+ */
+export function getQuadrupleWeaknesses(type1: PokemonType, type2: PokemonType): PokemonType[] {
+  const allTypes = Object.keys(pokemonTypeChartRaw) as PokemonType[];
+  
+  return allTypes.filter(attackingType => {
+    const effectiveness = getDualTypeEffectiveness(attackingType, type1, type2);
+    return effectiveness.multiplier >= 4;
+  });
+}
+
+/**
+ * Get types that a dual-type Pokemon is 4x resistant to (both types resist the attacking type)
+ * @param type1 - First defending type
+ * @param type2 - Second defending type
+ * @returns Array of attacking types that deal 0.25x damage
+ */
+export function getQuadrupleResistances(type1: PokemonType, type2: PokemonType): PokemonType[] {
+  const allTypes = Object.keys(pokemonTypeChartRaw) as PokemonType[];
+  
+  return allTypes.filter(attackingType => {
+    const effectiveness = getDualTypeEffectiveness(attackingType, type1, type2);
+    return effectiveness.multiplier <= 0.25 && effectiveness.multiplier > 0;
   });
 }
 

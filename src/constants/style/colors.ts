@@ -38,5 +38,12 @@ export default {
     tabIconSelected: tintColorDark,
     accent: '#321e3bb9', // dark purple
   },
+  pokemonType: {
+    normal: '#A8A77A',
+    fire: '#EE8130',
+    water: '#6390F0',
+  }
+
+
 };
 

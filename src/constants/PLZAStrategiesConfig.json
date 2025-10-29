@@ -147,7 +147,7 @@
     "sections": [
       {
         "title": "Training",
-        "content": "Natures remain while Abilities and Effort Values (EVs) are not present in Legends Z-A.",
+        "content": "Natures remain while Abilities are not present in Legends Z-A.",
         "bullets": [
           "Use Exp. Candy and Rare Candy to level up your Pokémon quickly",
           "Unlock the Red Canari Plush to gain extra Exp. Points by progressing the story",
@@ -169,7 +169,8 @@
         "bullets": [
           "Pokémon do NOT evolve on their own",
           "You must evolve them manually in the menu",
-          "Check evolution requirements for any species with special conditions below"
+          "No need for an Everstone to stop evolution",
+          "Check evolution requirements (below) for any species with special conditions below"
         ]
       },
       {
@@ -193,6 +194,57 @@
           "Swirlix → Slurpuff (trade while holding Whipped Dream)",
           "Phantump → Trevenant ",
           "Pumpkaboo → Gourgeist "
+        ]
+      }
+    ]
+  },
+  "competitive-training": {
+    "id": "competitive-training",
+    "title": "Competitive Training Guide",
+    "subtitle": "Train your Pokémon's for competitive play",
+    "icon": "🏆",
+    "description": "These mechanisms are not needed for a casual player to enjoy the game, but are essential for competitive battling in Pokémon Legends Z-A.",
+    "sections": [
+      {
+        "title": "IV Training",
+        "content": "Individual Values (IVs) in Legends Z-A",
+        "bullets": [
+          "Although not directly trainable in Legends: Arceus, IVs and EVs are back to normal in Legends: Z-A",
+          "IVs: Each Pokémon has hidden Individual Values that affect their stats (0-31 per stat)",
+          "Use Bottle Caps to Hyper Train IVs at the Justice Dojo in Juane Sector 2",
+          "Get Bottle Caps from high-level research rewards and 'Infinite Royale'(post-game)'",
+        ]
+      },
+      {
+        "title": "EV Training",
+        "content": "Effort Values (EVs) in Legends Z-A",
+        "bullets": [
+          "EVs: Effort Values are gained through battling specific Pokémon and can be trained to increase stats",
+          "Buy EV-enhancing items from any Poké Center in Lumiose City (after progressing past a certain point in the story)",
+          "Use Power items (e.g., Power Weight, Power Bracer) to gain specific EVs per battle",
+          "Buy Power items at Quasartico Inc. "
+        ]
+      },
+      {
+        "title": "Nature",
+        "content": "Natures in Legends Z-A",
+        "bullets": [
+          "Natures affect stat growth (e.g., Adamant increases Attack, decreases Special Attack)",
+          "Obtain different Natures through breeding or catching Pokémon in the wild",
+          "Change your Pokémon's Nature by purchasing and using Mints from the following locations:",
+          "Rouge Sector Market(just west of Wild Zone 3): Adamant, Modest, Serious, Relaxed, Impish, Lonely, Naughty, Brave, Mild, Rash, Quiet, Bold, Impish, and Lax mints",
+          "Johnny Plaza: Jolly, Adamant, and Modest mints(this will be updated more later!)",
+          "Vert Sector(in between Wild Zone 11 and Restaurant Le Nah): Timid, Hasty, Jolly, Naive, and Serious mints",
+          "Cost: Each mint costs 20,000 Pokédollars",
+          "Availability: Vendors are accessible as early as Main Mission 5",
+          "You can also buy EV reducing berries from vendors next to the mint vendors"
+        ]
+      },
+      {
+        "title": "Abilities",
+        "content": "Abilities in Legends Z-A",
+        "bullets": [
+          "Abilities are not present in Legends Z-A (except for some Pokémon's special ability that is integral to their species, such as Doublade)"
         ]
       }
     ]
@@ -553,7 +605,7 @@
           "Each Knockout grants you one point",
           "You are able to swap Pokémon 3 times; choose wisely (keep an eye on health and swap when health is low or type mismatch)",
           "Any time your current Pokémon faints, you are reset after a 5 second cooldown",
-          "Use the space to your advantage: obstacles can block line of sight and give you cover",
+          "Use the space to your advantage: obstacles can block line of sight and give you cover"
         ]
       },
       {
@@ -660,7 +712,8 @@
           "Significantly larger than normal Pokémon (the largest that species can be)",
           "Higher stats and better starting moves",
           "Glowing red eyes and aggressive behavior",
-          "Can have effort levels already raised",
+          "Automatically come with max Effort Values (EVs) for Health stat",
+          "Automatically come with max Individual Values (IVs) for three random stats",
           "Rare spawns in specific locations"
         ]
       },

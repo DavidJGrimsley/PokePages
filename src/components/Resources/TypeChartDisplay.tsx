@@ -6,21 +6,14 @@ import {
   getTypeMatchups,
   getWeaknesses,
   getResistances,
-  type PokemonType 
+  type PokemonType,
+  ALL_STANDARD_TYPES
 } from '~/constants/typeUtils';
 
 // All available types including special ones
 const ALL_TYPES: PokemonType[] = [
-  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy',
+  ...ALL_STANDARD_TYPES,
   'stellar', 'unknown', 'shadow'
-];
-
-const MAIN_TYPES: PokemonType[] = [
-  'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-  'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-  'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
 ];
 
 interface TypeMatchupDisplayProps {
@@ -139,7 +132,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
   const [defendingType2, setDefendingType2] = useState<PokemonType | null>(null);
   const [selectedAnalysis, setSelectedAnalysis] = useState<PokemonType>('fire');
 
-  const typesToShow = showSpecialTypes ? ALL_TYPES : MAIN_TYPES;
+  const typesToShow = showSpecialTypes ? ALL_TYPES : ALL_STANDARD_TYPES;
   
   const effectiveness = defendingType2 
     ? getDualTypeEffectiveness(attackingType, defendingType1, defendingType2)
