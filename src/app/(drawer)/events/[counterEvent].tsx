@@ -52,12 +52,15 @@ export default function CounterEvent() {
   const description = `Best counters and builds for the Shiny ${finalConfig.pokemonName} Tera Raid event in Pokémon Scarlet & Violet. Find effective strategies, optimal builds, and complete event details for ${finalConfig.pokemonName}.`;
   const keywords = `shiny ${finalConfig.pokemonName.toLowerCase()}, ${finalConfig.pokemonName.toLowerCase()} counters, tera raid builds, pokemon scarlet violet, ${finalConfig.pokemonName.toLowerCase()} event, tera raid battles, pokemon builds, ${finalConfig.pokemonName.toLowerCase()} strategy`;
   const shinyPokemonName = `Shiny ${finalConfig.pokemonName}`;
+  const canonicalUrl = `https://pokepages.app/events/${finalEventSlug}`;
+  
   // Structured data for SEO
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": title,
     "description": description,
+    "url": canonicalUrl,
     "author": {
       "@type": "Organization",
       "name": "PokePages"
@@ -68,13 +71,20 @@ export default function CounterEvent() {
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://pokepages.app/events/${finalEventSlug}`
+      "@id": canonicalUrl
     },
     "keywords": keywords,
-    "about": {
-      "@type": "VideoGame",
-      "name": "Pokémon Scarlet and Violet"
-    }
+    "about": [
+      {
+        "@type": "VideoGame",
+        "name": "Pokémon Scarlet"
+      },
+      {
+        "@type": "VideoGame",
+        "name": "Pokémon Violet"
+      }
+    ],
+    "articleSection": "Event Guide"
   };
 
   return (
@@ -85,10 +95,16 @@ export default function CounterEvent() {
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
+        <meta name="robots" content="index, follow" />
+        <meta property="article:section" content="Event Guide" />
+        <meta property="article:tag" content={`Shiny ${finalConfig.pokemonName}`} />
+        <meta property="article:tag" content="Tera Raid" />
+        <link rel="canonical" href={canonicalUrl} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

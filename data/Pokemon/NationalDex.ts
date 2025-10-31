@@ -6,6 +6,16 @@ export interface Pokemon {
 }
 
 export const nationalDex: Pokemon[] = [
+  { id: 1, name: "Bulbasaur", type1: "Grass", type2: "Poison" },
+  { id: 2, name: "Ivysaur", type1: "Grass", type2: "Poison" },
+  { id: 3, name: "Venusaur", type1: "Grass", type2: "Poison" },
+  { id: 4, name: "Charmander", type1: "Fire" },
+  { id: 5, name: "Charmeleon", type1: "Fire" },
+  { id: 6, name: "Charizard", type1: "Fire", type2: "Flying" },
+  { id: 7, name: "Squirtle", type1: "Water" },
+  { id: 8, name: "Wartortle", type1: "Water" },
+  { id: 9, name: "Blastoise", type1: "Water" },
+  { id: 10, name: "Caterpie", type1: "Bug" },
   { id: 11, name: "Metapod", type1: "Bug" },
   { id: 12, name: "Butterfree", type1: "Bug", type2: "Flying" },
   { id: 13, name: "Weedle", type1: "Bug", type2: "Poison" },

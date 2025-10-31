@@ -61,8 +61,8 @@ function TypeChip({ type, variant }: TypeChipProps) {
 }
 
 interface TypeGridProps {
-  types: PokemonType[];
-  variant: 'superEffective' | 'notVeryEffective' | 'neutral' | 'weakTo' | 'resists' | 'noEffect' | 'superDuperEffective' | 'veryWeak';
+  types: PokemonType[] | string[];
+  variant: 'superEffective' | 'notVeryEffective' | 'neutral' | 'weakTo' | 'resists' | 'quadResists' | 'noEffect' | 'superDuperEffective' | 'veryWeak';
   emptyMessage?: string;
 }
 
@@ -89,9 +89,20 @@ function TypeGrid({ types, variant, emptyMessage = 'None' }: TypeGridProps) {
   return (
     <Animated.View style={[animatedStyle, { flexDirection: 'row', flexWrap: 'wrap', gap: 4 }]}>
       {types.length > 0 ? (
-        types.map((type) => (
-          <TypeChip key={type} type={type} variant={variant} />
-        ))
+        types.map((type) => {
+          // Handle dual-type combinations (e.g., "normal/rock")
+          if (typeof type === 'string' && type.includes('/')) {
+            return (
+              <View key={type} className={cn('px-3 py-1.5 rounded-full m-1', variant === 'superDuperEffective' ? 'bg-yellow-500' : 'bg-green-600')}>
+                <Text className={cn('text-xs font-bold capitalize', variant === 'superDuperEffective' ? 'text-purple-700' : 'text-white')}>
+                  {type}
+                </Text>
+              </View>
+            );
+          }
+          // Handle single types
+          return <TypeChip key={type} type={type as PokemonType} variant={variant} />;
+        })
       ) : (
         <Text className="text-gray-500 text-xs italic">
           {emptyMessage}
@@ -115,6 +126,24 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
   // Dual-type specific calculations
   const quadWeaknesses = isDualTyped ? getQuadrupleWeaknesses(selectedType, secondType) : [];
   const quadResistances = isDualTyped ? getQuadrupleResistances(selectedType, secondType) : [];
+  
+  // Calculate all dual-type combinations that take 4x damage from this type
+  // This happens when both types in the combination are weak to the attacking type
+  const superEffectiveTypes = matchups.offensive.superEffectiveAgainst;
+  const quadDamageCombinations: string[] = [];
+  
+  for (let i = 0; i < superEffectiveTypes.length; i++) {
+    for (let j = i; j < superEffectiveTypes.length; j++) {
+      const type1 = superEffectiveTypes[i];
+      const type2 = superEffectiveTypes[j];
+      if (i === j) {
+        // Same type twice doesn't make sense, skip
+        continue;
+      }
+      // Create combination string
+      quadDamageCombinations.push(`${type1}/${type2}`);
+    }
+  }
   
   // Calculate neutral offensive types (all types minus super effective, not very effective, and no effect)
   const offensiveNeutral = ALL_STANDARD_TYPES.filter(type => 
@@ -146,15 +175,17 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
               🗡️ Offensive (When {selectedType} attacks):
             </Text>
 
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Super Duper Effective (4x Damage) Against:
-            </Text>
-            <TypeGrid
-              types={matchups.offensive.superEffectiveAgainst}
-              variant="superDuperEffective"
-            />
-          </View>
+          {quadDamageCombinations.length > 0 && (
+            <View className="mb-1">
+              <Text className="text-sm font-semibold mb-1.5">
+                Super Duper Effective (4x Damage) Against:
+              </Text>
+              <TypeGrid
+                types={quadDamageCombinations}
+                variant="superDuperEffective"
+              />
+            </View>
+          )}
           <View className="mb-1">
             <Text className="text-sm font-semibold mb-1.5">
               Super Effective (2x Damage) Against:

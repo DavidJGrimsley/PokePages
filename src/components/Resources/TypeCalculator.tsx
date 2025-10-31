@@ -18,13 +18,49 @@ const ALL_TYPES: PokemonType[] = [
 
 interface TypeEffectivenessCalculatorProps {
   showSpecialTypes?: boolean;
+  initialAttackingType?: PokemonType;
+  initialDefendingType1?: PokemonType;
+  initialDefendingType2?: PokemonType | null;
+  onTypesChange?: (attacking: PokemonType, defending1: PokemonType, defending2: PokemonType | null) => void;
 }
 
-export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEffectivenessCalculatorProps) {
-  const [attackingType, setAttackingType] = useState<PokemonType>('fire');
-  const [defendingType1, setDefendingType1] = useState<PokemonType>('grass');
-  const [defendingType2, setDefendingType2] = useState<PokemonType | null>(null);
+export function TypeEffectivenessCalculator({ 
+  showSpecialTypes = false,
+  initialAttackingType = 'fire',
+  initialDefendingType1 = 'grass',
+  initialDefendingType2 = null,
+  onTypesChange
+}: TypeEffectivenessCalculatorProps) {
+  const [attackingType, setAttackingType] = useState<PokemonType>(initialAttackingType);
+  const [defendingType1, setDefendingType1] = useState<PokemonType>(initialDefendingType1);
+  const [defendingType2, setDefendingType2] = useState<PokemonType | null>(initialDefendingType2);
   const [selectedAnalysis, setSelectedAnalysis] = useState<PokemonType>('fire');
+
+  // Update local state when props change
+  React.useEffect(() => {
+    setAttackingType(initialAttackingType);
+    setDefendingType1(initialDefendingType1);
+    setDefendingType2(initialDefendingType2);
+  }, [initialAttackingType, initialDefendingType1, initialDefendingType2]);
+
+  const handleAttackingTypeChange = (type: PokemonType | null) => {
+    if (type) {
+      setAttackingType(type);
+      onTypesChange?.(type, defendingType1, defendingType2);
+    }
+  };
+
+  const handleDefendingType1Change = (type: PokemonType | null) => {
+    if (type) {
+      setDefendingType1(type);
+      onTypesChange?.(attackingType, type, defendingType2);
+    }
+  };
+
+  const handleDefendingType2Change = (type: PokemonType | null) => {
+    setDefendingType2(type);
+    onTypesChange?.(attackingType, defendingType1, type);
+  };
 
   const typesToShow = showSpecialTypes ? ALL_TYPES : ALL_STANDARD_TYPES;
   
@@ -52,7 +88,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
           <TypeSelector 
             types={typesToShow}
             selectedType={attackingType}
-            onTypeSelect={(t) => setAttackingType(t as PokemonType)}
+            onTypeSelect={handleAttackingTypeChange}
           />
         </View>
 
@@ -61,7 +97,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
           <TypeSelector 
             types={typesToShow}
             selectedType={defendingType1}
-            onTypeSelect={(t) => setDefendingType1(t as PokemonType)}
+            onTypeSelect={handleDefendingType1Change}
           />
         </View>
 
@@ -71,7 +107,7 @@ export function TypeEffectivenessCalculator({ showSpecialTypes = false }: TypeEf
             types={[...typesToShow]}
             selectedType={defendingType2}
             allowNone={true}
-            onTypeSelect={(type) => setDefendingType2(type)}
+            onTypeSelect={handleDefendingType2Change}
           />
         </View>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Stack, Link } from 'expo-router';
 import { View, Text, ScrollView, Pressable } from 'react-native';
+import Head from 'expo-router/head';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
@@ -96,6 +97,31 @@ const formatUserFriendlyDate = (dateString: string) => {
 };
 
 export default function EventsIndex() {
+  // SEO meta content
+  const title = 'Pokémon Events | Global Challenge Events & Mystery Gifts | PokePages';
+  const description = 'Join global Pokémon challenge events and earn exclusive Mystery Gift rewards! Track active raids, upcoming events, and distribution periods for Pokémon Scarlet & Violet.';
+  const keywords = 'pokemon events, mystery gift, global challenge, pokemon raids, tera raids, event distribution, pokemon scarlet violet events';
+  const canonicalUrl = 'https://pokepages.app/events';
+
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Pokémon Global Challenge Events",
+    "description": description,
+    "url": canonicalUrl,
+    "about": [
+      {
+        "@type": "VideoGame",
+        "name": "Pokémon Scarlet"
+      },
+      {
+        "@type": "VideoGame",
+        "name": "Pokémon Violet"
+      }
+    ]
+  };
+
   // Generate events from our configuration
   const events = Object.entries(eventConfig).map(([key, config]) => ({
     title: config.eventTitle,
@@ -110,6 +136,26 @@ export default function EventsIndex() {
 
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={canonicalUrl} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData),
+          }}
+        />
+      </Head>
       <Stack.Screen options={{ title: 'Pokemon Events' }} />
       <ScrollView className="flex-1 bg-app-background">
         <View className="p-lg pb-md">

@@ -14,7 +14,8 @@ import { usePokemonTrackerStore} from '@/src/store/pokemonTrackerStoreEnhanced';
 import { useShallow } from 'zustand/react/shallow';
 import { nationalDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
 import { type FormType }from '~/types/tracker';
-import SearchBar from '@/src/components/Pokedex/SearchBar';
+import SearchBar from '@/src/components/Pokedex/LumioseDexSearch';
+import AuthStatus from '@/src/components/Auth/AuthStatus';
 
 
 type FilterType = 'all' | 'alpha' | 'mega';
@@ -272,20 +273,21 @@ export default function DexTrackerPage() {
         <meta name="description" content="Track your Pokémon collection in Pokémon Legends Z-A" />
       </Head>
       
-      <MultiLayerParallaxScrollView
-        headerBackgroundColor={{ light: colors.light.background, dark: colors.dark.background }}
-        headerHeight={180}
-        showsVerticalScrollIndicator={true}
-        titleElement={
-          <View className="flex-1 justify-center items-center px-4">
-            <BouncyText text="Pokédex Tracker" />
-            <AppText className="text-center text-app-brown text-lg mt-2">
-              Track your Pokédex completion and special forms
-            </AppText>
-          </View>
-        }
-      >
-        <Container>
+      <Container>
+        <MultiLayerParallaxScrollView
+          headerBackgroundColor={{ light: colors.light.background, dark: colors.dark.background }}
+          headerHeight={180}
+          showsVerticalScrollIndicator={true}
+          titleElement={
+            <View className="flex-1 justify-center items-center px-4">
+              <BouncyText text="Pokédex Tracker" />
+              <AppText className="text-center text-app-brown text-lg mt-2">
+                Track your Pokédex completion and special forms
+              </AppText>
+            </View>
+          }
+        >
+          <AuthStatus />
           <InProgressDisclaimer />
           <SearchBar value={query} onChange={setQuery} />
           {/* Filter Buttons */}
@@ -362,8 +364,8 @@ export default function DexTrackerPage() {
               🔄 Automatically syncs when online
             </Text>
           </View>
-        </Container>
-      </MultiLayerParallaxScrollView>
+        </MultiLayerParallaxScrollView>
+      </Container>
     </>
   );
 }

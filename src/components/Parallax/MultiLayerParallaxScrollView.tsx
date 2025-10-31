@@ -28,6 +28,7 @@ type Props = PropsWithChildren<{
   titleElement?: ReactNode; // Optional title/logo element
   spinningElement?: ReactNode; // Optional spinning element
   subTitles?: string[]; // Optional array of subtitle texts
+  keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
 }>;
 
 export default function MultiLayerParallaxScrollView({
@@ -39,6 +40,7 @@ export default function MultiLayerParallaxScrollView({
   spinningElement,
   subTitles = [],
   headerHeight = HEADER_HEIGHT,
+  keyboardShouldPersistTaps = 'handled',
 }: Props) {
   // Calculate dynamic height based on titles array
   const titleHeight = 100; // Approximate height of one title
@@ -219,6 +221,7 @@ export default function MultiLayerParallaxScrollView({
         contentContainerStyle={{ paddingBottom: bottom }}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
         scrollEnabled={true}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       >
         <View
           style={{
