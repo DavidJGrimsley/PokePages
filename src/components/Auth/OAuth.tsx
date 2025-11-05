@@ -8,6 +8,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { supabase } from "~/utils/supabaseClient";
 import { router } from "expo-router";
 import { debugLinking } from "~/utils/linkingConfig";
+import { useNavigateToSignIn } from "~/hooks/useNavigateToSignIn";
 
 // Required for web only
 WebBrowser.maybeCompleteAuthSession();
@@ -235,6 +236,7 @@ const sendMagicLink = async (email: string) => {
 
 export default function OAuth() {
   const [debugInfo, setDebugInfo] = useState(false);
+  const navigateToSignIn = useNavigateToSignIn();
   
   // Handle linking into app from email app or OAuth redirect
   const url = Linking.useURL();
@@ -300,7 +302,7 @@ export default function OAuth() {
           </Text>
           <View className="flex-row justify-around">
             <Button 
-              onPress={() => router.push('/sign-in')} 
+              onPress={navigateToSignIn} 
               title="Sign In" 
             />
             <Button 

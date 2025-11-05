@@ -9,7 +9,7 @@ import { useAuthStore } from '~/store/authStore';
 
 import { PrettyText } from 'components/TextTheme/PrettyText';
 export default function OnboardingFinalScreen() {
-  const { completeOnboarding, hasCompletedOnboarding } = useOnboardingStore();
+  const { completeOnboarding, hasCompletedOnboarding, returnUrl, setReturnUrl } = useOnboardingStore();
   const { isLoggedIn } = useAuthStore();
   const exploreBtnRef = useRef<View>(null); // ref to the Start Exploring button
   const signInButtonRef = useRef<View>(null); // ref to the Sign In button
@@ -20,8 +20,11 @@ export default function OnboardingFinalScreen() {
     // setConfettiVisible(false);
    
     completeOnboarding();
-    router.replace('/(drawer)' as any);
-  }, [completeOnboarding]);
+    // If there's a return URL, go there, otherwise go to drawer
+    const destination = returnUrl || '/(drawer)';
+    setReturnUrl(null); // Clear the return URL after using it
+    router.replace(destination as any);
+  }, [completeOnboarding, returnUrl, setReturnUrl]);
 
   const handleSignInCompleteOnboarding = useCallback(() => {
     // setConfettiVisible(false);

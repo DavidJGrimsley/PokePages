@@ -22,8 +22,9 @@ export default function AuthCallback() {
       console.log('✅ Checking auth after 2s delay - isLoggedIn:', currentIsLoggedIn, 'user:', currentUser?.email);
       
       if (currentIsLoggedIn && currentUser && !hasRedirected) {
-        console.log('🎉 User authenticated! Redirecting to home...');
+        console.log('🎉 User authenticated! Checking onboarding status...');
         setHasRedirected(true);
+        // Let _layout handle onboarding flow, just redirect to drawer
         router.replace('/(drawer)');
       } else if (!hasRedirected) {
         console.log('⚠️ No authentication detected, trying one more time...');
@@ -48,7 +49,7 @@ export default function AuthCallback() {
     return () => {
       clearTimeout(checkTimer);
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View className="flex-1 justify-center items-center bg-app-background">

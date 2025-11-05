@@ -8,11 +8,13 @@ type OnboardingState = {
   hasAcceptedTerms: boolean;
   hasAcceptedPrivacy: boolean;
   _hasHydratedOnboarding: boolean;
+  returnUrl: string | null;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
   acceptTerms: () => void;
   acceptPrivacy: () => void;
   setHasHydratedOnboarding: (value: boolean) => void;
+  setReturnUrl: (url: string | null) => void;
 };
 
 // Check if we're in a web environment
@@ -60,6 +62,7 @@ export const useOnboardingStore = create(
       hasAcceptedTerms: false,
       hasAcceptedPrivacy: false,
       _hasHydratedOnboarding: false,
+      returnUrl: null,
       completeOnboarding: () => {
         set((state) => ({
           ...state,
@@ -72,6 +75,7 @@ export const useOnboardingStore = create(
           hasCompletedOnboarding: false,
           hasAcceptedTerms: false,
           hasAcceptedPrivacy: false,
+          returnUrl: null,
         }));
       },
       acceptTerms: () => {
@@ -90,6 +94,12 @@ export const useOnboardingStore = create(
         set((state) => ({
           ...state,
           _hasHydratedOnboarding: value,
+        }));
+      },
+      setReturnUrl: (url: string | null) => {
+        set((state) => ({
+          ...state,
+          returnUrl: url,
         }));
       },
     }),

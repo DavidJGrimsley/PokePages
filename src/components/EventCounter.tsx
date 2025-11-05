@@ -14,13 +14,13 @@ import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { PokemonClient } from 'pokenode-ts';
 import { buildApiUrl } from '~/utils/apiConfig';
-import { router } from 'expo-router';
 import LottieView from 'lottie-react-native';
 
 import { useAuthStore } from '~/store/authStore';
 import { getEventStatus } from '~/utils/helperFX';
 import ErrorMessage from '~/components/Meta/Error';
 import { cn } from '~/utils/cn';
+import { useNavigateToSignIn } from '~/hooks/useNavigateToSignIn';
 
 // Cross-platform alert function
 const showAlert = (title: string, message?: string) => {
@@ -87,6 +87,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   apiUrl = buildApiUrl('events')
 }) => {
   const { user, isLoggedIn } = useAuthStore();
+  const navigateToSignIn = useNavigateToSignIn();
   const [eventData, setEventData] = useState<EventData | null>(null);
   const [globalCount, setGlobalCount] = useState(0);
   const [userCount, setUserCount] = useState(0);
@@ -437,7 +438,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
       {/* Show login prompt for better experience - using exact original styling */}
       {!isLoggedIn && (
-        <Pressable onPress={() => router.push('/sign-in')}>
+        <Pressable onPress={navigateToSignIn}>
           <View className="bg-app-background mx-lg my-sm p-md rounded-md border border-app-primary">
             <Text className="typography-copy text-app-primary text-center">
               💡 Sign in to sync your progress across devices and get personalized stats!
