@@ -8,7 +8,8 @@ import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerPa
 import { Collapsible } from '@/src/components/UI/Collapsible';
 import colors from '@/src/constants/style/colors';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
+import { EVYields } from '@/src/components/Guides/EVYields';
 
 // Static generation for all strategy slugs
 export async function generateStaticParams(): Promise<{ id: string }[]> {
@@ -29,7 +30,7 @@ export default function StrategyDetail() {
   const finalConfig = config || strategiesConfig[Object.keys(strategiesConfig)[0] as keyof typeof strategiesConfig];
   
   // SEO meta content
-  const title = `${finalConfig.title} - Pokémon Legends Z-A | PokePages`;
+  const title = `PP: ${finalConfig.title} - Pokémon Legends Z-A | PokePages`;
   const description = finalConfig.description;
   const keywords = `pokemon legends za, ${finalConfig.title.toLowerCase()}, legends za guide, pokemon strategy, ${strategySlug}, kalos guide`;
   
@@ -87,31 +88,44 @@ export default function StrategyDetail() {
       </Head>
       <Container>
         <MultiLayerParallaxScrollView 
-          headerBackgroundColor={{ dark: colors.light.secondary, light: colors.light.background }}
           titleElement={<BouncyText text={`${finalConfig.icon} ${finalConfig.title}`} />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <AppText className="text-xl font-bold mb-md text-app-secondary">
+          <AppText className="text-xl font-bold mb-0 text-app-secondary">
             {finalConfig.subtitle}
           </AppText>
 
-          <AppText className="text-base mb-lg text-app-text">
+          <AppText className="text-base mb-0 text-gray-700 dark:text-gray-400">
             {finalConfig.description}
           </AppText>
 
           {finalConfig.sections.map((section, index) => (
             <Collapsible key={index} title={section.title} animatedOpen={index === 0}>
-              <AppText className="text-base mb-md text-gray-700 dark:text-gray-200 font-semibold">
+              <AppText className="text-base mb-md  font-semibold">
                 {section.content}
               </AppText>
               
-              {section.bullets.map((bullet, bulletIndex) => (
-                <AppText key={bulletIndex} className="text-base mb-sm text-gray-600 dark:text-gray-300">
-                  • {bullet}
-                </AppText>
-              ))}
+              {section.bullets.map((bullet, bulletIndex) => {
+                // Render separator bar for empty bullets
+                if (!bullet || bullet.trim() === '') {
+                  return (
+                    <View key={bulletIndex} className="w-full h-[2px] bg-app-primary dark:bg-app-accent my-3" />
+                  );
+                }
+                
+                return (
+                  <AppText key={bulletIndex} className="text-base text-gray-600 dark:text-gray-200 mb-sm ">
+                    • {bullet}
+                  </AppText>
+                );
+              })}
             </Collapsible>
           ))}
+
+          {id === 'competitive-training' && (
+            <EVYields game="PLZA" />
+          )}
+
         </MultiLayerParallaxScrollView>
       </Container>
     </>

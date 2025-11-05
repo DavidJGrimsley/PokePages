@@ -137,9 +137,7 @@ const DrawerLayout = () => {
           ),
           headerTitleAlign: 'center',
           headerStyle: headerStyle,
-          drawerItemStyle: {
-            display: 'none'
-          }
+
         }}
       />
       <Drawer.Screen

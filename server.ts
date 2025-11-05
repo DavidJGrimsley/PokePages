@@ -5,6 +5,7 @@ import eventRouter from './src/routes/events/index.js';
 import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
 import legendsZARouter from './src/routes/legends-za/index.js';
+import socialRouter from './src/routes/social/index.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -72,6 +73,9 @@ app.use('/profiles', profileRouter);
 // Legends Z-A Dex & Form Tracker Routes
 app.use('/legends-za', legendsZARouter);
 
+// Social Routes
+app.use('/social', socialRouter);
+
 // Test route
 app.get('/test', (req, res) => {
   res.json({ message: 'API is working!' });
@@ -117,7 +121,9 @@ app.listen(port, '0.0.0.0', () => {
   console.log(`   AI: ${apiBaseUrl}/ai`);
   console.log(`   Profiles: ${apiBaseUrl}/profiles`);
   console.log(`   Legends Z-A Tracker: ${apiBaseUrl}/legends-za`);
+  console.log(`   Social: ${apiBaseUrl}/social`);
   console.log('legendsZARouter router loaded:', typeof legendsZARouter);
+  console.log('socialRouter router loaded:', typeof socialRouter);
 });
 
 // Error handling middleware - THIS MUST BE THE LAST APP.USE()

@@ -58,7 +58,7 @@ export function Collapsible({ children, title, isOpen: externalIsOpen, onToggle,
     : "bg-app-background dark:bg-app-primary";
   const titleClass = invertColors 
     ? "text-app-secondary dark:text-app-primary" 
-    : "text-app-primary dark:text-app-secondary";
+    : "text-app-primary dark:text-app-accent";
 
   return (
     <View className={`${backgroundClass} rounded-xl p-4 mb-4 shadow-app-medium relative overflow-hidden`}>
@@ -110,7 +110,7 @@ export function Collapsible({ children, title, isOpen: externalIsOpen, onToggle,
             zIndex: 1
           }}
         >
-          <View>
+          <View >
             {children}
           </View>
         </Animated.View>

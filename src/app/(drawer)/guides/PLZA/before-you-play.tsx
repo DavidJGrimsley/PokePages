@@ -81,23 +81,22 @@ export default function BeforeYouPlay() {
       </Head>
       <Container>
       <MultiLayerParallaxScrollView 
-        headerBackgroundColor={{ dark: colors.light.secondary, light: colors.light.background }}
         titleElement={<BouncyText text="Before You Play" />}
         headerHeight={ isMobile ? 75 : 150 }
         >
-      
-          <AppText className="text-xl font-bold mb-md text-gray-700">
+
+          <AppText className="text-xl font-bold mb-md text-gray-700 dark:text-gray-400">
             {beforeYouPlayData.story.caption}
           </AppText>
           
         {/* Story Recap Section */}
         <Collapsible title={beforeYouPlayData.story.title} animatedOpen={true}>
-          <AppText className="text-xl font-bold mb-md text-gray-700 dark:text-gray-200">
+          <AppText className="text-xl font-bold mb-md text-gray-600 dark:text-gray-300">
             {beforeYouPlayData.story.body}
           </AppText>
           
           {beforeYouPlayData.story.bullets.map((bullet, index) => (
-            <AppText key={index} className="text-base mb-sm text-gray-600 dark:text-gray-300">
+            <AppText key={index} className="text-base mb-sm text-gray-500 dark:text-gray-200">
               • {bullet}
             </AppText>
           ))}

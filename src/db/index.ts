@@ -4,6 +4,7 @@ import postgres from 'postgres';
 import * as profilesSchema from './profilesSchema.js';
 import * as eventsSchema from './eventsSchema.js';
 import * as legendsZATrackerSchema from './legendsZATrackerSchema.js';
+import * as socialSchema from './socialSchema.js';
 
 if (!process.env.DATABASE_URL) {
   throw new Error('DATABASE_URL is missing');
@@ -22,4 +23,5 @@ export const db = drizzle(client, { schema: {
   ...profilesSchema,
   ...eventsSchema,
   ...legendsZATrackerSchema,
+  ...socialSchema,
 } });

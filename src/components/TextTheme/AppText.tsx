@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text, StyleProp, TextStyle } from "react-native";
 import { cn } from "utils/cn";
 
 type AppTextProps = {
@@ -8,6 +8,8 @@ type AppTextProps = {
   color?: "primary" | "secondary" | "tertiary";
   center?: boolean;
   className?: string;
+  noMargin?: boolean;
+  style?: StyleProp<TextStyle>;
 };
 
 export function AppText({
@@ -17,16 +19,30 @@ export function AppText({
   color = "primary",
   center = false,
   className,
+  noMargin = false,
+  style,
 }: AppTextProps) {
+  const sizeClass = (() => {
+    switch (size) {
+      case "small":
+        return noMargin ? "text-sm" : "text-sm mb-2";
+      case "large":
+        return noMargin ? "text-lg" : "text-lg mb-4";
+      case "heading":
+        return noMargin ? "text-xl" : "text-xl mb-5";
+      case "medium":
+      default:
+        return noMargin ? "text-base" : "text-base mb-3";
+    }
+  })();
+
   return (
     <Text
+      style={style}
       className={cn(
-        size === "small" && "text-sm mb-2",
-        size === "medium" && "text-base mb-3",
-        size === "large" && "text-lg mb-4",
-        size === "heading" && "text-xl mb-5",
+        sizeClass,
         bold && "font-bold",
-        color === "primary" && "text-black",
+        color === "primary" && "text-app-text",
         color === "secondary" && "text-gray-500",
         color === "tertiary" && "text-gray-400",
         center && "text-center",

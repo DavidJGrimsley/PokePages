@@ -8,6 +8,7 @@ import colors from '@/src/constants/style/colors';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
 import { Platform, View } from 'react-native';
 import Head from 'expo-router/head';
+import { EVYields } from '@/src/components/Guides/EVYields';
 
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import { Frame } from 'components/UI/Frame';
@@ -69,11 +70,10 @@ export default function Strategies() {
       </Head>
       <Container>
         <MultiLayerParallaxScrollView 
-          headerBackgroundColor={{ dark: colors.light.secondary, light: colors.light.background }}
           titleElement={<BouncyText text="Strategies" />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <AppText className="text-xl font-bold mb-lg text-gray-800">
+          <AppText className="text-xl font-bold mb-lg text-gray-700 dark:text-gray-400">
             Master Pokémon Legends Z-A with these comprehensive guides
           </AppText>
           <InProgressDisclaimer />
@@ -87,6 +87,8 @@ export default function Strategies() {
               icon={strategy.icon}
             />
           ))}
+
+          <EVYields game="PLZA" />
           
           <View className="items-center justify-center w-full mt-8 mb-8">
             <Frame

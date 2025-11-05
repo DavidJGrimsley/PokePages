@@ -17,11 +17,12 @@ import { Footer } from '../Meta/Footer';
 
 // Safely import scroll context hook
 import { useScrollContext } from '../../app/(drawer)/guides/_layout';
+import colors from '@/src/constants/style/colors';
 
 const HEADER_HEIGHT = 350;
 
 type Props = PropsWithChildren<{
-  headerBackgroundColor: { dark: string; light: string };
+  headerBackgroundColor?: { dark: string; light: string };
   showsVerticalScrollIndicator?: boolean;
   backgroundGrid?: ReactNode; // Optional background grid
   headerHeight?: number; // Optional header height
@@ -33,7 +34,7 @@ type Props = PropsWithChildren<{
 
 export default function MultiLayerParallaxScrollView({
   children,
-  headerBackgroundColor,
+  headerBackgroundColor = { dark: colors.light.secondary, light: colors.light.secondary },
   showsVerticalScrollIndicator = false,
   backgroundGrid,
   titleElement,
@@ -211,11 +212,11 @@ export default function MultiLayerParallaxScrollView({
   const defaultParticles = ['⭐', '✨', '💫', '💫', '⭐', '✨', '💫'];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View className="flex-1">
       <Animated.ScrollView
         ref={scrollRef}
         onScroll={scrollHandler}
-        style={{ flex: 1 }} 
+        className="flex-1"
         scrollEventThrottle={16}
         scrollIndicatorInsets={{ bottom }}
         contentContainerStyle={{ paddingBottom: bottom }}
@@ -224,19 +225,19 @@ export default function MultiLayerParallaxScrollView({
         keyboardShouldPersistTaps={keyboardShouldPersistTaps}
       >
         <View
+          className="overflow-hidden relative"
           style={{
             height: dynamicHeaderHeight, 
             backgroundColor: headerBackgroundColor[colorScheme],
-            overflow: 'hidden',
-            position: 'relative'
           }}
         >
           {/* Layer 1: Background grid (slowest parallax) */}
           {backgroundGrid && (
-            <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <View pointerEvents="none" className="absolute top-0 left-0 right-0 bottom-0">
               <Animated.View
+                className="absolute opacity-40"
                 style={[
-                  { height: '120%', width: '120%', position: 'absolute', top: -50, left: -50, opacity: 0.4 },
+                  { height: '120%', width: '120%', top: -50, left: -50 },
                   gridBackgroundAnimatedStyle
                 ]}
               >
@@ -246,10 +247,11 @@ export default function MultiLayerParallaxScrollView({
           )}
           
           {/* Layer 2: Title/logo (medium parallax) */}
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+          <View className="absolute top-0 left-0 right-0 bottom-0">
             <Animated.View
+              className="absolute flex-col items-center justify-center"
               style={[
-                { position: 'absolute', top: '15%', left: '5%', right: '5%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
+                { top: '15%', left: '5%', right: '5%' },
                 titleAnimatedStyle
               ]}
             >
@@ -293,8 +295,8 @@ export default function MultiLayerParallaxScrollView({
           </View>
           
           {/* Layer 3: Floating particles (fast parallax) */}
-          <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-            <Animated.View style={[{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }, particleFieldAnimatedStyle]}>
+          <View pointerEvents="none" className="absolute top-0 left-0 right-0 bottom-0">
+            <Animated.View className="absolute top-0 left-0 right-0 bottom-0" style={particleFieldAnimatedStyle}>
               {defaultParticles.map((particle, i) => (
                 <View key={i} style={{ position: 'absolute', left: `${15 + i * 12}%`, top: `${20 + (i % 3) * 25}%` }}>
                   <ThemedText style={{ fontSize: 16, opacity: 0.7 }}>
@@ -307,10 +309,11 @@ export default function MultiLayerParallaxScrollView({
           
           {/* Layer 4: Main spinning element (fastest parallax) */}
           {spinningElement && (
-            <View  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <View className="absolute top-0 left-0 right-0 bottom-0">
               <Animated.View
+                className="absolute"
                 style={[
-                  { height: 200, width: 200, position: 'absolute', top: 20, right: 20 },
+                  { height: 200, width: 200, top: 20, right: 20 },
                   floatingElementAnimatedStyle
                 ]}
               >
@@ -321,10 +324,10 @@ export default function MultiLayerParallaxScrollView({
         </View>
         
         {/* Content area */}
-        <ThemedView className="p-8" style={{ gap: 16 }}>
+        <View className="p-8" style={{ gap: 16 }}>
           {children}
           <Footer />
-        </ThemedView>
+        </View>
       </Animated.ScrollView>
     </View>
   );

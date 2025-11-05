@@ -29,6 +29,13 @@ const APP_ACCENT = TYPE_GRASS;          // #7AC74C - Grass green
 const APP_BROWN = TYPE_GROUND;          // #E2BF65 - Ground brown
 const APP_FLAG = TYPE_FIRE;             // #EE8130 - Fire orange
 
+// App Theme Dark Colors (derived from type colors where applicable)
+const APP_PRIMARY_DARK = TYPE_POISON;        // #A33EA1 - Poison purple
+const APP_SECONDARY_DARK = TYPE_PSYCHIC;     // #F95587 - Psychic pink
+const APP_ACCENT_DARK = TYPE_GRASS;          // #7AC74C - Grass green
+const APP_BROWN_DARK = TYPE_GROUND;          // #E2BF65 - Ground brown
+const APP_FLAG_DARK = TYPE_FIRE;             // #EE8130 - Fire orange
+
 // Custom colors (not type-based)
 const LAVENDER = '#E6e6fa';
 const WHITE = '#fbfbfb';
@@ -71,15 +78,27 @@ module.exports = {
         'app-brown': APP_BROWN,              // Ground type color
         'app-flag': APP_FLAG,                // Fire type color
         
-        // Build card colors
-        'app-red': '#e74c3c',                // Physical Attacker
-        'app-red-bg': '#fdf2f2',             // Physical Attacker background
+        // Stat colors (for Build cards, EV charts, etc.)
+        // HP (Health)
+        'app-hp': '#FF5959',                 // HP/Health (red)
+        'app-hp-bg': '#FFE5E5',              // HP background
+        // Attack (Physical Attacker)
+        'app-attack': '#F08030',             // Attack (orange)
+        'app-attack-bg': '#FFF0E5',          // Attack background
+        'app-red': '#e74c3c',                // Alternate red
+        'app-red-bg': '#fdf2f2',             // Alternate red background
+        // Special Attack
         'app-purple': APP_PRIMARY,           // Special Attacker (Poison type)
         'app-purple-bg': LAVENDER,           // Special Attacker background
-        'app-blue': '#3498db',               // Physical Wall
-        'app-blue-bg': '#f2f8fd',            // Physical Wall background
-        'app-green': APP_ACCENT,             // Special Wall (Grass type)
-        'app-green-bg': '#f2fdf5',           // Special Wall background
+        // Defense (Physical Wall)
+        'app-blue': '#3498db',               // Defense (blue)
+        'app-blue-bg': '#f2f8fd',            // Defense background
+        // Special Defense
+        'app-green': APP_ACCENT,             // Special Defense (Grass type)
+        'app-green-bg': '#f2fdf5',           // Special Defense background
+        // Speed
+        'app-speed': '#F8D030',              // Speed (yellow)
+        'app-speed-bg': '#FFFAE5',           // Speed background
         
         // Tab colors (using type colors)
         'app-tab-active': APP_ACCENT,        // Grass type color
@@ -91,7 +110,7 @@ module.exports = {
         dark: {
           'app-primary': TINT_DARK,          // tintColorDark (orange)
           'app-secondary': TINT_DARK,        // orange
-          'app-background': '#20182d',       // plum
+          'app-background': TYPE_GHOST,       // plum
           'app-text': '#FEFEFE',             // white
           'app-icon': '#9BA1A6',             // gray
           'app-accent': '#321e3bb9',         // dark purple with alpha

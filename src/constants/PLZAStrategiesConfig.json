@@ -206,23 +206,13 @@
     "description": "These mechanisms are not needed for a casual player to enjoy the game, but are essential for competitive battling in Pokémon Legends Z-A.",
     "sections": [
       {
-        "title": "IV Training",
-        "content": "Individual Values (IVs) in Legends Z-A",
+        "title": "Individual Values (IVs)",
+        "content": "IV Training in Legends Z-A",
         "bullets": [
           "Although not directly trainable in Legends: Arceus, IVs and EVs are back to normal in Legends: Z-A",
           "IVs: Each Pokémon has hidden Individual Values that affect their stats (0-31 per stat)",
           "Use Bottle Caps to Hyper Train IVs at the Justice Dojo in Juane Sector 2",
-          "Get Bottle Caps from high-level research rewards and 'Infinite Royale'(post-game)'",
-        ]
-      },
-      {
-        "title": "EV Training",
-        "content": "Effort Values (EVs) in Legends Z-A",
-        "bullets": [
-          "EVs: Effort Values are gained through battling specific Pokémon and can be trained to increase stats",
-          "Buy EV-enhancing items from any Poké Center in Lumiose City (after progressing past a certain point in the story)",
-          "Use Power items (e.g., Power Weight, Power Bracer) to gain specific EVs per battle",
-          "Buy Power items at Quasartico Inc. "
+          "Get Bottle Caps from high-level research rewards, 'Infinite Royale'(post-game) and Online Battle rewards"
         ]
       },
       {
@@ -236,8 +226,7 @@
           "Johnny Plaza: Jolly, Adamant, and Modest mints(this will be updated more later!)",
           "Vert Sector(in between Wild Zone 11 and Restaurant Le Nah): Timid, Hasty, Jolly, Naive, and Serious mints",
           "Cost: Each mint costs 20,000 Pokédollars",
-          "Availability: Vendors are accessible as early as Main Mission 5",
-          "You can also buy EV reducing berries from vendors next to the mint vendors"
+          "Availability: Vendors are accessible as early as Main Mission 5"
         ]
       },
       {
@@ -245,6 +234,105 @@
         "content": "Abilities in Legends Z-A",
         "bullets": [
           "Abilities are not present in Legends Z-A (except for some Pokémon's special ability that is integral to their species, such as Doublade)"
+        ]
+      },
+      {
+        "title": "Effort Values (EVs)",
+        "content": "These are semi-hidden stats that can be trained to boost your Pokémon's performance in battle",
+        "bullets": [
+          "These stats are trained boosted by battling Pokémon automatically, with different Pokémon species giving different EVs (see Active EV Training below)",
+          "You can also increase them by using certain items (see Passive EV Training below)",
+          "",
+          "Buy EV reducing berries from street vendors next to the mint vendors (see Nature section below)",
+          "Each berry reduces 10 EVs from a specific stat, allowing you to reallocate EVs as needed; it also increases friendship",
+          "",
+          "Pomeg Berry: Reduces HP EVs",
+          "Kelpsy Berry: Reduces Attack EVs",
+          "Qualot Berry: Reduces Defense EVs",
+          "Hondew Berry: Reduces Special Attack EVs",
+          "Grepa Berry: Reduces Special Defense EVs",
+          "Tamato Berry: Reduces Speed EVs",
+          "",
+          "This is useful when you have a Pokémon that you've been battling with and now want to train for competitive purposes"
+        ]
+      },
+      {
+        "title": "EV Math",
+        "content": "The important numbers behind EV training",
+        "bullets": [
+          "Each Pokemon can have a total of 510 EVs",
+          "A maximum of 255 EVs in a single stat",
+          "",
+          "Each 4 EVs in a stat results in a +1 increase in that stat (at level 100)",
+          "So any EV after a multiple of 4 is wasted (for example, 10 EVs in a stat only gives +2, while 12 EVs gives +3)",
+          "252 EVs in a stat gives +63 at level 100 because 252 / 4 = 63 with no remainder",
+          "So maxing a stat to 255 is wasting 3 EVs that could be used elsewhere",
+          "",
+          "The common practice is to max out 2 stats (252 EVs each) and put the remaining 6 EVs into a third stat",
+          "This gives the most overall stat increases (63 + 63 + 1 = 127 total increase)",
+          "An example would be a 'Physical Sweeper' with 252 Attack EVs, 252 Speed EVs, and 6 HP EVs (still 2 wasted EVs but it can't be helped)",
+          "See more roles in the Team Building guide"
+        ]
+      },
+      {
+        "title": "Passive EV Training",
+        "content": "Effort Values (EVs) in Legends Z-A (without battling - costs a lot of money)",
+        "bullets": [
+          "Use this method if you're short on time and have plenty of Pokédollars",
+          "Buy EV-enhancing items (Vitamins) from any Poké Center in Lumiose City (after progressing past a certain point in the story; past Rank F)",
+          "",
+          "HP Up: Increases HP EVs by 10",
+          "Protein: Increases Attack EVs by 10",
+          "Iron: Increases Defense EVs by 10",
+          "Calcium: Increases Special Attack EVs by 10",
+          "Zinc: Increases Special Defense EVs by 10",
+          "Carbos: Increases Speed EVs by 10"          
+        ]
+      },
+      {
+        "title": "Active EV Training",
+        "content": "Effort Values (EVs) in Legends Z-A (while battling - costs time but chance of seeing shiny Pokémon)",
+        "bullets": [
+          "Use this method if you want to battle wild pokémon, short on Pokédollars, and/or want to gain Exp. Points (level up)",
+          "You can catch the Pokémon after defeating them as well",
+          "Each Pokémon species yields 1, 2, or 3 EVs in one stat when defeated (see list below) based on their most prominent stat",
+          "Some Pokémon give EVs in multiple stats (for example, Heliolisk gives 1 Speed EV and 1 Special Attack EV) - using these Pokémon requires more planning but could potentially save time (probably not worth the planning time)",
+          "",
+          "Use Power items to gain even more specific EVs on top of the base EVs",
+          "Buy Power items from any Poké Center (after reaching Rank A/Post-Game) - they can also be obtained from specific side missions",
+          "",
+          "Power Weight: +8 HP EVs per battle (Side mission 72)",
+          "Power Bracer: +8 Attack EVs per battle (Side mission 38)",
+          "Power Belt: +8 Defense EVs per battle (Side mission 39)",
+          "Power Lens: +8 Special Attack EVs per battle (Side mission 104)",
+          "Power Band: +8 Special Defense EVs per battle (Side mission 99)",
+          "Power Anklet: +8 Speed EVs per battle (Side mission 69)"
+        ]
+      },
+      {
+        "title": "EV Training Route",
+        "content": "I have hand-picked the best locations to farm EVs efficiently in Legends Z-A.",
+        "bullets": [
+          "For this strategy, put on the Power item for the corresponding stat and defeat all the Pokémon in the zone listed below, fast travel to that same location and repeat until you have maxed out the EVs for that stat (252 EVs total, which is 31.5 actual stat points)",
+          "",
+          "Low-level: These zones (1-10) will have the lowest level Pokémon that give the desired EVs, making it easier to defeat them quickly",
+          "HP: Wild Zone 7 - Audino; Wild Zone 10 - Slowpoke",
+          "Attack: Wild Zone 8 - All Pokémon here except for Numel; Wild Zone 10 - All Pokémon except for Slowpoke, Staryu, and Tynamo",
+          "Defense: Wild Zone 7 - Hippowdon and Kakuna",
+          "Special Attack: Wild Zone 6 - Houndour, Houndoom, and Flaaffy; Wild Zone 7 - Roselia and Vanillite",
+          "Special Defense: Wild Zone 3 - Flabébé; Wild Zone 9 - Carbink; Wild Zone 6 - Swablu",
+          "Speed: Wild Zone 1 - All Pokémon here except for Scatterbug and Mareep",
+          "",
+          "High-level: These zones (11-20) will have the highest level Pokémon that give the desired EVs, making it easier to level up while EV training",
+          "HP: Wild Zone 12 - Snorunt and Gogoat",
+          "Attack: Wild Zone 12 - Snover, Abomasnow, Machop, and Machoke; Wild Zone 13 - All Pokémon here except for Vivillon",
+          "Defense: Wild Zone 14 - Onix, Aron, and Lairon",
+          "Special Attack: Wild Zone 17 - Lampent (night) and Pyroar",
+          "Special Defense: Wild Zone 6 - All Pokémon here give Special Defense EVs (except for Budew)",
+          "Speed: Wild Zone 16 - Starmie and Medicham",
+          "",
+          "If you start with all of your Pokémon with 0 EV for that stat, you can check only one Pokémon's stat summary screen to see when you have maxed out the EVs for that stat (it will say 'Max EVs' under the stat)",
+          "With a Power item, it takes 28 battles to max out a stat (if each Pokémon gives 1 EVs in that stat)"
         ]
       }
     ]

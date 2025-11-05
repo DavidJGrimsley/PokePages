@@ -164,9 +164,29 @@ function getUserId(): string | undefined {
   }
 }
 
-// Add: access token + header helpers
-function getAccessToken(): string | undefined {
+// Add: access token + header helpers with session refresh
+async function getValidAccessToken(): Promise<string | undefined> {
   try {
+    // First try to get the current session which will auto-refresh if needed
+    const { supabase } = await import('@/src/utils/supabaseClient');
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error) {
+      console.error('[TRACKER] Error getting session:', error);
+      return undefined;
+    }
+    
+    if (session?.access_token) {
+      // Update auth store with fresh session
+      const authStore = useAuthStore.getState();
+      if (authStore.session?.access_token !== session.access_token) {
+        console.log('[TRACKER] Refreshed token detected, updating auth store');
+        authStore.setSession(session);
+      }
+      return session.access_token;
+    }
+    
+    // Fallback to auth store if getSession fails
     const s: any = useAuthStore.getState();
     return (
       s.session?.access_token ||
@@ -174,14 +194,15 @@ function getAccessToken(): string | undefined {
       s.token ||
       s.user?.accessToken
     );
-  } catch {
+  } catch (error) {
+    console.error('[TRACKER] Error in getValidAccessToken:', error);
     return undefined;
   }
 }
 
-function authHeaders(): Record<string, string> {
+async function authHeaders(): Promise<Record<string, string>> {
   const h: Record<string, string> = { 'Content-Type': 'application/json' };
-  const t = getAccessToken();
+  const t = await getValidAccessToken();
   if (t) h.Authorization = `Bearer ${t}`;
   return h;
 }
@@ -225,9 +246,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
               throw new Error('No user ID - user may not be logged in');
             }
 
+            const headers = await authHeaders(); // await the async function
             const res = await fetch(buildApiUrl(`legends-za/${dex}`), {
               method: 'PUT',
-              headers: authHeaders(), // include bearer
+              headers: headers, // include bearer
               body: JSON.stringify({ userId, formType: form, value: newValue }),
             });
             if (!res.ok) {
@@ -278,8 +300,9 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
           
+          const headers = await authHeaders(); // await the async function
           const res = await fetch(url, {
-            headers: authHeaders(), // include bearer
+            headers: headers, // include bearer
             signal: controller.signal,
           });
           
@@ -381,8 +404,9 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
           // Full sync: compare local data with database
           const localPokemon = get().pokemon;
+          const headers = await authHeaders(); // await the async function
           const res = await fetch(buildApiUrl(`legends-za?userId=${userId}`), {
-            headers: authHeaders(), // include bearer
+            headers: headers, // include bearer
           });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const json = await res.json();
@@ -415,9 +439,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           // Batch update if there are changes
           if (updates.length > 0) {
             console.log('[TRACKER] syncWithDatabase: sending batch updates', updates.length);
+            const headers2 = await authHeaders(); // await the async function
             const res2 = await fetch(buildApiUrl('legends-za/batch'), {
                method: 'POST',
-               headers: authHeaders(), // include bearer
+               headers: headers2, // include bearer
                body: JSON.stringify({ userId, updates }),
              });
             if (!res2.ok) {
@@ -460,9 +485,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           if (updates.length === 0) return;
 
           console.log('[TRACKER] processPendingUpdates: sending batch of', updates.length);
+          const headers = await authHeaders(); // await the async function
           const res = await fetch(buildApiUrl(`legends-za/batch?userId=${userId}`), {
              method: 'POST',
-             headers: authHeaders(), // include bearer
+             headers: headers, // include bearer
              body: JSON.stringify({ userId, updates }),
            });
           if (!res.ok) {

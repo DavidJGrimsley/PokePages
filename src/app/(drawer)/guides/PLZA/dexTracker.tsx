@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import Head from 'expo-router/head';
 import { Container } from '@/src/components/UI/Container';
 import { AppText } from '@/src/components/TextTheme/AppText';
@@ -21,6 +21,7 @@ import AuthStatus from '@/src/components/Auth/AuthStatus';
 type FilterType = 'all' | 'alpha' | 'mega';
 
 export default function DexTrackerPage() {
+  const colorScheme = useColorScheme(); // 'light' | 'dark' | null
   const hasHydrated = usePokemonTrackerStore((state) => state._hasHydrated);
   const [filter, setFilter] = useState<FilterType>('all');
   const [query, setQuery] = useState('');
@@ -275,7 +276,6 @@ export default function DexTrackerPage() {
       
       <Container>
         <MultiLayerParallaxScrollView
-          headerBackgroundColor={{ light: colors.light.background, dark: colors.dark.background }}
           headerHeight={180}
           showsVerticalScrollIndicator={true}
           titleElement={
@@ -288,7 +288,6 @@ export default function DexTrackerPage() {
           }
         >
           <AuthStatus />
-          <InProgressDisclaimer />
           <SearchBar value={query} onChange={setQuery} />
           {/* Filter Buttons */}
           <View className="flex-row gap-2 mb-6">
@@ -344,11 +343,11 @@ export default function DexTrackerPage() {
           </SidebarCollapsible>
 
           {/* Pokémon List */}
-          <View className="bg-app-white p-4 rounded-lg shadow-app-medium">
+          <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium">
             <Text className="text-lg font-bold text-app-text mb-4">
-              {filter === 'all' ? 'All Pokémon' : 
-               filter === 'alpha' ? 'Alpha Pokémon' : 
-               'Mega Evolution Pokémon'} ({filteredPokemon.length})
+              {filter === 'all' ? 'All Pokémon' :
+                filter === 'alpha' ? 'Alpha Pokémon' :
+                'Mega Evolution Pokémon'} ({filteredPokemon.length})
             </Text>
             {filteredPokemon.map((pokemon) => (
               <PokemonRow key={pokemon.id} pokemon={pokemon} />
