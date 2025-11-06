@@ -529,15 +529,21 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
         const mod = await import('./pokemonTrackerStoreEnhanced');
         const trackerStore = mod.usePokemonTrackerStore;
         if (trackerStore && trackerStore.getState) {
-          // Load from DB and then run a full sync
-          await trackerStore.getState().loadFromDatabase();
-          await trackerStore.getState().syncWithDatabase();
-          console.log('🔁 Auth handler: Tracker load/sync complete');
+          // On SIGNED_IN: Sync local data UP to database (don't overwrite local!)
+          // On TOKEN_REFRESHED: Just sync any pending changes
+          if (event === 'SIGNED_IN') {
+            console.log('🔁 Auth handler: SIGNED_IN - syncing local data to database (preserving local changes)');
+            await trackerStore.getState().syncWithDatabase(); // Push local changes up
+          } else {
+            console.log('🔁 Auth handler: TOKEN_REFRESHED - syncing any pending changes');
+            await trackerStore.getState().syncWithDatabase();
+          }
+          console.log('🔁 Auth handler: Tracker sync complete');
         } else {
           console.warn('🔁 Auth handler: trackerStore not available after import');
         }
       } catch (err) {
-        console.error('🔁 Auth handler: failed to trigger tracker load/sync', err);
+        console.error('🔁 Auth handler: failed to trigger tracker sync', err);
       }
     }
   } else if (event === 'SIGNED_OUT') {

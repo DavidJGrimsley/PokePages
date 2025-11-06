@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { AppText } from '@/src/components/TextTheme/AppText';
-import { nationalDex, Pokemon } from '@/data/Pokemon/LumioseDex';
+import { lumioseDex, Pokemon } from '@/data/Pokemon/LumioseDex';
 
 interface EVYieldsProps {
   game: 'PLZA' | 'SV' | 'BDSP';
@@ -32,7 +32,7 @@ const evCategories: (EVCategory & { bgClass: string; borderClass: string; colorB
 export function EVYields({ game }: EVYieldsProps) {
   // Filter Pokemon by EV yield and amount
   const getPokemonByEV = (evKey: keyof NonNullable<Pokemon['evYield']>, amount: number) => {
-    return nationalDex.filter(pokemon => 
+    return lumioseDex.filter(pokemon => 
       pokemon.evYield && pokemon.evYield[evKey] === amount
     );
   };

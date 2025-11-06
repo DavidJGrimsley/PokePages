@@ -25,7 +25,7 @@ export const NewestFeature: React.FC<NewestFeatureProps> = ({
             className="text-white text-xs font-mono p-3" 
             style={{ letterSpacing: 0.5 }}
           >
-            NEW
+            NEW{'\n'}FEATURE
           </Text>
         </View>
         <Text 

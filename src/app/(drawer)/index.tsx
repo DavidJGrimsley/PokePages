@@ -73,17 +73,17 @@ export default function Home() {
           {/* <AuthStatus /> */}
           
           <View className="p-lg bg-app-white">
-            <Text className="typography-header text-app-text mb-md">🎉 Latest Features</Text>
+            {/* */}
+            
+            {/* Messages */}
+            {/* Shortcuts */}
+            {/* Should be a simple button that takes you to your favorite features, like the type calculator/chart */}
             
             {/* Featured newest feature */}
-            <NewestFeature
-              title="Before you Play"
-              description="Get caught up on the Lore of Kalos and Lumiose City before diving into Pokémon Legends Z-A!"
-              path="/(drawer)/guides/PLZA/before-you-play"
-            />
+          
             <NewestFeature
               title="Legends Z-A Strategies"
-              description="Get caught up on the latest strategies for Pokémon Legends Z-A!"
+              description="All the info for Pokémon Legends Z-A!"
               path="/(drawer)/guides/PLZA/strategies"
             />
           

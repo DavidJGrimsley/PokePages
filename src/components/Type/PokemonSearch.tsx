@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, TextInput, Pressable, Text, ScrollView, Platform, Keyboard } from 'react-native';
 import { nationalDex, type Pokemon } from '@/data/Pokemon/NationalDex';
+import { lumioseMegaDex } from '@/data/Pokemon/LumioseDex';
 import { cn } from '@/src/utils/cn';
 import { type PokemonType } from '~/constants/typeUtils';
 
@@ -15,14 +16,40 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
-  // Filter Pokemon based on search query
+  // Filter Pokemon based on search query - includes mega evolutions for matching Pokemon
   const filteredPokemon = useMemo(() => {
     if (!searchQuery.trim()) return [];
     
     const query = searchQuery.toLowerCase();
-    return nationalDex
-      .filter(pokemon => pokemon.name.toLowerCase().includes(query))
-      .slice(0, 10); // Limit to 10 results for performance
+    const results: Pokemon[] = [];
+    
+    // Search through national dex
+    const regularMatches = nationalDex.filter(pokemon => 
+      pokemon.name.toLowerCase().includes(query)
+    );
+    
+    // For each matching regular Pokemon, add it and its mega forms (if any)
+    regularMatches.forEach(pokemon => {
+      results.push(pokemon);
+      
+      // Find and add mega evolutions for this Pokemon
+      const megaForms = lumioseMegaDex.filter(mega => mega.id === pokemon.id);
+      results.push(...megaForms);
+    });
+    
+    // Also search for direct mega searches (e.g., "Mega Gyarados")
+    const directMegaMatches = lumioseMegaDex.filter(mega => 
+      mega.name.toLowerCase().includes(query)
+    );
+    
+    // Add direct mega matches that aren't already in results
+    directMegaMatches.forEach(mega => {
+      if (!results.some(r => r.id === mega.id && r.name === mega.name)) {
+        results.push(mega);
+      }
+    });
+    
+    return results.slice(0, 15); // Limit to 15 results for performance
   }, [searchQuery]);
 
   const handlePokemonSelect = (pokemon: Pokemon) => {
@@ -99,9 +126,11 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
             nestedScrollEnabled={true}
             style={{ maxHeight: 300 }}
           >
-            {filteredPokemon.map((pokemon) => (
+            {filteredPokemon.map((pokemon, index) => {
+              const isMega = pokemon.name.toLowerCase().startsWith('mega ');
+              return (
               <Pressable
-                key={pokemon.id}
+                key={`${pokemon.id}-${pokemon.name}-${index}`}
                 onPress={() => handlePokemonSelect(pokemon)}
                 className={cn(
                   'px-4 py-3 border-b border-app-border',
@@ -110,9 +139,16 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
                 style={isWeb ? { cursor: 'pointer' } : undefined}
               >
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-app-text font-medium">
-                    {pokemon.name}
-                  </Text>
+                  <View className="flex-row items-center gap-2 flex-1">
+                    {isMega && (
+                      <View className="bg-purple-500 px-1.5 py-0.5 rounded">
+                        <Text className="text-xs text-white font-bold">M</Text>
+                      </View>
+                    )}
+                    <Text className="text-app-text font-medium">
+                      {pokemon.name}
+                    </Text>
+                  </View>
                   <View className="flex-row gap-1">
                     <View className="px-2 py-0.5 bg-app-accent/20 rounded">
                       <Text className="text-xs text-app-text capitalize">
@@ -129,7 +165,8 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
                   </View>
                 </View>
               </Pressable>
-            ))}
+            )}
+            )}
           </ScrollView>
         </View>
       )}

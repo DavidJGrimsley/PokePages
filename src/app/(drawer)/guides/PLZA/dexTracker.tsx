@@ -12,7 +12,7 @@ import colors from '@/src/constants/style/colors';
 import { cn } from '@/src/utils/cn';
 import { usePokemonTrackerStore} from '@/src/store/pokemonTrackerStoreEnhanced';
 import { useShallow } from 'zustand/react/shallow';
-import { nationalDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
+import { lumioseDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
 import { type FormType }from '~/types/tracker';
 import SearchBar from '@/src/components/Pokedex/LumioseDexSearch';
 import AuthStatus from '@/src/components/Auth/AuthStatus';
@@ -28,12 +28,12 @@ export default function DexTrackerPage() {
 
   // Filter Pokemon based on selected filter + search query
   const filteredPokemon = React.useMemo(() => {
-    if (!nationalDex || !Array.isArray(nationalDex)) {
-      console.error('[DEX TRACKER] nationalDex is not available or not an array:', nationalDex);
+    if (!lumioseDex || !Array.isArray(lumioseDex)) {
+      console.error('[DEX TRACKER] nationalDex is not available or not an array:', lumioseDex);
       return [];
     }
     
-    let base = nationalDex;
+    let base = lumioseDex;
     switch (filter) {
       case 'alpha':
         base = base.filter(p => p?.canBeAlpha);
@@ -294,22 +294,22 @@ export default function DexTrackerPage() {
             <FilterButton 
               filterType="all" 
               label="All" 
-              count={nationalDex.length} 
+              count={lumioseDex.length} 
             />
             <FilterButton 
               filterType="alpha" 
               label="Alpha" 
-              count={nationalDex.filter(p => p.canBeAlpha).length} 
+              count={lumioseDex.filter(p => p.canBeAlpha).length} 
             />
             <FilterButton 
               filterType="mega" 
               label="Mega" 
-              count={nationalDex.filter(p => p.hasMega).length} 
+              count={lumioseDex.filter(p => p.hasMega).length} 
             />
           </View>
 
           {/* Progress Sidebar */}
-          <ProgressSidebar pokemonList={nationalDex} />
+          <ProgressSidebar pokemonList={lumioseDex} />
 
           {/* Instructions */}
           <SidebarCollapsible

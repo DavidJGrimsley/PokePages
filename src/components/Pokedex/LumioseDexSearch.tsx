@@ -9,7 +9,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { nationalDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
+import { lumioseDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
 import { cn } from '@/src/utils/cn';
 
 const isWeb = Platform.OS === 'web';
@@ -37,7 +37,7 @@ export default function LumioseDexSearch({
       return [];
     }
 
-    return nationalDex
+    return lumioseDex
       .filter((pokemon) => {
         const nameMatch = pokemon.name.toLowerCase().includes(query);
         const idString = String(pokemon.id);

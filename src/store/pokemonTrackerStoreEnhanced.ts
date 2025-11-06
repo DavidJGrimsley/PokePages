@@ -360,8 +360,29 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           console.log('[TRACKER] loadFromDatabase: loaded records', records.length);
           console.log('[TRACKER] loadFromDatabase: final pokemon data', pokemonData);
 
+          // SAFETY: Merge with local data instead of overwriting
+          // Keep any Pokemon that exist locally but not in DB
+          const currentPokemon = get().pokemon;
+          const mergedPokemon = { ...currentPokemon };
+          
+          // Only overwrite with DB data if DB has any data for that Pokemon
+          Object.entries(pokemonData).forEach(([dexId, status]) => {
+            const id = Number(dexId);
+            // If DB has ANY true values for this Pokemon, use DB data
+            // Otherwise keep local data
+            if (status.normal || status.shiny || status.alpha || status.alphaShiny) {
+              mergedPokemon[id] = status;
+              console.log(`[TRACKER] loadFromDatabase: using DB data for #${id}:`, status);
+            } else if (currentPokemon[id]) {
+              console.log(`[TRACKER] loadFromDatabase: keeping local data for #${id}:`, currentPokemon[id]);
+              // Keep existing local data
+            }
+          });
+
+          console.log('[TRACKER] loadFromDatabase: merged pokemon data', mergedPokemon);
+
           set({ 
-            pokemon: pokemonData,
+            pokemon: mergedPokemon,
             lastSyncTime: new Date().toISOString(),
             isSyncing: false 
           });

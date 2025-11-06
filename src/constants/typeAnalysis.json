@@ -2,7 +2,7 @@
     "normal": {
         "id": "normal",
         "title": "Normal",
-        "description": "The base type and boring"
+        "description": "The only type to have no types against which it is super effective. Also the only type to have no types that it resists. There is always a normal type on the first route of every game, typically a rodent or small mammal. Normal types are often characterized as being plain, simple, or unremarkable. "
     },
     "fighting": {
         "id": "fighting",

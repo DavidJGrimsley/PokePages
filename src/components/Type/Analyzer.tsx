@@ -14,10 +14,42 @@ import {
   type PokemonType,
   ALL_STANDARD_TYPES
 } from '~/constants/typeUtils';
-import typeAnalysisConfig from '~/constants/typeAnalysis.json';
 import { cn } from '@/src/utils/cn';
 import { getTypeColor } from '~/utils/typeColors';
-import { LinearGradient } from 'expo-linear-gradient';
+import { TypeBlurb } from './Blurb';
+
+// Helper component to render a type name with its color background
+function TypeBadge({ typeName }: { typeName: string }) {
+  const typeColor = getTypeColor(typeName);
+  const capitalizedType = typeName.charAt(0).toUpperCase() + typeName.slice(1);
+  
+  // Calculate luminance for text color
+  const getLuminance = (hexColor: string) => {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16) / 255;
+    const g = parseInt(hex.substring(2, 4), 16) / 255;
+    const b = parseInt(hex.substring(4, 6), 16) / 255;
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  
+  const textColor = getLuminance(typeColor) > 0.6 ? '#141115' : '#FFFFFF';
+  
+  return (
+    <Text 
+      style={{ 
+        backgroundColor: typeColor,
+        color: textColor,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+        overflow: 'hidden',
+      }}
+      className="font-semibold"
+    >
+      {capitalizedType}
+    </Text>
+  );
+}
 
 
 
@@ -120,6 +152,7 @@ interface TypeAnalysisProps {
 export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisProps) {
   const isDualTyped = secondType !== null;
   const matchups = getTypeMatchups(selectedType);
+  const secondMatchups = secondType ? getTypeMatchups(secondType) : null;
   const weaknesses = getWeaknesses(selectedType, secondType || undefined);
   const resistances = getResistances(selectedType, secondType || undefined);
   
@@ -142,6 +175,22 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
       }
       // Create combination string
       quadDamageCombinations.push(`${type1}/${type2}`);
+    }
+  }
+
+  // Calculate quad damage combinations for second type (if dual typed)
+  const secondQuadDamageCombinations: string[] = [];
+  if (isDualTyped && secondMatchups) {
+    const secondSuperEffectiveTypes = secondMatchups.offensive.superEffectiveAgainst;
+    for (let i = 0; i < secondSuperEffectiveTypes.length; i++) {
+      for (let j = i; j < secondSuperEffectiveTypes.length; j++) {
+        const type1 = secondSuperEffectiveTypes[i];
+        const type2 = secondSuperEffectiveTypes[j];
+        if (i === j) {
+          continue;
+        }
+        secondQuadDamageCombinations.push(`${type1}/${type2}`);
+      }
     }
   }
   
@@ -169,194 +218,244 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
       >
         {/* Wrapper for responsive layout */}
         <View className="flex-col lg:flex-row lg:gap-6">
-          {/* Offensive Section - Only show for single type */}
-          {!isDualTyped && <View className="mb-3 lg:flex-1">
-            <Text className="text-lg font-bold mb-1.5">
-              🗡️ Offensive (When {selectedType} attacks):
-            </Text>
+          {/* Defensive Section - Now First */}
+          <View className="mb-2 lg:flex-1">
+            <View className="flex-row flex-wrap items-center mb-1.5 gap-1">
+              <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">
+                🛡️ Defensive (When 
+              </Text>
+              {isDualTyped ? (
+                <>
+                  <TypeBadge typeName={selectedType} />
+                  <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">&</Text>
+                  <TypeBadge typeName={secondType!} />
+                </>
+              ) : (
+                <TypeBadge typeName={selectedType} />
+              )}
+              <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">
+                {' '}defends):
+              </Text>
+            </View>
 
-          {quadDamageCombinations.length > 0 && (
-            <View className="mb-1">
-              <Text className="text-sm font-semibold mb-1.5">
-                Super Duper Effective (4x Damage) Against:
+            {isDualTyped && quadWeaknesses.length > 0 && <View className="mb-1">
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Very Weak To (takes 4x Damage):
               </Text>
               <TypeGrid
-                types={quadDamageCombinations}
-                variant="superDuperEffective"
+                types={quadWeaknesses}
+                variant="veryWeak"
               />
-            </View>
-          )}
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Super Effective (2x Damage) Against:
-            </Text>
-            <TypeGrid
-              types={matchups.offensive.superEffectiveAgainst}
-              variant="superEffective"
-            />
-          </View>
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Neutral Against:
-            </Text>
-            <TypeGrid
-              types={offensiveNeutral}
-              variant="neutral"
-            />
-          </View>
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Not Very Effective (0.5x Damage) Against:
-            </Text>
-            <TypeGrid
-              types={matchups.offensive.notVeryEffectiveAgainst}
-              variant="notVeryEffective"
-            />
-          </View>
-          {matchups.offensive.noEffectAgainst.length > 0 && (
+            </View>}
             <View className="mb-1">
-              <Text className="text-sm font-semibold mb-1.5">
-                No Effect (0x Damage) Against:
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Weak To (takes 2x Damage):
               </Text>
               <TypeGrid
-                types={matchups.offensive.noEffectAgainst}
-                variant="noEffect"
+                types={weaknesses.filter(w => !quadWeaknesses.includes(w))}
+                variant="weakTo"
               />
             </View>
-          )}
-        </View>}
-        {/* Defensive Section */}
-        <View className="mb-2 lg:flex-1">
-          <Text className="text-lg font-bold mb-1.5">
-            🛡️ Defensive (When {isDualTyped ? `${selectedType}/${secondType}` : selectedType} defends):
-          </Text>
-
-          {isDualTyped && quadWeaknesses.length > 0 && <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Very Weak To (takes 4x Damage):
-            </Text>
-            <TypeGrid
-              types={quadWeaknesses}
-              variant="veryWeak"
-            />
-          </View>}
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Weak To (takes 2x Damage):
-            </Text>
-            <TypeGrid
-              types={weaknesses.filter(w => !quadWeaknesses.includes(w))}
-              variant="weakTo"
-            />
-          </View>
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Neutral:
-            </Text>
-            <TypeGrid
-              types={defensiveNeutral}
-              variant="neutral"
-            />
-          </View>
-          <View className="mb-1">
-            <Text className="text-sm font-semibold mb-1.5">
-              Resists (takes 0.5x Damage):
-            </Text>
-            <TypeGrid
-              types={resistances.filter(r => !quadResistances.includes(r))}
-              variant="resists"
-            />
-          </View>
-          {isDualTyped && quadResistances.length > 0 && (
             <View className="mb-1">
-              <Text className="text-sm font-semibold mb-1.5">
-                Double Resists (takes 0.25x Damage):
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Neutral:
               </Text>
               <TypeGrid
-                types={quadResistances}
-                variant="quadResists"
+                types={defensiveNeutral}
+                variant="neutral"
               />
             </View>
-          )}
-          {matchups.defensive.immuneTo.length > 0 && (
             <View className="mb-1">
-              <Text className="text-sm font-semibold mb-1.5">
-                Immune To (takes 0x Damage) :
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Resists (takes 0.5x Damage):
               </Text>
               <TypeGrid
-                types={matchups.defensive.immuneTo}
-                variant="noEffect"
+                types={resistances.filter(r => !quadResistances.includes(r))}
+                variant="resists"
               />
             </View>
-          )}
-        </View>
-      </View>
-          {/* blurb about the chosen type */}
-        
-          {/* Type analysis description box (single or dual) */}
-          {(() => {
-            const color1 = getTypeColor(selectedType);
-            const color2 = isDualTyped && secondType ? getTypeColor(secondType) : color1;
-
-            // Compute text color for readability across both colors
-            const getLuminance = (hexColor: string) => {
-              const hex = hexColor.replace('#', '');
-              const r = parseInt(hex.substring(0, 2), 16) / 255;
-              const g = parseInt(hex.substring(2, 4), 16) / 255;
-              const b = parseInt(hex.substring(4, 6), 16) / 255;
-              return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            };
-            const lum1 = getLuminance(color1);
-            const lum2 = getLuminance(color2);
-            const textColor = lum1 > 0.6 || lum2 > 0.6 ? '#141115' : '#FFFFFF';
-
-            // Resolve info from typeAnalysis.json
-            let infoKey: string | undefined;
-            if (isDualTyped && secondType) {
-              const k1 = `${selectedType}-${secondType}`;
-              const k2 = `${secondType}-${selectedType}`;
-              if ((typeAnalysisConfig as any)[k1]) infoKey = k1;
-              else if ((typeAnalysisConfig as any)[k2]) infoKey = k2;
-            } else {
-              infoKey = selectedType;
-            }
-            const info: any = infoKey ? (typeAnalysisConfig as any)[infoKey] : undefined;
-
-            const headerText = info?.title
-              ? `${info.title} Type Analysis`
-              : (isDualTyped
-                  ? `${selectedType.toUpperCase()}/${secondType?.toUpperCase()} Type Analysis`
-                  : `${selectedType.toUpperCase()} Type Analysis`);
-
-            const aboutLabel = info?.title
-              ? `About ${info.title} type`
-              : `About ${isDualTyped && secondType ? `${selectedType}/${secondType}` : selectedType} type`;
-
-            return (
-              <LinearGradient
-                colors={[color1, color2]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{ borderRadius: 12, padding: 12, marginBottom: 16 }}
-                className="rounded-xl p-3 mb-4 shadow-app-small"
-              >
-                <Text style={{ color: textColor }} className="text-xl font-bold text-center mb-4 capitalize">
-                  {headerText}
+            {isDualTyped && quadResistances.length > 0 && (
+              <View className="mb-1">
+                <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                  Double Resists (takes 0.25x Damage):
                 </Text>
-                <Text style={{ color: textColor }} className="text-center">
-                  (This section is not yet complete. Thank you for your patience!)
+                <TypeGrid
+                  types={quadResistances}
+                  variant="quadResists"
+                />
+              </View>
+            )}
+            {matchups.defensive.immuneTo.length > 0 && (
+              <View className="mb-1">
+                <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                  Immune To (takes 0x Damage) :
                 </Text>
-                <Text style={{ color: textColor }} className="text-base font-semibold mb-1 capitalize">
-                  {aboutLabel}
+                <TypeGrid
+                  types={matchups.defensive.immuneTo}
+                  variant="noEffect"
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Offensive Section - Now Second */}
+          <View className="mb-3 lg:flex-1">
+            <View className="flex-row flex-wrap items-center mb-1.5 gap-1">
+              <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">
+                🗡️ Offensive (When 
+              </Text>
+              {isDualTyped ? (
+                <>
+                  <TypeBadge typeName={selectedType} />
+                  <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">/</Text>
+                  <TypeBadge typeName={secondType!} />
+                </>
+              ) : (
+                <TypeBadge typeName={selectedType} />
+              )}
+              <Text className="text-lg font-bold text-app-gray-600 dark:text-app-surface">
+                {' '}attacks):
+              </Text>
+            </View>
+            
+            {isDualTyped && (
+              <Text className="text-xs text-gray-600 dark:text-gray-400 italic mb-2">
+                Note: Shows STAB (Same Type Attack Bonus) move effectiveness. Pokémon can learn other type moves.
+              </Text>
+            )}
+
+            {/* Type 1 Offensive */}
+            {isDualTyped && (
+              <View className="flex-row items-center mt-2 mb-1 gap-1">
+                <TypeBadge typeName={selectedType} />
+                <Text className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                  {' '}Type Moves:
                 </Text>
-                {info?.description && (
-                  <Text style={{ color: textColor }} className="text-sm leading-5">
-                    {info.description}
+              </View>
+            )}
+
+            {quadDamageCombinations.length > 0 && (
+              <View className="mb-1">
+                <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                  Super Duper Effective (4x Damage) Against:
+                </Text>
+                <TypeGrid
+                  types={quadDamageCombinations}
+                  variant="superDuperEffective"
+                />
+              </View>
+            )}
+            <View className="mb-1">
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Super Effective (2x Damage) Against:
+              </Text>
+              <TypeGrid
+                types={matchups.offensive.superEffectiveAgainst}
+                variant="superEffective"
+              />
+            </View>
+            <View className="mb-1">
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Neutral Against:
+              </Text>
+              <TypeGrid
+                types={offensiveNeutral}
+                variant="neutral"
+              />
+            </View>
+            <View className="mb-1">
+              <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                Not Very Effective (0.5x Damage) Against:
+              </Text>
+              <TypeGrid
+                types={matchups.offensive.notVeryEffectiveAgainst}
+                variant="notVeryEffective"
+              />
+            </View>
+            {matchups.offensive.noEffectAgainst.length > 0 && (
+              <View className="mb-1">
+                <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                  No Effect (0x Damage) Against:
+                </Text>
+                <TypeGrid
+                  types={matchups.offensive.noEffectAgainst}
+                  variant="noEffect"
+                />
+              </View>
+            )}
+
+            {/* Type 2 Offensive (if dual type) */}
+            {isDualTyped && secondMatchups && (
+              <>
+                <View className="flex-row items-center mt-4 mb-1 gap-1">
+                  <TypeBadge typeName={secondType!} />
+                  <Text className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                    {' '}Type Moves:
                   </Text>
+                </View>
+
+                {secondQuadDamageCombinations.length > 0 && (
+                  <View className="mb-1">
+                    <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                      Super Duper Effective (4x Damage) Against:
+                    </Text>
+                    <TypeGrid
+                      types={secondQuadDamageCombinations}
+                      variant="superDuperEffective"
+                    />
+                  </View>
                 )}
-              </LinearGradient>
-            );
-          })()}
+
+                {secondMatchups.offensive.superEffectiveAgainst.length > 0 && (
+                  <View className="mb-1">
+                    <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                      Super Effective (2x Damage) Against:
+                    </Text>
+                    <TypeGrid
+                      types={secondMatchups.offensive.superEffectiveAgainst}
+                      variant="superEffective"
+                    />
+                  </View>
+                )}
+                <View className="mb-1">
+                  <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                    Neutral Against:
+                  </Text>
+                  <TypeGrid
+                    types={ALL_STANDARD_TYPES.filter(type => 
+                      !secondMatchups.offensive.superEffectiveAgainst.includes(type) &&
+                      !secondMatchups.offensive.notVeryEffectiveAgainst.includes(type) &&
+                      !secondMatchups.offensive.noEffectAgainst.includes(type)
+                    )}
+                    variant="neutral"
+                  />
+                </View>
+                <View className="mb-1">
+                  <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                    Not Very Effective (0.5x Damage) Against:
+                  </Text>
+                  <TypeGrid
+                    types={secondMatchups.offensive.notVeryEffectiveAgainst}
+                    variant="notVeryEffective"
+                  />
+                </View>
+                {secondMatchups.offensive.noEffectAgainst.length > 0 && (
+                  <View className="mb-1">
+                    <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
+                      No Effect (0x Damage) Against:
+                    </Text>
+                    <TypeGrid
+                      types={secondMatchups.offensive.noEffectAgainst}
+                      variant="noEffect"
+                    />
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+        </View>
+          {/* blurb about the chosen type */}
+          <TypeBlurb selectedType={selectedType} secondType={secondType} />
       </ScrollView>
 
     </View>
