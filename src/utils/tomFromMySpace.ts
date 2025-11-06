@@ -148,8 +148,11 @@ export const TOM_POST_IDEAS = [
  */
 export async function tomPost(content: string, visibility: 'public' | 'friends_only' = 'public') {
   try {
-    const post = await socialApi.createPost(TOM_USER_ID, content, visibility);
+    const { post, moderation } = await socialApi.createPost(TOM_USER_ID, content, visibility);
     console.log('✅ Tom posted:', content.substring(0, 50) + '...');
+    if (moderation?.mode === 'basic' && moderation.fallbackReason) {
+      console.warn(`Tom's post used basic moderation: ${moderation.fallbackReason}`);
+    }
     return post;
   } catch (error) {
     console.error('❌ Error posting as Tom:', error);

@@ -18,12 +18,12 @@ const showAlert = (title: string, message?: string) => {
 }
 
 export default function EditProfile({ session }: { session: Session }) {
-  const { signOut, setProfile, profile } = useAuthStore()
+  const { signOut, setProfile, profile, updateComputedProperties } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [birthdate, setBirthdate] = useState('')
   const [bio, setBio] = useState('')
-  const [avatar_url, setAvatar_url] = useState('')
+  const [avatarUrl, setAvatarUrl] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   // Sync form fields with profile data from store
@@ -32,12 +32,12 @@ export default function EditProfile({ session }: { session: Session }) {
       setUsername(profile.username || '')
       setBirthdate(profile.birthdate || '')
       setBio(profile.bio || '')
-      setAvatar_url(profile.avatar_url || '')
+      setAvatarUrl(profile.avatarUrl || '')
     } else {
       setUsername('')
       setBirthdate('')
       setBio('')
-      setAvatar_url('')
+      setAvatarUrl('')
     }
   }, [profile])
 
@@ -45,14 +45,14 @@ export default function EditProfile({ session }: { session: Session }) {
     username, 
     birthdate, 
     bio, 
-    avatar_url,
+    avatarUrl,
   }: {
     username: string
     birthdate: string
     bio: string
-    avatar_url: string
+    avatarUrl: string
   }) => {
-    console.log('🔄 updateProfile called with:', { username, birthdate, bio, avatar_url })
+    console.log('🔄 updateProfile called with:', { username, birthdate, bio, avatarUrl })
     setLoading(true)
     setError(null)
     try {
@@ -66,7 +66,7 @@ export default function EditProfile({ session }: { session: Session }) {
       if (username?.trim()) updates.username = username.trim()
       if (birthdate?.trim()) updates.birthdate = birthdate.trim()
       if (bio?.trim()) updates.bio = bio.trim()
-      if (avatar_url?.trim()) updates.avatarUrl = avatar_url.trim()
+      if (avatarUrl?.trim()) updates.avatarUrl = avatarUrl.trim()
       console.log('📝 Update payload:', updates)
 
       // Update profile via Express API
@@ -95,9 +95,13 @@ export default function EditProfile({ session }: { session: Session }) {
         username: result.data.username || null,
         birthdate: result.data.birthdate || null,
         bio: result.data.bio || null,
-        avatar_url: result.data.avatarUrl || null,
+        avatarUrl: result.data.avatarUrl || null,
       })
       console.log('✅ Profile updated successfully in store')
+
+      // IMPORTANT: Trigger re-calculation of age-based permissions
+      updateComputedProperties()
+      console.log('✅ Computed properties updated (age verification)')
 
       showAlert('Success', 'Profile updated successfully!')
     } catch (error) {
@@ -186,8 +190,8 @@ export default function EditProfile({ session }: { session: Session }) {
       <View className="py-2 self-stretch">
         <Text className="mb-2 text-gray-800 font-bold">Avatar URL</Text>
         <TextInput
-          value={avatar_url}
-          onChangeText={setAvatar_url}
+          value={avatarUrl}
+          onChangeText={setAvatarUrl}
           placeholder="https://example.com/avatar.jpg"
           autoCapitalize="none"
           autoCorrect={false}
@@ -200,7 +204,7 @@ export default function EditProfile({ session }: { session: Session }) {
           title={loading ? 'Loading ...' : 'Update Profile'}
           onPress={() => {
             console.log('🔘 Update Profile button pressed!')
-            updateProfile({ username, birthdate, bio, avatar_url })
+            updateProfile({ username, birthdate, bio, avatarUrl })
           }}
           disabled={loading}
         />

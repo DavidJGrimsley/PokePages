@@ -16,13 +16,12 @@ router.delete('/posts/:postId', socialController.deletePost);
 router.post('/friendships/request', socialController.sendFriendRequest);
 router.post('/friendships/:friendshipId/accept', socialController.acceptFriendRequest);
 router.post('/friendships/:friendshipId/reject', socialController.rejectFriendRequest);
-router.delete('/friendships/:friendshipId', socialController.removeFriend);
+router.post('/friendships/unfriend', socialController.unfriend);
 router.post('/friendships/block', socialController.blockUser);
 router.post('/friendships/unblock', socialController.unblockUser);
 router.get('/friendships/requests', socialController.getFriendRequests);
-router.get('/friendships/friends', socialController.getFriends);
+router.get('/friendships/friends', socialController.getUserFriends);
 router.get('/friendships/blocked', socialController.getBlockedUsers);
-router.get('/friendships/status', socialController.checkFriendshipStatus);
 
 // ============= LIKES =============
 router.post('/posts/:postId/like', socialController.likePost);
@@ -32,15 +31,16 @@ router.get('/posts/:postId/likes', socialController.getPostLikes);
 // ============= COMMENTS =============
 router.post('/posts/:postId/comments', socialController.createComment);
 router.get('/posts/:postId/comments', socialController.getPostComments);
-router.put('/comments/:commentId', socialController.updateComment);
 router.delete('/comments/:commentId', socialController.deleteComment);
 
-// ============= MESSAGES =============
-router.post('/messages', socialController.sendMessage);
-router.get('/messages/conversation', socialController.getConversation);
-router.get('/messages/unread-count', socialController.getUnreadMessagesCount);
-router.post('/messages/:messageId/read', socialController.markMessageAsRead);
-router.post('/messages/conversation/read', socialController.markConversationAsRead);
-router.get('/messages/conversations', socialController.getRecentConversations);
+// ============= MUTES =============
+router.post('/mutes', socialController.muteUser);
+router.delete('/mutes', socialController.unmuteUser);
+router.get('/mutes', socialController.getMutedUsers);
+
+// ============= NOTIFICATIONS =============
+router.get('/notifications', socialController.getUserNotifications);
+router.post('/notifications/:notificationId/read', socialController.markNotificationAsRead);
+router.post('/notifications/read-all', socialController.markAllNotificationsAsRead);
 
 export default router;

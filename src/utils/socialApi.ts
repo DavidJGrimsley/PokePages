@@ -1,6 +1,11 @@
 // Social API client for PokePages
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
+export interface ModerationMeta {
+  mode: 'ai' | 'basic' | 'advanced';
+  fallbackReason?: string;
+}
+
 export interface Post {
   id: string;
   authorId: string;
@@ -98,12 +103,17 @@ export interface Conversation {
 
 // ============= POSTS =============
 
+export interface CreatePostResponse {
+  post: Post;
+  moderation?: ModerationMeta;
+}
+
 export async function createPost(
   userId: string,
   content: string,
   visibility: 'public' | 'friends_only' = 'public',
   imageUrl?: string
-) {
+): Promise<CreatePostResponse> {
   const response = await fetch(`${API_BASE_URL}/social/posts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -112,7 +122,10 @@ export async function createPost(
   
   const data = await response.json();
   if (!data.success) throw new Error(data.error);
-  return data.data as Post;
+  return {
+    post: data.data as Post,
+    moderation: data.moderation as ModerationMeta | undefined,
+  };
 }
 
 export async function getPost(postId: string) {

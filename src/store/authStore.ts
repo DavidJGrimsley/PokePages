@@ -87,39 +87,37 @@ const migrateAnonymousData = async (userId: string) => {
 // Function to fetch user profile data
 const fetchUserProfile = async (userId: string) => {
   try {
-    console.log('fetchUserProfile: Starting fetch for userId:', userId);
-    console.log('fetchUserProfile: Supabase client exists:', !!supabase);
-    
     // Skip profile fetching in production for now to avoid crashes
     // This allows the tracker to work while we debug the Supabase issue
     if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-      console.log('fetchUserProfile: Skipping profile fetch in production to avoid crash');
       return null;
     }
     
-    console.log('fetchUserProfile: About to execute main query...');
     const { data, error } = await supabase
       .from('profiles')
       .select('username, birthdate, bio, avatar_url')
       .eq('id', userId)
       .single();
     
-    console.log('fetchUserProfile: Supabase response - data:', data, 'error:', error);
+    // Convert snake_case from database to camelCase for app
+    if (data) {
+      const profileData = {
+        username: data.username,
+        birthdate: data.birthdate,
+        bio: data.bio,
+        avatarUrl: data.avatar_url, // Convert snake_case to camelCase
+      };
+      return profileData;
+    }
     
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-      console.error('fetchUserProfile: Non-404 error occurred:', error);
+      console.error('Failed to fetch user profile:', error);
       return null;
     }
     
-    if (error && error.code === 'PGRST116') {
-      console.log('fetchUserProfile: No profile found (404), returning null');
-      return null;
-    }
-    
-    console.log('fetchUserProfile: Successfully fetched profile:', data);
-    return data;
+    return null;
   } catch (error) {
-    console.error('fetchUserProfile: Failed to fetch user profile:', error);
+    console.error('Failed to fetch user profile:', error);
     return null;
   }
 };
@@ -181,7 +179,7 @@ type UserState = {
     username: string | null;
     birthdate: string | null;
     bio: string | null;
-    avatar_url: string | null;
+    avatarUrl: string | null;  // camelCase for consistency with app
   } | null;
   
   // Computed properties based on profile data
@@ -461,6 +459,11 @@ export const useAuthStore = create(
             console.error('Auth store rehydration error:', error);
           }
           state?.setHasHydrated(true);
+          
+          // CRITICAL: Recalculate age-based permissions after rehydration
+          if (state?.profile?.birthdate) {
+            state?.updateComputedProperties();
+          }
         };
       },
       partialize: (state) => ({
@@ -503,18 +506,14 @@ setTimeout(async () => {
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-  console.log('🔔 Auth state changed:', event, 'user:', session?.user?.email || 'none');
   const { setUser, setSession, setProfile } = useAuthStore.getState();
   
-  console.log('🔄 Auth listener: Setting session and user in store...')
   setSession(session);
   setUser(session?.user ?? null);
   
   // Handle profile fetching for sign-in events and session restoration
   if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-    console.log('🔑 Auth state handler: Fetching profile for user:', session.user.id);
     const profileData = await fetchUserProfile(session.user.id);
-    console.log('👤 Auth state handler: Profile data fetched:', profileData);
     setProfile(profileData);
     
     // Only migrate on actual sign-in, not token refresh
@@ -525,32 +524,18 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
     // Load tracker data on both SIGNED_IN and TOKEN_REFRESHED events
     if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
       try {
-        console.log('🔁 Auth handler: Triggering tracker load/sync for user', session.user.id, 'event:', event);
         const mod = await import('./pokemonTrackerStoreEnhanced');
         const trackerStore = mod.usePokemonTrackerStore;
         if (trackerStore && trackerStore.getState) {
-          // On SIGNED_IN: Sync local data UP to database (don't overwrite local!)
-          // On TOKEN_REFRESHED: Just sync any pending changes
-          if (event === 'SIGNED_IN') {
-            console.log('🔁 Auth handler: SIGNED_IN - syncing local data to database (preserving local changes)');
-            await trackerStore.getState().syncWithDatabase(); // Push local changes up
-          } else {
-            console.log('🔁 Auth handler: TOKEN_REFRESHED - syncing any pending changes');
-            await trackerStore.getState().syncWithDatabase();
-          }
-          console.log('🔁 Auth handler: Tracker sync complete');
-        } else {
-          console.warn('🔁 Auth handler: trackerStore not available after import');
+          await trackerStore.getState().syncWithDatabase();
         }
       } catch (err) {
-        console.error('🔁 Auth handler: failed to trigger tracker sync', err);
+        console.error('Failed to sync tracker:', err);
       }
     }
   } else if (event === 'SIGNED_OUT') {
-    console.log('🚪 Auth state handler: SIGNED_OUT event - Clearing profile');
-    setProfile(null); // Clear profile on sign out
+    setProfile(null);
   }
-  console.log('✅ Auth listener: Completed handling', event, 'event')
 });
 
 // Selector hooks for easier access to computed properties

@@ -16,9 +16,10 @@ const apiBaseUrl = `http://localhost:${port}`;
 // (Express default is non-strict, but set explicitly for clarity)
 app.set('strict routing', false);
 
-// Middleware to convert path to lowercase
+// Middleware to convert path to lowercase (preserve query params)
 app.use((req, res, next) => {
-  req.url = req.url.toLowerCase();
+  const [path, query] = req.url.split('?');
+  req.url = query ? `${path.toLowerCase()}?${query}` : path.toLowerCase();
   next();
 });
 

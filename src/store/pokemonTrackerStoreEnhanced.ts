@@ -678,10 +678,8 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       name: 'pokemon-tracker-enhanced',
       storage: createJSONStorage(() => createStorage()),
       onRehydrateStorage: () => (state) => {
-        console.log('[TRACKER_STORE] onRehydrateStorage triggered');
         if (state) {
           state.setHasHydrated(true);
-          console.log('[TRACKER_STORE] Hydration complete, hasHydrated set to true.');
         }
       },
     }

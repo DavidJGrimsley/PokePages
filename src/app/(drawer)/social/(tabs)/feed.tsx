@@ -105,18 +105,25 @@ export default function FeedTab() {
         <View className="flex-row bg-gray-100 dark:bg-gray-800 rounded-full p-1 mx-4 mt-4 mb-2">
           <TouchableOpacity
             onPress={() => setFeedMode('explore')}
-            className={`flex-1 py-3 rounded-full items-center ${
-              feedMode === 'explore'
-                ? 'bg-amber-500 shadow-lg'
-                : 'bg-transparent'
-            }`}
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              borderRadius: 9999,
+              alignItems: 'center',
+              backgroundColor: feedMode === 'explore' ? '#F59E0B' : 'transparent',
+              shadowColor: feedMode === 'explore' ? '#000' : 'transparent',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: feedMode === 'explore' ? 0.25 : 0,
+              shadowRadius: feedMode === 'explore' ? 3.84 : 0,
+              elevation: feedMode === 'explore' ? 5 : 0,
+            }}
           >
             <Text
-              className={`typography-label font-semibold ${
-                feedMode === 'explore'
-                  ? 'text-white'
-                  : 'text-gray-600 dark:text-gray-300'
-              }`}
+              style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: feedMode === 'explore' ? '#FFFFFF' : '#9CA3AF',
+              }}
             >
               🌍 Explore
             </Text>
@@ -124,18 +131,25 @@ export default function FeedTab() {
 
           <TouchableOpacity
             onPress={() => setFeedMode('friends')}
-            className={`flex-1 py-3 rounded-full items-center ${
-              feedMode === 'friends'
-                ? 'bg-amber-500 shadow-lg'
-                : 'bg-transparent'
-            }`}
+            style={{
+              flex: 1,
+              paddingVertical: 12,
+              borderRadius: 9999,
+              alignItems: 'center',
+              backgroundColor: feedMode === 'friends' ? '#F59E0B' : 'transparent',
+              shadowColor: feedMode === 'friends' ? '#000' : 'transparent',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: feedMode === 'friends' ? 0.25 : 0,
+              shadowRadius: feedMode === 'friends' ? 3.84 : 0,
+              elevation: feedMode === 'friends' ? 5 : 0,
+            }}
           >
             <Text
-              className={`typography-label font-semibold ${
-                feedMode === 'friends'
-                  ? 'text-white'
-                  : 'text-gray-600 dark:text-gray-300'
-              }`}
+              style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: feedMode === 'friends' ? '#FFFFFF' : '#9CA3AF',
+              }}
             >
               👥 Friends
             </Text>

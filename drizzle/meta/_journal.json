@@ -15,6 +15,13 @@
       "when": 1760755435072,
       "tag": "0001_demonic_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762442891719,
+      "tag": "0002_wealthy_bloodstorm",
+      "breakpoints": true
     }
   ]
 }

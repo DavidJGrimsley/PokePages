@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Container } from 'components/UI/Container';
+import SuccessMessage from 'components/UI/SuccessMessage';
 import { useAuthStore } from '~/store/authStore';
 import * as socialApi from '~/utils/socialApi';
 
@@ -22,6 +23,7 @@ export default function CreatePostTab() {
   const [content, setContent] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'friends_only'>('public');
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handlePost = async () => {
     if (!user?.id) {
@@ -36,19 +38,29 @@ export default function CreatePostTab() {
 
     setLoading(true);
     try {
+      console.log('📝 Creating post with content:', content, 'and visibility:', visibility);
       await socialApi.createPost(user.id, content.trim(), visibility);
+      console.log('✅ Post created successfully');
       
-      Alert.alert('Success', 'Your post has been shared!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            setContent('');
-            router.push('/social');
-          },
-        },
-      ]);
+      // Clear form and show success
+      setContent('');
+      setShowSuccess(true);
+      
+      // Auto-hide success message and optionally navigate
+      setTimeout(() => {
+        setShowSuccess(false);
+        // Optionally auto-navigate to feed after 2 seconds
+        // router.push('/social');
+      }, 3000);
+
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to create post');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create post';
+      if (Platform.OS === 'web') {
+        // For web, use window.alert as fallback
+        window.alert(`Error: ${errorMessage}`);
+      } else {
+        Alert.alert('Error', errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -107,6 +119,27 @@ export default function CreatePostTab() {
                 </Text>
               </View>
             </View>
+
+            
+            {/* Success Message */}
+            {showSuccess && (
+              <View className="mt-4">
+                <SuccessMessage
+                  title="✅ Post Shared!"
+                  message="Your post is now live in the feed!"
+                  showAnimation={true}
+                />
+                <TouchableOpacity
+                  onPress={() => router.push('/social/feed')}
+                  className="mt-4 bg-amber-500 rounded-xl py-3 items-center"
+                >
+                  <Text className="typography-label text-white font-semibold">
+                    View in Feed
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
 
             {/* Visibility Toggle */}
             <View className="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-4 shadow-lg border border-gray-100 dark:border-gray-700">
@@ -183,10 +216,14 @@ export default function CreatePostTab() {
               )}
             </TouchableOpacity>
 
+
             {/* Tips */}
             <View className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
               <Text className="typography-label text-blue-900 dark:text-blue-100 font-semibold mb-2">
                 💡 Tips for Great Posts
+              </Text>
+              <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
+                • Be respectful and have fun! 🎉 (Posts cannot contain hate speech, harassment, or explicit content)
               </Text>
               <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
                 • Share your team builds and strategies
@@ -196,9 +233,6 @@ export default function CreatePostTab() {
               </Text>
               <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
                 • Celebrate your achievements
-              </Text>
-              <Text className="typography-caption text-blue-800 dark:text-blue-200">
-                • Be respectful and have fun! 🎉
               </Text>
             </View>
           </ScrollView>

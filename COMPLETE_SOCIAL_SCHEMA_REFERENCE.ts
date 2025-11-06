@@ -1,4 +1,20 @@
-﻿import { 
+// COMPLETE SOCIAL SCHEMA - Copy this content to src/db/socialSchema.ts
+//
+// This file includes all 12 improvements from the ChatGPT recommendations:
+// 1. Unique like constraint
+// 2. Unique friend constraint (symmetric pairs)
+// 3. Restructured post media (separate table)
+// 4. Messages → direct_messages with conversations
+// 5. Blocks table (separate from friendships)
+// 6. User mutes table
+// 7. Notifications table
+// 8. Hashtags system
+// 9. Saved posts
+// 10. Reactions (emoji reactions)
+// 11. Badges system (optional gamification)
+// 12. Catches (Pokémon gallery)
+
+import { 
   pgTable, 
   uuid, 
   timestamp, 
@@ -171,7 +187,6 @@ export const directMessageMedia = pgTable("direct_message_media", {
   createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
   index("direct_message_media_message_idx").on(table.messageId),
-  check("valid_dm_media_type", sql`type IN ('image', 'video')`),
 ]);
 
 // Notifications
@@ -235,20 +250,6 @@ export const reactions = pgTable("reactions", {
   index("reactions_user_idx").on(table.userId),
   unique("reactions_unique_user_post_emoji").on(table.userId, table.postId, table.emojiCode),
 ]);
-
-// Comment Reactions (emoji reactions on comments)
-export const commentReactions = pgTable("comment_reactions", {
-  id: uuid().primaryKey().defaultRandom(),
-  commentId: uuid("comment_id").notNull().references(() => comments.id, { onDelete: 'cascade' }),
-  userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
-  emojiCode: text("emoji_code").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-  index("comment_reactions_comment_idx").on(table.commentId),
-  index("comment_reactions_user_idx").on(table.userId),
-  unique("comment_reactions_unique_user_comment_emoji").on(table.userId, table.commentId, table.emojiCode),
-]);
-
 
 // Badges (gamification)
 export const badges = pgTable("badges", {
@@ -360,7 +361,7 @@ export const likesRelations = relations(likes, ({ one }) => ({
   }),
 }));
 
-export const commentsRelations = relations(comments, ({ one, many }) => ({
+export const commentsRelations = relations(comments, ({ one }) => ({
   post: one(posts, {
     fields: [comments.postId],
     references: [posts.id],
@@ -369,7 +370,6 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     fields: [comments.authorId],
     references: [profiles.id],
   }),
-  reactions: many(commentReactions),
 }));
 
 export const conversationsRelations = relations(conversations, ({ many }) => ({
@@ -439,17 +439,6 @@ export const reactionsRelations = relations(reactions, ({ one }) => ({
   }),
 }));
 
-export const commentReactionsRelations = relations(commentReactions, ({ one }) => ({
-  comment: one(comments, {
-    fields: [commentReactions.commentId],
-    references: [comments.id],
-  }),
-  user: one(profiles, {
-    fields: [commentReactions.userId],
-    references: [profiles.id],
-  }),
-}));
-
 export const badgesRelations = relations(badges, ({ many }) => ({
   users: many(userBadges),
 }));
@@ -506,8 +495,6 @@ export type SavedPost = typeof savedPosts.$inferSelect;
 export type NewSavedPost = typeof savedPosts.$inferInsert;
 export type Reaction = typeof reactions.$inferSelect;
 export type NewReaction = typeof reactions.$inferInsert;
-export type CommentReaction = typeof commentReactions.$inferSelect;
-export type NewCommentReaction = typeof commentReactions.$inferInsert;
 export type Badge = typeof badges.$inferSelect;
 export type NewBadge = typeof badges.$inferInsert;
 export type UserBadge = typeof userBadges.$inferSelect;
@@ -573,10 +560,6 @@ export const insertReactionSchema = createInsertSchema(reactions, {
   emojiCode: z.string().min(1).max(10),
 });
 
-export const insertCommentReactionSchema = createInsertSchema(commentReactions, {
-  emojiCode: z.string().min(1).max(10),
-});
-
 export const insertBadgeSchema = createInsertSchema(badges, {
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
@@ -605,7 +588,6 @@ export const selectHashtagSchema = createSelectSchema(hashtags);
 export const selectPostHashtagSchema = createSelectSchema(postHashtags);
 export const selectSavedPostSchema = createSelectSchema(savedPosts);
 export const selectReactionSchema = createSelectSchema(reactions);
-export const selectCommentReactionSchema = createSelectSchema(commentReactions);
 export const selectBadgeSchema = createSelectSchema(badges);
 export const selectUserBadgeSchema = createSelectSchema(userBadges);
 export const selectCatchSchema = createSelectSchema(catches);

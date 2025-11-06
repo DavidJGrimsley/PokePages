@@ -6,9 +6,24 @@
 import OpenAI from 'openai';
 
 // Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const hasOpenAIKey = Boolean(process.env.OPENAI_API_KEY);
+const openai = hasOpenAIKey
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null;
+
+let aiModerationEnabled = hasOpenAIKey;
+let aiDisableReason = '';
+
+function disableAIModeration(reason: string) {
+  if (!aiModerationEnabled) {
+    return;
+  }
+  aiModerationEnabled = false;
+  aiDisableReason = reason;
+  console.warn(`OpenAI moderation disabled: ${reason}. Falling back to basic moderation.`);
+}
 
 // Bad words list (basic fallback)
 const PROFANITY_LIST = [
@@ -23,6 +38,8 @@ export interface ModerationResult {
   reason?: string;
   flaggedCategories?: string[];
   confidence?: number;
+  mode: 'ai' | 'basic' | 'advanced';
+  fallbackReason?: string;
 }
 
 /**
@@ -30,6 +47,18 @@ export interface ModerationResult {
  * Free, accurate, and fast
  */
 export async function moderateContentWithAI(content: string): Promise<ModerationResult> {
+  if (!aiModerationEnabled || !openai) {
+    if (!openai && !aiDisableReason) {
+      aiDisableReason = 'No OpenAI API key provided';
+    }
+    const basicResult = moderateContentBasic(content);
+    return {
+      ...basicResult,
+      mode: 'basic',
+      fallbackReason: aiDisableReason || 'AI moderation disabled',
+    };
+  }
+
   try {
     const moderation = await openai.moderations.create({
       input: content,
@@ -48,6 +77,7 @@ export async function moderateContentWithAI(content: string): Promise<Moderation
         reason: `Content flagged for: ${flaggedCategories.join(', ')}`,
         flaggedCategories,
         confidence: Math.max(...Object.values(result.category_scores)),
+        mode: 'ai',
       };
     }
 
@@ -55,11 +85,21 @@ export async function moderateContentWithAI(content: string): Promise<Moderation
     return {
       isAllowed: true,
       confidence: 1 - Math.max(...Object.values(result.category_scores)),
+      mode: 'ai',
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('OpenAI moderation error:', error);
+    const status = error?.status ?? error?.code;
+    if (status === 401 || status === 402 || status === 403 || status === 429 || status === 'insufficient_quota') {
+      disableAIModeration(`API unavailable (${status})`);
+    }
     // Fallback to basic check if API fails
-    return moderateContentBasic(content);
+    const basicResult = moderateContentBasic(content);
+    return {
+      ...basicResult,
+      mode: 'basic',
+      fallbackReason: aiDisableReason || `AI moderation error (${status ?? 'unknown'})`,
+    };
   }
 }
 
@@ -76,6 +116,7 @@ export function moderateContentBasic(content: string): ModerationResult {
       return {
         isAllowed: false,
         reason: 'Content contains inappropriate language',
+        mode: 'basic',
       };
     }
   }
@@ -86,6 +127,7 @@ export function moderateContentBasic(content: string): ModerationResult {
     return {
       isAllowed: false,
       reason: 'Please avoid excessive use of capital letters',
+      mode: 'basic',
     };
   }
 
@@ -94,6 +136,7 @@ export function moderateContentBasic(content: string): ModerationResult {
     return {
       isAllowed: false,
       reason: 'Content appears to be spam',
+      mode: 'basic',
     };
   }
 
@@ -104,10 +147,11 @@ export function moderateContentBasic(content: string): ModerationResult {
     return {
       isAllowed: false,
       reason: 'Too many links detected',
+      mode: 'basic',
     };
   }
 
-  return { isAllowed: true };
+  return { isAllowed: true, mode: 'basic' };
 }
 
 /**
@@ -116,6 +160,10 @@ export function moderateContentBasic(content: string): ModerationResult {
  */
 export async function moderateContentAdvanced(content: string): Promise<ModerationResult> {
   try {
+    if (!aiModerationEnabled || !openai) {
+      return moderateContentWithAI(content);
+    }
+
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini', // Fast and cheap
       messages: [
@@ -147,11 +195,20 @@ and follows community guidelines. Respond with JSON only:
       reason: result.reason,
       flaggedCategories: result.concerns,
       confidence: result.isAllowed ? 0.95 : 0.85,
+      mode: 'advanced',
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Advanced moderation error:', error);
+    const status = error?.status ?? error?.code;
+    if (status === 401 || status === 402 || status === 403 || status === 429 || status === 'insufficient_quota') {
+      disableAIModeration(`API unavailable (${status})`);
+    }
     // Fallback to OpenAI moderation
-    return moderateContentWithAI(content);
+    const fallback = await moderateContentWithAI(content);
+    return {
+      ...fallback,
+      fallbackReason: fallback.fallbackReason || `Advanced AI moderation error (${status ?? 'unknown'})`,
+    };
   }
 }
 

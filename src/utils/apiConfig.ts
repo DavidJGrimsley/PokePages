@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 const getApiUrl = (): string => {
   // Allow environment variable to override
   if (process.env.EXPO_PUBLIC_API_BASE_URL) {
-    console.log('[CONFIG] Using environment variable API base URL:', process.env.EXPO_PUBLIC_API_BASE_URL);
     // return process.env.EXPO_PUBLIC_API_BASE_URL;
   }
   
@@ -14,19 +13,7 @@ const getApiUrl = (): string => {
   const hostname = isBrowser ? window.location.hostname : '';
   const isDev = __DEV__ || process.env.NODE_ENV === 'development' || hostname === 'localhost' || hostname === '127.0.0.1';
   
-  console.log('[CONFIG] Environment detection:', {
-    __DEV__,
-    NODE_ENV: process.env.NODE_ENV,
-    hostname,
-    isBrowser,
-    Platform: Platform.OS,
-    isDev
-  });
-
-  console.log('[API CONFIG] is dev:', isDev);
-  
   if (isDev) {
-    console.log('[CONFIG] Using test development API base URL');
     // For Android emulator, use 10.0.2.2 instead of localhost
     // For iOS simulator and web, localhost works fine
     if (Platform.OS === 'android') {
@@ -35,7 +22,6 @@ const getApiUrl = (): string => {
       return 'http://localhost:3001';
     }
   } else {
-    console.log('[CONFIG] Using production API base URL');
     return 'https://api.pokepages.app';
   }
 };
