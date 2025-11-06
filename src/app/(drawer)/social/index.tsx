@@ -4,17 +4,18 @@ import { Text } from 'react-native';
 import { Container } from 'components/UI/Container';
 import { ScreenContent } from 'components/UI/ScreenContent';
 import { Button } from 'components/UI/Button';
+import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
 
 export default function CheckSignin() {
+  const navigateToSignIn = useNavigateToSignIn();
+  
   return (
     <>
       <Stack.Screen options={{ title: 'Tab One' }} />
       <Container>
         <ScreenContent path="app/(drawer)/(tabs)/index.tsx" title="Tab One">
           <Text>In order to use the social features, you need to be signed in. Click the button below to sign in or create an account or hit he PP in the upper left hand corner to get to the rest of the app. The app is better if you sign in though!</Text>
-          <Link href="/sign-in" asChild push>
-            <Button title="Sign In/Create Account" />
-          </Link>
+          <Button onPress={navigateToSignIn} title="Sign In/Create Account" />
           {/* <Link href="/createAccount" asChild push>
             <Button title="Create Account" />
           </Link> */}
