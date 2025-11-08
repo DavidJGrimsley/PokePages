@@ -115,7 +115,7 @@ export default function EnhancedSignUp() {
         username: data.username.trim(),
         birthdate: data.birthdate.toISOString().split('T')[0],
         bio: null,
-        avatar_url: null,
+        avatarUrl: null,
       })
 
       // Show success message
@@ -316,6 +316,14 @@ export default function EnhancedSignUp() {
           <View className="mb-6">
             <Text className="mb-2 text-gray-800 font-bold">Birthdate</Text>
             
+            {/* Warning Message */}
+            <View className="mb-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <Text className="text-yellow-800 text-xs font-semibold">
+                ⚠️ Important: Your birthdate cannot be changed after account creation. 
+                Please ensure it&apos;s accurate. Contact support if you need to update it later.
+              </Text>
+            </View>
+            
             {Platform.OS === 'web' ? (
               <Controller
                 control={control}
@@ -341,10 +349,12 @@ export default function EnhancedSignUp() {
                       min={new Date(1900, 0, 1).toISOString().split('T')[0]}
                       className={`border ${
                         errors.birthdate ? 'border-red-300' : 'border-gray-300'
-                      } bg-white text-gray-800 rounded-md px-4 py-4 w-full text-base`}
+                      } bg-white text-gray-800 rounded-md px-4 py-4 w-full`}
                       style={{
                         fontSize: '16px',
                         fontFamily: 'inherit',
+                        height: '64px',
+                        boxSizing: 'border-box',
                       }}
                     />
                   );
@@ -357,6 +367,7 @@ export default function EnhancedSignUp() {
                   className={`border ${
                     errors.birthdate ? 'border-red-300' : 'border-gray-300'
                   } bg-white rounded-md px-4 py-4`}
+                  style={{ minHeight: 64, justifyContent: 'center' }}
                 >
                   <Text className="text-gray-800 text-base">
                     {formatDate(birthdate)}

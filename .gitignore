@@ -62,3 +62,6 @@ ios/
 *.apk
 *.aab
 *.ipa
+
+# Copilot MD files
+copilotInstructions/

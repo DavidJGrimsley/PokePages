@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { supabase } from "utils/supabaseClient"
 import { useAuthStore } from "~/store/authStore"
 import { View, Alert, Platform, Text, TextInput } from 'react-native'
 import { Session } from '@supabase/supabase-js'
@@ -21,7 +20,6 @@ export default function EditProfile({ session }: { session: Session }) {
   const { signOut, setProfile, profile, updateComputedProperties } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
-  const [birthdate, setBirthdate] = useState('')
   const [bio, setBio] = useState('')
   const [avatarUrl, setAvatarUrl] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -30,12 +28,10 @@ export default function EditProfile({ session }: { session: Session }) {
   useEffect(() => {
     if (profile) {
       setUsername(profile.username || '')
-      setBirthdate(profile.birthdate || '')
       setBio(profile.bio || '')
       setAvatarUrl(profile.avatarUrl || '')
     } else {
       setUsername('')
-      setBirthdate('')
       setBio('')
       setAvatarUrl('')
     }
@@ -43,16 +39,14 @@ export default function EditProfile({ session }: { session: Session }) {
 
   const updateProfile = async ({ 
     username, 
-    birthdate, 
     bio, 
     avatarUrl,
   }: {
     username: string
-    birthdate: string
     bio: string
     avatarUrl: string
   }) => {
-    console.log('🔄 updateProfile called with:', { username, birthdate, bio, avatarUrl })
+    console.log('🔄 updateProfile called with:', { username, bio, avatarUrl })
     setLoading(true)
     setError(null)
     try {
@@ -64,7 +58,6 @@ export default function EditProfile({ session }: { session: Session }) {
       // Prepare the update data (only include non-empty fields)
       const updates: any = {}
       if (username?.trim()) updates.username = username.trim()
-      if (birthdate?.trim()) updates.birthdate = birthdate.trim()
       if (bio?.trim()) updates.bio = bio.trim()
       if (avatarUrl?.trim()) updates.avatarUrl = avatarUrl.trim()
       console.log('📝 Update payload:', updates)
@@ -164,18 +157,6 @@ export default function EditProfile({ session }: { session: Session }) {
         />
       </View>
       <View className="py-2 self-stretch">
-        <Text className="mb-2 text-gray-800 font-bold">Birthdate</Text>
-        <TextInput
-          value={birthdate}
-          onChangeText={setBirthdate}
-          placeholder="YYYY-MM-DD"
-          autoCapitalize="none"
-          autoCorrect={false}
-          className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
-          accessibilityLabel="Birthdate"
-        />
-      </View>
-      <View className="py-2 self-stretch">
         <Text className="mb-2 text-gray-800 font-bold">Bio</Text>
         <TextInput
           value={bio}
@@ -204,7 +185,7 @@ export default function EditProfile({ session }: { session: Session }) {
           title={loading ? 'Loading ...' : 'Update Profile'}
           onPress={() => {
             console.log('🔘 Update Profile button pressed!')
-            updateProfile({ username, birthdate, bio, avatarUrl })
+            updateProfile({ username, bio, avatarUrl })
           }}
           disabled={loading}
         />
