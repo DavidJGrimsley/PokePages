@@ -1,6 +1,6 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { db } from './index.js';
-import { 
+import {
   eventCounters, 
   userEventParticipation, 
   anonymousEventParticipation,

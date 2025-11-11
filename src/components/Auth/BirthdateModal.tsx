@@ -78,6 +78,7 @@ export default function BirthdateModal({ visible, onClose, onSuccess }: Birthdat
         birthdate: result.data.birthdate || null,
         bio: result.data.bio || null,
         avatarUrl: result.data.avatarUrl || null,
+        socialLink: result.data.socialLink || null,
       })
 
       // Trigger re-calculation of age-based permissions
@@ -103,6 +104,10 @@ export default function BirthdateModal({ visible, onClose, onSuccess }: Birthdat
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!visible) {
+    return null
   }
 
   return (

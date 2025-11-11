@@ -1,0 +1,3 @@
+ALTER TABLE "direct_messages" ADD COLUMN "recipient_id" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "direct_messages" ADD CONSTRAINT "direct_messages_recipient_id_profiles_id_fk" FOREIGN KEY ("recipient_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "direct_messages_recipient_idx" ON "direct_messages" USING btree ("recipient_id");

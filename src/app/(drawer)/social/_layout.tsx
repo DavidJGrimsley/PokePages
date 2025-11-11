@@ -8,9 +8,25 @@ import BirthdateModal from '~/components/Auth/BirthdateModal';
 import { Button } from '~/components/UI/Button';
 
 export default function SocialLayout() {
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, profile, _authInitialized } = useAuthStore();
   const { canUseSocialFeatures, hasProvidedBirthdate } = useUserAge();
   const [showBirthdateModal, setShowBirthdateModal] = useState(false);
+
+  // Debug logging - MOVED BEFORE HOOKS
+  console.log('🔍 Social Layout Debug:', {
+    authInitialized: _authInitialized,
+    isLoggedIn,
+    canUseSocialFeatures,
+    hasProvidedBirthdate,
+    birthdate: profile?.birthdate,
+    profileFull: profile ? {
+      username: profile.username,
+      birthdate: profile.birthdate,
+      bio: profile.bio,
+      hasAvatarUrl: !!profile.avatarUrl,
+      socialLink: profile.socialLink,
+    } : null,
+  });
 
   const handleOpenModal = useCallback(() => {
     setShowBirthdateModal(true);
@@ -23,6 +39,27 @@ export default function SocialLayout() {
   const handleSuccess = useCallback(() => {
     setShowBirthdateModal(false);
   }, []);
+
+  // Debug logging
+  console.log('🔍 After hooks - Social Layout Debug:', {
+    isLoggedIn,
+    canUseSocialFeatures,
+    hasProvidedBirthdate,
+    birthdate: profile?.birthdate,
+    fullProfile: profile,
+    authInitialized: _authInitialized,
+  });
+
+  // Don't render anything until auth initialization is complete
+  // This prevents showing the "add birthdate" modal when the profile hasn't loaded yet
+  if (!_authInitialized) {
+    console.log('⏳ Auth not yet initialized, waiting...');
+    return (
+      <View className="flex-1 justify-center items-center bg-app-background">
+        <Text className="typography-copy text-app-secondary">Loading...</Text>
+      </View>
+    );
+  }
 
   // Show age restriction message for logged in users who can't access social features
   if (isLoggedIn && !canUseSocialFeatures) {
@@ -65,6 +102,7 @@ export default function SocialLayout() {
       </Stack.Protected>
       <Stack.Protected guard={isLoggedIn && canUseSocialFeatures}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="conversations/[conversationId]" />
       </Stack.Protected>
     </Stack>
   );

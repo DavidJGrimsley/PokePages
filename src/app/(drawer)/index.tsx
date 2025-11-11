@@ -55,7 +55,7 @@ export default function Home() {
     <>
       <Stack.Screen options={{ title: 'Poké Pages' }} />
       <Container>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }} className='bg-app-background dark:bg-dark-app-background'>
           {/* Download App Banner */}
          {!isMobile && (<Link href="/download" asChild>
             <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
@@ -74,13 +74,19 @@ export default function Home() {
           
           <View className="p-lg bg-app-white">
             {/* */}
+            <Text className="typography-header text-app-text mb-md">Shortcuts</Text>
             
-            {/* Messages */}
+            {/* Messages Link */}
+            <Link href="/(drawer)/social/(tabs)/messages" asChild>
+              <Pressable className="bg-app-secondary mb-8 py-md px-lg rounded-md items-center mt-sm">
+                <Text className="typography-cta text-app-white">Go to Messages</Text>
+              </Pressable>
+            </Link>
+            
             {/* Shortcuts */}
             {/* Should be a simple button that takes you to your favorite features, like the type calculator/chart */}
             
             {/* Featured newest feature */}
-          
             <NewestFeature
               title="Legends Z-A Strategies"
               description="All the info for Pokémon Legends Z-A!"

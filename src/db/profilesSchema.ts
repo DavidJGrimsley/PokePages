@@ -9,6 +9,7 @@ export const profiles = pgTable("profiles", {
 	birthdate: date(),
 	avatarUrl: text("avatar_url"),
 	bio: text(),
+	socialLink: text("social_link"),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow(),
 }, (table) => [
@@ -31,6 +32,7 @@ export const updateProfileSchema = createProfileSchema.pick({
   birthdate: true,
   avatarUrl: true,
   bio: true,
+  socialLink: true,
 });
 
 // Example: Only allow user-controlled fields (exclude system fields)

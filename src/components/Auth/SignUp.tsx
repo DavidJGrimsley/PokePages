@@ -65,13 +65,27 @@ export default function SignUp() {
       })
 
       if (authError) {
-        setErrorMessage(authError.message)
+        // Check for common error messages
+        if (authError.message.includes('already registered') || 
+            authError.message.includes('already exists')) {
+          setErrorMessage('This email is already registered. Please sign in instead.')
+        } else {
+          setErrorMessage(authError.message)
+        }
         setLoading(false)
         return
       }
 
       if (!authData.user) {
         setErrorMessage('Failed to create user account')
+        setLoading(false)
+        return
+      }
+
+      // Check if this is a re-signup (Supabase sometimes doesn't error)
+      // If the user already exists, Supabase may return it without error
+      if (authData.session === null && authData.user.email_confirmed_at) {
+        setErrorMessage('This email is already registered. Please sign in instead.')
         setLoading(false)
         return
       }
@@ -104,7 +118,8 @@ export default function SignUp() {
         username: username.trim(),
         birthdate: birthdate,
         bio: null,
-        avatar_url: null,
+        avatarUrl: null,
+        socialLink: null,
       })
 
       // Show success message instead of alert

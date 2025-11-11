@@ -62,6 +62,38 @@ export async function createProfile(req: Request, res: Response) {
     // req.validated contains the validated data from middleware
     const profileData = req.validated as NewProfile;
     
+    // Check if profile already exists
+    const existingProfile = await dbGetProfile(profileData.id);
+    
+    if (existingProfile) {
+      console.log(`Profile already exists for user ${profileData.id}, updating instead...`);
+      // Profile exists, update it instead
+      const updatedProfile = await dbUpdateProfile(profileData.id, {
+        username: profileData.username,
+        birthdate: profileData.birthdate,
+        bio: profileData.bio,
+        avatarUrl: profileData.avatarUrl,
+        socialLink: profileData.socialLink,
+      });
+      return res.status(200).json({ 
+        success: true, 
+        data: updatedProfile,
+        message: 'Profile updated (already existed)',
+      });
+    }
+
+    // Check if username already exists (case-insensitive)
+    if (profileData.username) {
+      const existingUsername = await dbGetProfileByUsername(profileData.username);
+      if (existingUsername) {
+        return res.status(400).json({
+          success: false,
+          error: 'Username already taken',
+        });
+      }
+    }
+    
+    // Profile doesn't exist, create new one
     const newProfile = await dbCreateProfile(profileData);
     res.status(201).json({ success: true, data: newProfile });
   } catch (error) {
@@ -79,6 +111,17 @@ export async function updateProfile(req: Request, res: Response) {
     const { userId } = req.params;
     // req.validated contains the validated update data from middleware
     const updates = req.validated as Partial<NewProfile>;
+
+    // Check if username is being changed and if it's already taken (case-insensitive)
+    if (updates.username) {
+      const existingUsername = await dbGetProfileByUsername(updates.username);
+      if (existingUsername && existingUsername.id !== userId) {
+        return res.status(400).json({
+          success: false,
+          error: 'Username already taken',
+        });
+      }
+    }
 
     const updatedProfile = await dbUpdateProfile(userId, updates);
 

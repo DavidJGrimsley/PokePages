@@ -28,7 +28,7 @@ export async function getProfileByUsername(username: string): Promise<Profile | 
     const [profile] = await db
       .select()
       .from(profiles)
-      .where(eq(profiles.username, username));
+      .where(sql`LOWER(${profiles.username}) = LOWER(${username})`);
     
     return profile || null;
   } catch (error) {

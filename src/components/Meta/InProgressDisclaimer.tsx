@@ -6,7 +6,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import TypeWriter from 'react-native-typewriter';
 
 
-const disclaimerText = "This information is new and is not yet fully tested, please email support@pokepages.app for any issues.";
+const disclaimerText = "This information or feature is new and may be slightly inaccurate or buggy, please email support@pokepages.app for any issues. Your help is greatly appreciated!";
 
 
 export function InProgressDisclaimer() {

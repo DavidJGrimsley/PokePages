@@ -17,11 +17,11 @@ const showAlert = (title: string, message?: string) => {
 }
 
 export default function EditProfile({ session }: { session: Session }) {
-  const { signOut, setProfile, profile, updateComputedProperties } = useAuthStore()
+  const { setProfile, profile, updateComputedProperties } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [bio, setBio] = useState('')
-  const [avatarUrl, setAvatarUrl] = useState('')
+  const [socialLink, setSocialLink] = useState('')
   const [error, setError] = useState<string | null>(null)
 
   // Sync form fields with profile data from store
@@ -29,24 +29,24 @@ export default function EditProfile({ session }: { session: Session }) {
     if (profile) {
       setUsername(profile.username || '')
       setBio(profile.bio || '')
-      setAvatarUrl(profile.avatarUrl || '')
+      setSocialLink(profile.socialLink || '')
     } else {
       setUsername('')
       setBio('')
-      setAvatarUrl('')
+      setSocialLink('')
     }
   }, [profile])
 
   const updateProfile = async ({ 
     username, 
     bio, 
-    avatarUrl,
+    socialLink,
   }: {
     username: string
     bio: string
-    avatarUrl: string
+    socialLink: string
   }) => {
-    console.log('🔄 updateProfile called with:', { username, bio, avatarUrl })
+    console.log('🔄 updateProfile called with:', { username, bio, socialLink })
     setLoading(true)
     setError(null)
     try {
@@ -58,8 +58,15 @@ export default function EditProfile({ session }: { session: Session }) {
       // Prepare the update data (only include non-empty fields)
       const updates: any = {}
       if (username?.trim()) updates.username = username.trim()
-      if (bio?.trim()) updates.bio = bio.trim()
-      if (avatarUrl?.trim()) updates.avatarUrl = avatarUrl.trim()
+      if (bio?.trim()) {
+        // Validate bio word count (max 50 words)
+        const wordCount = bio.trim().split(/\s+/).length
+        if (wordCount > 50) {
+          throw new Error('Bio must be 50 words or less')
+        }
+        updates.bio = bio.trim()
+      }
+      if (socialLink?.trim()) updates.socialLink = socialLink.trim()
       console.log('📝 Update payload:', updates)
 
       // Update profile via Express API
@@ -77,6 +84,7 @@ export default function EditProfile({ session }: { session: Session }) {
       console.log('📡 API Response status:', response.status, response.statusText)
       const result = await response.json()
       console.log('📦 API Response data:', result)
+      console.log('🔍 Birthdate in response:', result.data?.birthdate)
 
       if (!response.ok || !result.success) {
         console.error('❌ API Error:', result.error || 'Failed to update profile')
@@ -84,13 +92,16 @@ export default function EditProfile({ session }: { session: Session }) {
       }
 
       // Update local store with the returned profile data
+      // IMPORTANT: Preserve birthdate from current profile if not in response
       setProfile({
         username: result.data.username || null,
-        birthdate: result.data.birthdate || null,
+        birthdate: result.data.birthdate || profile?.birthdate || null,
         bio: result.data.bio || null,
         avatarUrl: result.data.avatarUrl || null,
+        socialLink: result.data.socialLink || null,
       })
       console.log('✅ Profile updated successfully in store')
+      console.log('🔍 Birthdate after update:', result.data.birthdate || profile?.birthdate || null)
 
       // IMPORTANT: Trigger re-calculation of age-based permissions
       updateComputedProperties()
@@ -108,19 +119,6 @@ export default function EditProfile({ session }: { session: Session }) {
     }
   }
 
-  async function handleSignOut() {
-    console.log('🚪 Sign Out button pressed!')
-    try {
-      console.log('🔄 Calling signOut function...')
-      await signOut()
-      console.log('✅ Sign out successful!')
-    } catch (error) {
-      console.error('💥 Sign out error:', error)
-      if (error instanceof Error) {
-        showAlert('Sign Out Error', error.message)
-      }
-    }
-  }
 
   return (
     <View className="mt-16 p-4">
@@ -157,7 +155,7 @@ export default function EditProfile({ session }: { session: Session }) {
         />
       </View>
       <View className="py-2 self-stretch">
-        <Text className="mb-2 text-gray-800 font-bold">Bio</Text>
+        <Text className="mb-2 text-gray-800 font-bold">Bio (max 50 words)</Text>
         <TextInput
           value={bio}
           onChangeText={setBio}
@@ -167,17 +165,21 @@ export default function EditProfile({ session }: { session: Session }) {
           className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4 h-30 text-top"
           accessibilityLabel="Bio"
         />
+        <Text className="text-xs text-gray-500 mt-1">
+          {bio.trim() ? bio.trim().split(/\s+/).length : 0} / 50 words
+        </Text>
       </View>
       <View className="py-2 self-stretch">
-        <Text className="mb-2 text-gray-800 font-bold">Avatar URL</Text>
+        <Text className="mb-2 text-gray-800 font-bold">Social Media Link</Text>
         <TextInput
-          value={avatarUrl}
-          onChangeText={setAvatarUrl}
-          placeholder="https://example.com/avatar.jpg"
+          value={socialLink}
+          onChangeText={setSocialLink}
+          placeholder="https://twitter.com/yourhandle or https://instagram.com/yourhandle"
           autoCapitalize="none"
           autoCorrect={false}
+          keyboardType="url"
           className="border border-gray-300 bg-white text-gray-800 rounded-md px-4 py-4"
-          accessibilityLabel="Avatar URL"
+          accessibilityLabel="Social Media Link"
         />
       </View>
       <View className="py-2 self-stretch mt-8">
@@ -185,20 +187,12 @@ export default function EditProfile({ session }: { session: Session }) {
           title={loading ? 'Loading ...' : 'Update Profile'}
           onPress={() => {
             console.log('🔘 Update Profile button pressed!')
-            updateProfile({ username, bio, avatarUrl })
+            updateProfile({ username, bio, socialLink })
           }}
           disabled={loading}
         />
       </View>
-      <View className="py-2 self-stretch">
-        <Button 
-          title="Sign Out" 
-          onPress={() => {
-            console.log('🔘 Sign Out button UI pressed!')
-            handleSignOut()
-          }}
-        />
-      </View>
+     
     </View>
   )
 }

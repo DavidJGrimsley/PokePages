@@ -7,14 +7,64 @@
 
 import { createClient } from '@supabase/supabase-js';
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as FileSystem from 'expo-file-system';
+import { Platform } from 'react-native';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+if (!supabaseUrl || !supabaseKey) {
+  console.error('[storageApi] Missing Supabase env vars', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseKey,
+  });
+}
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const STORAGE_BUCKET = 'social-media';
+async function getAuthToken(): Promise<string | null> {
+  try {
+    const { data } = await supabase.auth.getSession();
+    return (data as any)?.session?.access_token ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`upload-timeout after ${ms}ms`)), ms);
+    promise
+      .then((v) => { clearTimeout(t); resolve(v); })
+      .catch((e) => { clearTimeout(t); reject(e); });
+  });
+}
+
+async function restUpload(bucket: string, path: string, body: Blob | ArrayBuffer, contentType: string, upsert: boolean) {
+  const token = await getAuthToken();
+  const url = `${supabaseUrl}/storage/v1/object/${bucket}/${path}`;
+  const headers: Record<string, string> = {
+    apikey: supabaseKey,
+    authorization: `Bearer ${token ?? supabaseKey}`,
+    'x-upsert': upsert ? 'true' : 'false',
+    'content-type': contentType,
+  };
+  const res = await withTimeout(
+    fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      headers,
+      body: body instanceof Blob ? body : new Uint8Array(body as ArrayBuffer),
+    }),
+    20000
+  );
+  const text = await res.text();
+  if (!(res as Response).ok) {
+    throw new Error(`REST upload failed: ${(res as Response).status} ${text}`);
+  }
+  return { path };
+}
+
+// Bucket for storing post media; configurable via env var so you can reuse an existing bucket.
+const STORAGE_BUCKET = process.env.EXPO_PUBLIC_SUPABASE_MEDIA_BUCKET || 'social-media';
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB
 const MAX_VIDEO_DURATION = 30; // seconds
@@ -34,6 +84,25 @@ export interface VideoMetadata {
 }
 
 /**
+ * Helper function to convert local file URI to Blob using XMLHttpRequest
+ * This works reliably in React Native for local file URIs
+ */
+async function uriToBlob(uri: string): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      resolve(xhr.response);
+    };
+    xhr.onerror = function () {
+      reject(new Error('Failed to read file'));
+    };
+    xhr.responseType = 'blob';
+    xhr.open('GET', uri, true);
+    xhr.send(null);
+  });
+}
+
+/**
  * Compress and upload an image to Supabase Storage
  */
 export async function uploadImage(
@@ -42,64 +111,69 @@ export async function uploadImage(
   folder: 'posts' | 'messages' = 'posts'
 ): Promise<UploadResult> {
   try {
-    // Compress the image
-    const compressedImage = await ImageManipulator.manipulateAsync(
-      uri,
-      [{ resize: { width: MAX_IMAGE_DIMENSION } }],
-      { compress: IMAGE_QUALITY, format: ImageManipulator.SaveFormat.JPEG }
-    );
+    let blob: Blob;
+    let uploadUri = uri;
 
-    // Check file size
-    const fileInfo = await FileSystem.getInfoAsync(compressedImage.uri);
-    if (!fileInfo.exists) {
-      throw new Error('Compressed image file not found');
+    if (Platform.OS === 'web') {
+      const response = await fetch(uri);
+      blob = await response.blob();
+    } else {
+      const compressedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: MAX_IMAGE_DIMENSION } }],
+        { compress: IMAGE_QUALITY, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      uploadUri = compressedImage.uri;
+      blob = await uriToBlob(uploadUri);
     }
     
-    if (fileInfo.size && fileInfo.size > MAX_IMAGE_SIZE) {
+    if (blob.size > MAX_IMAGE_SIZE) {
       throw new Error(`Image size exceeds ${MAX_IMAGE_SIZE / 1024 / 1024}MB limit`);
     }
 
-    // Read file as base64
-    const base64 = await FileSystem.readAsStringAsync(compressedImage.uri, {
-      encoding: 'base64',
-    });
-
-    // Generate unique filename
     const filename = `${folder}/${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-
-    // Convert base64 to blob
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'image/jpeg' });
-
-    // Upload to Supabase
-    const { data, error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .upload(filename, blob, {
-        contentType: 'image/jpeg',
-        upsert: false,
-      });
-
-    if (error) {
-      throw new Error(`Upload failed: ${error.message}`);
+    let payload: Blob | ArrayBuffer = blob;
+    if (Platform.OS === 'web') {
+      payload = await blob.arrayBuffer();
     }
 
-    // Get public URL
+    let data: any | null = null;
+    let error: any | null = null;
+    try {
+      const resp = await withTimeout(
+        supabase.storage
+          .from(STORAGE_BUCKET)
+          .upload(filename, payload as any, {
+            contentType: 'image/jpeg',
+            upsert: false,
+          }) as any,
+        15000
+      );
+      data = (resp as any).data;
+      error = (resp as any).error ?? null;
+    } catch (e: any) {
+      error = e;
+    }
+
+    let finalPath: string | null = null;
+    if (error || !data?.path) {
+      const restRes = await restUpload(STORAGE_BUCKET, filename, blob, 'image/jpeg', false);
+      finalPath = restRes.path;
+    } else {
+      finalPath = data.path;
+    }
+
     const { data: { publicUrl } } = supabase.storage
       .from(STORAGE_BUCKET)
-      .getPublicUrl(data.path);
+      .getPublicUrl(finalPath!);
 
     return {
       url: publicUrl,
-      path: data.path,
+      path: finalPath!,
     };
-  } catch (error) {
-    console.error('Image upload error:', error);
-    throw error;
+  } catch (uploadError: any) {
+    console.error('[storageApi] uploadImage:error', uploadError?.message);
+    throw uploadError;
   }
 }
 
@@ -125,18 +199,15 @@ export async function uploadImages(
  */
 export async function getVideoMetadata(uri: string): Promise<VideoMetadata> {
   try {
-    const fileInfo = await FileSystem.getInfoAsync(uri);
-    
-    if (!fileInfo.exists) {
-      throw new Error('Video file not found');
-    }
+    // Convert to blob to get size
+    const blob = await uriToBlob(uri);
 
     // Return basic metadata (duration would need to be provided separately)
     return {
       duration: 0, // Must be provided by caller using Video component
       width: 0,
       height: 0,
-      size: fileInfo.size || 0,
+      size: blob.size,
     };
   } catch (error) {
     console.error('Error getting video metadata:', error);
@@ -154,63 +225,60 @@ export async function uploadVideo(
   folder: 'posts' | 'messages' = 'posts'
 ): Promise<UploadResult> {
   try {
-    // Validate duration
     if (duration > MAX_VIDEO_DURATION) {
       throw new Error(`Video duration exceeds ${MAX_VIDEO_DURATION} seconds limit`);
     }
 
-    // Check file size
-    const fileInfo = await FileSystem.getInfoAsync(uri);
-    if (!fileInfo.exists) {
-      throw new Error('Video file not found');
-    }
+    const blob = await uriToBlob(uri);
     
-    if (fileInfo.size && fileInfo.size > MAX_VIDEO_SIZE) {
+    if (blob.size > MAX_VIDEO_SIZE) {
       throw new Error(`Video size exceeds ${MAX_VIDEO_SIZE / 1024 / 1024}MB limit`);
     }
 
-    // Read file as base64
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: 'base64',
-    });
-
-    // Generate unique filename
     const ext = uri.split('.').pop() || 'mp4';
     const filename = `${folder}/${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-
-    // Convert base64 to blob
-    const byteCharacters = atob(base64);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'video/mp4' });
-
-    // Upload to Supabase
-    const { data, error } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .upload(filename, blob, {
-        contentType: 'video/mp4',
-        upsert: false,
-      });
-
-    if (error) {
-      throw new Error(`Upload failed: ${error.message}`);
+    let payload: Blob | ArrayBuffer = blob;
+    if (Platform.OS === 'web') {
+      payload = await blob.arrayBuffer();
     }
 
-    // Get public URL
+    let data: any | null = null;
+    let error: any | null = null;
+    try {
+      const resp = await withTimeout(
+        supabase.storage
+          .from(STORAGE_BUCKET)
+          .upload(filename, payload as any, {
+            contentType: 'video/mp4',
+            upsert: false,
+          }) as any,
+        20000
+      );
+      data = (resp as any).data;
+      error = (resp as any).error ?? null;
+    } catch (e: any) {
+      error = e;
+    }
+
+    let finalPath: string | null = null;
+    if (error || !data?.path) {
+      const restRes = await restUpload(STORAGE_BUCKET, filename, blob, 'video/mp4', false);
+      finalPath = restRes.path;
+    } else {
+      finalPath = data.path;
+    }
+
     const { data: { publicUrl } } = supabase.storage
       .from(STORAGE_BUCKET)
-      .getPublicUrl(data.path);
+      .getPublicUrl(finalPath!);
 
     return {
       url: publicUrl,
-      path: data.path,
+      path: finalPath!,
     };
-  } catch (error) {
-    console.error('Video upload error:', error);
-    throw error;
+  } catch (uploadError: any) {
+    console.error('[storageApi] uploadVideo:error', uploadError?.message);
+    throw uploadError;
   }
 }
 

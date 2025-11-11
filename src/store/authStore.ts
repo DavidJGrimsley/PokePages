@@ -6,6 +6,8 @@ import { Platform } from "react-native";
 import { supabase } from "../utils/supabaseClient";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 
+console.log('🧠 authStore module loaded');
+
 // Cross-platform storage functions
 const getStorageItem = async (key: string): Promise<string | null> => {
   try {
@@ -87,37 +89,49 @@ const migrateAnonymousData = async (userId: string) => {
 // Function to fetch user profile data
 const fetchUserProfile = async (userId: string) => {
   try {
-    // Skip profile fetching in production for now to avoid crashes
-    // This allows the tracker to work while we debug the Supabase issue
-    if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-      return null;
-    }
+    console.log('🔄 Fetching profile for user:', userId);
+    console.log('📡 Calling supabase.from("profiles").select()...');
     
     const { data, error } = await supabase
       .from('profiles')
-      .select('username, birthdate, bio, avatar_url')
+      .select('username, birthdate, bio, avatar_url, social_link')
       .eq('id', userId)
       .single();
     
+    console.log('🔎 Supabase response:', {
+      hasData: !!data,
+      hasError: !!error,
+      data: data || null,
+      error: error ? { 
+        message: error.message, 
+        code: error.code,
+        details: (error as any).details,
+      } : null,
+    });
+    
     // Convert snake_case from database to camelCase for app
     if (data) {
+      console.log('📊 Raw profile data from database:', data);
       const profileData = {
         username: data.username,
         birthdate: data.birthdate,
         bio: data.bio,
         avatarUrl: data.avatar_url, // Convert snake_case to camelCase
+        socialLink: data.social_link,
       };
+      console.log('📊 Processed profile data:', profileData);
       return profileData;
     }
     
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
-      console.error('Failed to fetch user profile:', error);
+      console.error('❌ Failed to fetch user profile:', error);
       return null;
     }
     
+    console.log('⚠️ No profile data found for user:', userId);
     return null;
   } catch (error) {
-    console.error('Failed to fetch user profile:', error);
+    console.error('❌ Exception in fetchUserProfile:', error);
     return null;
   }
 };
@@ -173,6 +187,7 @@ type UserState = {
   shouldCreateAccount: boolean;
   isVip: boolean;
   _hasHydrated: boolean;
+  _authInitialized: boolean; // Track if auth startup is complete
   
   // Profile data (fetched from database)
   profile: {
@@ -180,6 +195,7 @@ type UserState = {
     birthdate: string | null;
     bio: string | null;
     avatarUrl: string | null;  // camelCase for consistency with app
+    socialLink: string | null;
   } | null;
   
   // Computed properties based on profile data
@@ -251,6 +267,7 @@ export const useAuthStore = create(
       shouldCreateAccount: true,
       isVip: false,
       _hasHydrated: false,
+      _authInitialized: false,
       
       // Profile data
       profile: null,
@@ -263,10 +280,14 @@ export const useAuthStore = create(
       updateComputedProperties: () => {
         const state = get();
         const birthdate = state.profile?.birthdate || null;
+        console.log('🔄 Updating computed properties with birthdate:', birthdate);
+        const newIsAdult = calculateIsAdult(birthdate);
+        const newCanUseSocial = canAccessSocial(birthdate);
+        console.log('✅ Computed values:', { isAdult: newIsAdult, canUseSocialFeatures: newCanUseSocial });
         set((state) => ({
           ...state,
-          isAdult: calculateIsAdult(birthdate),
-          canUseSocialFeatures: canAccessSocial(birthdate),
+          isAdult: newIsAdult,
+          canUseSocialFeatures: newCanUseSocial,
         }));
       },
       
@@ -278,11 +299,7 @@ export const useAuthStore = create(
         console.log('Refreshing profile for user:', state.user.id);
         const profileData = await fetchUserProfile(state.user.id);
         console.log('Refreshed profile data:', profileData);
-        set((state) => ({
-          ...state,
-          profile: profileData,
-        }));
-        get().updateComputedProperties();
+        get().setProfile(profileData);
       },
       
       // Supabase authentication methods
@@ -392,6 +409,7 @@ export const useAuthStore = create(
             isVip: false,
             profile: null, // Clear profile data on sign out
           }));
+          get().updateComputedProperties();
           console.log('✅ AuthStore: Local state cleared successfully')
         } catch (error) {
           console.error("💥 AuthStore: Error signing out:", error);
@@ -406,6 +424,7 @@ export const useAuthStore = create(
             isVip: false,
             profile: null,
           }));
+          get().updateComputedProperties();
           console.log('✅ AuthStore: Local state cleared after error')
         }
       },
@@ -426,10 +445,27 @@ export const useAuthStore = create(
       },
       
       setProfile: (profile: UserState['profile']) => {
-        set((state) => ({
-          ...state,
-          profile,
-        }));
+        console.log('📝 setProfile called with:', profile);
+        const emptyProfile = {
+          username: null,
+          birthdate: null,
+          bio: null,
+          avatarUrl: null,
+          socialLink: null,
+        } as const;
+        set((state) => {
+          const nextProfile = profile
+            ? {
+                ...(state.profile ?? emptyProfile),
+                ...profile,
+              }
+            : null;
+          return {
+            ...state,
+            profile: nextProfile,
+          };
+        });
+        console.log('📝 Profile set, calling updateComputedProperties');
         get().updateComputedProperties();
       },
       
@@ -472,6 +508,8 @@ export const useAuthStore = create(
         shouldCreateAccount: state.shouldCreateAccount,
         isVip: state.isVip,
         _hasHydrated: state._hasHydrated,
+        // DO NOT persist _authInitialized - it must always start false
+        // and be set to true only after startup initialization completes
         profile: state.profile, // Include profile data in persistence
         // Exclude session to avoid size limits - it will be restored from Supabase
       }) as UserState,
@@ -479,61 +517,149 @@ export const useAuthStore = create(
   ),
 );
 
-// Set hydrated to true after timeout as fallback
-setTimeout(() => {
-  const state = useAuthStore.getState();
-  if (!state._hasHydrated) {
-    console.log('Auth store: Setting hydrated to true after timeout');
-    state.setHasHydrated(true);
+const syncProfileForUser = async (userId: string, reason: string) => {
+  console.log(`� SYNC START: Syncing profile for user ${userId} [${reason}]`);
+  try {
+    const profileData = await fetchUserProfile(userId);
+    console.log(`✅ SYNC SUCCESS (${reason}):`, profileData);
+    useAuthStore.getState().setProfile(profileData);
+    console.log(`✅ SYNC COMPLETE: setProfile called with data`);
+  } catch (error: any) {
+    console.error(`❌ SYNC FAILED for ${reason}:`, {
+      name: error?.name,
+      message: error?.message,
+      stack: error?.stack,
+    });
   }
-}, 500);
+};
 
-// Check for existing session on app start
-setTimeout(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.user) {
-    console.log('Found existing session on startup for:', session.user.email);
-    const { setUser, setSession, setProfile } = useAuthStore.getState();
-    setSession(session);
-    setUser(session.user);
+/* DISABLED: getSession() hangs on web platform, using onAuthStateChange listener instead
+const initializeAuth = async () => {
+  console.log('🔁 Starting auth initialization...');
+  try {
+    console.log('📡 Calling supabase.auth.getSession()...');
     
-    // Fetch profile data for existing session
-    const profileData = await fetchUserProfile(session.user.id);
-    console.log('Startup profile data:', profileData);
-    setProfile(profileData);
+    // Add timeout to detect hanging calls
+    const sessionPromise = supabase.auth.getSession();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('getSession timeout after 5 seconds')), 5000)
+    );
+    
+    const result = await Promise.race([sessionPromise, timeoutPromise]) as any;
+    const { data, error } = result;
+    
+    console.log('📋 getSession result:', {
+      hasData: !!data,
+      hasSession: !!data?.session,
+      sessionUser: data?.session?.user ? {
+        id: data.session.user.id,
+        email: data.session.user.email,
+        phone: data.session.user.phone,
+      } : null,
+      error: error ? { message: error.message, code: error.code } : null,
+    });
+
+    if (error) {
+      console.error('❌ Failed to retrieve Supabase session:', error);
+      useAuthStore.getState().setProfile(null);
+      useAuthStore.setState({ _authInitialized: true });
+      return;
+    }
+
+    const session = data?.session ?? null;
+    console.log('✅ Session extracted:', {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      expiresAt: session?.expires_at,
+    });
+
+    const { setUser, setSession } = useAuthStore.getState();
+
+    setSession(session);
+    setUser(session?.user ?? null);
+
+    if (session?.user) {
+      console.log('✅ Found existing session for:', session.user.email);
+      console.log('🔄 About to sync profile for user:', session.user.id);
+      try {
+        await syncProfileForUser(session.user.id, 'startup getSession');
+        console.log('✅ Profile sync completed');
+      } catch (syncError: any) {
+        console.error('💥 CRITICAL: syncProfileForUser failed:', {
+          name: syncError?.name,
+          message: syncError?.message,
+          stack: syncError?.stack,
+        });
+      }
+    } else {
+      console.log('⚠️ No existing Supabase session found (session is null)');
+      useAuthStore.getState().setProfile(null);
+    }
+    
+    // Mark initialization complete
+    useAuthStore.setState({ _authInitialized: true });
+    console.log('✅ Auth initialization complete');
+  } catch (err) {
+    console.error('💥 Exception during initializeAuth:', err);
+    console.error('Error details:', {
+      name: (err as Error).name,
+      message: (err as Error).message,
+      stack: (err as Error).stack,
+    });
+    useAuthStore.setState({ _authInitialized: true });
   }
-}, 100);
+};
+*/
+
+// Start initialization immediately (don't wait)
+// DISABLED: getSession() hangs on web, use onAuthStateChange instead
+// initializeAuth().catch(err => {
+//   console.error('Auth initialization unhandled error:', err);
+//   useAuthStore.setState({ _authInitialized: true });
+// });
+
+// Mark as initialized immediately - the listener will handle auth state
+useAuthStore.setState({ _authInitialized: true });
+console.log('✅ Auth store initialized, relying on listener for auth state');
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-  const { setUser, setSession, setProfile } = useAuthStore.getState();
+  console.log('🔐 Auth state change event:', event);
+  console.log('📋 Session info:', {
+    event,
+    hasSession: !!session,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email,
+  });
   
+  const { setUser, setSession, setProfile } = useAuthStore.getState();
+
   setSession(session);
   setUser(session?.user ?? null);
-  
-  // Handle profile fetching for sign-in events and session restoration
-  if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-    const profileData = await fetchUserProfile(session.user.id);
-    setProfile(profileData);
-    
-    // Only migrate on actual sign-in, not token refresh
+
+  if (session?.user && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED')) {
+    console.log(`📡 Syncing profile for event: ${event}`);
+    await syncProfileForUser(session.user.id, `authStateChange:${event}`);
+
     if (event === 'SIGNED_IN') {
       await migrateAnonymousData(session.user.id);
     }
-    
-    // Load tracker data on both SIGNED_IN and TOKEN_REFRESHED events
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
       try {
         const mod = await import('./pokemonTrackerStoreEnhanced');
         const trackerStore = mod.usePokemonTrackerStore;
         if (trackerStore && trackerStore.getState) {
+          console.log('🔄 Syncing Pokemon tracker...');
           await trackerStore.getState().syncWithDatabase();
+          console.log('✅ Pokemon tracker synced');
         }
       } catch (err) {
         console.error('Failed to sync tracker:', err);
       }
     }
   } else if (event === 'SIGNED_OUT') {
+    console.log('🏪 Signed out event detected, clearing profile');
     setProfile(null);
   }
 });

@@ -153,12 +153,14 @@ export const directMessages = pgTable("direct_messages", {
   id: uuid().primaryKey().defaultRandom(),
   conversationId: uuid("conversation_id").notNull().references(() => conversations.id, { onDelete: 'cascade' }),
   senderId: uuid("sender_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  recipientId: uuid("recipient_id").notNull().references(() => profiles.id, { onDelete: 'cascade' }),
   content: text().notNull(),
   isRead: boolean("is_read").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
   index("direct_messages_conversation_idx").on(table.conversationId),
   index("direct_messages_sender_idx").on(table.senderId),
+  index("direct_messages_recipient_idx").on(table.recipientId),
   index("direct_messages_created_at_idx").on(table.createdAt),
 ]);
 

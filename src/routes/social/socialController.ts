@@ -37,9 +37,49 @@ export async function createPost(req: Request, res: Response) {
 
     const post = await socialQueries.createPost(validated);
     
-    // Handle media if provided
+    // Handle media if provided (imageUrls or videoUrl)
+    const mediaToAdd: { storagePath: string; type: 'image' | 'video' }[] = [];
+    
+    if (req.body.imageUrls && Array.isArray(req.body.imageUrls)) {
+      // Validate max 5 images
+      if (req.body.imageUrls.length > 5) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Maximum 5 images allowed per post' 
+        });
+      }
+      
+      // Add image media
+      req.body.imageUrls.forEach((url: string) => {
+        mediaToAdd.push({ storagePath: url, type: 'image' });
+      });
+    }
+    
+    if (req.body.videoUrl) {
+      // Cannot have both images and video
+      if (mediaToAdd.length > 0) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Posts can contain either images OR a video, not both' 
+        });
+      }
+      
+      mediaToAdd.push({ storagePath: req.body.videoUrl, type: 'video' });
+    }
+    
+    // Add media to database
+    if (mediaToAdd.length > 0) {
+      await socialQueries.addPostMedia(post.id, mediaToAdd);
+    }
+    
+    // Handle legacy media field (for backward compatibility)
     if (req.body.media && Array.isArray(req.body.media) && req.body.media.length > 0) {
       await socialQueries.addPostMedia(post.id, req.body.media);
+    }
+
+    // Handle hashtags if provided
+    if (req.body.hashtags && Array.isArray(req.body.hashtags) && req.body.hashtags.length > 0) {
+      await socialQueries.addPostHashtags(post.id, req.body.hashtags);
     }
 
     res.json({
@@ -70,7 +110,10 @@ export async function getPost(req: Request, res: Response) {
       return res.status(404).json({ success: false, error: 'Post not found' });
     }
 
-    res.json({ success: true, data: post });
+    // Transform media for convenience
+    const transformedPost = socialQueries.transformPostMedia(post);
+
+    res.json({ success: true, data: transformedPost });
   } catch (error) {
     console.error('Get post error:', error);
     res.status(500).json({ 
@@ -91,7 +134,11 @@ export async function getExploreFeed(req: Request, res: Response) {
     }
 
     const posts = await socialQueries.getExploreFeed(userId, limit, offset);
-    res.json({ success: true, data: posts });
+    
+    // Transform media for all posts
+    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    
+    res.json({ success: true, data: transformedPosts });
   } catch (error) {
     console.error('Get explore feed error:', error);
     res.status(500).json({ 
@@ -112,12 +159,45 @@ export async function getFriendsFeed(req: Request, res: Response) {
     }
 
     const posts = await socialQueries.getFriendsFeed(userId, limit, offset);
-    res.json({ success: true, data: posts });
+    
+    // Transform media for all posts
+    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    
+    res.json({ success: true, data: transformedPosts });
   } catch (error) {
     console.error('Get friends feed error:', error);
     res.status(500).json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch friends feed' 
+    });
+  }
+}
+
+export async function getPostsByHashtag(req: Request, res: Response) {
+  try {
+    const { hashtag } = req.params;
+    const userId = req.query.userId as string;
+    const limit = parseInt(req.query.limit as string) || 50;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User ID is required' });
+    }
+
+    if (!hashtag) {
+      return res.status(400).json({ success: false, error: 'Hashtag is required' });
+    }
+
+    const posts = await socialQueries.getPostsByHashtag(hashtag, userId, limit);
+    
+    // Transform media for all posts
+    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    
+    res.json({ success: true, data: transformedPosts });
+  } catch (error) {
+    console.error('Get posts by hashtag error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch posts by hashtag' 
     });
   }
 }
@@ -134,7 +214,11 @@ export async function getUserPosts(req: Request, res: Response) {
     }
 
     const posts = await socialQueries.getUserPosts(userId, currentUserId, limit, offset);
-    res.json({ success: true, data: posts });
+    
+    // Transform media for all posts
+    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    
+    res.json({ success: true, data: transformedPosts });
   } catch (error) {
     console.error('Get user posts error:', error);
     res.status(500).json({ 
@@ -298,8 +382,9 @@ export async function createComment(req: Request, res: Response) {
 export async function getPostComments(req: Request, res: Response) {
   try {
     const { postId } = req.params;
+    const { userId } = req.query;
 
-    const comments = await socialQueries.getPostComments(postId);
+    const comments = await socialQueries.getPostComments(postId, userId as string);
     res.json({ success: true, data: comments });
   } catch (error) {
     console.error('Get post comments error:', error);
@@ -444,6 +529,26 @@ export async function getFriendRequests(req: Request, res: Response) {
   }
 }
 
+export async function getPendingFriendRequests(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User ID is required' });
+    }
+
+    // Get all pending friend requests where this user is the requester
+    const requests = await socialQueries.getPendingFriendRequests(userId);
+    res.json({ success: true, data: requests });
+  } catch (error) {
+    console.error('Get pending friend requests error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch pending friend requests' 
+    });
+  }
+}
+
 export async function getUserFriends(req: Request, res: Response) {
   try {
     const userId = req.query.userId as string;
@@ -459,6 +564,31 @@ export async function getUserFriends(req: Request, res: Response) {
     res.status(500).json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch friends' 
+    });
+  }
+}
+
+export async function getFriendshipStatus(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string;
+    const otherUserId = req.query.otherUserId as string;
+
+    if (!userId || !otherUserId) {
+      return res.status(400).json({ success: false, error: 'Both userId and otherUserId are required' });
+    }
+
+    if (userId === otherUserId) {
+      // Self profile – treat as no friendship record
+      return res.json({ success: true, data: null });
+    }
+
+    const friendship = await socialQueries.getFriendshipStatus(userId, otherUserId);
+    res.json({ success: true, data: friendship });
+  } catch (error) {
+    console.error('Get friendship status error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch friendship status' 
     });
   }
 }
@@ -643,6 +773,291 @@ export async function markAllNotificationsAsRead(req: Request, res: Response) {
     res.status(500).json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to mark all notifications as read' 
+    });
+  }
+}
+
+// ============= DIRECT MESSAGES & CONVERSATIONS =============
+
+export async function sendMessage(req: Request, res: Response) {
+  try {
+    const { senderId, recipientId, content, conversationId } = req.body;
+
+    if (!senderId || !recipientId || !content) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Sender ID, recipient ID, and content are required' 
+      });
+    }
+
+    // CONTENT MODERATION - Check message before sending
+    const moderationResult = await moderateContent(content, 'ai');
+    
+    if (!moderationResult.isAllowed) {
+      const message = getModerationMessage(moderationResult);
+      return res.status(400).json({ 
+        success: false, 
+        error: message,
+        moderationFailed: true,
+        flaggedCategories: moderationResult.flaggedCategories,
+      });
+    }
+
+    let finalConversationId = conversationId;
+
+    // Create conversation if it doesn't exist
+    if (!finalConversationId) {
+      const conversation = await socialQueries.getOrCreateConversation(senderId, recipientId);
+      finalConversationId = (conversation as any).id;
+    }
+
+    const message = await socialQueries.sendDirectMessage({
+      conversationId: finalConversationId,
+      senderId,
+      recipientId,
+      content,
+      isRead: false,
+    });
+
+    res.json({
+      success: true,
+      data: message,
+      moderation: {
+        mode: moderationResult.mode,
+        fallbackReason: moderationResult.fallbackReason,
+      },
+    });
+  } catch (error) {
+    console.error('Send message error:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to send message' 
+    });
+  }
+}
+
+export async function getConversation(req: Request, res: Response) {
+  try {
+    const { conversationId } = req.params;
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
+
+    const messages = await socialQueries.getConversationMessages(conversationId, limit, offset);
+    res.json({ success: true, data: messages });
+  } catch (error) {
+    console.error('Get conversation error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch conversation' 
+    });
+  }
+}
+
+export async function markMessageRead(req: Request, res: Response) {
+  try {
+    const { messageId } = req.params;
+
+    await socialQueries.markMessageAsRead(messageId);
+    res.json({ success: true, message: 'Message marked as read' });
+  } catch (error) {
+    console.error('Mark message as read error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to mark message as read' 
+    });
+  }
+}
+
+export async function getRecentConversations(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User ID is required' });
+    }
+
+    const conversations = await socialQueries.getUserConversations(userId);
+    res.json({ success: true, data: conversations });
+  } catch (error) {
+    console.error('Get recent conversations error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch conversations' 
+    });
+  }
+}
+
+export async function getUnreadMessagesCount(req: Request, res: Response) {
+  try {
+    const userId = req.query.userId as string;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, error: 'User ID is required' });
+    }
+
+    const count = await socialQueries.getUnreadMessagesCount(userId);
+    res.json({ success: true, data: { count } });
+  } catch (error) {
+    console.error('Get unread messages count error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch unread count' 
+    });
+  }
+}
+
+// ============= REACTIONS =============
+
+export async function addReaction(req: Request, res: Response) {
+  try {
+    const { postId } = req.params;
+    const { userId, emojiCode } = req.body;
+
+    if (!userId || !emojiCode) {
+      return res.status(400).json({ success: false, error: 'User ID and emoji code are required' });
+    }
+
+    const reaction = await socialQueries.addReaction(userId, postId, emojiCode);
+    res.json({ success: true, data: reaction });
+  } catch (error) {
+    console.error('Add reaction error:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to add reaction' 
+    });
+  }
+}
+
+export async function removeReaction(req: Request, res: Response) {
+  try {
+    const { postId } = req.params;
+    const { userId, emojiCode } = req.body;
+
+    if (!userId || !emojiCode) {
+      return res.status(400).json({ success: false, error: 'User ID and emoji code are required' });
+    }
+
+    await socialQueries.removeReaction(userId, postId, emojiCode);
+    res.json({ success: true, message: 'Reaction removed' });
+  } catch (error) {
+    console.error('Remove reaction error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to remove reaction' 
+    });
+  }
+}
+
+export async function getPostReactions(req: Request, res: Response) {
+  try {
+    const { postId } = req.params;
+
+    const reactions = await socialQueries.getPostReactions(postId);
+    res.json({ success: true, data: reactions });
+  } catch (error) {
+    console.error('Get post reactions error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch reactions' 
+    });
+  }
+}
+
+// ============= HASHTAGS =============
+
+export async function searchHashtags(req: Request, res: Response) {
+  try {
+    const query = req.query.query as string;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    if (!query) {
+      return res.status(400).json({ success: false, error: 'Search query is required' });
+    }
+
+    const hashtags = await socialQueries.searchHashtags(query, limit);
+    res.json({ success: true, data: hashtags });
+  } catch (error) {
+    console.error('Search hashtags error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to search hashtags' 
+    });
+  }
+}
+
+// ============= COMMENT REACTIONS =============
+
+export async function addCommentReaction(req: Request, res: Response) {
+  try {
+    const { commentId } = req.params;
+    const { userId, emojiCode } = req.body;
+
+    console.log('🎯 addCommentReaction called:', { commentId, userId, emojiCode });
+
+    if (!userId || !emojiCode) {
+      return res.status(400).json({ success: false, error: 'User ID and emoji code are required' });
+    }
+
+    const reaction = await socialQueries.addCommentReaction(userId, commentId, emojiCode);
+    console.log('✅ addCommentReaction result:', reaction);
+    res.json({ success: true, data: reaction });
+  } catch (error) {
+    console.error('Add comment reaction error:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to add comment reaction' 
+    });
+  }
+}
+
+export async function removeCommentReaction(req: Request, res: Response) {
+  try {
+    const { commentId } = req.params;
+    const { userId, emojiCode } = req.body;
+
+    if (!userId || !emojiCode) {
+      return res.status(400).json({ success: false, error: 'User ID and emoji code are required' });
+    }
+
+    await socialQueries.removeCommentReaction(userId, commentId, emojiCode);
+    res.json({ success: true, message: 'Comment reaction removed' });
+  } catch (error) {
+    console.error('Remove comment reaction error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to remove comment reaction' 
+    });
+  }
+}
+
+export async function getCommentReactions(req: Request, res: Response) {
+  try {
+    const { commentId } = req.params;
+
+    const reactions = await socialQueries.getCommentReactions(commentId);
+    res.json({ success: true, data: reactions });
+  } catch (error) {
+    console.error('Get comment reactions error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch comment reactions' 
+    });
+  }
+}
+
+// ============= CATCHES =============
+
+export async function getUserCatches(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+
+    const catches = await socialQueries.getUserCatches(userId);
+    res.json({ success: true, data: catches });
+  } catch (error) {
+    console.error('Get user catches error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to fetch user catches' 
     });
   }
 }

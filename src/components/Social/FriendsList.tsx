@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import * as socialApi from '~/utils/socialApi';
 import type { Friend, FriendRequest } from '~/utils/socialApi';
 
@@ -54,49 +55,109 @@ export function FriendsList({ userId, onFriendPress }: FriendsListProps) {
     }
   };
 
-  const handleRemoveFriend = async (friendshipId: string) => {
+  const handleRemoveFriend = async (friendshipId: string, friendUsername: string, friendId: string) => {
+    if (!userId || !friendId) return;
+
+    // Web fallback since Alert.alert is a no-op in some web builds
+    if (Platform.OS === 'web') {
+      const ok = window.confirm(`Remove ${friendUsername || 'this user'} from your friends?`);
+      if (!ok) return;
+      try {
+        await socialApi.unfriend(userId, friendId);
+        loadData(); // Refresh
+      } catch (error) {
+        console.error('Error unfriending:', error);
+        Alert.alert('Error', error instanceof Error ? error.message : 'Failed to unfriend');
+      }
+      return;
+    }
+
+    Alert.alert(
+      'Remove Friend',
+      `Are you sure you want to remove ${friendUsername || 'this person'} from your friends?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Yes',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await socialApi.unfriend(userId, friendId);
+              loadData(); // Refresh
+            } catch (error) {
+              console.error('Error unfriending:', error);
+              Alert.alert('Error', error instanceof Error ? error.message : 'Failed to unfriend');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleSendMessage = async (friendId: string, friendUsername: string) => {
+    if (!userId) return;
     try {
-      await socialApi.removeFriend(friendshipId, userId);
-      loadData(); // Refresh
+      // Send a lightweight starter message to create conversation
+      const starter = await socialApi.sendMessage(userId, friendId, '👋');
+      const conversationId = (starter as any).conversationId;
+      if (conversationId) {
+        router.push(`/social/conversations/${conversationId}` as any);
+      }
     } catch (error) {
-      console.error('Error removing friend:', error);
+      console.error('Error starting conversation:', error);
     }
   };
 
   const renderFriendItem = ({ item }: { item: Friend }) => (
     <TouchableOpacity
-      onPress={() => onFriendPress?.(item.friendId)}
+      onPress={() => router.navigate(`/(profile)/${item.friend?.username}` as any)}
       className="bg-white dark:bg-gray-800 rounded-xl p-4 mb-2 flex-row items-center shadow"
     >
-      {item.friend?.avatarUrl ? (
-        <Image
-          source={{ uri: item.friend.avatarUrl }}
-          className="w-12 h-12 rounded-full bg-gray-200"
-        />
-      ) : (
-        <View className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 items-center justify-center">
-          <Ionicons name="person" size={24} color="white" />
-        </View>
-      )}
-      
-      <View className="flex-1 ml-3">
-        <Text className="typography-label text-gray-900 dark:text-white font-semibold">
-          {item.friend?.username || 'Unknown Trainer'}
-        </Text>
-        {item.friend?.bio && (
-          <Text className="typography-caption text-gray-500 dark:text-gray-400" numberOfLines={1}>
-            {item.friend.bio}
-          </Text>
+        {item.friend?.avatarUrl ? (
+          <Image
+            source={{ uri: item.friend.avatarUrl }}
+            className="w-12 h-12 rounded-full bg-gray-200"
+          />
+        ) : (
+          <View className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-500 items-center justify-center">
+            <Ionicons name="person" size={24} color="white" />
+          </View>
         )}
-      </View>
-
-      <TouchableOpacity
-        onPress={() => handleRemoveFriend(item.friendshipId)}
-        className="p-2"
-      >
-        <Ionicons name="close-circle" size={24} color="#EF4444" />
+      
+        <View className="flex-1 ml-3">
+          <Text className="typography-label text-gray-900 dark:text-white font-semibold">
+            {item.friend?.username || 'Unknown Trainer'}
+          </Text>
+          {item.friend?.bio && (
+            <Text className="typography-caption text-gray-500 dark:text-gray-400" numberOfLines={1}>
+              {item.friend.bio}
+            </Text>
+          )}
+        </View>
+        {/* Action Buttons */}
+        <View className="flex-row items-center">
+          {/* Message Button */}
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation(); // Prevent profile navigation
+              handleSendMessage(item.friendId, item.friend?.username || 'Unknown');
+            }}
+            className="p-3 mr-2"
+          >
+            <Ionicons name="paper-plane" size={28} color="#3B82F6" />
+          </TouchableOpacity>
+          {/* Remove Friend Button */}
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation(); // Prevent profile navigation
+              handleRemoveFriend(item.friendshipId, item.friend?.username || 'Unknown', item.friendId);
+            }}
+            className="p-3"
+          >
+            <Ionicons name="close-circle" size={32} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
-    </TouchableOpacity>
   );
 
   const renderRequestItem = ({ item }: { item: FriendRequest }) => (

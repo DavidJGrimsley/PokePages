@@ -13,8 +13,10 @@ const openai = hasOpenAIKey
     })
   : null;
 
-let aiModerationEnabled = hasOpenAIKey;
-let aiDisableReason = '';
+// **TEMPORARILY DISABLED** - Hitting rate limits in development
+// Re-enable in production with proper rate limiting/caching
+let aiModerationEnabled = false; // TODO: Set to hasOpenAIKey when rate limits resolved
+let aiDisableReason = 'Disabled to avoid rate limits during development';
 
 function disableAIModeration(reason: string) {
   if (!aiModerationEnabled) {

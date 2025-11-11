@@ -240,12 +240,14 @@
         "title": "Effort Values (EVs)",
         "content": "These are semi-hidden stats that can be trained to boost your Pokémon's performance in battle",
         "bullets": [
-          "These stats are trained boosted by battling Pokémon automatically, with different Pokémon species giving different EVs (see Active EV Training below)",
+          "These stats are trained by battling Pokémon automatically, with different Pokémon species giving different EVs (see Active EV Training below)",
           "You can also increase them by using certain items (see Passive EV Training below)",
           "",
+          "When you have EVs in an undesired stat, you can reduce them in one of two ways:",
           "Buy EV reducing berries from street vendors next to the mint vendors (see Nature section below)",
-          "Each berry reduces 10 EVs from a specific stat, allowing you to reallocate EVs as needed; it also increases friendship",
+          "There is an NPC, Lady Clear, inside Rust Syndicate Office (behind the counter on the right side of the lobby) who will clear the EVs from a Pokémon for 5 Mega Shards (great deal!)",
           "",
+          "Each Berry reduces 10 EVs from a specific stat, allowing you to reallocate EVs as needed; it also increases friendship",
           "Pomeg Berry: Reduces HP EVs",
           "Kelpsy Berry: Reduces Attack EVs",
           "Qualot Berry: Reduces Defense EVs",
@@ -253,7 +255,7 @@
           "Grepa Berry: Reduces Special Defense EVs",
           "Tamato Berry: Reduces Speed EVs",
           "",
-          "This is useful when you have a Pokémon that you've been battling with and now want to train for competitive purposes"
+          "This is useful when you have a Pokémon that you've been battling with and now want to train for competitive purposes",
         ]
       },
       {
@@ -306,7 +308,26 @@
           "Power Belt: +8 Defense EVs per battle (Side mission 39)",
           "Power Lens: +8 Special Attack EVs per battle (Side mission 104)",
           "Power Band: +8 Special Defense EVs per battle (Side mission 99)",
-          "Power Anklet: +8 Speed EVs per battle (Side mission 69)"
+          "Power Anklet: +8 Speed EVs per battle (Side mission 69 ;)"
+        ]
+      },
+      {
+        "title": "Practical Competitive Advice",
+        "content": "It is nearly impossible to train for competitive play during your playthrough",
+        "bullets": [
+          "If you want to EV train during your playthrough, you will have to do the Active EV Training method using the chart below because the Vitamins aren't available right away and it will be very slow because Power Items are locked to post-game",
+          "The Judge Feature doesn't unlock until post-game as well, so you won't be able to see your IVs until then",
+          "The ability to Hyper Train IVs comes a little bit earlier, so you can technically judge your Pokémon's IVs based on the Bottle Caps required but you will have only 10 Bottle Caps to work with",
+          "The game basically wants you to focus on enjoying the story and exploration first, then do competitive training after beating the main story",
+          "So after your boxes are full(they should be at least half full if you've caught a lot), you've beaten the story and are ready to do competitive training, here's what to do:",
+          "",
+          "Check your Pokémon's IVs—aim for at least 4 perfect IVs out of 6",
+          "Alpha Pokémon start with at least 3 random perfect IVs and max HP EV, making them 'half perfect'",
+          "If a Pokémon has 3 or 4 perfect IVs, use Bottle Caps to Hyper Train the remaining stats",
+          "Save Gold Bottle Caps for Shinies or special Pokémon you won't replace (like starters or gifts)",
+          "Prioritize IVs over nature, but if you have two 4/6 IV Pokémon, choose the one with the better nature",
+          "Nature Mints are reasonably accessible, so don't stress too much about getting the perfect nature",
+          "Release Pokémon that don't meet your standards to keep your boxes organized"
         ]
       },
       {
@@ -317,19 +338,19 @@
           "",
           "Low-level: These zones (1-10) will have the lowest level Pokémon that give the desired EVs, making it easier to defeat them quickly",
           "HP: Wild Zone 7 - Audino; Wild Zone 10 - Slowpoke",
-          "Attack: Wild Zone 8 - All Pokémon here except for Numel; Wild Zone 10 - All Pokémon except for Slowpoke, Staryu, and Tynamo",
-          "Defense: Wild Zone 7 - Hippowdon and Kakuna",
-          "Special Attack: Wild Zone 6 - Houndour, Houndoom, and Flaaffy; Wild Zone 7 - Roselia and Vanillite",
+          "Attack: Wild Zone 8 - All Pokémon here except for Numel; Wild Zone 10 - All Pokémon except for Slowpoke, Staryu, & Tynamo",
+          "Defense: Wild Zone 7 - Hippowdon & Kakuna",
+          "Special Attack: Wild Zone 6 - Houndour, Houndoom, & Flaaffy; Wild Zone 7 - Roselia & Vanillite",
           "Special Defense: Wild Zone 3 - Flabébé; Wild Zone 9 - Carbink; Wild Zone 6 - Swablu",
-          "Speed: Wild Zone 1 - All Pokémon here except for Scatterbug and Mareep",
+          "Speed: Wild Zone 1 - All Pokémon here except for Scatterbug & Mareep",
           "",
           "High-level: These zones (11-20) will have the highest level Pokémon that give the desired EVs, making it easier to level up while EV training",
-          "HP: Wild Zone 12 - Snorunt and Gogoat",
-          "Attack: Wild Zone 12 - Snover, Abomasnow, Machop, and Machoke; Wild Zone 13 - All Pokémon here except for Vivillon",
-          "Defense: Wild Zone 14 - Onix, Aron, and Lairon",
-          "Special Attack: Wild Zone 17 - Lampent (night) and Pyroar",
-          "Special Defense: Wild Zone 6 - All Pokémon here give Special Defense EVs (except for Budew)",
-          "Speed: Wild Zone 16 - Starmie and Medicham",
+          "HP: Wild Zone 12 - Snorunt & Gogoat;  Wild Zone 19 - Kangaskhan, Audino, & Clefairy(NOT Cleffa)",
+          "Attack: Wild Zone 12 - Snover, Abomasnow, Machop, & Machoke; Wild Zone 13 - All Pokémon here except for Vivillon; Wild Zone 20 - Bagon, & Salamence; Wild Zone 20 - Malamar, Lucario, & Garbador",
+          "Defense: Wild Zone 14 - Onix, Aron, & Lairon; Wild Zone 20 - Aggron, Hippowdon, & Scrafty",
+          "Special Attack: Wild Zone 17 - Lampent (night) & Pyroar; Wild Zone 20 - Roserade & Gardevoir",
+          "Special Defense: Wild Zone 19 - Eevee & Cleffa; Wild Zone 20 - Dragalge",
+          "Speed: Wild Zone 16 - Starmie & Medicham, Wild Zone 19 - Furfrou",
           "",
           "If you start with all of your Pokémon with 0 EV for that stat, you can check only one Pokémon's stat summary screen to see when you have maxed out the EVs for that stat (it will say 'Max EVs' under the stat)",
           "With a Power item, it takes 28 battles to max out a stat (if each Pokémon gives 1 EVs in that stat)"

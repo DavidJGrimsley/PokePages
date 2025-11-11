@@ -14,16 +14,28 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Container } from 'components/UI/Container';
 import SuccessMessage from 'components/UI/SuccessMessage';
+import { HashtagInput } from 'components/Social/HashtagInput';
+import { MediaPicker } from 'components/Social/MediaPicker';
 import { useAuthStore } from '~/store/authStore';
 import * as socialApi from '~/utils/socialApi';
+import { uploadImages, uploadVideo } from '~/utils/storageApi';
+import { Footer } from '@/src/components/Meta/Footer';
 
 export default function CreatePostTab() {
   const router = useRouter();
   const { user } = useAuthStore();
   const [content, setContent] = useState('');
+  const [hashtags, setHashtags] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<'public' | 'friends_only'>('public');
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const handleMediaSelected = (images: string[], video: string | null) => {
+    setSelectedImages(images);
+    setSelectedVideo(video);
+  };
 
   const handlePost = async () => {
     if (!user?.id) {
@@ -38,12 +50,44 @@ export default function CreatePostTab() {
 
     setLoading(true);
     try {
-      console.log('📝 Creating post with content:', content, 'and visibility:', visibility);
-      await socialApi.createPost(user.id, content.trim(), visibility);
+      console.log('📝 Creating post with content:', content, 'visibility:', visibility, 'hashtags:', hashtags);
+      
+      let uploadedImageUrls: string[] = [];
+      let uploadedVideoUrl: string | null = null;
+
+      // Upload images if selected
+      if (selectedImages.length > 0) {
+        console.log('📸 Uploading', selectedImages.length, 'images...');
+        const results = await uploadImages(selectedImages, user.id, 'posts');
+        uploadedImageUrls = results.map(r => r.url);
+        console.log('✅ Images uploaded:', uploadedImageUrls);
+      }
+
+      // Upload video if selected
+      if (selectedVideo) {
+        console.log('🎥 Uploading video...');
+        // Default to 30 seconds max duration for video validation
+        const result = await uploadVideo(selectedVideo, user.id, 30, 'posts');
+        uploadedVideoUrl = result.url;
+        console.log('✅ Video uploaded:', uploadedVideoUrl);
+      }
+
+      await socialApi.createPost(
+        user.id, 
+        content.trim(), 
+        visibility, 
+        undefined, 
+        hashtags,
+        uploadedImageUrls,
+        uploadedVideoUrl
+      );
       console.log('✅ Post created successfully');
       
       // Clear form and show success
       setContent('');
+      setHashtags([]);
+      setSelectedImages([]);
+      setSelectedVideo(null);
       setShowSuccess(true);
       
       // Auto-hide success message and optionally navigate
@@ -119,6 +163,16 @@ export default function CreatePostTab() {
                 </Text>
               </View>
             </View>
+
+            {/* Media Picker */}
+            <MediaPicker onMediaSelected={handleMediaSelected} maxImages={5} />
+
+            {/* Hashtags Section */}
+            <HashtagInput
+              selectedHashtags={hashtags}
+              onHashtagsChange={setHashtags}
+              maxHashtags={5}
+            />
 
             
             {/* Success Message */}
@@ -223,7 +277,7 @@ export default function CreatePostTab() {
                 💡 Tips for Great Posts
               </Text>
               <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
-                • Be respectful and have fun! 🎉 (Posts cannot contain hate speech, harassment, or explicit content)
+                • Be respectful and have fun! 🎉
               </Text>
               <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
                 • Share your team builds and strategies
@@ -234,7 +288,17 @@ export default function CreatePostTab() {
               <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
                 • Celebrate your achievements
               </Text>
+              <Text className="typography-label text-blue-900 dark:text-blue-100 font-semibold mb-2">
+                🚫 Community Guidelines
+              </Text>
+              <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
+                • Posts cannot contain hate speech, harassment, or explicit content
+              </Text>
+              <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
+                • Bo trolling, wasting people&apos;s time, or spamming
+              </Text>
             </View>
+            <Footer />
           </ScrollView>
         </KeyboardAvoidingView>
       </Container>

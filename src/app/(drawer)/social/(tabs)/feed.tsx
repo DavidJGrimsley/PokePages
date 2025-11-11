@@ -1,27 +1,43 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Stack } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
+import { Stack, router } from 'expo-router';
 import {
   View,
   Text,
+  TextInput,
   FlatList,
   TouchableOpacity,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Container } from 'components/UI/Container';
 import { PostCard } from 'components/Social/PostCard';
+import { CommentsModal } from 'components/Social/CommentsModal';
+import { FriendRequestsModal } from 'components/Social/FriendRequestsModal';
 import { useAuthStore } from '~/store/authStore';
 import * as socialApi from '~/utils/socialApi';
+import type { ReactionType } from '~/utils/socialApi';
+import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
+import { Footer } from '@/src/components/Meta/Footer';
 
 type FeedMode = 'explore' | 'friends';
+
+interface PostWithReactions extends socialApi.Post {
+  reactions?: { emojiCode: ReactionType; count: number }[];
+  currentUserReaction?: ReactionType | null;
+}
 
 export default function FeedTab() {
   const { user } = useAuthStore();
   const [feedMode, setFeedMode] = useState<FeedMode>('explore');
-  const [posts, setPosts] = useState<socialApi.Post[]>([]);
+  const [posts, setPosts] = useState<PostWithReactions[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [showFriendRequests, setShowFriendRequests] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const loadPosts = useCallback(async (refresh = false) => {
     if (!user?.id) return;
@@ -36,7 +52,21 @@ export default function FeedTab() {
           ? await socialApi.getExploreFeed(user.id)
           : await socialApi.getFriendsFeed(user.id);
 
-      setPosts(fetchedPosts);
+      // Load reactions for each post
+      const postsWithReactions = await Promise.all(
+        fetchedPosts.map(async (post) => {
+          try {
+            const reactions = await socialApi.getPostReactions(post.id);
+            // TODO: Track current user's reaction
+            return { ...post, reactions, currentUserReaction: null };
+          } catch (err) {
+            console.error('Failed to load reactions for post', post.id, err);
+            return { ...post, reactions: [], currentUserReaction: null };
+          }
+        })
+      );
+
+      setPosts(postsWithReactions);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load posts');
     } finally {
@@ -45,34 +75,139 @@ export default function FeedTab() {
     }
   }, [user?.id, feedMode]);
 
+  const loadHashtagPosts = useCallback(async (hashtag: string) => {
+    if (!user?.id) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const fetchedPosts = await socialApi.getPostsByHashtag(hashtag, user.id);
+
+      // Load reactions for each post
+      const postsWithReactions = await Promise.all(
+        fetchedPosts.map(async (post) => {
+          try {
+            const reactions = await socialApi.getPostReactions(post.id);
+            return { ...post, reactions, currentUserReaction: null };
+          } catch (err) {
+            console.error('Failed to load reactions for post', post.id, err);
+            return { ...post, reactions: [], currentUserReaction: null };
+          }
+        })
+      );
+
+      setPosts(postsWithReactions);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to search posts');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      loadHashtagPosts(searchQuery);
+    } else {
+      loadPosts();
+    }
+  }, [searchQuery, loadPosts, loadHashtagPosts]);
+
+  const handleHashtagPress = (hashtagName: string) => {
+    setSearchQuery(hashtagName);
+  };
+
   useEffect(() => {
     loadPosts();
   }, [loadPosts]);
 
-  const handleLike = async (postId: string, currentlyLiked: boolean) => {
+  // Refresh the feed whenever this screen gains focus (e.g., after navigating from composer)
+  useFocusEffect(
+    useCallback(() => {
+      loadPosts(true);
+    }, [loadPosts])
+  );
+
+  const handleReaction = async (postId: string, reactionType: ReactionType) => {
     if (!user?.id) return;
 
+    console.log('🎯 handleReaction called:', { postId, reactionType, userId: user.id });
+
     try {
-      if (currentlyLiked) {
-        await socialApi.unlikePost(postId, user.id);
-      } else {
-        await socialApi.likePost(postId, user.id);
+      const post = posts.find((p) => p.id === postId);
+      if (!post) {
+        console.log('⚠️ Post not found:', postId);
+        return;
       }
 
-      // Update local state optimistically
-      setPosts((prev) =>
-        prev.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                isLikedByUser: !currentlyLiked,
-                likesCount: post.likesCount + (currentlyLiked ? -1 : 1),
+      console.log('📊 Current post state:', {
+        id: post.id,
+        currentUserReaction: post.currentUserReaction,
+        reactionsCount: post.reactions?.length || 0,
+      });
+
+      // If same reaction, remove it; otherwise replace/add
+      if (post.currentUserReaction === reactionType) {
+        console.log('🗑️ Removing reaction...');
+        await socialApi.removeReaction(postId, user.id, reactionType);
+        console.log('✅ Reaction removed');
+        // Update local state
+        setPosts((prev) =>
+          prev.map((p) => {
+            if (p.id === postId) {
+              const newReactions = p.reactions?.map((r) =>
+                r.emojiCode === reactionType ? { ...r, count: Math.max(0, r.count - 1) } : r
+              ).filter((r) => r.count > 0) || [];
+              return { ...p, reactions: newReactions, currentUserReaction: null };
+            }
+            return p;
+          })
+        );
+      } else {
+        // Remove old reaction if exists
+        if (post.currentUserReaction) {
+          console.log('🔄 Removing old reaction:', post.currentUserReaction);
+          await socialApi.removeReaction(postId, user.id, post.currentUserReaction);
+          console.log('✅ Old reaction removed');
+        }
+        // Add new reaction
+        console.log('➕ Adding new reaction:', reactionType);
+        await socialApi.addReaction(postId, user.id, reactionType);
+        console.log('✅ New reaction added');
+        
+        // Update local state
+        setPosts((prev) =>
+          prev.map((p) => {
+            if (p.id === postId) {
+              let newReactions = p.reactions || [];
+              
+              // Remove old reaction count
+              if (post.currentUserReaction) {
+                newReactions = newReactions.map((r) =>
+                  r.emojiCode === post.currentUserReaction
+                    ? { ...r, count: Math.max(0, r.count - 1) }
+                    : r
+                ).filter((r) => r.count > 0);
               }
-            : post
-        )
-      );
+              
+              // Add new reaction count
+              const existing = newReactions.find((r) => r.emojiCode === reactionType);
+              if (existing) {
+                newReactions = newReactions.map((r) =>
+                  r.emojiCode === reactionType ? { ...r, count: r.count + 1 } : r
+                );
+              } else {
+                newReactions = [...newReactions, { emojiCode: reactionType, count: 1 }];
+              }
+              
+              return { ...p, reactions: newReactions, currentUserReaction: reactionType };
+            }
+            return p;
+          })
+        );
+      }
     } catch (err) {
-      console.error('Like error:', err);
+      console.error('Reaction error:', err);
     }
   };
 
@@ -99,31 +234,36 @@ export default function FeedTab() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Feed' }} />
+      <Stack.Screen 
+        options={{ 
+          title: 'Feed',
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => setShowFriendRequests(true)}
+              className="mr-4"
+            >
+              <Ionicons name="people-outline" size={24} color="#F59E0B" />
+            </TouchableOpacity>
+          ),
+        }} 
+      />
       <Container>
         {/* Feed Mode Toggle */}
-        <View className="flex-row bg-gray-100 dark:bg-gray-800 rounded-full p-1 mx-4 mt-4 mb-2">
+        <View className="flex-row border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <TouchableOpacity
             onPress={() => setFeedMode('explore')}
-            style={{
-              flex: 1,
-              paddingVertical: 12,
-              borderRadius: 9999,
-              alignItems: 'center',
-              backgroundColor: feedMode === 'explore' ? '#F59E0B' : 'transparent',
-              shadowColor: feedMode === 'explore' ? '#000' : 'transparent',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: feedMode === 'explore' ? 0.25 : 0,
-              shadowRadius: feedMode === 'explore' ? 3.84 : 0,
-              elevation: feedMode === 'explore' ? 5 : 0,
-            }}
+            className={`flex-1 py-3 items-center border-b-2 ${
+              feedMode === 'explore'
+                ? 'border-amber-500'
+                : 'border-transparent'
+            }`}
           >
             <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: feedMode === 'explore' ? '#FFFFFF' : '#9CA3AF',
-              }}
+              className={`typography-label font-semibold ${
+                feedMode === 'explore'
+                  ? 'text-amber-500'
+                  : 'text-gray-500 dark:text-gray-400'
+              }`}
             >
               🌍 Explore
             </Text>
@@ -131,29 +271,43 @@ export default function FeedTab() {
 
           <TouchableOpacity
             onPress={() => setFeedMode('friends')}
-            style={{
-              flex: 1,
-              paddingVertical: 12,
-              borderRadius: 9999,
-              alignItems: 'center',
-              backgroundColor: feedMode === 'friends' ? '#F59E0B' : 'transparent',
-              shadowColor: feedMode === 'friends' ? '#000' : 'transparent',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: feedMode === 'friends' ? 0.25 : 0,
-              shadowRadius: feedMode === 'friends' ? 3.84 : 0,
-              elevation: feedMode === 'friends' ? 5 : 0,
-            }}
+            className={`flex-1 py-3 items-center border-b-2 ${
+              feedMode === 'friends'
+                ? 'border-amber-500'
+                : 'border-transparent'
+            }`}
           >
             <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '600',
-                color: feedMode === 'friends' ? '#FFFFFF' : '#9CA3AF',
-              }}
+              className={`typography-label font-semibold ${
+                feedMode === 'friends'
+                  ? 'text-amber-500'
+                  : 'text-gray-500 dark:text-gray-400'
+              }`}
             >
               👥 Friends
             </Text>
           </TouchableOpacity>
+        </View>
+
+        <InProgressDisclaimer />
+
+        {/* Search Bar */}
+        <View className="mx-4 my-2 flex-row items-center bg-white dark:bg-gray-800 rounded-full px-4 py-2 shadow-sm border border-gray-100 dark:border-gray-700">
+          <Ionicons name="search" size={20} color="#9CA3AF" />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search by #hashtag..."
+            placeholderTextColor="#9CA3AF"
+            className="flex-1 ml-3 typography-copy text-gray-900 dark:text-white"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
+              <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Posts List */}
@@ -187,25 +341,43 @@ export default function FeedTab() {
           <FlatList
             data={posts}
             keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <PostCard
                 post={item}
                 currentUserId={user.id}
-                onLike={() => handleLike(item.id, item.isLikedByUser || false)}
+                onReaction={(reactionType) => handleReaction(item.id, reactionType)}
                 onComment={() => {
-                  // TODO: Navigate to post details/comments
-                  console.log('Open comments for', item.id);
+                  console.log('💬 onComment clicked for postId:', item.id);
+                  console.log('💬 Current selectedPostId:', selectedPostId);
+                  console.log('💬 Setting selectedPostId to:', item.id);
+                  
+                  // Use setTimeout to see if the freeze is from a blocking operation
+                  setTimeout(() => {
+                    console.log('💬 Timeout executing setSelectedPostId');
+                    setSelectedPostId(item.id);
+                    console.log('💬 selectedPostId set complete');
+                  }, 0);
                 }}
+                onHashtagPress={handleHashtagPress}
                 onDelete={
                   item.authorId === user.id ? () => handleDelete(item.id) : undefined
                 }
                 onUserPress={() => {
-                  // TODO: Navigate to user profile
-                  console.log('Open profile for', item.authorId);
+                  const username = item.author?.username;
+                  if (username) {
+                    console.log('👤 onUserPress called for username:', username);
+                    console.log('👤 Navigating to /(profile)/' + username);
+                    router.push(`/(profile)/${username}`);
+                  } else {
+                    console.warn('⚠️ No username available for author:', item.authorId);
+                  }
                 }}
+                reactions={item.reactions}
+                currentUserReaction={item.currentUserReaction}
               />
             )}
-            contentContainerClassName="px-4 pb-4"
+            contentContainerClassName="pb-4"
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -213,9 +385,31 @@ export default function FeedTab() {
                 tintColor="#F59E0B"
               />
             }
+            ListFooterComponent={
+              <Footer />
+            }
           />
         )}
       </Container>
+
+      {/* Modals */}
+      <CommentsModal
+        visible={selectedPostId !== null}
+        onClose={() => {
+          console.log('🚪 Closing comments modal, selectedPostId was:', selectedPostId);
+          setSelectedPostId(null);
+          console.log('🚪 selectedPostId set to null');
+        }}
+        postId={selectedPostId || ''}
+        userId={user.id}
+      />
+
+      <FriendRequestsModal
+        visible={showFriendRequests}
+        onClose={() => setShowFriendRequests(false)}
+        userId={user.id}
+        onUpdate={() => loadPosts(true)}
+      />
     </>
   );
 }

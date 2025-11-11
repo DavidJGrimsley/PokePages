@@ -20,8 +20,10 @@ router.post('/friendships/unfriend', socialController.unfriend);
 router.post('/friendships/block', socialController.blockUser);
 router.post('/friendships/unblock', socialController.unblockUser);
 router.get('/friendships/requests', socialController.getFriendRequests);
+router.get('/friendships/pending', socialController.getPendingFriendRequests);
 router.get('/friendships/friends', socialController.getUserFriends);
 router.get('/friendships/blocked', socialController.getBlockedUsers);
+router.get('/friendships/status', socialController.getFriendshipStatus);
 
 // ============= LIKES =============
 router.post('/posts/:postId/like', socialController.likePost);
@@ -33,6 +35,11 @@ router.post('/posts/:postId/comments', socialController.createComment);
 router.get('/posts/:postId/comments', socialController.getPostComments);
 router.delete('/comments/:commentId', socialController.deleteComment);
 
+// ============= COMMENT REACTIONS =============
+router.post('/comments/:commentId/reactions', socialController.addCommentReaction);
+router.delete('/comments/:commentId/reactions', socialController.removeCommentReaction);
+router.get('/comments/:commentId/reactions', socialController.getCommentReactions);
+
 // ============= MUTES =============
 router.post('/mutes', socialController.muteUser);
 router.delete('/mutes', socialController.unmuteUser);
@@ -42,5 +49,24 @@ router.get('/mutes', socialController.getMutedUsers);
 router.get('/notifications', socialController.getUserNotifications);
 router.post('/notifications/:notificationId/read', socialController.markNotificationAsRead);
 router.post('/notifications/read-all', socialController.markAllNotificationsAsRead);
+
+// ============= MESSAGES & CONVERSATIONS =============
+router.post('/messages', socialController.sendMessage);
+router.get('/conversations/:conversationId', socialController.getConversation);
+router.get('/messages/conversations', socialController.getRecentConversations);
+router.get('/messages/unread-count', socialController.getUnreadMessagesCount);
+router.post('/messages/:messageId/read', socialController.markMessageRead);
+
+// ============= REACTIONS =============
+router.post('/posts/:postId/reactions', socialController.addReaction);
+router.delete('/posts/:postId/reactions', socialController.removeReaction);
+router.get('/posts/:postId/reactions', socialController.getPostReactions);
+
+// ============= HASHTAGS =============
+router.get('/hashtags/:hashtag/posts', socialController.getPostsByHashtag);
+router.get('/hashtags/search', socialController.searchHashtags);
+
+// ============= CATCHES =============
+router.get('/catches/:userId', socialController.getUserCatches);
 
 export default router;

@@ -131,7 +131,7 @@ const DrawerLayout = () => {
           ),
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/editProfile" asChild>
+            <Link href="/(profile)/account" asChild>
               <HeaderButton iconName="user-circle" />
             </Link>
           ),
@@ -148,7 +148,7 @@ const DrawerLayout = () => {
           headerShown: true,
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/editProfile" asChild>
+            <Link href="/(profile)/account" asChild>
               <HeaderButton iconName="user-circle" />
             </Link>
           ),
@@ -166,7 +166,7 @@ const DrawerLayout = () => {
           drawerLabel: 'Tools',
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/editProfile" asChild>
+            <Link href="/(profile)/account" asChild>
               <HeaderButton iconName="user-circle" />
             </Link>
           ),
@@ -184,7 +184,7 @@ const DrawerLayout = () => {
           drawerLabel: 'Games',
           headerLeft: () => <DrawerToggle />, 
           headerRight: () => (
-            <Link href="/editProfile" asChild>
+            <Link href="/(profile)/account" asChild>
               <HeaderButton iconName="user-circle" />
             </Link>
           ),

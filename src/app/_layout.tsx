@@ -113,7 +113,6 @@ export default function RootLayout() {
   } = useAuthStore();
 
   const { hasCompletedOnboarding, _hasHydratedOnboarding } = useOnboardingStore();
-  console.log('Is Development mode active?', __DEV__);
   // https://zustand.docs.pmnd.rs/integrations/persisting-store-data#how-can-i-check-if-my-store-has-been-hydrated
   // Hide the splash screen after both stores have been hydrated AND fonts are loaded (or timed out)
   useEffect(() => {
@@ -210,9 +209,9 @@ export default function RootLayout() {
               <Stack.Screen name="sign-up" options={{ headerShown: false }} />
             </Stack.Protected>
               <Stack.Screen 
-                name="editProfile" 
+                name="(profile)" 
                 options={{ 
-                presentation: 'modal',
+                // presentation: 'modal',
                 headerTitle: '',
                 headerTransparent: true,
                 headerStyle: { backgroundColor: 'transparent' },
