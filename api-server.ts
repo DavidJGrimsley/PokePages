@@ -12,6 +12,9 @@ const port = Number(process.env.PORT) || 3001;
 // For display purposes
 const apiBaseUrl = `http://localhost:${port}`;
 
+// Track server instance for graceful shutdown
+let server: any;
+
 // Ensure trailing slashes do not cause different routing
 // (Express default is non-strict, but set explicitly for clarity)
 app.set('strict routing', false);
@@ -53,6 +56,7 @@ app.get('/', (req, res) => {
     message: '🎮 PokePages Drizzle API Server',
     status: 'healthy',
     timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
   });
 });
 
@@ -102,18 +106,20 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Error handling middleware
+// Error handling middleware (must be after all routes)
 app.use(
   (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error('Unhandled error:', err);
     res.status(500).json({
       success: false,
-      error: 'DJ server error',
+      error: 'Poké Pages Server error occurred',
+      message: process.env.NODE_ENV === 'development' ? err.message : undefined,
     });
   }
 );
 
-app.listen(port, '0.0.0.0', () => {
+// Start server
+server = app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 PokePages Drizzle API server running on port ${port}`);
   console.log(`📊 Health check: ${apiBaseUrl}/test`);
   console.log(`📊 DB Connection Health check: ${apiBaseUrl}/test-db`);
@@ -127,14 +133,47 @@ app.listen(port, '0.0.0.0', () => {
   console.log('socialRouter router loaded:', typeof socialRouter);
 });
 
-// Error handling middleware - THIS MUST BE THE LAST APP.USE()
-app.use(
-  (err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error('Unhandled error:', err);
-    res.status(500).json({
-      success: false,
-      error: 'A server error occurred',
-      details: err.message,
-    });
-  }
-);
+// ====== GRACEFUL SHUTDOWN HANDLERS ======
+async function gracefulShutdown(signal: string): Promise<void> {
+  console.log(`\n${signal} received. Starting graceful shutdown...`);
+  
+  // Stop accepting new connections
+  server.close(async () => {
+    console.log('HTTP server closed');
+    
+    try {
+      // Close database connections
+      const { client } = await import('./src/db/index.js');
+      await client.end({ timeout: 5 });
+      console.log('Database connections closed');
+      
+      console.log('Graceful shutdown complete');
+      process.exit(0);
+    } catch (error) {
+      console.error('Error during shutdown:', error);
+      process.exit(1);
+    }
+  });
+  
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+}
+
+// Handle shutdown signals
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error: Error) => {
+  console.error('UNCAUGHT EXCEPTION:', error);
+  gracefulShutdown('uncaughtException');
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+  console.error('UNHANDLED REJECTION at:', promise, 'reason:', reason);
+  gracefulShutdown('unhandledRejection');
+});

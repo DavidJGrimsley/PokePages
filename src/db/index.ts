@@ -37,15 +37,15 @@ if (!process.env.DATABASE_URL) {
 
 const connectionString = process.env.DATABASE_URL;
 
-// For Supabase pooler in Session mode (port 6543), use prepare: false
-// For direct connection (port 5432), remove prepare: false
+// Optimized connection pool settings for Supabase pooler
+// Using Session mode (pgbouncer) - prepare: false is required
 export const client = postgres(connectionString, {
-  prepare: false,
+  prepare: false, // Required for pgbouncer
   ssl: 'require',
-  max: 10, // Connection pool size
-  idle_timeout: 20, // Close idle connections after 20 seconds
-  connect_timeout: 30, // Timeout after 30 seconds if can't connect
-  keep_alive: 30, // keep TCP connection alive
+  max: 5, // Reduced from 10 - fewer connections for serverless/Plesk
+  idle_timeout: 30, // Increased from 20 - keep connections alive longer
+  connect_timeout: 10, // Reduced from 30 - fail faster on connection issues
+  max_lifetime: 60 * 30, // 30 minutes - recycle connections to prevent stale connections
 });
 
 // Merge schemas so drizzle has the full set of tables
