@@ -29,7 +29,7 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
   if (isIOS) {
     return (
       <View className="mb-4 items-center flex-1">
-        <View className="rounded-lg flex-row bg-gray-100 px-2 py-1 items-center min-w-[150px] w-full max-w-[180px]">
+        <View className="rounded-lg flex-row bg-gray-100 px-2 py-2 items-center min-w-[150px] w-full max-w-[180px]">
           {label && (
             <Text className="text-xs font-semibold text-gray-600 text-left mr-2 min-w-[40px]">
               {label}
@@ -37,10 +37,10 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
           )}
           <Pressable 
             onPress={() => setShowModal(true)}
-            className="flex-1 bg-white rounded px-3 py-2 border border-gray-300"
+            className="flex-1 bg-white rounded px-3 py-1.5 border border-gray-300"
           >
             <View className="flex-row items-center justify-between">
-              <Text className="text-gray-800 font-medium">
+              <Text className="text-gray-800 font-medium text-sm">
                 {displayValue}
               </Text>
               <MaterialIcons name="arrow-drop-down" size={20} color="#555" />
@@ -55,8 +55,8 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
           onRequestClose={() => setShowModal(false)}
         >
           <View className="flex-1 justify-end bg-black/50">
-            <View className="bg-white rounded-t-2xl" style={{ minHeight: 380 }}>
-              <View className="flex-row justify-between items-center px-5 py-4 border-b border-gray-200">
+            <View className="bg-white rounded-t-2xl" style={{ minHeight: 320 }}>
+              <View className="flex-row justify-between items-center px-5 py-3 border-b border-gray-200">
                 <Pressable onPress={() => setShowModal(false)}>
                   <Text className="text-blue-500 font-semibold">Cancel</Text>
                 </Pressable>
@@ -76,7 +76,8 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
                     onTypeSelect(value as PokemonType);
                   }
                 }}
-                style={{ height: 300 }}
+                style={{ height: 260 }}
+                itemStyle={{ color: '#000000' }}
               >
                 {allowNone && (
                   <Picker.Item label="None" value={NONE_VALUE} />
@@ -99,7 +100,10 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
   // Web and Android - Original Picker
   return (
     <View className="mb-4 items-center flex-1">
-      <View className="rounded-lg flex-row bg-gray-100 px-2 py-1 items-center min-w-[150px] w-full max-w-[180px]">
+      <View 
+        className="rounded-lg flex-row bg-gray-100 px-2 items-center min-w-[150px] w-full max-w-[180px]"
+        style={{ paddingVertical: isWeb ? 4 : 0 }}
+      >
         {label && (
           <Text className="text-xs font-semibold text-gray-600 text-center mr-2 min-w-[40px]">
             {label}
@@ -116,7 +120,7 @@ export function TypeSelector({ types, selectedType, onTypeSelect, allowNone = fa
             }
           }}
           dropdownIconColor="#555"
-          style={{ height: isWeb ? 30 : 55 }}
+          style={{ height: isWeb ? 30 :  50 }}
         >
           {allowNone && (
             <Picker.Item label="None" value={NONE_VALUE} />

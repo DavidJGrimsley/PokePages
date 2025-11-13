@@ -246,6 +246,7 @@ export const lumioseDex: Pokemon[] = [
   { id: 228, name: "Xerneas", type1: "Fairy", hasMega: false, canBeAlpha: false, evYield: {hp:3} },
   { id: 229, name: "Yveltal", type1: "Dark", type2: "Flying", hasMega: false, canBeAlpha: false, evYield: {hp:3} },
   { id: 230, name: "Zygarde", type1: "Dragon", type2: "Ground", hasMega: true, canBeAlpha: false, evYield: {hp:3} },
+  { id: 231, name: "Diancie", type1: "Rock", type2: "Fairy", hasMega: true, canBeAlpha: false, evYield: {defense:3} },
 ];
 
 export const lumioseMegaDex: Pokemon[] = [
@@ -313,6 +314,7 @@ export const lumioseMegaDex: Pokemon[] = [
   { id: 224, name: "Mega Drampa", type1: "Normal", type2: "Dragon", hasMega: true, canBeAlpha: true, evYield: {specialAttack:3} },
   { id: 227, name: "Mega Metagross", type1: "Steel", type2: "Psychic", hasMega: true, canBeAlpha: true, evYield: {defense:3} },
   { id: 230, name: "Mega Zygarde", type1: "Dragon", type2: "Ground", hasMega: true, canBeAlpha: false, evYield: {hp:3} },
+  { id: 231, name: "Mega Diancie", type1: "Rock", type2: "Fairy", hasMega: true, canBeAlpha: false, evYield: {defense:3} },
 ];
 
 

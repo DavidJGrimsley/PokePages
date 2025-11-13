@@ -198,7 +198,14 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
 
   return (
     <ScrollView className="flex-1 bg-app-background dark:bg-dark-app-background p-4">
-
+      <Text
+        role="heading"
+        aria-level={1}
+        className="text-lg font-semibold text-center text-app-secondary dark:text-dark-app-secondary"
+      >
+        Pokémon Type Information{'\n'}
+        Find out more about each type
+      </Text>
 
       {/* Filter indicator */}
       {selectedType && (

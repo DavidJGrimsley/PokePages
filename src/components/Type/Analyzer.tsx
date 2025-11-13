@@ -17,6 +17,7 @@ import {
 import { cn } from '@/src/utils/cn';
 import { getTypeColor } from '~/utils/typeColors';
 import { TypeBlurb } from './Blurb';
+import { CounterSuggestions } from './CounterSuggestions';
 
 // Helper component to render a type name with its color background
 function TypeBadge({ typeName }: { typeName: string }) {
@@ -160,6 +161,21 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
   const quadWeaknesses = isDualTyped ? getQuadrupleWeaknesses(selectedType, secondType) : [];
   const quadResistances = isDualTyped ? getQuadrupleResistances(selectedType, secondType) : [];
   
+  // Calculate types that are weak to BOTH types in a dual typing (defensive perspective)
+  // This shows which opponent types you should avoid the most
+  const typesWeakToBoth: PokemonType[] = [];
+  if (isDualTyped && secondMatchups) {
+    const type1SuperEffective = matchups.offensive.superEffectiveAgainst;
+    const type2SuperEffective = secondMatchups.offensive.superEffectiveAgainst;
+    
+    // Find types that appear in both arrays (weak to both types)
+    for (const type of type1SuperEffective) {
+      if (type2SuperEffective.includes(type)) {
+        typesWeakToBoth.push(type);
+      }
+    }
+  }
+  
   // Calculate all dual-type combinations that take 4x damage from this type
   // This happens when both types in the combination are weak to the attacking type
   const superEffectiveTypes = matchups.offensive.superEffectiveAgainst;
@@ -238,6 +254,7 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
               </Text>
             </View>
 
+
             {isDualTyped && quadWeaknesses.length > 0 && <View className="mb-1">
               <Text className="text-sm font-semibold mb-1.5 text-gray-700 dark:text-gray-300">
                 Very Weak To (takes 4x Damage):
@@ -296,8 +313,12 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
                 />
               </View>
             )}
+
+            {/* Counter Suggestions - Inside defensive section */}
+            <CounterSuggestions selectedType={selectedType} secondType={secondType} />
           </View>
 
+        {/* Wrapper for responsive layout */}
           {/* Offensive Section - Now Second */}
           <View className="mb-3 lg:flex-1">
             <View className="flex-row flex-wrap items-center mb-1.5 gap-1">
@@ -317,6 +338,18 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
                 {' '}attacks):
               </Text>
             </View>
+
+            {isDualTyped && typesWeakToBoth.length > 0 && (
+              <View className="mb-1 p-2 bg-red-50 dark:bg-red-950 rounded-lg border border-red-300 dark:border-red-700">
+                <Text className="text-sm font-semibold mb-1.5 text-red-800 dark:text-red-300">
+                  ⚠️ AVOID These Types (Weak to BOTH {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} & {secondType!.charAt(0).toUpperCase() + secondType!.slice(1)}):
+                </Text>
+                <TypeGrid
+                  types={typesWeakToBoth}
+                  variant="veryWeak"
+                />
+              </View>
+            )}
             
             {isDualTyped && (
               <Text className="text-xs text-gray-600 dark:text-gray-400 italic mb-2">
@@ -456,8 +489,15 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
         </View>
           {/* blurb about the chosen type */}
           <TypeBlurb selectedType={selectedType} secondType={secondType} />
+        <Text
+          role="heading"
+          aria-level={1}
+          className="text-lg font-semibold text-center text-gray-700 dark:text-app-secondary"
+        >
+          Use this Pokemon Type Calculator to analyze effectiveness{'\n'}
+          Enter a Pokemon&apos;s name in the search bar to have its type filled in for you
+        </Text>
       </ScrollView>
-
     </View>
   );
 }

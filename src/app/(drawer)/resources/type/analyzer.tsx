@@ -112,14 +112,7 @@ export default function TypeAnalyzer() {
         />
       </View>
       <TypeAnalysis selectedType={typeOne} secondType={typeTwo} />
-       <Text
-        role="heading"
-        aria-level={1}
-        className="text-lg font-semibold text-center text-gray-700 dark:text-app-secondary"
-      >
-        Use this Pokemon Type Calculator to analyze effectiveness{'\n'}
-        Enter a Pokemon&apos;s name in the search bar to have its type filled in for you
-      </Text>
+      
     </Container>
   );
 }

@@ -93,14 +93,7 @@ export default function TypeInfoPage() {
           </Pressable>
         </View>
         )}
-        <Text
-        role="heading"
-        aria-level={1}
-        className="text-lg font-semibold text-center text-app-secondary dark:text-dark-app-secondary"
-      >
-        Pokémon Type Information{'\n'}
-        Find out more about each type
-      </Text>
+        
       <TypeInfo selectedType={selectedType} />
       
     </Container>
