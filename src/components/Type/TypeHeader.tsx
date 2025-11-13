@@ -34,7 +34,7 @@ export const TypeHeader = ({ onPokemonSelect, onTypeSelect }: TypeHeaderProps) =
   return (
     <View className="flex-row items-center gap-3 my-3 px-2" style={{ zIndex: 10, overflow: 'visible' }}>
       {/* Toggle Switch */}
-      <View className="flex-row bg-app-muted rounded-lg p-1 border border-app-border">
+      <View className="flex-row bg-app-muted rounded-lg p-1 border border-app-secondary dark:border-dark-app-secondary">
         <Pressable
           onPress={() => handleToggle('analyzer')}
           className={cn(
@@ -45,7 +45,7 @@ export const TypeHeader = ({ onPokemonSelect, onTypeSelect }: TypeHeaderProps) =
           <Text
             className={cn(
               'font-semibold text-sm',
-              showAnalyzer ? 'text-white' : 'text-app-text'
+              showAnalyzer ? 'text-white' : 'text-app-secondary dark:text-dark-app-secondary'
             )}
           >
             Analyzer
@@ -61,7 +61,7 @@ export const TypeHeader = ({ onPokemonSelect, onTypeSelect }: TypeHeaderProps) =
           <Text
             className={cn(
               'font-semibold text-sm',
-              showInfo ? 'text-white' : 'text-app-text'
+              showInfo ? 'text-white' : 'text-app-secondary dark:text-dark-app-secondary'
             )}
           >
             Info

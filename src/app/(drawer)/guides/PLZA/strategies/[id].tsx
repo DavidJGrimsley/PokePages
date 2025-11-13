@@ -6,9 +6,8 @@ import { AppText } from '@/src/components/TextTheme/AppText';
 import { BouncyText } from '@/src/components/TextTheme/BouncyText';
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
 import { Collapsible } from '@/src/components/UI/Collapsible';
-import colors from '@/src/constants/style/colors';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
-import { Platform, View } from 'react-native';
+import { Platform, View, Text } from 'react-native';
 import { EVYields } from '@/src/components/Guides/EVYields';
 
 // Static generation for all strategy slugs
@@ -91,9 +90,13 @@ export default function StrategyDetail() {
           titleElement={<BouncyText text={`${finalConfig.icon} ${finalConfig.title}`} />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <AppText className="text-xl font-bold mb-0 text-app-secondary">
+          <Text
+            role="heading"
+            aria-level={1}
+            className="text-xl font-bold mb-0 text-app-secondary"
+          >
             {finalConfig.subtitle}
-          </AppText>
+          </Text>
 
           <AppText className="text-base mb-0 text-gray-700 dark:text-gray-400">
             {finalConfig.description}

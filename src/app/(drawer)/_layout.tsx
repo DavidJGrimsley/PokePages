@@ -82,7 +82,7 @@ const DrawerLayout = () => {
         drawerActiveBackgroundColor: theme.colors.light.accent, // Active item background (lavender)
         drawerInactiveBackgroundColor: theme.colors.light.background, // Inactive item background
         drawerStyle: {
-          backgroundColor: theme.colors.light.white, // Drawer background (white)
+          backgroundColor: theme.colors.pokemonType.ghost, // Drawer background (white)
           // width: isMobile ? '90%' : 500, // Full width on mobile, fixed width on desktop
           height: '90%', // Full height
         },

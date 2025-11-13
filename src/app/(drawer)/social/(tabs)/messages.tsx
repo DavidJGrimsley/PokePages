@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Stack, router } from 'expo-router';
+import Head from 'expo-router/head';
 import {
   View,
   Text,
@@ -103,6 +104,10 @@ export default function MessagesTab() {
     return (
       <>
         <Stack.Screen options={{ title: 'Messages' }} />
+        <Head>
+          <title>Messages | Sign In Required | PokePages</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
         <Container>
           <View className="flex-1 justify-center items-center p-4">
             <Ionicons name="chatbubbles-outline" size={64} color="#9CA3AF" />
@@ -116,8 +121,39 @@ export default function MessagesTab() {
     );
   }
 
+  // SEO meta content
+  const title = 'Messages | Trainer Conversations | PokePages';
+  const description = 'Connect with fellow Pokémon trainers through direct messages. Discuss strategies, trade tips, and make new friends in the Poké Pages community.';
+  const keywords = 'pokemon messages, trainer chat, pokemon dm, trainer conversations';
+
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="Poké Pages" />
+        <meta property="og:url" content="https://pokepages.app/social/messages" />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <Stack.Screen options={{ title: 'Messages' }} />
       <Container>
         {/* Tab Toggle */}

@@ -33,7 +33,7 @@ const EventCard: React.FC<EventCardProps> = ({ title, description, href, status,
 
   return (
     <Link href={href as any} asChild>
-      <Pressable className="bg-app-white rounded-lg p-md mb-md shadow-app-small border border-app-secondary">
+      <Pressable className="bg-app-white rounded-lg p-md mb-md shadow-app-small border border-app-secondary dark:border-dark-app-secondary">
         <View className="flex-row justify-between items-start mb-sm">
           <Text className="typography-subheader text-app-primary flex-1 mr-sm">{title}</Text>
           <View className={cn("px-sm py-xs rounded-md min-w-[70px] items-center", getStatusBgClass())}>
@@ -140,13 +140,26 @@ export default function EventsIndex() {
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Poké Pages" />
         <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter Cards */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={canonicalUrl} />
         <script
@@ -157,9 +170,19 @@ export default function EventsIndex() {
         />
       </Head>
       <Stack.Screen options={{ title: 'Pokemon Events' }} />
-      <ScrollView className="flex-1 bg-app-background">
+      <ScrollView className="flex-1 bg-app-background dark:bg-dark-app-background">
         <View className="p-lg pb-md">
-          <Text className="typography-header text-app-text mb-xs">Participate in global Pokemon challenges and events!</Text>
+          <Text
+            role="heading"
+            aria-level={1}
+            className="typography-header text-app-text dark:text-dark-app-text mb-md text-center"
+          >
+            Pokémon Global Challenge Events
+          </Text>
+          <Text className="typography-copy text-app-secondary text-center px-md">
+            Join worldwide Pokémon raid events and work together with trainers across the globe to defeat powerful Pokémon. 
+            Complete challenges to unlock exclusive Mystery Gift rewards for Pokémon Scarlet & Violet!
+          </Text>
         </View>
 
         <View className="px-lg">

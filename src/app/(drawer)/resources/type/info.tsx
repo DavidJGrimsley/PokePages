@@ -50,13 +50,26 @@ export default function TypeInfoPage() {
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Poké Pages" />
         <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter Cards */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href={canonicalUrl} />
         <script
@@ -66,14 +79,7 @@ export default function TypeInfoPage() {
           }}
         />
       </Head>
-      <Text
-        role="heading"
-        aria-level={1}
-        className="text-lg font-semibold text-center text-app-text"
-      >
-        Pokémon Type Information{'\n'}
-        Find out more about each type
-      </Text>
+      
       <TypeHeader onTypeSelect={handleTypeSelect} />
       {selectedType && (
         <View className="px-4 pb-2">
@@ -87,7 +93,16 @@ export default function TypeInfoPage() {
           </Pressable>
         </View>
         )}
+        <Text
+        role="heading"
+        aria-level={1}
+        className="text-lg font-semibold text-center text-app-secondary dark:text-dark-app-secondary"
+      >
+        Pokémon Type Information{'\n'}
+        Find out more about each type
+      </Text>
       <TypeInfo selectedType={selectedType} />
+      
     </Container>
   );
 }

@@ -80,19 +80,21 @@ export default function AskSimple() {
   }
 
   return (
-    <View className="flex-1 p-4 bg-white">
+    <View className="flex-1 p-4 bg-app-background dark:bg-dark-app-background">
       <ScrollView className="flex-1 mb-4">
         {messages.map((message, idx) => (
           <View 
             key={idx} 
             className={`mb-3 p-3 rounded-lg max-w-[80%] ${
               message.role === 'user' 
-                ? 'self-end bg-blue-500' 
-                : 'self-start bg-gray-200'
+                ? 'self-end bg-app-primary' 
+                : 'self-start bg-white dark:bg-app-surface'
             }`}
           >
             <Text className={`text-base ${
-              message.role === 'user' ? 'text-white' : 'text-black'
+              message.role === 'user' 
+                ? 'text-white' 
+                : 'text-app-text'
             }`}>
               {message.content}
             </Text>
@@ -120,7 +122,8 @@ export default function AskSimple() {
           value={input}
           onChangeText={setInput}
           placeholder="Ask about Pokémon strategies... (mention any Pokémon name for detailed info)"
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-base"
+          placeholderTextColor="#9CA3AF"
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-base bg-white dark:bg-app-surface text-app-text"
           multiline
           editable={!loading}
           onSubmitEditing={send}
@@ -132,7 +135,7 @@ export default function AskSimple() {
           className={`px-4 py-2 rounded-lg ${
             loading || !input.trim() 
               ? 'bg-gray-300' 
-              : 'bg-blue-500'
+              : 'bg-app-primary'
           }`}
         >
           <Text className={`font-semibold ${

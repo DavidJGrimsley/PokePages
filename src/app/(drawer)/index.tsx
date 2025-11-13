@@ -1,4 +1,5 @@
 import { Stack, Link } from 'expo-router';
+import Head from 'expo-router/head';
 import { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
 
@@ -8,6 +9,7 @@ import { eventConfig } from 'constants/eventConfig';
 // ...existing code...
 import TypeChartDisplay from '@/src/components/Resources/TypeChartDisplay';
 import AuthStatus from 'components/Auth/AuthStatus';
+import { Footer } from '@/src/components/Meta/Footer';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -33,6 +35,12 @@ const formatEventDate = (dateString: string, userLocale: string = 'en-US'): stri
 
 export default function Home() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+  
+  // SEO meta content
+  const title = 'Poké Pages | The Ultimate Pokémon Companion App';
+  const description = 'Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions.';
+  const keywords = 'Pokemon, Poké Pages, Pokemon events, Pokemon battles, Pokemon community, Pokemon type chart, Pokemon strategies, Pokemon news, Pokemon Scarlet Violet, Legends Z-A, Treasures of Ruin, global challenges, Pokemon counters';
+  
   // Generate events from our configuration
   const activeCounterEvents = useMemo(() => 
     Object.entries(eventConfig)
@@ -54,8 +62,37 @@ export default function Home() {
   return (
     <>
       <Stack.Screen options={{ title: 'Poké Pages' }} />
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="Poké Pages" />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://pokepages.app" />
+      </Head>
       <Container>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 0 }} className='bg-app-background dark:bg-dark-app-background'>
+        <ScrollView 
+          contentContainerStyle={{ flexGrow: 1, padding: 0 }}
+          showsVerticalScrollIndicator={false}
+          >
           {/* Download App Banner */}
          {!isMobile && (<Link href="/download" asChild>
             <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
@@ -70,16 +107,28 @@ export default function Home() {
           </Link>)}
           
           {/* Auth Status Debug Component */}
-          {/* <AuthStatus /> */}
           
-          <View className="p-lg bg-app-white">
+          <View className="p-lg bg-app-background dark:bg-dark-app-background">
             {/* */}
-            <Text className="typography-header text-app-text mb-md">Shortcuts</Text>
-            
+            <Text
+              role="heading"
+              aria-level={1}
+              className="text-lg font-semibold text-center text-gray-700 dark:text-app-flag"
+            >
+              The Ultimate (Unofficial) Pokémon Hub
+            </Text>
+            <Text
+              role="heading"
+              aria-level={2}
+              className="text-sm font-semibold text-center text-app-text dark:text-dark-app-text"
+            >
+              Your home for Pokémon events, strategies, and community connection
+            </Text>
+
             {/* Messages Link */}
             <Link href="/(drawer)/social/(tabs)/messages" asChild>
-              <Pressable className="bg-app-secondary mb-8 py-md px-lg rounded-md items-center mt-sm">
-                <Text className="typography-cta text-app-white">Go to Messages</Text>
+              <Pressable className="bg-app-accent mb-8 py-md px-lg rounded-md items-center mt-sm">
+                <Text className="typography-cta text-app-background dark:text-dark-app-background">Messages</Text>
               </Pressable>
             </Link>
             
@@ -93,7 +142,13 @@ export default function Home() {
               path="/(drawer)/guides/PLZA/strategies"
             />
           
-            <Text className="typography-header text-app-text mb-md">🎉 Latest Events</Text>
+            <Text
+              role="heading"
+              aria-level={3}
+              className="typography-header text-app-secondary m-md"
+            >
+              Latest Events
+            </Text>
             
             {/* Multiple Active Event Buttons */}
             {activeCounterEvents.map((event) => (
@@ -106,12 +161,18 @@ export default function Home() {
             ))}
            
             <Link href="/(drawer)/events" asChild>
-              <Pressable className="bg-app-secondary py-md px-lg rounded-md items-center mt-sm">
-                <Text className="typography-cta text-app-white">View All Events</Text>
+              <Pressable className="bg-app-accent py-md px-lg rounded-md items-center mt-sm">
+                <Text className="typography-cta text-app-background dark:text-dark-app-background">View All Events</Text>
               </Pressable>
             </Link>
             
-            <Text className="typography-header text-app-text mb-md">🎉 Latest News</Text>
+            <Text
+              role="heading"
+              aria-level={3}
+              className="typography-header text-app-secondary m-md"
+            >
+              Latest News
+            </Text>
           
             {/* Dynamic News Cards for Active Events */}
             {activeCounterEvents.map((event) => (
@@ -148,8 +209,14 @@ export default function Home() {
             </View>
           </View>
 
-          <View className="p-lg bg-app-background">
-            <Text className="typography-header text-app-text mb-md">🌟 Features</Text>
+          <View className="p-lg rounded-lg mb-0 border-t-2 border-b-2 border-app-flag">
+            <Text
+              role="heading"
+              aria-level={3}
+              className="typography-header dark:text-app-background text-dark-app-background  mb-md"
+            >
+              Features
+            </Text>
             
             <View className="flex-row flex-wrap justify-between">
               <View className="bg-app-white p-md rounded-lg w-[48%] mb-md shadow-app-small">
@@ -181,6 +248,7 @@ export default function Home() {
               </View>
             </View>
           </View>
+          <Footer />
         </ScrollView>
       </Container>
     </>

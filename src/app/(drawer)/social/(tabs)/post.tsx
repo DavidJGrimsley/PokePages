@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Stack, useRouter } from 'expo-router';
+import Head from 'expo-router/head';
 import {
   View,
   Text,
@@ -114,8 +115,39 @@ export default function CreatePostTab() {
   const maxChars = 5000;
   const isValid = content.trim().length > 0 && charCount <= maxChars;
 
+  // SEO meta content
+  const title = 'Create Post | Share Your Pokémon Adventure | PokePages';
+  const description = 'Share your Pokémon journey with the community. Post updates, strategies, team builds, and connect with fellow trainers on Poké Pages.';
+  const keywords = 'create pokemon post, share pokemon, trainer posts, pokemon social';
+
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="Poké Pages" />
+        <meta property="og:url" content="https://pokepages.app/social/post" />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <Stack.Screen options={{ title: 'Create Post' }} />
       <Container>
         <KeyboardAvoidingView

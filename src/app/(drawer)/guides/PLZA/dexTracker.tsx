@@ -281,9 +281,13 @@ export default function DexTrackerPage() {
           titleElement={
             <View className="flex-1 justify-center items-center px-4">
               <BouncyText text="Pokédex Tracker" />
-              <AppText className="text-center text-app-brown text-lg mt-2">
+              <Text
+                role="heading"
+                aria-level={1}
+                className="text-center text-app-brown text-lg mt-2"
+              >
                 Track your Pokédex completion and special forms
-              </AppText>
+              </Text>
             </View>
           }
         >

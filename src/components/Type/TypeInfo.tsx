@@ -72,7 +72,7 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
       return (
         <View
           key={key}
-          className="p-4 bg-white rounded-lg shadow-sm"
+          className="p-4 bg-white dark:bg-app-surface rounded-lg shadow-sm"
         >
           <View className="flex-row items-center mb-2">
             {/* Dual Color Chip - Split vertically */}
@@ -139,7 +139,7 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
     return (
       <View
         key={key}
-        className="p-4 bg-white rounded-lg shadow-sm"
+        className="p-4 bg-app-white dark:bg-app-surface rounded-lg shadow-sm"
       >
         <View className="flex-row items-center mb-2">
           {/* Single Color Chip */}
@@ -197,7 +197,7 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
   };
 
   return (
-    <ScrollView className="flex-1 bg-app-background p-4">
+    <ScrollView className="flex-1 bg-app-background dark:bg-dark-app-background p-4">
 
 
       {/* Filter indicator */}
@@ -212,7 +212,11 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
       {/* Single Types Section */}
       {singleTypes.length > 0 && (
         <>
-          <Text className="text-xl font-bold text-app-text mb-3 mt-2">
+          <Text
+            role="heading"
+            aria-level={2}
+            className="text-xl font-bold text-app-text dark:text-dark-app-text mb-2"
+          >
             Single Types
           </Text>
           <View className="gap-3 mb-6">
@@ -224,7 +228,11 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
       {/* Dual Types Section */}
       {dualTypes.length > 0 && (
         <>
-          <Text className="text-xl font-bold text-app-text mb-3 mt-4">
+          <Text
+            role="heading"
+            aria-level={2}
+            className="text-xl font-bold text-app-text dark:text-dark-app-text my-2"
+          >
             Dual Types
           </Text>
           <View className="gap-3 mb-6">

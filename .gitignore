@@ -38,6 +38,7 @@ yarn-error.*
 # local env files
 .env*.local
 .env
+.env.backup
 
 # typescript
 *.tsbuildinfo
@@ -53,6 +54,7 @@ yarn-error.*
 app-example
 
 server/
+api-server/
 
 # Android
 android/

@@ -52,6 +52,18 @@ export default function Map() {
           />
         </Head>
         <View style={styles.container}>
+          <View style={styles.header}>
+            <Text
+              role="heading"
+              aria-level={1}
+              style={styles.headerTitle}
+            >
+              Explore Lumiose City
+            </Text>
+            <Text style={styles.headerSubtitle}>
+              Navigate the Kalos region with our interactive map featuring Pokémon locations, items, trainers, and important landmarks. Perfect for planning your Legends Z-A adventure!
+            </Text>
+          </View>
           <InProgressDisclaimer />
           <Text> This is not yet fully implemented.</Text>
           <FilterBar />
@@ -66,5 +78,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    paddingHorizontal: 8,
   },
 });

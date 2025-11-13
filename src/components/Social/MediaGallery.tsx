@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Image, Dimensions, Pressable, Modal, StyleSheet } from 'react-native';
-import { Video, ResizeMode } from 'expo-av';
+import { View, Image, Pressable, Modal, StyleSheet, useWindowDimensions } from 'react-native';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { Ionicons } from '@expo/vector-icons';
 
 interface MediaGalleryProps {
@@ -10,7 +10,18 @@ interface MediaGalleryProps {
 
 export function MediaGallery({ imageUrls = [], videoUrl = null }: MediaGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
-  const screenWidth = Dimensions.get('window').width - 32; // Account for padding
+  const { width: windowWidth } = useWindowDimensions();
+  const player = useVideoPlayer((videoUrl ? { uri: videoUrl } : undefined) as any, (player: any) => {
+    if (videoUrl) {
+      player.loop = true;
+    }
+  });
+  
+  // Calculate available width (accounting for container padding)
+  // On narrow screens, use full width minus padding
+  // On wider screens, cap at a reasonable max width (800px for better desktop viewing)
+  const maxWidth = Math.min(windowWidth - 32, 800); // 32px for padding, max 800px
+  const screenWidth = maxWidth;
   const imageCount = imageUrls.length;
 
   const handleImagePress = useCallback((index: number) => {
@@ -57,30 +68,32 @@ export function MediaGallery({ imageUrls = [], videoUrl = null }: MediaGalleryPr
   };
 
   return (
-    <View className="mb-4">
+    <View className="mb-4" style={{ maxWidth: '100%' }}>
       {/* Video Display */}
       {videoUrl && (
-        <Video
-          source={{ uri: videoUrl }}
-          style={{ width: screenWidth, height: 300 }}
+        <VideoView
+          player={player}
+          style={{ width: screenWidth, height: 300, maxWidth: '100%' }}
           className="rounded-2xl border-2 border-purple-300"
-          useNativeControls
-          resizeMode={ResizeMode.COVER}
-          isLooping
+          nativeControls
+          contentFit="cover"
+          allowsFullscreen
+          allowsPictureInPicture
         />
       )}
 
       {/* Images Display */}
       {imageUrls.length > 0 && (
-        <View className="flex-row flex-wrap gap-2">
+        <View className="flex-row flex-wrap gap-2" style={{ maxWidth: '100%' }}>
           {imageUrls.map((url, index) => (
             <Pressable
               key={index}
               onPress={() => handleImagePress(index)}
+              style={{ maxWidth: '100%' }}
             >
               <Image
                 source={{ uri: url }}
-                style={getImageStyle(index)}
+                style={[getImageStyle(index), { maxWidth: '100%' }]}
                 className="rounded-2xl border-2 border-amber-300"
                 resizeMode="cover"
               />

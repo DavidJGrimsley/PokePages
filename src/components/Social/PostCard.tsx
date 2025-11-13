@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import type { Post, ReactionType } from '~/utils/socialApi';
 import { formatDistanceToNow } from 'date-fns';
 import { ReactionPicker, REACTIONS } from './ReactionPicker';
 import { ShareModal } from './ShareModal';
 import { ParsedContent } from './ParsedContent';
 import { MediaGallery } from './MediaGallery';
+import { PostHeader } from './PostHeader';
 
 interface PostCardProps {
   post: Post;
@@ -18,6 +18,7 @@ interface PostCardProps {
   onDelete?: () => void;
   onUserPress?: () => void;
   onHashtagPress?: (hashtag: string) => void;
+  onPress?: () => void; // Added: Make entire card pressable
   reactions?: { emojiCode: ReactionType; count: number }[];
   currentUserReaction?: ReactionType | null;
 }
@@ -31,13 +32,15 @@ export function PostCard({
   onDelete,
   onUserPress,
   onHashtagPress,
+  onPress,
   reactions = [],
   currentUserReaction = null,
 }: PostCardProps) {
   const [showReactionPicker, setShowReactionPicker] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const isOwnPost = post.authorId === currentUserId;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
+  const { width: screenWidth } = useWindowDimensions();
+  const isSmallScreen = screenWidth < 768; // match [postId] breakpoint
 
   const totalReactions = reactions.reduce((sum, r) => sum + r.count, 0);
 
@@ -64,71 +67,69 @@ export function PostCard({
 
   return (
     <>
-      <View className=" rounded-3xl p-3 mb-0 border-t border-r-2 border-amber-500">
+      <TouchableOpacity 
+        onPress={onPress}
+        activeOpacity={onPress ? 0.7 : 1}
+        disabled={!onPress}
+        className="rounded-3xl p-3 mb-0 border-t border-r-2 border-app-flag"
+        style={{ width: isSmallScreen ? '100%' : '90%', alignSelf: 'center' }}
+      >
         {/* Header */}
-        <View className="bg-white dark:bg-gray-800 rounded-3xl flex-row items-center justify-between mb-3">
-          <TouchableOpacity
-            onPress={() => {
-              console.log('🔘 PostCard header pressed');
-              console.log('🔘 onUserPress exists?', !!onUserPress);
-              console.log('🔘 post.authorId:', post.authorId);
-              if (onUserPress) {
-                console.log('✅ Calling onUserPress callback');
-                onUserPress();
-              } else if (post.author?.username) {
-                console.log('📍 Navigating to /(profile)/' + post.author.username);
-                router.push(`/(profile)/${post.author.username}`);
-              } else {
-                console.warn('⚠️ No username available for author');
-              }
-            }}
-            className="flex-row items-center flex-1"
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            {post.author?.avatarUrl ? (
-              <Image
-                source={{ uri: post.author.avatarUrl }}
-                className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 border-2 border-amber-400"
-              />
-            ) : (
-              <View className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 items-center justify-center border-2 border-amber-400">
-                <Ionicons name="person" size={24} color="white" />
-              </View>
-            )}
-            <View className="ml-3 flex-1">
-              <Text className="typography-label text-gray-900 dark:text-white font-bold">
-                {post.author?.username || 'Unknown Trainer'}
-              </Text>
-              <Text className="typography-caption text-gray-500 dark:text-gray-400">
-                {timeAgo}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <PostHeader
+            author={post.author}
+            authorId={post.authorId}
+            currentUserId={currentUserId}
+            timeAgo={timeAgo}
+            onAuthorPress={onUserPress}
+            onDelete={onDelete}
+            stopPropagation={true}
+          />
 
-          {isOwnPost && onDelete && (
-            <TouchableOpacity onPress={onDelete} className="p-2">
-              <Ionicons name="trash-outline" size={20} color="#EF4444" />
-            </TouchableOpacity>
+        {/* Content and Media - Row on wide screens, stacked on small */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+          {/* Text Content */}
+          <View style={isSmallScreen ? { width: '100%' } : { flex: 1, minWidth: 600 }}>
+            <ParsedContent 
+              content={post.content}
+              className="typography-copy text-gray-800 dark:text-gray-100 mb-4 leading-6"
+            />
+          </View>
+
+          {/* Media */}
+          {(post.imageUrls || post.videoUrl || post.imageUrl) && (
+            <View
+              style={
+                isSmallScreen
+                  ? {
+                      width: '100%',
+                      maxWidth: '100%',
+                      marginBottom: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+                  : {
+                      flex: 1,
+                      minWidth: 600,
+                      maxWidth: '100%',
+                      marginBottom: 12,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }
+              }
+            >
+              {(post.imageUrls || post.videoUrl) ? (
+                <MediaGallery imageUrls={post.imageUrls} videoUrl={post.videoUrl} />
+              ) : post.imageUrl ? (
+                <Image
+                  source={{ uri: post.imageUrl }}
+                  style={{ width: '100%', height: 256, maxWidth: 600 }}
+                  className="rounded-2xl mb-4 border-2 border-amber-300"
+                  resizeMode="cover"
+                />
+              ) : null}
+            </View>
           )}
         </View>
-
-        {/* Content */}
-        <ParsedContent 
-          content={post.content}
-          className="typography-copy text-gray-800 dark:text-gray-100 mb-4 leading-6"
-        />
-
-        {/* Media Gallery - supports up to 5 images or 1 video */}
-        <MediaGallery imageUrls={post.imageUrls} videoUrl={post.videoUrl} />
-
-        {/* Legacy single image support (for backward compatibility) */}
-        {!post.imageUrls && !post.videoUrl && post.imageUrl && (
-          <Image
-            source={{ uri: post.imageUrl }}
-            className="w-full h-64 rounded-2xl mb-4 border-2 border-amber-300"
-            resizeMode="cover"
-          />
-        )}
 
         {/* Hashtags */}
         {post.hashtags && post.hashtags.length > 0 && (
@@ -181,7 +182,10 @@ export function PostCard({
         {/* Action Buttons */}
         <View className="flex-row items-center justify-around pt-4 border-t-2 border-amber-200 dark:border-amber-800">
           <TouchableOpacity
-            onPress={handleReactionPress}
+            onPress={(e) => {
+              e?.stopPropagation?.();
+              handleReactionPress();
+            }}
             className={`flex-row items-center px-4 py-2 rounded-full border-2 ${
               currentUserReaction
                 ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-500'
@@ -205,7 +209,10 @@ export function PostCard({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={onComment}
+            onPress={(e) => {
+              e?.stopPropagation?.();
+              onComment();
+            }}
             className="flex-row items-center px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700"
           >
             <Ionicons name="chatbubble-outline" size={20} color="#6B7280" />
@@ -215,7 +222,10 @@ export function PostCard({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={handleShare}
+            onPress={(e) => {
+              e?.stopPropagation?.();
+              handleShare();
+            }}
             className="flex-row items-center px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700"
           >
             <Ionicons name="share-outline" size={20} color="#6B7280" />
@@ -224,7 +234,7 @@ export function PostCard({
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <ReactionPicker
         visible={showReactionPicker}

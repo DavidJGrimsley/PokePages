@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Stack, router } from 'expo-router';
+import Head from 'expo-router/head';
 import {
   View,
   Text,
@@ -232,8 +233,40 @@ export default function FeedTab() {
     );
   }
 
+  // SEO meta content
+  const title = 'Social Feed | Pokémon Trainer Community | PokePages';
+  const description = 'Explore posts from the Pokémon trainer community. Share your adventures, strategies, and connect with fellow trainers worldwide.';
+  const keywords = 'pokemon feed, trainer posts, pokemon community, social pokemon, trainer network';
+
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:site_name" content="Poké Pages" />
+        <meta property="og:url" content="https://pokepages.app/social/feed" />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        
+        {/* Additional SEO */}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Poké Pages" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://pokepages.app/social/feed" />
+      </Head>
       <Stack.Screen 
         options={{ 
           title: 'Feed',
@@ -372,6 +405,10 @@ export default function FeedTab() {
                   } else {
                     console.warn('⚠️ No username available for author:', item.authorId);
                   }
+                }}
+                onPress={() => {
+                  // Navigate to individual post page
+                  router.push(`/social/posts/${item.id}`);
                 }}
                 reactions={item.reactions}
                 currentUserReaction={item.currentUserReaction}

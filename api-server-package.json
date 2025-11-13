@@ -2,11 +2,13 @@
   "name": "pokepages-api-server", 
   "version": "1.0.0",
   "description": "PokePages API Server for production deployment",
-  "main": "server.js",
+  "main": "api-server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "restart": "./start-server.sh"
+    "start": "node api-server.js",
+    "dev": "node api-server.js",
+    "restart": "npm run restart:win || npm run restart:unix",
+    "restart:win": "start-api-server.bat",
+    "restart:unix": "bash ./start-api-server.sh"
   },
   "dependencies": {
     "express": "^5.1.0",

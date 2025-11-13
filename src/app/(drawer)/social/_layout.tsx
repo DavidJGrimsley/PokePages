@@ -6,6 +6,8 @@ import { useAuthStore } from '~/store/authStore';
 import { useUserAge } from '~/hooks/useUserAge';
 import BirthdateModal from '~/components/Auth/BirthdateModal';
 import { Button } from '~/components/UI/Button';
+import { theme } from '@/src/constants/style/theme';
+
 
 export default function SocialLayout() {
   const { isLoggedIn, profile, _authInitialized } = useAuthStore();
@@ -103,6 +105,14 @@ export default function SocialLayout() {
       <Stack.Protected guard={isLoggedIn && canUseSocialFeatures}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="conversations/[conversationId]" />
+        <Stack.Screen 
+          name="posts/[postId]"
+          headerBackTitle="Back"
+          options={{ 
+            title: '',
+            headerStyle: { backgroundColor: theme.colors.light.secondary, height: theme.spacing.xl } }} // Lavender, shorter
+
+        />
       </Stack.Protected>
     </Stack>
   );

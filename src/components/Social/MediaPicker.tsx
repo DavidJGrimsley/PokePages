@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Image, Alert, ScrollView, Dimensions, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Video, ResizeMode } from 'expo-av';
+import { VideoView, useVideoPlayer } from 'expo-video';
 import { Ionicons } from '@expo/vector-icons';
 
 interface MediaPickerProps {
@@ -233,28 +233,39 @@ export function MediaPicker({ onMediaSelected, maxImages = 5 }: MediaPickerProps
 
       {/* Selected Video Preview */}
       {video && (
-        <View className="mb-2">
-          <Text className="typography-caption text-gray-600 dark:text-gray-400 mb-2">
-            Video selected
-          </Text>
-          <View className="relative">
-            <Video
-              source={{ uri: video }}
-              style={{ width: '100%', height: 200 }}
-              className="rounded-xl border-2 border-purple-300"
-              useNativeControls
-              resizeMode={ResizeMode.COVER}
-            />
-            <TouchableOpacity
-              onPress={removeVideo}
-              className="absolute top-2 right-2 bg-red-500 rounded-full p-2"
-              style={{ elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
-            >
-              <Ionicons name="close" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <VideoPreview uri={video} onRemove={removeVideo} />
       )}
+    </View>
+  );
+}
+
+function VideoPreview({ uri, onRemove }: { uri: string; onRemove: () => void }) {
+  const player = useVideoPlayer(uri, (player: any) => {
+    // no looping for preview; controls on
+  });
+  return (
+    <View className="mb-2">
+      <Text className="typography-caption text-gray-600 dark:text-gray-400 mb-2">
+        Video selected
+      </Text>
+      <View className="relative">
+        <VideoView
+          player={player}
+          style={{ width: '100%', height: 200 }}
+          className="rounded-xl border-2 border-purple-300"
+          nativeControls
+          contentFit="cover"
+          allowsFullscreen
+          allowsPictureInPicture
+        />
+        <TouchableOpacity
+          onPress={onRemove}
+          className="absolute top-2 right-2 bg-red-500 rounded-full p-2"
+          style={{ elevation: 3, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 }}
+        >
+          <Ionicons name="close" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

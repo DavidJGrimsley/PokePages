@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 const getApiUrl = (): string => {
   // Allow environment variable to override
   if (process.env.EXPO_PUBLIC_API_BASE_URL) {
-    // return process.env.EXPO_PUBLIC_API_BASE_URL;
+    return process.env.EXPO_PUBLIC_API_BASE_URL;
   }
   
   // More robust development detection

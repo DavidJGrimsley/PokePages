@@ -15,5 +15,5 @@ else
     echo "✅ Port 3001 is available."
 fi
 
-echo "🚀 Starting server..."
-npx tsx server.ts
+echo "🚀 Starting API server..."
+node api-server.js

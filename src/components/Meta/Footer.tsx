@@ -8,7 +8,7 @@ export function Footer() {
   };
 
   return (
-    <View className="p-4 mt-8 border-t border-gray-200 dark:border-gray-700">
+    <View className="p-4 mt-8 border-t border-gray-300 dark:border-gray-700">
       {/* Developer Link */}
       <View className="mb-4 flex-row justify-center">
         <Pressable onPress={handleDeveloperPress}>

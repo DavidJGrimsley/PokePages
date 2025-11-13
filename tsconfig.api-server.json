@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "ES2020",
     "target": "ES2020",
-    "outDir": "./server",
+    "outDir": "./api-server",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -23,7 +23,7 @@
     }
   },
   "include": [
-    "server.ts",
+    "api-server.ts",
     "src/routes/**/*",
     "src/db/**/*",
     "src/middlewares/**/*",

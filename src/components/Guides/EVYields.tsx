@@ -76,13 +76,13 @@ export function EVYields({ game }: EVYieldsProps) {
 
               {/* Pokemon lists by EV amount */}
               <View 
-                className="flex-row">
+                className="flex-row flex-wrap gap-2">
                 {[3, 2, 1].map(evAmount => {
                   const pokemonList = getPokemonByEV(category.key, evAmount);
                   if (pokemonList.length === 0) return null;
 
                   return (
-                    <View key={evAmount} className="mr-2">
+                    <View key={evAmount} className="flex-1 min-w-[120px]">
                       <View 
                         className={`rounded-full mb-1 flex items-center justify-center ${category.colorBgClass}`}
                       >
@@ -90,7 +90,7 @@ export function EVYields({ game }: EVYieldsProps) {
                           +{evAmount} EV
                         </AppText>
                       </View>
-                      <View className="bg-white rounded-xl p-2 shadow-sm" style={{ minWidth: 150 }}>
+                      <View className="bg-white rounded-xl p-2 shadow-sm">
                         {pokemonList.map((pokemon, idx) => (
                           <View 
                             key={pokemon.id}

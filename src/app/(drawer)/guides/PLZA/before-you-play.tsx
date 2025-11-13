@@ -4,11 +4,10 @@ import { AppText } from '@/src/components/TextTheme/AppText';
 import { BouncyText } from '@/src/components/TextTheme/BouncyText';
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
 import { Collapsible } from '@/src/components/UI/Collapsible';
-import colors from '@/src/constants/style/colors';
 import beforeYouPlayData from '@/src/constants/beforeYouPlayLegendsAZ.json';
 import Head from 'expo-router/head';
 
-import { Platform, Linking, TouchableOpacity, View, Image } from 'react-native';
+import { Platform, Linking, TouchableOpacity, View, Image, Text } from 'react-native';
 
 export default function BeforeYouPlay() {
 
@@ -85,9 +84,13 @@ export default function BeforeYouPlay() {
         headerHeight={ isMobile ? 75 : 150 }
         >
 
-          <AppText className="text-xl font-bold mb-md text-gray-700 dark:text-gray-400">
+          <Text
+            role="heading"
+            aria-level={1}
+            className="text-xl font-bold mb-md text-gray-700 dark:text-gray-400"
+          >
             {beforeYouPlayData.story.caption}
-          </AppText>
+          </Text>
           
         {/* Story Recap Section */}
         <Collapsible title={beforeYouPlayData.story.title} animatedOpen={true}>
