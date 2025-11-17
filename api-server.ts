@@ -6,6 +6,7 @@ import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
 import legendsZARouter from './src/routes/legends-za/index.js';
 import socialRouter from './src/routes/social/index.js';
+import favoritesRouter from './src/routes/favorites/index.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -80,6 +81,9 @@ app.use('/legends-za', legendsZARouter);
 
 // Social Routes
 app.use('/social', socialRouter);
+
+// Favorite Features Routes
+app.use('/favorites', favoritesRouter);
 
 // Test route
 app.get('/test', (req, res) => {
