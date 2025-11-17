@@ -40,7 +40,7 @@ export default function OnboardingWelcomeScreen() {
       
       <View className="flex-1 items-center justify-center py-xl">
         {/* <Image 
-          source={require('@/assets/favicon.png')} 
+          source={require('@/assets/icons/favicon.png')} 
           className="w-[40%] h-[40%] mb-lg shadow-app-large"
           resizeMode="contain"
         /> */}

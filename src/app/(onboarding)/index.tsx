@@ -16,7 +16,7 @@ export default function OnboardingWelcomeScreen() {
       
       <View className="flex-1 items-center py-xl">
         {/* <Image 
-          source={require('@/assets/icon.png')} 
+          source={require('@/assets/icons/icon.png')} 
           className="w-[120px] h-[120px] mb-lg shadow-app-large"
           resizeMode="contain"
         /> */}

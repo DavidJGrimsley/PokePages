@@ -5,6 +5,15 @@ Allow: /
 # Sitemap
 Sitemap: https://pokepages.app/sitemap.xml
 
+# Social media crawlers
+User-agent: Twitterbot
+Allow: /
+Allow: /images/
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /images/
+
 # Common bots
 User-agent: Googlebot
 Allow: /

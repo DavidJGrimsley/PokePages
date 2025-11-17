@@ -69,19 +69,26 @@ export default function Home() {
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://pokepages.app" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:site_name" content="Poké Pages" />
         <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:secure_url" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Poké Pages - The Ultimate Pokémon Companion App" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
-        
+        <meta name="twitter:image:alt" content="Poké Pages - The Ultimate Pokémon Companion App" />
+        <meta name="twitter:site" content="@mrdj2u26" />
+        <meta name="twitter:creator" content="@gokuscharizard" />  
+
         {/* Additional SEO */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="author" content="Poké Pages" />

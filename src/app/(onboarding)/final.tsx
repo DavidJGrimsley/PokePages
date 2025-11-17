@@ -49,7 +49,7 @@ export default function OnboardingFinalScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* <Image 
-          source={require('@/assets/icon.png')} 
+          source={require('@/assets/icons/icon.png')} 
           className="w-[100px] h-[100px] mb-lg shadow-app-large"
           resizeMode="contain"
         /> */}
