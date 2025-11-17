@@ -1,14 +1,14 @@
 /* Basic Service Worker for caching core files and PWA icons. */
-const CACHE_NAME = 'poke-pages-cache-v1';
+const CACHE_NAME = 'poke-pages-cache-v2';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icons/pwa-192x192.png',
-  '/icons/pwa-512x512.png',
-  '/icons/favicon.ico',
-  '/icons/apple-touch-icon.png',
-  '/icons/favicon-32.png'
+  '/images/icons/pwa-192x192.png',
+  '/images/icons/pwa-512x512.png',
+  '/images/icons/favicon.ico',
+  '/images/icons/apple-touch-icon.png',
+  '/images/icons/favicon-32.png'
 ];
 
 self.addEventListener('install', (event) => {

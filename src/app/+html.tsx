@@ -17,11 +17,12 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <link rel="canonical" href="https://pokepages.app" />
         {/* PWA: Manifest and icons */}
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icons/favicon.ico" />
-        <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" />
-        <link rel="icon" href="/icons/favicon-16.png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-        <link rel="mask-icon" href="/icons/mask-icon.svg" color="#582a5a" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" href="/images/icons/favicon.ico" />
+        <link rel="icon" href="/images/icons/favicon-32.png" sizes="32x32" />
+        <link rel="icon" href="/images/icons/favicon-16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" />
+        <link rel="mask-icon" href="/images/icons/mask-icon.svg" color="#582a5a" />
         <meta name="theme-color" content="#582a5a" />
         
         {/* Open Graph / Facebook */}

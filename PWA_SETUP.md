@@ -18,11 +18,11 @@ Existing or covered (present somewhere):
 - splash.png - `assets/icons/splash-icon.png` (if this is the exported splash) ✅
 - adaptive-icon.png — `assets/icons/adaptive-icon.png` ✅
 - favicon.png — `assets/icons/favicon.png` ✅
-- PWA icons (72–512) — `smartutilifyIconDownload/pwa/` contains `pwa-72..pwa-512.png` ✅ (not yet copied to `public/icons`)
-- web favicons+apple-touch - `smartutilifyIconDownload/web/*` includes `favicon.ico`, `favicon-32.png`, `favicon-16.png`, `apple-touch-icon.png` ✅ (not yet copied to `public/icons`)
+ - PWA icons (72–512) — `smartutilifyIconDownload/pwa/` contains `pwa-72..pwa-512.png` ✅ (not yet copied to `public/images/icons`)
+ - web favicons+apple-touch - `smartutilifyIconDownload/web/*` includes `favicon.ico`, `favicon-32.png`, `favicon-16.png`, `apple-touch-icon.png` ✅ (not yet copied to `public/images/icons`)
 - manifest.json — `public/manifest.json` ✅
 - service-worker.js — `public/service-worker.js` ✅
-- mask-icon.svg — placeholder created at `public/icons/mask-icon.svg` ✅ (placeholder)
+- mask-icon.svg — placeholder created at `public/images/icons/mask-icon.svg` ✅ (placeholder)
 - home-preview.png — `public/images/home-preview.png` ✅
 
 Missing / recommended (not present or not yet generated):
@@ -31,8 +31,8 @@ Missing / recommended (not present or not yet generated):
 - ios-appstore.png (1024x1024) — for App Store listing ❌
 - android-playstore.png (512x512) — for Play Store listing ❌
 - splash-background.png (2048x2048) — recommended ❌
-- favicon.ico in `public/icons/` — available in `smartutilifyIconDownload/web/` but not copied into `public/icons` yet (script added) ❌ (will be copied when you run the script)
-- favicon-32, favicon-16, etc — available in `smartutilifyIconDownload/web/` but not yet copied to `public/icons` ❌ (will be copied when you run the script)
+- favicon.ico in `public/images/icons/` — available in `smartutilifyIconDownload/web/` but not copied into `public/images/icons` yet (script added) ❌ (will be copied when you run the script)
+- favicon-32, favicon-16, etc — available in `smartutilifyIconDownload/web/` but not yet copied to `public/images/icons` ❌ (will be copied when you run the script)
 - apple-touch-icon.png — available in `smartutilify` → `web` ❌ (will be copied)
 - manifest-icon-512.png, manifest-icon-192.png — available in `smartutilify/pwa` (will be copied) ❌ (will be copied)
 - twitter-preview.png, share-square.png, share-story.png — social images for sharing — missing ❌
@@ -53,7 +53,7 @@ From the checklist the typical files that are missing/needed:
 
 So: 10 *design files* that are not strictly required for the PWA but are recommended for branding and stores.
 
-Additionally, running `npm run copy:pwa-icons` will copy the Smartutilify files (favicons and pwa icons) into `public/icons` so your PWA will have the correct sizes in `public/icons/`. After copying, the only missing items for PWA will be the store icons (app store, play store), social share assets, and mask SVG (if you want a real one).
+Additionally, running `npm run copy:pwa-icons` will copy the Smartutilify files (favicons and pwa icons) into `public/icons` and `public/images/icons` so your PWA will have the correct sizes available. After copying, the only missing items for PWA will be the store icons (app store, play store), social share assets, and mask SVG (if you want a real one).
 
 ## Should you use both generators (expo-assets-generator + Smartutilify)?
 Yes — they're complementary:
@@ -66,7 +66,7 @@ Use both if you want consistent icon coverage across native stores and web/PWA. 
 - Updated `app.json` to point at `assets/icons`.
 - Updated onboarding screens to require the new paths (`@/assets/icons/*`).
 - Created `public/manifest.json` and a minimal `public/service-worker.js` with a small caching strategy.
-- Added an npm script `copy:pwa-icons` to copy `smartutilify` assets into `public/icons` (Windows PowerShell platform command). Run it before building for web.
+- Added an npm script `copy:pwa-icons` to copy `smartutilify` assets into `public/icons` and `public/images/icons` (Windows PowerShell platform command). Run it before building for web.
 - Updated `src/app/+html.tsx` to link the manifest and icons and to register the service worker at runtime.
 
 ## Recommended next steps (run these commands locally)
@@ -76,9 +76,9 @@ Use both if you want consistent icon coverage across native stores and web/PWA. 
 npm run copy:pwa-icons
 ```
 
-2. Verify that `public/icons` now contains PWA icons and favicons (e.g. `/icons/pwa-512x512.png`, `/icons/favicon.ico`).
+2. Verify that `public/images/icons` now contains PWA icons and favicons (e.g. `/images/icons/pwa-512x512.png`, `/images/icons/favicon.ico`).
 
-3. Replace the placeholder `mask-icon.svg` in `public/icons/` with your monochrome design from the brand assets.
+3. Replace the placeholder `mask-icon.svg` in `public/images/icons/` with your monochrome design from the brand assets. (If you prefer to keep it in `/icons/`, update server mapping and ensure it's accessible.)
 
 4. Generate store listing images and the master icon if you don’t have them yet (App Store/Play Store):
 - `app-icon-master.png` (2048x2048) as your canonical high-res source.
@@ -97,11 +97,11 @@ npm run build:web
 7. Optionally, add a more advanced service worker (Workbox), or use a platform plugin (e.g. `cra` or `next` PWA plug-ins) depending on your hosting environment.
 
 ## Final notes
-- If you want, I can: copy the Smartutilify files into the `public/icons` folder automatically in this branch and remove any remaining references to old paths.
+- If you want, I can: copy the Smartutilify files into the `public/icons` and `public/images/icons` folders automatically in this branch and remove any remaining references to old paths.
 - If you'd like me to generate the missing social and store assets, I can add small placeholder images, but it's usually better to export them from the master `app-icon-master.png` to keep brand consistency.
 
 Would you like me to:
-1) Run `npm run copy:pwa-icons` for you (I can add the files to `public/icons` if you'd like),
+1) Run `npm run copy:pwa-icons` for you (I can add the files to `public/icons` and `public/images/icons` if you'd like),
 2) Add placeholder social & store images automatically, or
 3) Only proceed after you provide the `app-icon-master.png` and any brand images you want me to derive from it?
 
