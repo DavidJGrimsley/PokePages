@@ -8,26 +8,43 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         
         {/* Primary Meta Tags */}
-        <title>Poké Pages - Your Ultimate Pokémon Legends Z-A Guide</title>
-        <meta name="title" content="Poké Pages - Your Ultimate Pokémon Legends Z-A Guide" />
-        <meta name="description" content="Complete guides, strategies, and resources for Pokémon Legends Z-A. Master shiny hunting, battle tactics, team building, wild zones, Z-A Royale, and more with Poké Pages." />
-        <meta name="keywords" content="Pokemon Legends ZA, Pokemon Legends Z-A, shiny hunting, battle guide, team building, wild zones, Z-A Royale, Pokemon strategies, Poke Pages, PokePages" />
+        <title>Poké Pages | The Ultimate Pokémon Companion App</title>
+        <meta name="title" content="Poké Pages | The Ultimate Pokémon Companion App" />
+        <meta name="description" content="Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions." />
+        <meta name="keywords" content="Pokemon, Poké Pages, Pokemon events, Pokemon battles, Pokemon community, Pokemon type chart, Pokemon strategies, Pokemon news, Pokemon Scarlet Violet, Legends Z-A, Treasures of Ruin, global challenges, Pokemon counters" />
         <meta name="author" content="Poké Pages" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://pokepages.app" />
+        {/* PWA: Manifest and icons */}
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/icons/favicon.ico" />
+        <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" />
+        <link rel="icon" href="/icons/favicon-16.png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="mask-icon" href="/icons/mask-icon.svg" color="#582a5a" />
+        <meta name="theme-color" content="#582a5a" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://pokepages.app/" />
-        <meta property="og:title" content="Poké Pages - Your Ultimate Pokémon Legends Z-A Guide" />
-        <meta property="og:description" content="Complete guides, strategies, and resources for Pokémon Legends Z-A. Master shiny hunting, battle tactics, team building, and more." />
+        <meta property="og:url" content="https://pokepages.app" />
+        <meta property="og:title" content="Poké Pages | The Ultimate Pokémon Companion App" />
+        <meta property="og:description" content="Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions." />
         <meta property="og:site_name" content="Poké Pages" />
+        <meta property="og:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:secure_url" content="https://pokepages.app/images/home-preview.png" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Poké Pages - The Ultimate Pokémon Companion App" />
         
         {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://pokepages.app/" />
-        <meta property="twitter:title" content="Poké Pages - Your Ultimate Pokémon Legends Z-A Guide" />
-        <meta property="twitter:description" content="Complete guides, strategies, and resources for Pokémon Legends Z-A. Master shiny hunting, battle tactics, team building, and more." />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Poké Pages | The Ultimate Pokémon Companion App" />
+        <meta name="twitter:description" content="Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions." />
+        <meta name="twitter:image" content="https://pokepages.app/images/home-preview.png" />
+        <meta name="twitter:image:alt" content="Poké Pages - The Ultimate Pokémon Companion App" />
+        <meta name="twitter:site" content="@mrdj2u26" />
+        <meta name="twitter:creator" content="@gokuscharizard" />
         
         {/* Critical CSS to stabilize mobile web layout before bundles load */}
         <style dangerouslySetInnerHTML={{
@@ -41,6 +58,15 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <ScrollViewStyleReset />
       </head>
       <body>{children}</body>
+      <script dangerouslySetInnerHTML={{ __html: `
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js').catch(function(err){
+              console.warn('ServiceWorker registration failed:', err);
+            });
+          });
+        }
+      ` }} />
     </html>
   );
 }

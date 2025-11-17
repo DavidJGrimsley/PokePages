@@ -5,11 +5,11 @@
     "scheme": "pokepages",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icons/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,7 +23,7 @@
     "android": {
       "package": "com.mrdj2u.pokepages",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -36,7 +36,32 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icons/favicon.png",
+      "meta": {
+        "title": "Poké Pages | The Ultimate Pokémon Companion App",
+        "description": "Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions.",
+        "keywords": "Pokemon, Poké Pages, Pokemon events, Pokemon battles, Pokemon community, Pokemon type chart, Pokemon strategies, Pokemon news, Pokemon Scarlet Violet, Legends Z-A, Treasures of Ruin, global challenges, Pokemon counters",
+        "author": "Poké Pages",
+        "robots": "index, follow",
+        "og:type": "website",
+        "og:url": "https://pokepages.app",
+        "og:title": "Poké Pages | The Ultimate Pokémon Companion App",
+        "og:description": "Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions.",
+        "og:site_name": "Poké Pages",
+        "og:image": "https://pokepages.app/images/home-preview.png",
+        "og:image:secure_url": "https://pokepages.app/images/home-preview.png",
+        "og:image:type": "image/png",
+        "og:image:width": "1200",
+        "og:image:height": "630",
+        "og:image:alt": "Poké Pages - The Ultimate Pokémon Companion App",
+        "twitter:card": "summary_large_image",
+        "twitter:title": "Poké Pages | The Ultimate Pokémon Companion App",
+        "twitter:description": "Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions.",
+        "twitter:image": "https://pokepages.app/images/home-preview.png",
+        "twitter:image:alt": "Poké Pages - The Ultimate Pokémon Companion App",
+        "twitter:site": "@mrdj2u26",
+        "twitter:creator": "@gokuscharizard"
+      }
     },
     "plugins": [
       "expo-router",
