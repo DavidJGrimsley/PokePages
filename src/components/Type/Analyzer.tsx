@@ -18,6 +18,7 @@ import { cn } from '@/src/utils/cn';
 import { getTypeColor } from '~/utils/typeColors';
 import { TypeBlurb } from './Blurb';
 import { CounterSuggestions } from './CounterSuggestions';
+import { Footer } from '../Meta/Footer';
 
 // Helper component to render a type name with its color background
 function TypeBadge({ typeName }: { typeName: string }) {
@@ -497,6 +498,7 @@ export function TypeAnalysis({ selectedType, secondType = null }: TypeAnalysisPr
           Use this Pokemon Type Calculator to analyze effectiveness{'\n'}
           Enter a Pokemon&apos;s name in the search bar to have its type filled in for you
         </Text>
+        <Footer />
       </ScrollView>
     </View>
   );

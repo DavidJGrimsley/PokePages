@@ -28,7 +28,7 @@ export function MediaPicker({ onMediaSelected, maxImages = 5 }: MediaPickerProps
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsMultipleSelection: true,
-        quality: 0.8,
+        quality: 0.7, // More aggressive compression for faster uploads
         selectionLimit: maxImages,
       });
 
@@ -196,8 +196,11 @@ export function MediaPicker({ onMediaSelected, maxImages = 5 }: MediaPickerProps
 
       {/* Constraints Info */}
       <View className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 mb-3">
-        <Text className="typography-caption text-blue-800 dark:text-blue-200">
+        <Text className="typography-caption text-blue-800 dark:text-blue-200 mb-1">
           💡 You can add up to {maxImages} images OR 1 video (max 30s)
+        </Text>
+        <Text className="typography-caption text-blue-800 dark:text-blue-200">
+          📸 Images are automatically compressed for fast uploads
         </Text>
       </View>
 

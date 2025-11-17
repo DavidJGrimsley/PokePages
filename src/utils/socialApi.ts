@@ -136,22 +136,45 @@ export async function createPost(
   imageUrls?: string[],
   videoUrl?: string | null
 ): Promise<CreatePostResponse> {
+  const traceId = `socialApi-post-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const payload = { 
+    userId, 
+    content, 
+    visibility, 
+    imageUrl, 
+    hashtags,
+    imageUrls,
+    videoUrl 
+  };
+
+  console.log(`[socialApi.createPost:${traceId}] ➡️ Sending request`, {
+    API_BASE_URL,
+    hasImages: !!imageUrls?.length,
+    imageCount: imageUrls?.length || 0,
+    hasVideo: !!videoUrl,
+    contentLength: content.length,
+  });
+
+  const start = Date.now();
   const response = await fetch(`${API_BASE_URL}/social/posts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      userId, 
-      content, 
-      visibility, 
-      imageUrl, 
-      hashtags,
-      imageUrls,
-      videoUrl 
-    }),
+    body: JSON.stringify(payload),
   });
-  
+  const duration = Date.now() - start;
+  console.log(`[socialApi.createPost:${traceId}] ⬅️ Response received`, {
+    status: response.status,
+    ok: response.ok,
+    duration,
+  });
+
   const data = await response.json();
-  if (!data.success) throw new Error(data.error);
+  console.log(`[socialApi.createPost:${traceId}] ⬅️ Parsed JSON`, data);
+
+  if (!data.success) {
+    console.error(`[socialApi.createPost:${traceId}] ❌ API error`, data.error);
+    throw new Error(data.error);
+  }
   return {
     post: data.data as Post,
     moderation: data.moderation as ModerationMeta | undefined,

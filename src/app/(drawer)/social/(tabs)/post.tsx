@@ -32,6 +32,7 @@ export default function CreatePostTab() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
 
   const handleMediaSelected = (images: string[], video: string | null) => {
     setSelectedImages(images);
@@ -49,31 +50,52 @@ export default function CreatePostTab() {
       return;
     }
 
+    const traceId = `post-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    console.log(`[CreatePost:${traceId}] 🔔 User pressed Share Post`, {
+      userId: user.id,
+      hasImages: selectedImages.length > 0,
+      imageCount: selectedImages.length,
+      hasVideo: !!selectedVideo,
+      contentLength: content.length,
+      visibility,
+      hashtags,
+    });
+
     setLoading(true);
     try {
-      console.log('📝 Creating post with content:', content, 'visibility:', visibility, 'hashtags:', hashtags);
+      console.log(`[CreatePost:${traceId}] 📝 Starting createPost flow`);
       
       let uploadedImageUrls: string[] = [];
       let uploadedVideoUrl: string | null = null;
 
       // Upload images if selected
       if (selectedImages.length > 0) {
-        console.log('📸 Uploading', selectedImages.length, 'images...');
+        console.log(`[CreatePost:${traceId}] 📸 Uploading`, selectedImages.length, 'images...', selectedImages);
+        setUploadProgress(`Uploading ${selectedImages.length} image${selectedImages.length > 1 ? 's' : ''}...`);
+
+        const uploadStart = Date.now();
         const results = await uploadImages(selectedImages, user.id, 'posts');
+        const uploadDuration = Date.now() - uploadStart;
+        console.log(`[CreatePost:${traceId}] ✅ Images uploaded in ${uploadDuration}ms`, results);
         uploadedImageUrls = results.map(r => r.url);
-        console.log('✅ Images uploaded:', uploadedImageUrls);
       }
 
       // Upload video if selected
       if (selectedVideo) {
-        console.log('🎥 Uploading video...');
+        console.log(`[CreatePost:${traceId}] 🎥 Uploading video:`, selectedVideo);
+        setUploadProgress('Uploading video...');
+        
         // Default to 30 seconds max duration for video validation
+        const uploadStart = Date.now();
         const result = await uploadVideo(selectedVideo, user.id, 30, 'posts');
+        const uploadDuration = Date.now() - uploadStart;
+        console.log(`[CreatePost:${traceId}] ✅ Video uploaded in ${uploadDuration}ms`, result);
         uploadedVideoUrl = result.url;
-        console.log('✅ Video uploaded:', uploadedVideoUrl);
       }
 
-      await socialApi.createPost(
+      setUploadProgress('Creating post...');
+      const apiStart = Date.now();
+      const response = await socialApi.createPost(
         user.id, 
         content.trim(), 
         visibility, 
@@ -82,13 +104,15 @@ export default function CreatePostTab() {
         uploadedImageUrls,
         uploadedVideoUrl
       );
-      console.log('✅ Post created successfully');
+      const apiDuration = Date.now() - apiStart;
+      console.log(`[CreatePost:${traceId}] ✅ Post created successfully in ${apiDuration}ms`, response);
       
       // Clear form and show success
       setContent('');
       setHashtags([]);
       setSelectedImages([]);
       setSelectedVideo(null);
+      setUploadProgress('');
       setShowSuccess(true);
       
       // Auto-hide success message and optionally navigate
@@ -100,6 +124,8 @@ export default function CreatePostTab() {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create post';
+      console.error(`[CreatePost:${traceId}] ❌ Error during post creation`, error);
+      setUploadProgress('');
       if (Platform.OS === 'web') {
         // For web, use window.alert as fallback
         window.alert(`Error: ${errorMessage}`);
@@ -291,7 +317,14 @@ export default function CreatePostTab() {
               }`}
             >
               {loading ? (
-                <ActivityIndicator color="white" />
+                <View className="flex-col items-center">
+                  <ActivityIndicator color="white" />
+                  {uploadProgress && (
+                    <Text className="typography-caption text-white mt-2">
+                      {uploadProgress}
+                    </Text>
+                  )}
+                </View>
               ) : (
                 <View className="flex-row items-center">
                   <Ionicons name="send" size={20} color="white" />

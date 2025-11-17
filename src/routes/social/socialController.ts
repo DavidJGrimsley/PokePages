@@ -12,13 +12,34 @@ import { moderateContent, getModerationMessage } from '../../utils/contentModera
 
 export async function createPost(req: Request, res: Response) {
   try {
+    const traceId = `srv-post-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    console.log(`[socialController.createPost:${traceId}] 📨 Incoming request`, {
+      path: req.path,
+      method: req.method,
+      ip: req.ip,
+      bodyKeys: Object.keys(req.body || {}),
+      hasImages: Array.isArray(req.body.imageUrls) && req.body.imageUrls.length > 0,
+      imageCount: Array.isArray(req.body.imageUrls) ? req.body.imageUrls.length : 0,
+      hasVideo: !!req.body.videoUrl,
+      contentLength: typeof req.body.content === 'string' ? req.body.content.length : 0,
+    });
+
+    const startTotal = Date.now();
     const userId = req.body.userId;
     if (!userId) {
+      console.warn(`[socialController.createPost:${traceId}] Missing userId`);
       return res.status(400).json({ success: false, error: 'User ID is required' });
     }
 
     // CONTENT MODERATION - Check before posting
+    const moderationStart = Date.now();
     const moderationResult = await moderateContent(req.body.content, 'ai');
+    const moderationDuration = Date.now() - moderationStart;
+    console.log(`[socialController.createPost:${traceId}] ✅ Moderation completed`, {
+      duration: moderationDuration,
+      isAllowed: moderationResult.isAllowed,
+      flaggedCategories: moderationResult.flaggedCategories,
+    });
     
     if (!moderationResult.isAllowed) {
       const message = getModerationMessage(moderationResult);
@@ -30,12 +51,19 @@ export async function createPost(req: Request, res: Response) {
       });
     }
 
+    console.log(`[socialController.createPost:${traceId}] 🔍 Validating payload`);
     const validated = insertPostSchema.parse({
       ...req.body,
       authorId: userId,
     });
-
+    console.log(`[socialController.createPost:${traceId}] ✅ Validation ok, creating post in DB`);
+    const dbStart = Date.now();
     const post = await socialQueries.createPost(validated);
+    const dbDuration = Date.now() - dbStart;
+    console.log(`[socialController.createPost:${traceId}] ✅ Post created in DB`, {
+      postId: post.id,
+      dbDuration,
+    });
     
     // Handle media if provided (imageUrls or videoUrl)
     const mediaToAdd: { storagePath: string; type: 'image' | 'video' }[] = [];
@@ -69,7 +97,14 @@ export async function createPost(req: Request, res: Response) {
     
     // Add media to database
     if (mediaToAdd.length > 0) {
+      const mediaStart = Date.now();
+      console.log(`[socialController.createPost:${traceId}] 💾 Adding media records`, {
+        count: mediaToAdd.length,
+        mediaToAdd,
+      });
       await socialQueries.addPostMedia(post.id, mediaToAdd);
+      const mediaDuration = Date.now() - mediaStart;
+      console.log(`[socialController.createPost:${traceId}] ✅ Media records added`, { mediaDuration });
     }
     
     // Handle legacy media field (for backward compatibility)
@@ -79,8 +114,17 @@ export async function createPost(req: Request, res: Response) {
 
     // Handle hashtags if provided
     if (req.body.hashtags && Array.isArray(req.body.hashtags) && req.body.hashtags.length > 0) {
+      const hashtagsStart = Date.now();
+      console.log(`[socialController.createPost:${traceId}] #️⃣ Adding hashtags`, {
+        hashtags: req.body.hashtags,
+      });
       await socialQueries.addPostHashtags(post.id, req.body.hashtags);
+      const hashtagsDuration = Date.now() - hashtagsStart;
+      console.log(`[socialController.createPost:${traceId}] ✅ Hashtags added`, { hashtagsDuration });
     }
+
+    const totalDuration = Date.now() - startTotal;
+    console.log(`[socialController.createPost:${traceId}] ✅ Sending success response`, { totalDuration });
 
     res.json({
       success: true,
@@ -433,7 +477,7 @@ export async function sendFriendRequest(req: Request, res: Response) {
     const friendship = await socialQueries.sendFriendRequest(
       validated.requesterId, 
       validated.addresseeId, 
-      validated.message
+      validated.message ?? undefined
     );
 
     res.json({ success: true, data: friendship });
