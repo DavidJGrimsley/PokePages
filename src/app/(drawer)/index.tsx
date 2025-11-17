@@ -1,14 +1,14 @@
 import { Stack, Link } from 'expo-router';
 import Head from 'expo-router/head';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
+import useFavoriteFeaturesStore from '@/src/store/favoriteFeaturesStore';
 
 import { Container } from 'components/UI/Container';
 import { NewestFeature } from 'components/Meta/NewestFeature';
 import { eventConfig } from 'constants/eventConfig';
 // ...existing code...
-import TypeChartDisplay from '@/src/components/Resources/TypeChartDisplay';
-import AuthStatus from 'components/Auth/AuthStatus';
+// Unused imports removed (keep these components imported in their respective pages)
 import { Footer } from '@/src/components/Meta/Footer';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
@@ -34,6 +34,27 @@ const formatEventDate = (dateString: string, userLocale: string = 'en-US'): stri
 };
 
 export default function Home() {
+  // Use shallow comparator to avoid re-render loop when an array reference changes
+  const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
+  const favorites = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
+  useEffect(() => {
+    console.log('[HOME] Favorite Features:', favorites);
+  }, [favorites]);
+
+  // Ensure favorites store initializes and syncs for signed-in users
+  useEffect(() => {
+    const init = async () => {
+      try {
+        // Avoid re-initializing if the persisted store has already hydrated
+        if (!useFavoriteFeaturesStore.getState()._hasHydrated) {
+          await useFavoriteFeaturesStore.getState().initialize();
+        }
+      } catch (e) {
+        console.error('[HOME] favorite store init failed', e);
+      }
+    };
+    init();
+  }, []);
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   
   // SEO meta content
@@ -101,6 +122,9 @@ export default function Home() {
           showsVerticalScrollIndicator={false}
           >
           {/* Download App Banner */}
+
+          
+          
          {!isMobile && (<Link href="/download" asChild>
             <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
               <View className="flex-row items-center">
@@ -206,8 +230,9 @@ export default function Home() {
               </View>
             )}
 
-            <View className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
-              <Text className="typography-subheader text-app-text mb-sm">Treasures of Ruin Event Series</Text>
+
+            <View className=" p-md rounded-lg mb-md  border-y border-x-4 border-x-red-500 border-y-dark-app-secondary ">
+              <Text className="typography-subheader text-dark-app-background dark:text-app-background mb-sm">Treasures of Ruin Event Series</Text>
               <Text className="typography-copy text-app-brown mb-sm">
                 Four legendary Pokemon challenges featuring Wo-Chien, Chien-Pao, Ting-Lu, and Chi-Yu! 
                 Each event runs for two weeks with different Tera Types and special rewards.

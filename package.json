@@ -18,7 +18,7 @@
     "build:api-server": "powershell -Command \"if (Test-Path api-server) { Remove-Item -Recurse -Force api-server }; tsc --project tsconfig.api-server.json; if (!(Test-Path api-server)) { New-Item -ItemType Directory api-server }; Copy-Item api-server-package.json api-server/package.json; if (Test-Path start-api-server.sh) { Copy-Item start-api-server.sh api-server/start-api-server.sh }; if (Test-Path start-api-server.bat) { Copy-Item start-api-server.bat api-server/start-api-server.bat }; if (Test-Path .env) { Copy-Item .env api-server/.env }\"",
     "build:server": "npm run build:api-server",
     "build:production": "npm run generate:sitemap && npm run build:api-server",
-    "db:pull": "NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",
+    "db:pull": "drizzle-kit pull",
     "db:pull:debug": "DEBUG=drizzle:* NODE_OPTIONS=--dns-result-order=ipv4first drizzle-kit pull",
     "db:generate": "npx tsx node_modules/drizzle-kit/bin.cjs generate",
     "db:migrate": "npx tsx node_modules/drizzle-kit/bin.cjs migrate",

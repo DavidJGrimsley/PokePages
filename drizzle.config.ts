@@ -8,6 +8,7 @@ export default defineConfig({
     './src/db/profilesSchema.ts',
     './src/db/legendsZATrackerSchema.ts',
     './src/db/socialSchema.ts',
+    './src/db/favoritesSchema.ts',
   ],
   dialect: 'postgresql',
   dbCredentials: {

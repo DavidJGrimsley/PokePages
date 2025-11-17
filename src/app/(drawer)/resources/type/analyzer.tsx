@@ -1,4 +1,14 @@
 import React, { useState } from 'react';
+import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
+export const FEATURE_KEY = 'feature:resources.type.analyzer';
+import { registerFeature } from '@/src/utils/featureRegistry';
+// Register this feature for registry usage
+registerFeature({ 
+  key: FEATURE_KEY, 
+  title: 'Type Analyzer', 
+  path: '/(drawer)/resources/type/analyzer', 
+  icon: 'analytics' });
+
 import { Text, View } from 'react-native';
 import Head from 'expo-router/head';
 import { Container } from 'components/UI/Container';
@@ -87,7 +97,12 @@ export default function TypeAnalyzer() {
         />
       </Head>
      
-      <TypeHeader onPokemonSelect={handlePokemonSelect} />
+      <View className="flex-row items-center justify-between">
+        <TypeHeader onPokemonSelect={handlePokemonSelect} />
+        <View className="pr-3 pl-3">
+          <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Type Analyzer" />
+        </View>
+      </View>
       <View className='flex-row justify-center lg:justify-start lg:ml-8 gap-4'>
         <TypeSelector
           types={ALL_STANDARD_TYPES}

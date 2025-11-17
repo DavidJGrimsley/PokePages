@@ -1,4 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
+import { registerFeature } from '@/src/utils/featureRegistry';
+export const FEATURE_KEY = 'feature:guides.PLZA.dex-tracker';
+registerFeature({
+  key: FEATURE_KEY,
+  title: 'Pokédex Tracker',
+  path: '/(drawer)/guides/PLZA/dex-tracker',
+  icon: 'calculator' });
+
 import { View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
 import Head from 'expo-router/head';
 import { Container } from '@/src/components/UI/Container';
@@ -280,7 +289,12 @@ export default function DexTrackerPage() {
           showsVerticalScrollIndicator={true}
           titleElement={
             <View className="flex-1 justify-center items-center px-4">
-              <BouncyText text="Pokédex Tracker" />
+              <View className="flex-row items-center justify-center w-full">
+                <BouncyText text="Pokédex Tracker" />
+                <View className="absolute top-4 right-4 z-50" style={{ zIndex: 999 }}>
+                  <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Pokédex Tracker" />
+                </View>
+              </View>
               <Text
                 role="heading"
                 aria-level={1}
