@@ -28,7 +28,7 @@
     "generate:types": "npx tsx scripts/generateTypeChart.ts",
     "generate:sitemap": "npx tsx scripts/generateSitemap.ts"
     ,
-    "copy:pwa-icons": "powershell -Command \"if (!(Test-Path public/icons)) { New-Item -ItemType Directory -Path public/icons }; Copy-Item smartutilifyIconDownload/pwa/* public/icons/ -Recurse -Force; Copy-Item smartutilifyIconDownload/web/* public/icons/ -Recurse -Force; Copy-Item assets/icons/* public/icons/ -Recurse -Force\""
+    "copy:pwa-icons": "powershell -Command \"if (!(Test-Path public/icons)) { New-Item -ItemType Directory -Path public/icons }; if (!(Test-Path public/images/icons)) { New-Item -ItemType Directory -Path public/images/icons -Force }; Copy-Item smartutilifyIconDownload/pwa/* public/icons/ -Recurse -Force; Copy-Item smartutilifyIconDownload/web/* public/icons/ -Recurse -Force; Copy-Item assets/icons/* public/icons/ -Recurse -Force; Copy-Item public/icons/* public/images/icons/ -Recurse -Force; Copy-Item public/icons/favicon.ico public/favicon.ico -Force\""
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
