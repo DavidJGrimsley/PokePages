@@ -93,7 +93,16 @@
       "imageUrl": "https://legends.pokemon.com/_next/image?url=%2Fimages%2Fcharacters%2Furbain-taunie%2Furbain-taunie-2x.png&w=384&q=75",
       "likelyRelevantInZA": false
     },
-   
+    "Korrina": {
+      "name": "Korrina",
+      "info": "Shalour City Gym Leader and Mega Evolution expert.",
+      "bullets": [
+        "First Gym Leader you face in X/Y; teaches you about Mega Evolution.",
+        "Introduces the player (you) to Lucario’s aura sensing and gives the Rumble Badge.",
+        "A true legend in Kalos and Pokémon lore"
+      ],
+      "likelyRelevantInZA": false
+    },
     "Looker": {
       "name": "Looker",
       "info": "International Police detective who runs the post-game Looker Bureau in Lumiose City.",

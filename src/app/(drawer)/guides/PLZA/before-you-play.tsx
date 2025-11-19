@@ -8,6 +8,7 @@ import beforeYouPlayData from '@/src/constants/beforeYouPlayLegendsAZ.json';
 import Head from 'expo-router/head';
 
 import { Platform, Linking, TouchableOpacity, View, Image, Text } from 'react-native';
+import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
 
 export default function BeforeYouPlay() {
 
@@ -218,63 +219,11 @@ export default function BeforeYouPlay() {
             This guide respects fair use guidelines and provides proper attribution to all sources. No copyright infringement is intended.
           </AppText>
         </Collapsible>
+
+        <VideoCarousel videoIds={["9YHGCWSdE40"]} isMobile={isMobile} />
       </MultiLayerParallaxScrollView>
 
     </Container>
     </>
   );
 }
-
-
-// if I want to add this back in after playing it's here:
-// "Shauna": {
-    //   "name": "Shauna, Trevor, ",
-    //   "info": "Friend and traveling companion; cheerful and supportive.",
-    //   "bullets": [
-    //     "One of the player’s (yours) main companions during the X/Y journey.",
-    //     "Represents the friendly social circle you'll meet in Kalos."
-    //   ],
-    //   "likelyRelevantInZA": true
-    // },
-    // "Trevor": {
-    //   "name": "Trevor",
-    //   "info": "Friend who gifts the player (you) the Pokédex early in the game.",
-    //   "bullets": [
-    //     "Part of the player (you)’s initial group and helps establish the Pokédex role."
-    //   ],
-    //   "likelyRelevantInZA": false
-    // },
-    // "Tierno": {
-    //   "name": "Tierno",
-    //   "info": "Playful friend who accompanies the player (you) on parts of the journey.",
-    //   "bullets": [
-    //     "Member of the player (you)’s early party of peers; lighthearted presence in Kalos’ social fabric."
-    //   ],
-    //   "likelyRelevantInZA": false
-    // },
-    //  "Korrina": {
-    //   "name": "Korrina",
-    //   "info": "Gym Leader and Tower of Mastery/ Lucario connection.",
-    //   "bullets": [
-    //     "Introduces the player (you) to Lucario’s aura sensing and gives the Rumble Badge.",
-    //     "Connected to the Mega Evolution subplot and the Tower of Mastery"
-    //   ],
-    //   "likelyRelevantInZA": true
-    // },
-    // "Gurkinn": {
-    //   "name": "Gurkinn",
-    //   "info": "Expert on Mega Evolution (Tower of Mastery).",
-    //   "bullets": [
-    //     "Explains the Mega Ring and Mega Stones; only had one Mega Ring to give in X/Y (which the player (you) receives).",
-    //     "Part of the Mega Evolution institutional lore in Kalos"
-    //   ],
-    //   "likelyRelevantInZA": true
-    // },
-    // "Diantha": {
-    //   "name": "Diantha",
-    //   "info": "Champion of the Kalos League and celebrity actress.",
-    //   "bullets": [
-    //     "A powerful Trainer and public figure—appears in story beats and is referenced around Lumiose society"
-    //   ],
-    //   "likelyRelevantInZA": true
-    // },

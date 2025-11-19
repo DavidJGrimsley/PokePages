@@ -14,7 +14,7 @@ import { useRouter, usePathname } from 'expo-router';
 
 // Map configuration
 // Use a static require so Metro bundles the local image correctly
-const MAP_IMAGE = require('../../../assets/maps/lumiose-city-map.jpg');
+const MAP_IMAGE = require('../../../assets/PLZA/maps/lumiose-city-map.jpg');
 
 export const ZoomableMap: React.FC = () => {
   const router = useRouter();

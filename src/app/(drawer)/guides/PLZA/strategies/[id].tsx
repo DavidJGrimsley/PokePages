@@ -9,6 +9,9 @@ import { Collapsible } from '@/src/components/UI/Collapsible';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
 import { Platform, View, Text } from 'react-native';
 import { EVYields } from '@/src/components/Guides/EVYields';
+import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
+import { ImageGallery } from '@/src/components/Guides/ImageGallery';
+import { Strategy, StrategiesConfig } from '@/src/types/strategy';
 
 // Static generation for all strategy slugs
 export async function generateStaticParams(): Promise<{ id: string }[]> {
@@ -22,11 +25,11 @@ export default function StrategyDetail() {
   // Ensure id is a string
   let strategySlug = Array.isArray(id) ? id[0] : id;
   
-  // Get the strategy configuration
-  const config = strategySlug ? strategiesConfig[strategySlug as keyof typeof strategiesConfig] : null;
+  // Get the strategy configuration with proper typing
+  const config = strategySlug ? (strategiesConfig as StrategiesConfig)[strategySlug] : null;
   
   // If no config found, default to first strategy
-  const finalConfig = config || strategiesConfig[Object.keys(strategiesConfig)[0] as keyof typeof strategiesConfig];
+  const finalConfig: Strategy = config || (strategiesConfig as StrategiesConfig)[Object.keys(strategiesConfig)[0]];
   
   // SEO meta content
   const title = `PP: ${finalConfig.title} - Pokémon Legends Z-A | PokePages`;
@@ -122,11 +125,31 @@ export default function StrategyDetail() {
                   </AppText>
                 );
               })}
+
+              {/* Section-level YouTube Videos */}
+              {section.youtubeIDs && section.youtubeIDs.length > 0 && (
+                <VideoCarousel videoIds={section.youtubeIDs} isMobile={isMobile} />
+              )}
+
+              {/* Section-level Images */}
+              {section.pics && section.pics.length > 0 && (
+                <ImageGallery pics={section.pics} />
+              )}
             </Collapsible>
           ))}
 
           {id === 'competitive-training' && (
             <EVYields game="PLZA" />
+          )}
+
+          {/* Strategy-level YouTube Videos (at the bottom of the page) */}
+          {finalConfig.youtubeIDs && finalConfig.youtubeIDs.length > 0 && (
+            <View className="mt-8">
+              <AppText className="text-xl font-bold mb-4 text-app-secondary">
+                Related Videos
+              </AppText>
+              <VideoCarousel videoIds={finalConfig.youtubeIDs} isMobile={isMobile} />
+            </View>
           )}
 
         </MultiLayerParallaxScrollView>
