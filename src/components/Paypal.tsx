@@ -1,14 +1,11 @@
 import React from 'react';
 import { View, Text, Pressable, Linking, StyleSheet } from 'react-native';
+import Constants from 'expo-constants';
 
 export function PayPal() {
   const handleDonatePress = () => {
-    const donateUrl = 'https://www.paypal.com/donate?' +
-      'business=AJDRNR4GM2D9G&' +
-      'no_recurring=0&' +
-      'item_name=Thank%20you%20for%20keeping%20Pok%C3%A9%20Pages%20alive!&' +
-      'currency_code=USD';
     
+    const donateUrl = 'https://www.paypal.com/donate/?hosted_button_id=WZL2E37Z2PFTU';
     Linking.openURL(donateUrl);
   };
 
