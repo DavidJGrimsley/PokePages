@@ -1,7 +1,7 @@
-import { Stack } from 'expo-router';
+import { Stack, Link } from 'expo-router';
 import Head from 'expo-router/head';
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, RefreshControl, Pressable } from 'react-native';
 import { Container } from '@/src/components/UI/Container';
 import { NewsCard } from '@/src/components/Home/NewsCard';
 import { fetchNews, type NewsArticle } from '@/src/services/rssService';
@@ -61,6 +61,13 @@ export default function NewsPage() {
           >
             Latest Pokémon News
           </Text>
+          <Link href="https://pokemondb.net/news" target="_blank" rel="noopener noreferrer" asChild>
+            <Pressable>
+              <Text role="heading" aria-level={2} className="text-xs text-app-brown dark:text-dark-app-brown text-center mb-sm underline">
+                Source: Pokémon DB
+              </Text>
+            </Pressable>
+          </Link>
 
           {loading ? (
             <View className="flex-1 items-center justify-center py-xl">

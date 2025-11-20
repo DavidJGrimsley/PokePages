@@ -52,11 +52,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
   }
   return (
     <Link href={`/(drawer)/news/${article.id}` as any} asChild>
-      <Pressable className="bg-app-background dark:bg-dark-app-background border-l-4 border-l-red-500 rounded-lg mb-md shadow-app-small active:opacity-80">
-        <View className="flex-row">
+      <Pressable className="bg-app-background dark:bg-dark-app-background border-l-4 border-l-red-500 rounded-lg mb-md shadow-app-small active:opacity-80 w-full sm:max-w-[80%] self-center">
+        <View className="flex-row items-stretch h-28">
           {/* Image */}
           {article.imageUrl && (
-            <View className="w-24 h-24 rounded-l-lg overflow-hidden">
+            <View className="w-24 rounded-l-lg overflow-hidden">
               <Image 
                 source={{ uri: article.imageUrl }} 
                 className="w-full h-full"
@@ -66,16 +66,11 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article }) => {
           )}
           
           {/* Content */}
-          <View className={`flex-1 p-md ${article.imageUrl ? 'pl-sm' : ''}`}>
-            {/* Category and Date */}
-            <View className="flex-row items-center mb-xs">
-              <Text className="text-xs text-red-500 font-bold uppercase">
-                {article.category}
-              </Text>
-              <Text className="text-xs text-app-brown dark:text-dark-app-brown ml-sm">
-                • {formatDate(article.publishedDate)}
-              </Text>
-            </View>
+          <View className={`flex-1 p-md justify-center ${article.imageUrl ? 'pl-sm' : ''}`}>
+            {/* Date only */}
+            <Text className="text-xs text-red-500 font-bold uppercase mb-xs">
+              {formatDate(article.publishedDate)}
+            </Text>
             
             {/* Title */}
             <Text 

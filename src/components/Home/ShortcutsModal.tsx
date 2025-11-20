@@ -80,7 +80,7 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ visible, onClose
 
             {/* Close Button */}
             <Pressable
-              className="bg-app-accent py-md px-lg rounded-md items-center active:opacity-80"
+              className="bg-app-accent dark:bg-dark-app-accent py-md px-lg rounded-md items-center active:opacity-80"
               onPress={onClose}
             >
               <Text className="typography-cta text-app-background dark:text-dark-app-background">

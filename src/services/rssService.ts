@@ -13,8 +13,8 @@ export interface NewsArticle {
 }
 
 const RSS_FEED_URL = 'https://pokemondb.net/news/feed';
-// Use CORS proxy for web platform
-const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+// Use CORS proxy for web platform - trying corsproxy.io as allorigins.win is down
+const CORS_PROXY = 'https://corsproxy.io/?';
 const CACHE_KEY = 'pokemondb_news_cache';
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
@@ -45,10 +45,6 @@ function parseRSSFeed(xmlText: string): NewsArticle[] {
       const title = extractTag(itemContent, 'title');
       const link = extractTag(itemContent, 'link');
       const pubDate = extractTag(itemContent, 'pubDate');
-      const categoryRaw = extractTag(itemContent, 'category');
-      console.log(`[RSS Service] Raw category for "${title.substring(0, 30)}":`, categoryRaw);
-      const category = stripHtml(categoryRaw || 'News');
-      console.log(`[RSS Service] Cleaned category:`, category);
       const description = extractTag(itemContent, 'description');
       const contentEncoded = extractTag(itemContent, 'content:encoded');
 
@@ -92,7 +88,7 @@ function parseRSSFeed(xmlText: string): NewsArticle[] {
           title: stripHtml(title),
           excerpt,
           imageUrl,
-          category,
+          category: 'News', // Static value since we don't display it
           publishedDate: pubDate,
           link,
           content: contentEncoded || description,
@@ -193,6 +189,7 @@ function stripHtml(html: string): string {
     .replace(/&#39;/g, "'")
     .replace(/&#8217;/g, "'")
     .replace(/&#8216;/g, "'")
+    .replace(/&#039;/g, "'")
     .replace(/&#8220;/g, '"')
     .replace(/&#8221;/g, '"')
     .replace(/&ndash;/g, '–')

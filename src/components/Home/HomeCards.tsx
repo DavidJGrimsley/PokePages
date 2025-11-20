@@ -5,6 +5,7 @@ import { ShortcutsModal } from './ShortcutsModal';
 import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 import { useAuthStore } from '@/src/store/authStore';
 import { getFeatureMeta } from '@/src/utils/featureRegistry';
+import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
 
 interface HomeCardsProps {
   newestFeaturePath?: string;
@@ -17,6 +18,7 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
 }) => {
   const { width } = useWindowDimensions();
   const [modalVisible, setModalVisible] = useState(false);
+  const navigateToSignIn = useNavigateToSignIn();
   
   const user = useAuthStore((s) => s.user);
   const isSignedIn = !!user;
@@ -26,10 +28,10 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
 
   // Calculate responsive columns
   // Small screens (<640px): 2 columns
-  // Medium screens (640-1024px): 2 columns
-  // Large screens (>1024px): 3 columns
-  const columns = width < 640 ? 2 : width < 1024 ? 2 : 3;
-  const cardWidth = columns === 2 ? '48%' : '32%';
+  // Tablet (640-1024px): 3 columns
+  // Desktop (>1024px): 4 columns
+  const columns = width < 640 ? 2 : width < 1024 ? 3 : 4;
+  const cardWidth = columns === 2 ? '48%' : columns === 3 ? '31%' : '23%';
 
   // Build favorite feature cards
   const favoriteCards = useMemo(() => {
@@ -63,7 +65,7 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
           Quick Access
         </Text>
         
-        <View className="flex-row flex-wrap justify-between">
+        <View className="flex-row flex-wrap justify-between w-full sm:max-w-[80%]">
           {/* System Cards - Messages with NEW badge */}
           <View style={{ width: cardWidth, marginBottom: 16 }}>
             <HomeCard
@@ -95,9 +97,9 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
               <HomeCard
                 title={isSignedIn ? 'Add Shortcut' : 'Sign in to add shortcuts'}
                 icon={isSignedIn ? 'add-circle' : 'log-in'}
-                path={isSignedIn ? '#' : '/(drawer)/profile/(tabs)/settings'}
+                path="#"
                 variant="shortcut"
-                onPress={isSignedIn ? () => setModalVisible(true) : undefined}
+                onPress={isSignedIn ? () => setModalVisible(true) : navigateToSignIn}
               />
             </View>
           )}

@@ -212,6 +212,15 @@ const DrawerLayout = () => {
           headerTitleAlign: 'center',
           headerStyle: headerStyle,
         }}
+        listeners={({ navigation }) => ({
+          drawerItemPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'news' }],
+            });
+          },
+        })}
       />
     </Drawer>
   );

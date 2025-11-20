@@ -26,7 +26,7 @@ const TYPE_STELLAR = TYPE_COLORS.stellar; // teal
 const APP_PRIMARY = TYPE_POISON;        // #A33EA1 - Poison purple
 const APP_SECONDARY = TYPE_PSYCHIC;     // #F95587 - Psychic pink
 const APP_ACCENT = TYPE_BUG;          // #7AC74C - Grass green
-const APP_BROWN = TYPE_GROUND;          // #E2BF65 - Ground brown
+const APP_BROWN = TYPE_ROCK;          // #E2BF65 - Ground brown
 const APP_FLAG = TYPE_FIRE;             // #EE8130 - Fire orange
 
 // App Theme Dark Colors (derived from type colors where applicable)
@@ -112,6 +112,7 @@ module.exports = {
           'app-secondary': TINT_DARK,        // orange
           'app-background': TYPE_GHOST,       // plum
           'app-text': '#FEFEFE',             // white
+          'app-brown': APP_BROWN_DARK,              // Ground type color
           'app-icon': '#9BA1A6',             // gray
           'app-accent': APP_ACCENT_DARK,         // dark purple with alpha
           'app-tab-default': '#321e3bb9',    // accent with alpha

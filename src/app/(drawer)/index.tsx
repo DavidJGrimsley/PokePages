@@ -147,10 +147,7 @@ export default function Home() {
           contentContainerStyle={{ flexGrow: 1, padding: 0 }}
           showsVerticalScrollIndicator={false}
           >
-          {/* Download App Banner */}
-
-          
-          
+          {/* Download App Banner */}          
          {!isMobile && (<Link href="/download" asChild>
             <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
               <View className="flex-row items-center">
@@ -183,8 +180,8 @@ export default function Home() {
 
             {/* HomeCards Section */}
             <HomeCards
-              newestFeaturePath="/(drawer)/guides/PLZA/strategies"
-              newestFeatureTitle="Legends Z-A"
+              newestFeaturePath="/(drawer)/guides/PLZA/dexTracker"
+              newestFeatureTitle="Legends Z-A Form Tracker"
             />
 
             {/* Conditional Events Section */}
@@ -219,6 +216,7 @@ export default function Home() {
               >
                 Latest News
               </Text>
+              
               {loadingNews ? (
                 <View className="items-center py-lg">
                   <ActivityIndicator size="large" color="#A33EA1" />
@@ -229,6 +227,13 @@ export default function Home() {
                   {newsArticles.map((article) => (
                     <NewsCard key={article.id} article={article} />
                   ))}
+                  <Link href="https://pokemondb.net/news" target="_blank" rel="noopener noreferrer" asChild>
+                    <Pressable>
+                      <Text role="heading" aria-level={4} className="text-xs text-app-brown dark:text-dark-app-brown text-center mb-sm underline">
+                        Source: Pokémon DB
+                      </Text>
+                    </Pressable>
+                  </Link>
                   {/* View More News Button */}
                   <View className="items-center mb-lg">
                     <Link href="/(drawer)/news" asChild>
@@ -242,10 +247,11 @@ export default function Home() {
                 <View className="bg-app-background p-md rounded-lg mb-lg border-l-4 border-l-red-500">
                   <Text className="typography-subheader text-app-text mb-sm">Stay tuned for Pokémon news!</Text>
                   <Text className="typography-copy text-app-brown">
-                    The latest news and updates will appear here.
+                    The latest news and updates will appear here. Please check back later or refresh the app.
                   </Text>
                 </View>
               )}
+              
             </View>
           </View>
 
