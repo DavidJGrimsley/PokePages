@@ -1,15 +1,15 @@
 import { Stack, Link } from 'expo-router';
 import Head from 'expo-router/head';
-import { useMemo, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, Platform } from 'react-native';
-import useFavoriteFeaturesStore from '@/src/store/favoriteFeaturesStore';
+import { useMemo, useEffect, useState } from 'react';
+import { View, Text, ScrollView, Pressable, Platform, ActivityIndicator } from 'react-native';
+import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 
 import { Container } from 'components/UI/Container';
-import { NewestFeature } from 'components/Meta/NewestFeature';
+import { HomeCards } from '@/src/components/Home/HomeCards';
+import { NewsCard } from '@/src/components/Home/NewsCard';
 import { eventConfig } from 'constants/eventConfig';
-// ...existing code...
-// Unused imports removed (keep these components imported in their respective pages)
 import { Footer } from '@/src/components/Meta/Footer';
+import { getRecentNews, type NewsArticle } from '@/src/services/rssService';
 
 const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
   const now = new Date();
@@ -21,22 +21,15 @@ const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcomin
   return 'active';
 };
 
-const formatEventDate = (dateString: string, userLocale: string = 'en-US'): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString(userLocale, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZoneName: 'short'
-  });
-};
-
 export default function Home() {
   // Use shallow comparator to avoid re-render loop when an array reference changes
   const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
   const favorites = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
+  
+  // State for news articles
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [loadingNews, setLoadingNews] = useState(true);
+  
   useEffect(() => {
     console.log('[HOME] Favorite Features:', favorites);
   }, [favorites]);
@@ -55,6 +48,39 @@ export default function Home() {
     };
     init();
   }, []);
+  
+  // Load recent news articles
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        console.log('[HOME] Starting news fetch...');
+        const articles = await getRecentNews(2);
+        console.log('[HOME] News fetch complete. Article count:', articles.length);
+        console.log('[HOME] Articles:', JSON.stringify(articles.map(a => ({ id: a.id, title: a.title })), null, 2));
+        setNewsArticles(articles);
+        // Log excerpt snippet, HTML entity presence and image existence for each article
+        articles.forEach((a) => {
+          const excerptSnippet = (a.excerpt || '').substring(0, 120);
+          const hasAngleBracket = /</.test(a.excerpt || '');
+          const hasEncodedLt = /&lt;/.test(a.excerpt || '');
+          console.log('[HOME] Article:', {
+            id: a.id,
+            excerptSnippet,
+            hasAngleBracket,
+            hasEncodedLt,
+            hasImage: !!a.imageUrl,
+          });
+        });
+      } catch (error) {
+        console.error('[HOME] Failed to load news:', error);
+        console.error('[HOME] Error details:', error instanceof Error ? error.message : String(error));
+      } finally {
+        setLoadingNews(false);
+      }
+    };
+    loadNews();
+  }, []);
+  
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   
   // SEO meta content
@@ -137,10 +163,9 @@ export default function Home() {
             </Pressable>
           </Link>)}
           
-          {/* Auth Status Debug Component */}
           
           <View className="p-lg bg-app-background dark:bg-dark-app-background">
-            {/* */}
+            {/* Hero Section */}
             <Text
               role="heading"
               aria-level={1}
@@ -151,97 +176,81 @@ export default function Home() {
             <Text
               role="heading"
               aria-level={2}
-              className="text-sm font-semibold text-center text-app-text dark:text-dark-app-text"
+              className="text-sm font-semibold text-center text-app-text dark:text-dark-app-text mb-lg"
             >
               Your home for Pokémon events, strategies, and community connection
             </Text>
 
-            {/* Messages Link */}
-            <Link href="/(drawer)/social/(tabs)/messages" asChild>
-              <Pressable className="bg-app-accent mb-8 py-md px-lg rounded-md items-center mt-sm">
-                <Text className="typography-cta text-app-background dark:text-dark-app-background">Messages</Text>
-              </Pressable>
-            </Link>
-            
-            {/* Shortcuts */}
-            {/* Should be a simple button that takes you to your favorite features, like the type calculator/chart */}
-            
-            {/* Featured newest feature */}
-            <NewestFeature
-              title="Legends Z-A Strategies"
-              description="All the info for Pokémon Legends Z-A!"
-              path="/(drawer)/guides/PLZA/strategies"
+            {/* HomeCards Section */}
+            <HomeCards
+              newestFeaturePath="/(drawer)/guides/PLZA/strategies"
+              newestFeatureTitle="Legends Z-A"
             />
-          
-            <Text
-              role="heading"
-              aria-level={3}
-              className="typography-header text-app-secondary m-md"
-            >
-              Latest Events
-            </Text>
-            
-            {/* Multiple Active Event Buttons */}
-            {activeCounterEvents.map((event) => (
-              <Link key={event.key} href={event.href} asChild>
-                <Pressable className="bg-red-500 py-lg px-lg rounded-lg items-center mt-md mb-sm shadow-app-medium">
-                  <Text className="typography-cta text-app-white text-center mb-xs">{event.buttonText}</Text>
-                  <Text className="typography-copy text-app-white text-center opacity-90">Click to contribute to the global counter</Text>
-                </Pressable>
-              </Link>
-            ))}
-           
-            <Link href="/(drawer)/events" asChild>
-              <Pressable className="bg-app-accent py-md px-lg rounded-md items-center mt-sm">
-                <Text className="typography-cta text-app-background dark:text-dark-app-background">View All Events</Text>
-              </Pressable>
-            </Link>
-            
-            <Text
-              role="heading"
-              aria-level={3}
-              className="typography-header text-app-secondary m-md"
-            >
-              Latest News
-            </Text>
-          
-            {/* Dynamic News Cards for Active Events */}
-            {activeCounterEvents.map((event) => (
-              <View key={event.key} className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
-                <Text className="typography-subheader text-app-text mb-sm">{event.pokemonName} Global Challenge is LIVE!</Text>
-                <Text className="typography-copy text-app-brown mb-sm">
-                  Join trainers worldwide in defeating {event.pokemonName} to unlock special Mystery Gift rewards. 
-                  We need {event.targetCount.toLocaleString()} defeats by the event deadline!
-                </Text>
-                <Text className="text-xs text-red-500 font-medium">
-                  Active until {formatEventDate(event.endDate)}
-                </Text>
-              </View>
-            ))}
 
-            {/* Static fallback if no active events */}
-            {activeCounterEvents.length === 0 && (
-              <View className="bg-app-background p-md rounded-lg mb-md border-l-4 border-l-red-500">
-                <Text className="typography-subheader text-app-text mb-sm">Treasures of Ruin Event Series</Text>
-                <Text className="typography-copy text-app-brown mb-sm">
-                  No events are currently active. Check back for new events featuring the legendary Treasures of Ruin!
+            {/* Conditional Events Section */}
+            {activeCounterEvents.length > 0 && (
+              <>
+                <Text
+                  role="heading"
+                  aria-level={3}
+                  className="typography-subheader text-app-secondary mb-sm"
+                >
+                  Latest Events
                 </Text>
-                <Text className="text-xs text-red-500 font-medium">Check back soon!</Text>
-              </View>
+                
+                {/* Active Event Buttons */}
+                {activeCounterEvents.map((event) => (
+                  <Link key={event.key} href={event.href} asChild>
+                    <Pressable className="bg-red-500 py-lg px-lg rounded-lg items-center mb-sm shadow-app-medium active:opacity-80">
+                      <Text className="typography-cta text-app-white text-center mb-xs">{event.buttonText}</Text>
+                      <Text className="typography-copy text-app-white text-center opacity-90">Click to contribute to the global counter</Text>
+                    </Pressable>
+                  </Link>
+                ))}
+              </>
             )}
-
-
-            <View className=" p-md rounded-lg mb-md  border-y border-x-4 border-x-red-500 border-y-dark-app-secondary ">
-              <Text className="typography-subheader text-dark-app-background dark:text-app-background mb-sm">Treasures of Ruin Event Series</Text>
-              <Text className="typography-copy text-app-brown mb-sm">
-                Four legendary Pokemon challenges featuring Wo-Chien, Chien-Pao, Ting-Lu, and Chi-Yu! 
-                Each event runs for two weeks with different Tera Types and special rewards.
+                    
+            {/* Latest News Section */}
+            <View className='items-center'>
+              <Text
+                role="heading"
+                aria-level={3}
+                className="typography-subheader text-app-secondary mb-sm"
+              >
+                Latest News
               </Text>
-              <Text className="text-xs text-red-500 font-medium">Ongoing Series</Text>
+              {loadingNews ? (
+                <View className="items-center py-lg">
+                  <ActivityIndicator size="large" color="#A33EA1" />
+                  <Text className="typography-copy text-app-brown mt-sm">Loading news...</Text>
+                </View>
+              ) : newsArticles.length > 0 ? (
+                <>
+                  {newsArticles.map((article) => (
+                    <NewsCard key={article.id} article={article} />
+                  ))}
+                  {/* View More News Button */}
+                  <View className="items-center mb-lg">
+                    <Link href="/(drawer)/news" asChild>
+                      <Pressable className="bg-app-accent dark:bg-dark-app-accent  py-md px-lg rounded-md self-center active:opacity-80 hover:shadow-app-medium">
+                        <Text className="typography-cta text-app-background dark:text-dark-app-background">View More News</Text>
+                      </Pressable>
+                    </Link>
+                  </View>
+                </>
+              ) : (
+                <View className="bg-app-background p-md rounded-lg mb-lg border-l-4 border-l-red-500">
+                  <Text className="typography-subheader text-app-text mb-sm">Stay tuned for Pokémon news!</Text>
+                  <Text className="typography-copy text-app-brown">
+                    The latest news and updates will appear here.
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
 
-          <View className="p-lg rounded-lg mb-0 border-t-2 border-b-2 border-app-flag">
+          {/* Features Section */}
+          <View className="p-lg rounded-lg mb-5 border-t-2 border-b-2 border-app-flag">
             <Text
               role="heading"
               aria-level={3}
@@ -279,6 +288,27 @@ export default function Home() {
                 </Text>
               </View>
             </View>
+          </View>
+
+          {/* NO current events View  */}
+          <View className="items-center mb-lg">
+            <Text
+                role="heading"
+                aria-level={3}
+                className="typography-subheader text-app-secondary mb-sm"
+              >
+                Latest Events
+              </Text>
+            {activeCounterEvents.length === 0 && (
+              <Text className="typography-copy text-app-brown dark:text-dark-app-brown text-center mb-sm">
+                No participation events currently active
+              </Text>
+            )}
+            <Link href="/(drawer)/events" asChild>
+              <Pressable className="bg-app-accent dark:bg-dark-app-accent py-md px-lg rounded-md self-center active:opacity-80 hover:shadow-app-medium">
+                <Text className="typography-cta text-app-background dark:text-dark-app-background">View All Events</Text>
+              </Pressable>
+            </Link>
           </View>
           <Footer />
         </ScrollView>
