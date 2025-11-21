@@ -46,7 +46,7 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
               title={meta.title || 'Feature'}
               icon={meta.icon as any}
               path={meta.path}
-              variant="shortcut"
+              variant="favorite"
             />
           </View>
         );
@@ -57,13 +57,6 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
   return (
     <>
       <View className="items-center mb-lg">
-        <Text
-          role="heading"
-          aria-level={3}
-          className="typography-subheader text-app-secondary mb-sm"
-        >
-          Quick Access
-        </Text>
         
         <View className="flex-row flex-wrap justify-between w-full sm:max-w-[80%]">
           {/* System Cards - Messages with NEW badge */}
@@ -98,7 +91,7 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
                 title={isSignedIn ? 'Add Shortcut' : 'Sign in to add shortcuts'}
                 icon={isSignedIn ? 'add-circle' : 'log-in'}
                 path="#"
-                variant="shortcut"
+                variant="favorite"
                 onPress={isSignedIn ? () => setModalVisible(true) : navigateToSignIn}
               />
             </View>

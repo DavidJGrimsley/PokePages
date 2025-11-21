@@ -3,6 +3,7 @@ import { View, Text, Pressable, Platform } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BorderMask } from '../shared/BorderMask';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -13,13 +14,13 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 
-type HomeCardVariant = 'system' | 'shortcut' | 'event';
+type HomeCardVariant = 'system' | 'favorite' | 'event';
 
 interface HomeCardProps {
   title: string;
   icon?: keyof typeof Ionicons.glyphMap;
   path: string;
-  variant?: HomeCardVariant;
+  variant: HomeCardVariant;
   badge?: string;
   onPress?: () => void;
   showNewFeatureLabel?: boolean;
@@ -27,19 +28,25 @@ interface HomeCardProps {
 
 const variantStyles = {
   system: {
-    borderColor: 'border-l-app-primary',
+    borderColor: '#A33EA100',
     iconColor: '#A33EA1',
-    gradientColors: ['rgba(163, 62, 161, 0.1)', 'rgba(0, 0, 0, 0)'] as const,
+    gradientColors: ['rgba(163, 62, 161, 0.06)', 'rgba(0, 0, 0, 0)'] as const,
+    borderGlowColor: 'rgba(255, 165, 0, 0.1)',
+    borderGlowColorSecondary: 'rgba(163, 62, 161, 0.5)',
   },
-  shortcut: {
-    borderColor: 'border-l-orange-500',
-    iconColor: '#F95587',
-    gradientColors: ['rgba(255, 165, 0, 0.1)', 'rgba(0, 0, 0, 0)'] as const,
+  favorite: {
+    borderColor: '#FFA50000',
+    iconColor: '#FFA500',
+    gradientColors: ['rgba(255, 165, 0, 0.06)', 'rgba(0, 0, 0, 0)'] as const,
+    borderGlowColor: 'rgba(0,0,0, 1)',
+    borderGlowColorSecondary: 'rgba(255, 0, 0, 0.6)',
   },
   event: {
-    borderColor: 'border-l-red-500',
+    borderColor: '#EF4444',
     iconColor: '#EE8130',
     gradientColors: ['rgba(239, 68, 68, 0.1)', 'rgba(0, 0, 0, 0)'] as const,
+    borderGlowColor: 'rgba(239, 68, 68, 1)',
+    borderGlowColorSecondary: 'rgba(255, 150, 150, 0.6)',
   },
 };
 
@@ -47,7 +54,7 @@ export const HomeCard: React.FC<HomeCardProps> = ({
   title,
   icon,
   path,
-  variant = 'system',
+  variant,
   badge,
   onPress,
   showNewFeatureLabel = false,
@@ -58,8 +65,20 @@ export const HomeCard: React.FC<HomeCardProps> = ({
   const pressed = useSharedValue(0);
   const [hovered, setHovered] = useState(false);
   
-  // Shine sweep animation - triggered on hover
+  // Shine sweep animation across card face (triggered on hover)
   const shinePosition = useSharedValue(-150);
+
+  // Continuous border sweep (0..1 loop) for BorderMask
+  const borderShine = useSharedValue(0);
+
+  useEffect(() => {
+    // Continuous perimeter sweep independent of hover
+    borderShine.value = withRepeat(
+      withTiming(1, { duration: 3000, easing: Easing.linear }),
+      -1,
+      false
+    );
+  }, [borderShine]);
   
   // Subtle pulse animation for idle state
   const pulseOpacity = useSharedValue(1);
@@ -120,7 +139,7 @@ export const HomeCard: React.FC<HomeCardProps> = ({
   
   const CardContent = (
     <Pressable 
-      className={`${styles.borderColor} border-l-4 rounded-lg shadow-app-large overflow-hidden`}
+      className="rounded-lg shadow-app-medium overflow-visible"
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
@@ -132,9 +151,22 @@ export const HomeCard: React.FC<HomeCardProps> = ({
         minHeight: Platform.OS === 'web' ? 160 : undefined,
       }}
     >
-      <Animated.View style={[{ flex: 1 }, pressStyle]}>
-        {/* More transparent glass background */}
-        <Animated.View style={[{ flex: 1 }, pulseStyle]}>
+      <Animated.View style={[{ flex: 1, position: 'relative' }, pressStyle]}>
+        <BorderMask
+          borderWidth={3}
+          borderRadius={8}
+          borderColor={styles.borderColor}
+          glowColor={styles.borderGlowColor}
+          glowColorSecondary={styles.borderGlowColorSecondary}
+          bandOpacity={0.95}
+          bandWidthMultiplier={2.5}
+          shineSpeed={1600}
+          showShine={true}
+          externalShine={borderShine}
+          style={{ flex: 1 }}
+        >
+          {/* More transparent glass background */}
+          <Animated.View style={[{ flex: 1, borderRadius: 8, overflow: 'hidden' }, pulseStyle]}>
           <LinearGradient
             colors={[
               `${styles.gradientColors[0]}`,
@@ -155,7 +187,7 @@ export const HomeCard: React.FC<HomeCardProps> = ({
                 bottom: 0,
                 backdropFilter: 'blur(12px) saturate(150%)',
                 WebkitBackdropFilter: 'blur(12px) saturate(150%)',
-                backgroundColor: hovered ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.01)',
+                backgroundColor: hovered ? 'rgba(255,255,255,0.045)' : 'rgba(255,255,255,0.012)',
               } as any}
             />
           )}
@@ -172,8 +204,10 @@ export const HomeCard: React.FC<HomeCardProps> = ({
               justifyContent: 'center',
               pointerEvents: 'none',
               overflow: 'hidden',
+              borderRadius: 8,
             }}
           >
+            {/* Hover shine effect */}
             <Animated.View 
               style={[
                 {
@@ -237,6 +271,7 @@ export const HomeCard: React.FC<HomeCardProps> = ({
             </View>
           </LinearGradient>
         </Animated.View>
+        </BorderMask>
       </Animated.View>
     </Pressable>
   );

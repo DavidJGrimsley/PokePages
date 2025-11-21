@@ -26,8 +26,7 @@
     "server:dev": "npm run api-server:dev",
     "server:build": "npm run build:api-server",
     "generate:types": "npx tsx scripts/generateTypeChart.ts",
-    "generate:sitemap": "npx tsx scripts/generateSitemap.ts"
-    ,
+    "generate:sitemap": "npx tsx scripts/generateSitemap.ts",
     "copy:pwa-icons": "powershell -Command \"if (!(Test-Path public/icons)) { New-Item -ItemType Directory -Path public/icons }; if (!(Test-Path public/images/icons)) { New-Item -ItemType Directory -Path public/images/icons -Force }; Copy-Item smartutilifyIconDownload/pwa/* public/icons/ -Recurse -Force; Copy-Item smartutilifyIconDownload/web/* public/icons/ -Recurse -Force; Copy-Item assets/icons/* public/icons/ -Recurse -Force; Copy-Item public/icons/* public/images/icons/ -Recurse -Force; Copy-Item public/icons/favicon.ico public/favicon.ico -Force\""
   },
   "dependencies": {
@@ -43,7 +42,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-google-signin/google-signin": "^16.0.0",
-    "@react-native-masked-view/masked-view": "^0.3.2",
+    "@react-native-masked-view/masked-view": "0.3.2",
     "@react-native-picker/picker": "2.11.1",
     "@react-navigation/drawer": "^7.3.9",
     "@supabase/supabase-js": "^2.57.4",
@@ -89,11 +88,12 @@
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
-    "react-native-reanimated": "~4.1.0",
+    "react-native-reanimated": "~4.1.1",
     "react-native-responsive-fontsize": "^0.5.1",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
+    "react-native-svg": "15.12.1",
     "react-native-typewriter": "^0.7.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.21.0",
