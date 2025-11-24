@@ -111,10 +111,12 @@ export const BorderMask: React.FC<BorderMaskProps> = ({
    * Using a stable literal here is fine for most apps; you can add a prop for unique id if needed.
    */
   const maskId = 'bordermask-mask';
-  const teal = 'rgba(0, 245, 245, 0.5)'; // dummy color for gradient stops
-  const pink = 'rgba(245, 0, 245, 0.5)'; // dummy color for gradient stops
-  const yellow = 'rgba(245, 245, 0, 0.5)'; // dummy color for gradient stops
-
+  const primary = 'rgba(163, 62, 161, 0.7)'; // #A33EA1 - TYPE_POISON / APP_PRIMARY
+  const secondary = 'rgba(249, 85, 135, 0.8)'; // #F95587 - TYPE_PSYCHIC / APP_SECONDARY
+  const white = 'rgba(251, 251, 251, 0.5)'; // #fbfbfb - WHITE
+  const lavendar = 'rgba(230, 230, 250, 0.5)'; // #E6e6fa - LAVENDER  
+  const flag = 'rgb(245, 119, 28, 0.7)'; // #FFCC00 - TYPE_FIRE / APP_FLAG
+  
   /**
    * Layout notes:
    * - We render an <Svg> that covers the full area (absoluteFill). The Svg uses viewBox `0 0 svgViewBoxSize svgViewBoxSize`
@@ -157,31 +159,17 @@ export const BorderMask: React.FC<BorderMaskProps> = ({
             {/* LinearGradient used by the band; left->right fade */}
             <SvgLinearGradient id="bandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
               <Stop offset="0%" stopColor="transparent" stopOpacity="0" />
-              <Stop offset="15%" stopColor={glowColor} stopOpacity={bandOpacity} />
-              <Stop offset="23%" stopColor={yellow} stopOpacity={bandOpacity} />
-              <Stop offset="30%" stopColor={glowColorSecondary || glowColor} stopOpacity={bandOpacity * 0.5} />
-              <Stop offset="45%" stopColor={glowColor} stopOpacity={bandOpacity} />
-              <Stop offset="60%" stopColor={teal} stopOpacity={bandOpacity} />
-              <Stop offset="75%" stopColor={glowColorSecondary || glowColor} stopOpacity={bandOpacity * 0.5} />
-              <Stop offset="87%" stopColor={pink} stopOpacity={bandOpacity} />
+              <Stop offset="10%" stopColor={primary} stopOpacity="100" />
+              <Stop offset="20%" stopColor={white} stopOpacity={bandOpacity} />
+              <Stop offset="40%" stopColor={flag} stopOpacity="100" />
+              <Stop offset="60%" stopColor={lavendar} stopOpacity={bandOpacity} />
+              <Stop offset="80%" stopColor={secondary} stopOpacity={bandOpacity} />
+              <Stop offset="90%" stopColor={primary} stopOpacity="100" />
               <Stop offset="100%" stopColor="transparent" stopOpacity="0" />
             </SvgLinearGradient>
           </Defs>
 
-          {/* Base stroke (thin) so you always have some border color visible */}
-          <Rect
-            x="0"
-            y="0"
-            width={svgViewBoxSize}
-            height={svgViewBoxSize}
-            rx={(borderRadius * svgViewBoxSize) / 100}
-            ry={(borderRadius * svgViewBoxSize) / 100}
-            fill="none"
-            stroke={borderColor}
-            strokeWidth={borderWidth}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          
 
           {/* Group masked by the stroke: only stroke-area will let this group show */}
           <G mask={`url(#${maskId})`}>
