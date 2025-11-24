@@ -8,6 +8,7 @@ import * as profilesSchema from './profilesSchema.js';
 import * as eventsSchema from './eventsSchema.js';
 import * as legendsZATrackerSchema from './legendsZATrackerSchema.js';
 import * as socialSchema from './socialSchema.js';
+import * as favoritesSchema from './favoritesSchema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,4 +55,5 @@ export const db = drizzle(client, { schema: {
   ...eventsSchema,
   ...legendsZATrackerSchema,
   ...socialSchema,
+  ...favoritesSchema,
 } });

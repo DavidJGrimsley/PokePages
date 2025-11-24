@@ -195,6 +195,33 @@ const DrawerLayout = () => {
           headerStyle: headerStyle,
         }}
       />
+      <Drawer.Screen
+        name="news"
+        options={{
+          headerTitle: () => <HeaderTitle title="News" />,
+          drawerLabel: 'News',
+          headerLeft: () => <DrawerToggle />, 
+          headerRight: () => (
+            <Link href="/(profile)/account" asChild>
+              <HeaderButton iconName="user-circle" />
+            </Link>
+          ),
+          drawerIcon: ({ size, color }) => (
+            <MaterialIcons name="article" size={iconSize} color={color} />
+          ),
+          headerTitleAlign: 'center',
+          headerStyle: headerStyle,
+        }}
+        listeners={({ navigation }) => ({
+          drawerItemPress: (e) => {
+            e.preventDefault();
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'news' }],
+            });
+          },
+        })}
+      />
     </Drawer>
   );
 };

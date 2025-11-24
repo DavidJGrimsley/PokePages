@@ -4,7 +4,6 @@ import { makeRedirectUri } from "expo-auth-session";
 import * as QueryParams from "expo-auth-session/build/QueryParams";
 import * as WebBrowser from "expo-web-browser";
 import * as Linking from "expo-linking";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { supabase } from "~/utils/supabaseClient";
 import { router } from "expo-router";
 import { debugLinking } from "~/utils/linkingConfig";
@@ -21,15 +20,25 @@ const GOOGLE_WEB_CLIENT_ID = "970928478495-o8j6evk7kp0hfaqvlucr01r3ahm94m46.apps
 const hasNativeGoogleSignin =
   Platform.OS !== 'web' && !!(NativeModules as any).RNGoogleSignin;
 
+// Avoid importing native GoogleSignin on web to prevent runtime errors in environments that
+// don't have the RN module (Expo Go or web). Load and configure dynamically only when available.
 if (hasNativeGoogleSignin) {
-  GoogleSignin.configure({
-    scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-    iosClientId: "970928478495-55ufo85eolgh0f43p4j88b7cpjdkvvk7.apps.googleusercontent.com", // Your iOS client ID
-    offlineAccess: true, // To get refresh token
-    forceCodeForRefreshToken: true, // Force refresh token for better session management
-  });
-  console.log('🔧 GoogleSignin configured with webClientId:', GOOGLE_WEB_CLIENT_ID);
+  (async () => {
+    try {
+      const googleMod = await import('@react-native-google-signin/google-signin');
+      const GoogleSignin = googleMod.GoogleSignin;
+      GoogleSignin.configure({
+        scopes: ["https://www.googleapis.com/auth/drive.readonly"],
+        webClientId: GOOGLE_WEB_CLIENT_ID,
+        iosClientId: "970928478495-55ufo85eolgh0f43p4j88b7cpjdkvvk7.apps.googleusercontent.com",
+        offlineAccess: true,
+        forceCodeForRefreshToken: true,
+      });
+      console.log('🔧 GoogleSignin configured with webClientId:', GOOGLE_WEB_CLIENT_ID);
+    } catch (err) {
+      console.warn('Google Native Sign-In dynamic import failed:', err);
+    }
+  })();
 } else {
   console.log('ℹ️ RNGoogleSignin native module not available; will use browser OAuth.');
 }
@@ -164,6 +173,9 @@ const performNativeGoogleSignIn = async () => {
     if (!hasNativeGoogleSignin) {
       throw new Error('RNGoogleSignin native module not available');
     }
+    // Import GoogleSignin dynamically so we avoid hard dependency on native module in web
+    const googleMod = await import('@react-native-google-signin/google-signin');
+    const GoogleSignin = googleMod.GoogleSignin;
     await GoogleSignin.hasPlayServices();
     
     // Sign in with Google

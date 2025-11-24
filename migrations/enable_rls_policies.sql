@@ -798,6 +798,22 @@ CREATE POLICY "saved_posts_delete_own"
   USING ((SELECT auth.uid()) = user_id);
 
 -- ============================================================================
+-- FAVORITE FEATURES POLICIES
+-- ============================================================================
+
+CREATE POLICY "favorite_features_select_own"
+  ON "favorite_features" FOR SELECT
+  USING ((SELECT auth.uid()) = user_id);
+
+CREATE POLICY "favorite_features_insert_own"
+  ON "favorite_features" FOR INSERT
+  WITH CHECK ((SELECT auth.uid()) = user_id);
+
+CREATE POLICY "favorite_features_delete_own"
+  ON "favorite_features" FOR DELETE
+  USING ((SELECT auth.uid()) = user_id);
+
+-- ============================================================================
 -- REACTIONS POLICIES
 -- ============================================================================
 
