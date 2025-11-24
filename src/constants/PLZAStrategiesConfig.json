@@ -169,34 +169,87 @@
         "bullets": [
           "Pokémon do NOT evolve on their own",
           "You must evolve them manually in the menu",
-          "No need for an Everstone to stop evolution",
+          "No need for an Everstone to stop evolution (unless trading and you want to keep it from evolving)",
           "Check evolution requirements (below) for any species with special conditions below"
         ]
       },
       {
         "title": "Special Evolution Requirements",
-        "content": "Some Pokémon have unique evolution methods.",
+        "content": "Some Pokémon have unique evolution methods - these do not include trade evolutions which is in the next section.",
         "bullets": [
-          "Coming soon!"
-        ]
+          "Having a drink at a cafe is a great way to increase friendship quickly",
+          "If no level is specified, it can be done at any level as long as other conditions are met",
+          "",
+          "Budew → Roselia (high friendship during daytime) → Roserade (use Shiny Stone)",
+          "Staryu → Starmie (use Water Stone)",
+          "Floette → Florges (use Shiny Stone)",
+          "Pancham → Pangoro (at least Lv. 32 with a Dark-type Pokémon in party)",
+          "Pichu → Pikachu (high friendship) → Raichu (use Thunder Stone)",
+          "Cleffa → Clefairy (high friendship) → Clefable (use Moon Stone)",
+          "Doublade → Aegislash (use Dusk Stone)",
+          "Weepinbell → Victreebel (use Leaf Stone)",
+          "Pansage → Simisage (use Leaf Stone)",
+          "Pansear → Simisear (use Fire Stone)",
+          "Panpour → Simipour (use Water Stone)",
+          "Kirlia (male) → Gallade (use Dawn Stone)",
+          "Kirlia (male or female) → Gardevoir (at least Lv. 30)",
+          "Eevee → Sylveon (high friendship + Fairy-type move)",
+          "Eevee → Espeon (high friendship daytime)",
+          "Eevee → Umbreon (high friendship nighttime)",
+          "Eevee → Flareon (use Fire Stone)",
+          "Eevee → Jolteon (use Thunder Stone)",
+          "Eevee → Vaporeon (use Water Stone)",
+          "Eevee → Glaceon (use Ice Stone)",
+          "Eevee → Leafeon (use Leaf Stone)",
+          "Buneary → Lopunny (high friendship)",
+          "Riolu → Lucario (high friendship, level up during daytime)",
+          "Galarian Slowpoke → Galarian Slowbro (use Galarica Cuff), Galarian Slowking (use Galarica Wreath)",
+          "Eelektrik → Eelektross (use Thunder Stone)",
+          "Inkay → Malamar (at least Lv. 30 while console in handheld mode and held upside down and no other controllers connected - have menu open and Press 'A' on Inkay in your party)",
+          "Sliggoo → Goodra (at least Lv. 50 during rain)",
+          "Snorunt (female) → Froslass (use Dawn Stone)",
+          "Snorunt (male or female) → Glalie (at least Lv. 42)",
+          "Lampent → Chandelure (use Dusk Stone)",
+          "Tyrunt → Tyrantrum (at least Lv. 39 during daytime)",
+          "Amaura → Aurorus (at least Lv. 39 during nighttime)",
+          "Helioptile → Heliolisk (use Sun Stone)",
+          ""
+        ],
+        "youtubeIDs": ["51O3M4M8aFo", "n5adt3QWOts"]
       },
       {
         "title": "Trade Evolution Pokémon",
-        "content": "These Pokémon require trading to evolve in Legends Z-A.",
+        "content": "These Pokémon require trading to evolve in Legends Z-A and Trade Codes by Austin John Plays",
         "bullets": [
-          "Kadabra → Alakazam ",
-          "Haunter → Gengar ",
-          "Machoke → Machamp ",
-          "Slowpoke → Slowking (trade while holding King's Rock)",
-          "Onyx → Steelix (trade while holding Metal Coat)",
-          "Scyther → Scizor (trade while holding Metal Coat)",
+          "You can use these trade codes to trade with random trainers online - you will likely not get your Pokémon back but please offer to trade the Pokémon back to them after evolving if possible",
+          "Make sure the Pokémon that is being traded to you is not holding an Everstone as this will prevent evolution",
+          "",
+          "These Pokémon can be also be find in the wild:",
+          "Kadabra → Alakazam; 0063 0063",
+          "Haunter → Gengar; 0066 0066",
+          "Machoke → Machamp; 0126 0126",
+          "Phantump → Trevenant; 0182 0182",
+          "Pumpkaboo → Gourgeist; 0204 0204",
+          "",
+          "These Pokémon cannot be found in the wild and must be traded to evolve:",
           "Spritzee → Aromatisse (trade while holding Sachet)",
           "Swirlix → Slurpuff (trade while holding Whipped Dream)",
-          "Phantump → Trevenant ",
-          "Pumpkaboo → Gourgeist "
+          "Slowpoke → Slowking (trade while holding King's Rock); ",
+          "Scyther → Scizor (trade while holding Metal Coat)",
+          "Onyx → Steelix (trade while holding Metal Coat)",
+          "Inspect to make sure it is holding the correct item before trading",
+          ""
+        ],
+        "youtubeIDs": ["MjicscEj0J8"],
+        "pics": [
+          {
+            "src": "assets/PLZA/TradeCodes_PlZA.png",
+            "caption": "Trade Evolution Pokémon Guide by Austin John Plays"
+          }
         ]
       }
-    ]
+    ],
+    "youtubeIDs": []
   },
   "competitive-training": {
     "id": "competitive-training",
@@ -255,7 +308,7 @@
           "Grepa Berry: Reduces Special Defense EVs",
           "Tamato Berry: Reduces Speed EVs",
           "",
-          "This is useful when you have a Pokémon that you've been battling with and now want to train for competitive purposes",
+          "This is useful when you have a Pokémon that you've been battling with and now want to train for competitive purposes"
         ]
       },
       {

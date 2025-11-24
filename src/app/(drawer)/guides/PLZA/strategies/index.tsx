@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container } from 'components/UI/Container';
-import { AppText } from '@/src/components/TextTheme/AppText';
 import { BouncyText } from '@/src/components/TextTheme/BouncyText';
 import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
 import { StrategyCard } from '@/src/components/UI/StrategyCard';
@@ -11,6 +10,7 @@ import { EVYields } from '@/src/components/Guides/EVYields';
 
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import { Frame } from 'components/UI/Frame';
+import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
 
 export default function Strategies() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
@@ -104,19 +104,9 @@ export default function Strategies() {
             />
           ))}
 
-          <EVYields game="PLZA" />
           
-          <View className="items-center justify-center w-full mt-8 mb-8">
-            <Frame
-              src="https://www.youtube.com/embed/mE3xS2Myzq4?si=Mytvv4gVc-KVODoC"
-              title="YouTube video player"
-              width={isMobile ? '100%' : 560}
-              height={isMobile ? 200 : 315}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              className="rounded-lg shadow-lg"
-            />
-          </View>
+         
+          <VideoCarousel videoIds={["mE3xS2Myzq4", "XcG0nh5AvYg"]} isMobile={isMobile} />
         </MultiLayerParallaxScrollView>
       </Container>
     </>
