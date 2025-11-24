@@ -80,7 +80,6 @@ export default function Home() {
     };
     loadNews();
   }, []);
-  
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   
   // SEO meta content
@@ -147,7 +146,7 @@ export default function Home() {
           contentContainerStyle={{ flexGrow: 1, padding: 0 }}
           showsVerticalScrollIndicator={false}
           >
-          {/* Download App Banner */}          
+          {/* Download App Banner */}
          {!isMobile && (<Link href="/download" asChild>
             <Pressable className="bg-gradient-to-r from-blue-600 to-purple-600 py-md px-lg items-center shadow-app-medium">
               <View className="flex-row items-center">
