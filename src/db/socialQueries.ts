@@ -52,7 +52,7 @@ export async function getBlockedUserIds(userId: string): Promise<string[]> {
     .from(blocks)
     .where(eq(blocks.blockerId, userId));
   
-  return blocked.map(b => b.id);
+  return blocked.map((b: any) => b.id);
 }
 
 /**
@@ -64,7 +64,7 @@ export async function getMutedUserIds(userId: string): Promise<string[]> {
     .from(userMutes)
     .where(eq(userMutes.userId, userId));
   
-  return muted.map(m => m.id);
+  return muted.map((m: any) => m.id);
 }
 
 /**
@@ -125,8 +125,8 @@ export async function getFriendIds(userId: string): Promise<string[]> {
     ));
   
   return [
-    ...friendsAsRequester.map(f => f.friendId),
-    ...friendsAsAddressee.map(f => f.friendId),
+    ...friendsAsRequester.map((f: any) => f.friendId),
+    ...friendsAsAddressee.map((f: any) => f.friendId),
   ];
 }
 
@@ -140,7 +140,7 @@ export async function createPost(data: NewPost) {
 export async function addPostMedia(postId: string, mediaData: Omit<NewPostMedia, 'postId'>[]) {
   if (mediaData.length === 0) return [];
   
-  const mediaToInsert = mediaData.map(m => ({
+  const mediaToInsert = mediaData.map((m: any) => ({
     ...m,
     postId,
   }));
@@ -152,7 +152,7 @@ export async function addPostHashtags(postId: string, hashtagNames: string[]) {
   if (hashtagNames.length === 0) return [];
   
   // Normalize hashtags (lowercase, no #)
-  const normalized = hashtagNames.map(tag => tag.toLowerCase().replace(/^#/, '').trim());
+  const normalized = hashtagNames.map((tag: string) => tag.toLowerCase().replace(/^#/, '').trim());
   
   // Get or create hashtags
   const hashtagIds: string[] = [];
@@ -177,7 +177,7 @@ export async function addPostHashtags(postId: string, hashtagNames: string[]) {
   }
   
   // Link hashtags to post
-  const postHashtagData = hashtagIds.map(hashtagId => ({
+  const postHashtagData = hashtagIds.map((hashtagId: any) => ({
     postId,
     hashtagId,
   }));
@@ -248,7 +248,7 @@ export async function getPostsByHashtag(
     .limit(limit);
   
   // Get media for all posts
-  const postIds = postsWithHashtag.map(p => p.id);
+  const postIds = postsWithHashtag.map((p: any) => p.id);
   const allMedia = postIds.length > 0
     ? await db
         .select()
@@ -271,20 +271,20 @@ export async function getPostsByHashtag(
     : [];
   
   // Map media to posts
-  const mediaByPostId = allMedia.reduce((acc, m) => {
+  const mediaByPostId = allMedia.reduce((acc: Record<string, any[]>, m: any) => {
     if (!acc[m.postId]) acc[m.postId] = [];
     acc[m.postId].push(m);
     return acc;
   }, {} as Record<string, typeof allMedia>);
   
   // Map hashtags to posts
-  const hashtagsByPostId = allHashtags.reduce((acc, h) => {
+  const hashtagsByPostId = allHashtags.reduce((acc: Record<string, { id: string; name: string; createdAt: string | null }[]>, h: any) => {
     if (!acc[h.postId]) acc[h.postId] = [];
     acc[h.postId].push({ id: h.id, name: h.name, createdAt: h.createdAt });
     return acc;
   }, {} as Record<string, { id: string; name: string; createdAt: string | null }[]>);
   
-  return postsWithHashtag.map(post => ({
+  return postsWithHashtag.map((post: any) => ({
     ...post,
     media: mediaByPostId[post.id] || [],
     hashtags: hashtagsByPostId[post.id] || [],
@@ -397,7 +397,7 @@ export async function getExploreFeed(userId: string, limit = 20, offset = 0) {
     .offset(offset);
 
   // Get media for all posts
-  const postIds = explorePosts.map(p => p.id);
+  const postIds = explorePosts.map((p: any) => p.id);
   const allMedia = postIds.length > 0
     ? await db
         .select()
@@ -420,20 +420,20 @@ export async function getExploreFeed(userId: string, limit = 20, offset = 0) {
     : [];
 
   // Map media to posts
-  const mediaByPostId = allMedia.reduce((acc, m) => {
+  const mediaByPostId = allMedia.reduce((acc: Record<string, any[]>, m: any) => {
     if (!acc[m.postId]) acc[m.postId] = [];
     acc[m.postId].push(m);
     return acc;
   }, {} as Record<string, typeof allMedia>);
 
   // Map hashtags to posts
-  const hashtagsByPostId = allHashtags.reduce((acc, h) => {
+  const hashtagsByPostId = allHashtags.reduce((acc: Record<string, { id: string; name: string; createdAt: string | null }[]>, h: any) => {
     if (!acc[h.postId]) acc[h.postId] = [];
     acc[h.postId].push({ id: h.id, name: h.name, createdAt: h.createdAt });
     return acc;
   }, {} as Record<string, { id: string; name: string; createdAt: string | null }[]>);
 
-  return explorePosts.map(post => ({
+  return explorePosts.map((post: any) => ({
     ...post,
     media: mediaByPostId[post.id] || [],
     hashtags: hashtagsByPostId[post.id] || [],
@@ -481,7 +481,7 @@ export async function getFriendsFeed(userId: string, limit = 20, offset = 0) {
     .offset(offset);
 
   // Get media for all posts
-  const postIds = friendsPosts.map(p => p.id);
+  const postIds = friendsPosts.map((p: any) => p.id);
   const allMedia = postIds.length > 0
     ? await db
         .select()
@@ -504,20 +504,20 @@ export async function getFriendsFeed(userId: string, limit = 20, offset = 0) {
     : [];
 
   // Map media to posts
-  const mediaByPostId = allMedia.reduce((acc, m) => {
+  const mediaByPostId = allMedia.reduce((acc: Record<string, any[]>, m: any) => {
     if (!acc[m.postId]) acc[m.postId] = [];
     acc[m.postId].push(m);
     return acc;
   }, {} as Record<string, typeof allMedia>);
 
   // Map hashtags to posts
-  const hashtagsByPostId = allHashtags.reduce((acc, h) => {
+  const hashtagsByPostId = allHashtags.reduce((acc: Record<string, { id: string; name: string; createdAt: string | null }[]>, h: any) => {
     if (!acc[h.postId]) acc[h.postId] = [];
     acc[h.postId].push({ id: h.id, name: h.name, createdAt: h.createdAt });
     return acc;
   }, {} as Record<string, { id: string; name: string; createdAt: string | null }[]>);
 
-  return friendsPosts.map(post => ({
+  return friendsPosts.map((post: any) => ({
     ...post,
     media: mediaByPostId[post.id] || [],
     hashtags: hashtagsByPostId[post.id] || [],
@@ -573,7 +573,7 @@ export async function getUserPosts(userId: string, currentUserId: string, limit 
     .offset(offset);
 
   // Get media for all posts
-  const postIds = userPosts.map(p => p.id);
+  const postIds = userPosts.map((p: any) => p.id);
   const allMedia = postIds.length > 0
     ? await db
         .select()
@@ -582,13 +582,13 @@ export async function getUserPosts(userId: string, currentUserId: string, limit 
     : [];
 
   // Map media to posts
-  const mediaByPostId = allMedia.reduce((acc, m) => {
+  const mediaByPostId = allMedia.reduce((acc: Record<string, any[]>, m: any) => {
     if (!acc[m.postId]) acc[m.postId] = [];
     acc[m.postId].push(m);
     return acc;
   }, {} as Record<string, typeof allMedia>);
 
-  return userPosts.map(post => ({
+  return userPosts.map((post: any) => ({
     ...post,
     media: mediaByPostId[post.id] || [],
   }));
@@ -698,7 +698,7 @@ export async function getPostComments(postId: string, userId?: string) {
     .orderBy(asc(comments.createdAt));
 
   // Get reactions for each comment
-  const commentIds = commentsWithAuthors.map(c => c.id);
+  const commentIds = commentsWithAuthors.map((c: any) => c.id);
   
   const reactionsData = commentIds.length > 0 ? await db
     .select({
@@ -707,7 +707,7 @@ export async function getPostComments(postId: string, userId?: string) {
       count: count(),
     })
     .from(commentReactions)
-    .where(sql`${commentReactions.commentId} IN (${sql.join(commentIds.map(id => sql`${id}`), sql`, `)})`)
+    .where(sql`${commentReactions.commentId} IN (${sql.join(commentIds.map((id: any) => sql`${id}`), sql`, `)})`)
     .groupBy(commentReactions.commentId, commentReactions.emojiCode) : [];
 
   // Get user's reactions if userId provided
@@ -719,16 +719,16 @@ export async function getPostComments(postId: string, userId?: string) {
     .from(commentReactions)
     .where(and(
       eq(commentReactions.userId, userId),
-      sql`${commentReactions.commentId} IN (${sql.join(commentIds.map(id => sql`${id}`), sql`, `)})`
+      sql`${commentReactions.commentId} IN (${sql.join(commentIds.map((id: any) => sql`${id}`), sql`, `)})`
     )) : [];
 
   // Combine data
-  return commentsWithAuthors.map(comment => ({
+  return commentsWithAuthors.map((comment: any) => ({
     ...comment,
     reactions: reactionsData
-      .filter(r => r.commentId === comment.id)
-      .map(r => ({ emojiCode: r.emojiCode, count: r.count })),
-    userReaction: userReactionsData.find(ur => ur.commentId === comment.id)?.emojiCode || null,
+      .filter((r: any) => r.commentId === comment.id)
+      .map((r: any) => ({ emojiCode: r.emojiCode, count: r.count })),
+    userReaction: userReactionsData.find((ur: any) => ur.commentId === comment.id)?.emojiCode || null,
   }));
 }
 
@@ -1117,7 +1117,7 @@ export async function getUserConversations(userId: string) {
     }
   }
 
-  const conversations = Array.from(byConv.values()).map((r) => {
+  const conversations = Array.from(byConv.values()).map((r: any) => {
     const otherId = r.senderId === userId ? r.recipientId : r.senderId;
     const otherUser = r.senderId === userId 
       ? { id: r.recipientId, username: r.recipientUsername, avatarUrl: r.recipientAvatar }
@@ -1287,7 +1287,7 @@ export async function getUserSavedPosts(userId: string, limit = 20, offset = 0) 
     .offset(offset);
 
   // Get media for all posts
-  const postIds = saved.map(s => s.postId);
+  const postIds = saved.map((s: any) => s.postId);
   const allMedia = postIds.length > 0
     ? await db
         .select()
@@ -1296,13 +1296,13 @@ export async function getUserSavedPosts(userId: string, limit = 20, offset = 0) 
     : [];
 
   // Map media to posts
-  const mediaByPostId = allMedia.reduce((acc, m) => {
+  const mediaByPostId = allMedia.reduce((acc: Record<string, any[]>, m: any) => {
     if (!acc[m.postId]) acc[m.postId] = [];
     acc[m.postId].push(m);
     return acc;
   }, {} as Record<string, typeof allMedia>);
 
-  return saved.map(s => ({
+  return saved.map((s: any) => ({
     ...s,
     post: s.post ? {
       ...s.post,
@@ -1386,13 +1386,13 @@ export async function searchHashtags(query: string, limit = 10) {
 
 export async function addReaction(userId: string, postId: string, emojiCode: string) {
   // Enforce one reaction per (user, post); toggle if same, switch if different
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     const existing = await tx
       .select()
       .from(reactions)
       .where(and(eq(reactions.userId, userId), eq(reactions.postId, postId)));
 
-    const hasTarget = existing.some((r) => r.emojiCode === emojiCode);
+    const hasTarget = existing.some((r: any) => r.emojiCode === emojiCode);
 
     // Toggle off if the same emoji already exists
     if (hasTarget) {
@@ -1450,13 +1450,13 @@ export async function getPostReactions(postId: string) {
 
 export async function addCommentReaction(userId: string, commentId: string, emojiCode: string) {
   // Enforce one reaction per (user, comment); toggle if same, switch if different
-  return await db.transaction(async (tx) => {
+  return await db.transaction(async (tx: any) => {
     const existing = await tx
       .select()
       .from(commentReactions)
       .where(and(eq(commentReactions.userId, userId), eq(commentReactions.commentId, commentId)));
 
-    const hasTarget = existing.some((r) => r.emojiCode === emojiCode);
+    const hasTarget = existing.some((r: any) => r.emojiCode === emojiCode);
 
     if (hasTarget) {
       // Toggle off the same emoji and clean up any duplicates

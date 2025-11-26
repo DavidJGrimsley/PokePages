@@ -15,5 +15,12 @@ else
     echo "✅ Port 3001 is available."
 fi
 
-echo "🚀 Starting API server..."
-node api-server.js
+echo "🚀 Starting API server with trace warnings and log redirection..."
+LOG_DIR="./logs"
+if [ ! -d "$LOG_DIR" ]; then
+    mkdir -p "$LOG_DIR"
+fi
+NODE_CMD="node --trace-warnings api-server.js >> $LOG_DIR/node.log 2>&1 &"
+echo "Running: $NODE_CMD"
+eval $NODE_CMD
+echo "✅ API server started (check $LOG_DIR/node.log for logs)"

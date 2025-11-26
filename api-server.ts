@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { envPresence, isDotEnvPresent, formatMemoryUsage, formatUptime } from './src/utils/diagnostics.js';
 import eventRouter from './src/routes/events/index.js';
 import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
@@ -51,6 +52,19 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Track last unhandled exception for diagnostics
+let lastUnhandledException: any = null;
+
+// Early startup diagnostics (safe, non-secret)
+try {
+  console.log('📡 Startup diagnostics - Node:', process.version, 'PID:', process.pid);
+  console.log('🔐 DATABASE_URL:', envPresence('DATABASE_URL'));
+  console.log('🔐 SUPABASE_URL:', envPresence('SUPABASE_URL'));
+  console.log('💾 .env file found:', isDotEnvPresent());
+} catch (d) {
+  console.warn('Error in startup diagnostics:', d);
+}
+
 // Health check
 app.get('/', (req, res) => {
   res.json({
@@ -93,13 +107,13 @@ app.get('/test', (req, res) => {
 // Database connection test
 app.get('/test-db', async (req, res) => {
   try {
-    const { db } = await import('./src/db/index.js');
-    const result = await db.execute('SELECT 1 as test');
-    res.json({
-      success: true,
-      message: 'Database connection working!',
-      result: result,
-    });
+    const { getDbPing } = await import('./src/db/index.js');
+    const result = await getDbPing();
+    if (result.ok) {
+      res.json({ success: true, message: 'Database connection working!', result: result.result });
+    } else {
+      res.status(500).json({ success: false, message: 'Database ping failed', error: result.error });
+    }
   } catch (error) {
     console.error('Database test error:', error);
     res.status(500).json({
@@ -172,12 +186,65 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error: Error) => {
+  lastUnhandledException = { type: 'uncaughtException', error: { message: error?.message, stack: error?.stack }, timestamp: new Date().toISOString() };
   console.error('UNCAUGHT EXCEPTION:', error);
   gracefulShutdown('uncaughtException');
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+  lastUnhandledException = { type: 'unhandledRejection', reason, promise, timestamp: new Date().toISOString() };
   console.error('UNHANDLED REJECTION at:', promise, 'reason:', reason);
   gracefulShutdown('unhandledRejection');
 });
+
+// Keep basic 'warning' handler to log Node warnings (non-fatal)
+process.on('warning', (warning) => {
+  console.warn('NODE WARNING', { name: warning.name, message: warning.message, stack: warning.stack });
+});
+
+// 'exit' logs - note exit code
+process.on('exit', (code) => {
+  console.log('Process exit event with code:', code);
+});
+
+// Optional runtime metrics logging (enabled with ENABLE_RUNTIME_METRICS)
+if (process.env.ENABLE_RUNTIME_METRICS === 'true') {
+  const intervalMs = Number(process.env.RUNTIME_METRICS_INTERVAL_MS || 60000);
+  setInterval(() => {
+    try {
+      console.log('Runtime Metrics:', { memory: formatMemoryUsage(), uptime: formatUptime() });
+    } catch (e) {
+      console.warn('Error logging runtime metrics:', e);
+    }
+  }, intervalMs);
+}
+
+// Debug status endpoint, opt-in via env var
+if (process.env.ENABLE_DEBUG_ENDPOINT === 'true') {
+  app.get('/debug/status', async (req, res) => {
+    const mem = formatMemoryUsage();
+    const uptime = formatUptime();
+    let dbPing = { success: null as null | boolean, error: null as string | null };
+    try {
+      const { getDbPing } = await import('./src/db/index.js');
+      const response = await getDbPing();
+      dbPing = { success: response.ok === true, error: response.ok ? null : (response.error ?? null) };
+    } catch (e: any) {
+      dbPing = { success: false, error: e?.message || String(e) };
+    }
+
+    res.json({
+      node: process.version,
+      pid: process.pid,
+      uptime,
+      memory: mem,
+      envs: {
+        DATABASE_URL: envPresence('DATABASE_URL'),
+        SUPABASE_URL: envPresence('SUPABASE_URL'),
+      },
+      dbPing,
+      lastUnhandledException: lastUnhandledException ? String(lastUnhandledException) : undefined,
+    });
+  });
+}

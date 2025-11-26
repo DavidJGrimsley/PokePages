@@ -5,6 +5,7 @@
   "main": "api-server.js",
   "scripts": {
     "start": "node api-server.js",
+    "start:trace": "node --trace-warnings api-server.js",
     "dev": "node api-server.js",
     "restart": "npm run restart:win || npm run restart:unix",
     "restart:win": "start-api-server.bat",

@@ -180,7 +180,7 @@ export async function getExploreFeed(req: Request, res: Response) {
     const posts = await socialQueries.getExploreFeed(userId, limit, offset);
     
     // Transform media for all posts
-    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    const transformedPosts = posts.map((post: any) => socialQueries.transformPostMedia(post));
     
     res.json({ success: true, data: transformedPosts });
   } catch (error) {
@@ -205,7 +205,7 @@ export async function getFriendsFeed(req: Request, res: Response) {
     const posts = await socialQueries.getFriendsFeed(userId, limit, offset);
     
     // Transform media for all posts
-    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    const transformedPosts = posts.map((post: any) => socialQueries.transformPostMedia(post));
     
     res.json({ success: true, data: transformedPosts });
   } catch (error) {
@@ -234,7 +234,7 @@ export async function getPostsByHashtag(req: Request, res: Response) {
     const posts = await socialQueries.getPostsByHashtag(hashtag, userId, limit);
     
     // Transform media for all posts
-    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    const transformedPosts = posts.map((post: any) => socialQueries.transformPostMedia(post));
     
     res.json({ success: true, data: transformedPosts });
   } catch (error) {
@@ -260,7 +260,7 @@ export async function getUserPosts(req: Request, res: Response) {
     const posts = await socialQueries.getUserPosts(userId, currentUserId, limit, offset);
     
     // Transform media for all posts
-    const transformedPosts = posts.map(post => socialQueries.transformPostMedia(post));
+    const transformedPosts = posts.map((post: any) => socialQueries.transformPostMedia(post));
     
     res.json({ success: true, data: transformedPosts });
   } catch (error) {

@@ -58,7 +58,7 @@ export async function incrementEventCounter(
     let userContribution = 0;
 
     // Start a transaction
-    const result = await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx: any) => {
       // Increment the global counter
       const [updatedEvent] = await tx
         .update(eventCounters)
@@ -287,18 +287,18 @@ export async function getEventStats(eventKey: string): Promise<{
 
     // Combine and format top contributors
     const topContributors = [
-      ...topUsers.map(user => ({
+      ...topUsers.map((user: any) => ({
         userId: user.userId!,
         username: user.username ?? undefined,
         contributionCount: user.contributionCount ?? 0,
         isAnonymous: false
       })),
-      ...topAnonymous.map(anon => ({
+      ...topAnonymous.map((anon: any) => ({
         anonymousId: anon.anonymousId,
         contributionCount: anon.contributionCount ?? 0,
         isAnonymous: true
       }))
-    ].sort((a, b) => (b.contributionCount ?? 0) - (a.contributionCount ?? 0)).slice(0, 10);
+    ].sort((a: any, b: any) => (b.contributionCount ?? 0) - (a.contributionCount ?? 0)).slice(0, 10);
 
     return {
       event,

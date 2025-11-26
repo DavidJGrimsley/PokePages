@@ -12,9 +12,10 @@ for /f "tokens=5" %%i in ('netstat -ano ^| findstr :3001') do (
 echo ✅ Port 3001 is available.
 
 :start_server
-echo 🚀 Starting API server...
+echo 🚀 Starting API server with trace warnings and log redirection...
+if not exist logs mkdir logs
 if exist api-server\api-server.js (
-    node api-server\api-server.js
+    node --trace-warnings api-server\api-server.js >> logs\node.log 2>&1
 ) else (
-    npx tsx api-server.ts
+    npx tsx api-server.ts >> logs\node.log 2>&1
 )
