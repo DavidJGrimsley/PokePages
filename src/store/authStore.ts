@@ -6,8 +6,6 @@ import { Platform } from "react-native";
 import { supabase } from "../utils/supabaseClient";
 import type { User, AuthChangeEvent, Session } from "@supabase/supabase-js";
 
-console.log('🧠 authStore module loaded');
-
 // Cross-platform storage functions
 const getStorageItem = async (key: string): Promise<string | null> => {
   try {
@@ -280,10 +278,8 @@ export const useAuthStore = create(
       updateComputedProperties: () => {
         const state = get();
         const birthdate = state.profile?.birthdate || null;
-        console.log('🔄 Updating computed properties with birthdate:', birthdate);
         const newIsAdult = calculateIsAdult(birthdate);
         const newCanUseSocial = canAccessSocial(birthdate);
-        console.log('✅ Computed values:', { isAdult: newIsAdult, canUseSocialFeatures: newCanUseSocial });
         set((state) => ({
           ...state,
           isAdult: newIsAdult,
@@ -620,7 +616,6 @@ const initializeAuth = async () => {
 
 // Mark as initialized immediately - the listener will handle auth state
 useAuthStore.setState({ _authInitialized: true });
-console.log('✅ Auth store initialized, relying on listener for auth state');
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {

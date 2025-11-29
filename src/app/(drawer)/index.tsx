@@ -53,27 +53,10 @@ export default function Home() {
   useEffect(() => {
     const loadNews = async () => {
       try {
-        console.log('[HOME] Starting news fetch...');
         const articles = await getRecentNews(2);
-        console.log('[HOME] News fetch complete. Article count:', articles.length);
-        console.log('[HOME] Articles:', JSON.stringify(articles.map(a => ({ id: a.id, title: a.title })), null, 2));
         setNewsArticles(articles);
-        // Log excerpt snippet, HTML entity presence and image existence for each article
-        articles.forEach((a) => {
-          const excerptSnippet = (a.excerpt || '').substring(0, 120);
-          const hasAngleBracket = /</.test(a.excerpt || '');
-          const hasEncodedLt = /&lt;/.test(a.excerpt || '');
-          console.log('[HOME] Article:', {
-            id: a.id,
-            excerptSnippet,
-            hasAngleBracket,
-            hasEncodedLt,
-            hasImage: !!a.imageUrl,
-          });
-        });
       } catch (error) {
         console.error('[HOME] Failed to load news:', error);
-        console.error('[HOME] Error details:', error instanceof Error ? error.message : String(error));
       } finally {
         setLoadingNews(false);
       }
