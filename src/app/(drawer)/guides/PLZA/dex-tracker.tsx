@@ -303,8 +303,8 @@ export default function DexTrackerPage() {
           }
         >
           <AuthStatus />
-          <View className="flex-row items-center gap-3 mb-4">
-            <View className="flex-1">
+          <View className="flex-row items-center gap-3 mb-4" style={{ zIndex: 50 }}>
+            <View className="flex-1" style={{ zIndex: 50 }}>
               <SearchBar value={query} onChange={setQuery} />
             </View>
             <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Pokédex Tracker" />

@@ -97,7 +97,7 @@ export default function TypeAnalyzer() {
         />
       </Head>
      
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-center justify-between" style={{ zIndex: 50 }}>
         <TypeHeader onPokemonSelect={handlePokemonSelect} />
         <View className="pr-3 pl-3">
           <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Type Analyzer" />

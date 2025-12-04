@@ -32,7 +32,7 @@ export const TypeHeader = ({ onPokemonSelect, onTypeSelect }: TypeHeaderProps) =
   };
 
   return (
-    <View className="flex-row items-center gap-3 my-3 px-2" style={{ zIndex: 10, overflow: 'visible' }}>
+    <View className="flex-row items-center gap-3 my-3 px-2 flex-1" style={{ zIndex: 50, overflow: 'visible' }}>
       {/* Toggle Switch */}
       <View className="flex-row bg-app-muted rounded-lg p-1 border border-app-secondary dark:border-dark-app-secondary">
         <Pressable
@@ -72,18 +72,22 @@ export const TypeHeader = ({ onPokemonSelect, onTypeSelect }: TypeHeaderProps) =
 
       {/* Pokemon Search Input */}
       {onPokemonSelect && (
+        <View className="flex-1">
           <PokemonSearch 
             onPokemonSelect={onPokemonSelect}
             placeholder="Search Pokémon..."
           />
+        </View>
       )}
 
       {/* Type Search Input */}
       {onTypeSelect && (
-        <TypeSearch 
-          onTypeSelect={onTypeSelect}
-          placeholder="Search type..."
-        />
+        <View className="flex-1">
+          <TypeSearch 
+            onTypeSelect={onTypeSelect}
+            placeholder="Search type..."
+          />
+        </View>
       )}
     </View>
   );

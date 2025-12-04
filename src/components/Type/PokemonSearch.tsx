@@ -84,7 +84,7 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
   };
 
   return (
-    <View className="relative flex-1 max-w-[300px]" style={{ zIndex: 10, overflow: 'visible' }}>
+    <View className="relative flex-1 max-w-[400px]" style={{ zIndex: 1000, overflow: 'visible' }}>
       <TextInput
         placeholder={placeholder}
         placeholderTextColor="#9CA3AF"

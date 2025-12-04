@@ -80,7 +80,7 @@ export default function LumioseDexSearch({
   };
 
   return (
-    <View className="relative" style={{ zIndex: 10, overflow: 'visible' }}>
+    <View className="relative" style={{ zIndex: 1000, overflow: 'visible' }}>
       <View className="flex-row items-center bg-gray-100 rounded-lg px-3 py-3 border border-gray-300">
         <Ionicons name="search" size={18} color="#6b7280" style={{ marginRight: 8 }} />
         <TextInput
