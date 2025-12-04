@@ -44,7 +44,7 @@ export default function PLZALayout() {
       }}
       />
       <Tabs.Screen
-      name="dexTracker"
+      name="dex-tracker"
       options={{
         title: 'Pokédex Tracker',
         headerShown: false,
