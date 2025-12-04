@@ -13,7 +13,7 @@ interface HomeCardsProps {
 }
 
 export const HomeCards: React.FC<HomeCardsProps> = ({
-  newestFeaturePath = '/(drawer)/guides/PLZA/strategies',
+  newestFeaturePath = '/guides/PLZA/strategies',
   newestFeatureTitle = 'Legends Z-A',
 }) => {
   const { width } = useWindowDimensions();
@@ -24,6 +24,7 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
   const isSignedIn = !!user;
   
   const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
+  const getFavoriteTitle = useFavoriteFeaturesStore((s) => s.getFavoriteTitle);
   const favoriteKeys = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
 
   // Calculate responsive columns
@@ -38,21 +39,36 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
     return favoriteKeys
       .map(key => {
         const meta = getFeatureMeta(key);
-        if (!meta || !meta.path) return null;
+        const storedTitle = getFavoriteTitle(key);
+        
+        // Use stored title as fallback if feature isn't registered
+        const title = meta?.title || storedTitle || 'Feature';
+        const icon = meta?.icon || 'book';
+        
+        // Construct path from feature key if meta not available
+        // Feature keys follow format: "feature:path.to.page"
+        let path = meta?.path;
+        if (!path && key.startsWith('feature:')) {
+          // Extract path from key: "feature:guides.PLZA.strategies.competitive-training" -> "/guides/PLZA/strategies/competitive-training"
+          path = '/' + key.replace('feature:', '').replace(/\./g, '/');
+        }
+        
+        // Skip if we still don't have a valid path
+        if (!path || path === '#') return null;
         
         return (
           <View key={key} style={{ width: cardWidth, marginBottom: 16 }}>
             <HomeCard
-              title={meta.title || 'Feature'}
-              icon={meta.icon as any}
-              path={meta.path}
+              title={title}
+              icon={icon as any}
+              path={path}
               variant="favorite"
             />
           </View>
         );
       })
       .filter(Boolean);
-  }, [favoriteKeys, cardWidth]);
+  }, [favoriteKeys, cardWidth, getFavoriteTitle]);
 
   return (
     <>

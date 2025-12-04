@@ -1,4 +1,4 @@
-import { eq, and } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { db } from './index.js';
 import { favoriteFeatures } from './favoritesSchema.js';
 
@@ -21,7 +21,15 @@ export async function addFavoriteFeature(userId: string, featureKey: string, fea
 
 export async function removeFavoriteFeature(userId: string, featureKey: string) {
   try {
-    const deleted = await db.delete(favoriteFeatures).where(and(eq(favoriteFeatures.userId, userId), eq(favoriteFeatures.featureKey, featureKey))).returning();
+    // Use case-insensitive comparison for feature_key
+    const deleted = await db.delete(favoriteFeatures)
+      .where(
+        and(
+          eq(favoriteFeatures.userId, userId),
+          sql`LOWER(${favoriteFeatures.featureKey}) = LOWER(${featureKey})`
+        )
+      )
+      .returning();
     return Array.isArray(deleted) && deleted.length > 0;
   } catch (error) {
     console.error('[favoritesQueries] removeFavoriteFeature error:', error);

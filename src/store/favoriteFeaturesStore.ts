@@ -7,6 +7,7 @@ import { buildApiUrl, buildApiUrlNoTrailingSlash, API_BASE_URL } from '@/src/uti
 
 interface FavoriteFeaturesState {
   favorites: Record<string, true>;
+  favoriteTitles: Record<string, string>;
   pendingAdds: string[];
   pendingRemoves: string[];
   isSyncing: boolean;
@@ -14,26 +15,60 @@ interface FavoriteFeaturesState {
   initialize: () => Promise<void>;
   allFavorites: () => string[];
   isFavorite: (key: string) => boolean;
+  getFavoriteTitle: (key: string) => string | undefined;
   toggleFavorite: (key: string, title?: string) => Promise<void>;
   syncPending: () => Promise<void>;
   resetSyncing: () => void;
 }
 
 const createStorage = () => {
-  const isWeb = Platform.OS === 'web' && typeof window !== 'undefined';
-  if (isWeb) {
+  // For web, always use localStorage directly (handles SSR/static export)
+  if (Platform.OS === 'web') {
     return {
       getItem: (name: string) => {
-        try { return localStorage.getItem(name); } catch { return null; }
+        try { 
+          if (typeof window === 'undefined') return null;
+          return localStorage.getItem(name); 
+        } catch { 
+          return null; 
+        }
       },
-      setItem: (name: string, value: string) => { try { localStorage.setItem(name, value); } catch {} },
-      removeItem: (name: string) => { try { localStorage.removeItem(name); } catch {} },
+      setItem: (name: string, value: string) => { 
+        try { 
+          if (typeof window === 'undefined') return;
+          localStorage.setItem(name, value); 
+        } catch {} 
+      },
+      removeItem: (name: string) => { 
+        try { 
+          if (typeof window === 'undefined') return;
+          localStorage.removeItem(name); 
+        } catch {} 
+      },
     };
   }
+  // For native, use AsyncStorage directly (not through universalStorage)
   return {
-    getItem: async (name: string) => await universalStorage.getItem(name),
-    setItem: async (name: string, value: string) => await universalStorage.setItem(name, value),
-    removeItem: async (name: string) => await universalStorage.removeItem(name),
+    getItem: async (name: string) => {
+      try {
+        const AsyncStorage = await import('@react-native-async-storage/async-storage');
+        return await AsyncStorage.default.getItem(name);
+      } catch {
+        return null;
+      }
+    },
+    setItem: async (name: string, value: string) => {
+      try {
+        const AsyncStorage = await import('@react-native-async-storage/async-storage');
+        await AsyncStorage.default.setItem(name, value);
+      } catch {}
+    },
+    removeItem: async (name: string) => {
+      try {
+        const AsyncStorage = await import('@react-native-async-storage/async-storage');
+        await AsyncStorage.default.removeItem(name);
+      } catch {}
+    },
   };
 };
 
@@ -41,6 +76,13 @@ const createStorage = () => {
 
 async function getValidAccessToken() {
   try {
+    // Try to get session from auth store first (faster)
+    const authSession = useAuthStore.getState().session;
+    if (authSession?.access_token) {
+      return authSession.access_token;
+    }
+    
+    // Fallback to Supabase if auth store doesn't have it
     const { supabase } = await import('@/src/utils/supabaseClient');
     const { data: { session }, error } = await supabase.auth.getSession();
     if (error) { console.error('[favoritesStore] supabase.getSession error', error); }
@@ -55,6 +97,7 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
   persist(
     (set, get) => ({
       favorites: {},
+      favoriteTitles: {},
       pendingAdds: [],
       pendingRemoves: [],
       isSyncing: false,
@@ -63,31 +106,35 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
       initialize: async () => {
         const user = useAuthStore.getState().user;
         const uid = user?.id;
-        console.log('[favoritesStore] initialize START', { uid, hasUser: !!user });
         try {
           set({ isSyncing: true });
-          console.log('[favoritesStore] set isSyncing=true');
-          // Already persisted by zustand middleware - but fetch from server if logged in
           if (uid) {
             const token = await getValidAccessToken();
-            console.log('[favoritesStore] got token:', !!token);
             if (token) {
               const url = buildApiUrl('favorites');
-              console.log('[favoritesStore] fetching from:', url);
               const res = await fetch(url, {
                 headers: {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${token}`,
                 },
               });
-              console.log('[favoritesStore] fetch response status:', res.status);
               if (res.ok) {
                 const json = await res.json();
-                console.log('[favoritesStore] fetch response data:', json);
                 if (json?.data && Array.isArray(json.data)) {
                   const favMap: Record<string, true> = {};
-                  json.data.forEach((r: any) => favMap[r.feature_key] = true);
-                  set({ favorites: favMap });
+                  const titleMap: Record<string, string> = {};
+                  json.data.forEach((r: any) => {
+                    // Handle both camelCase (featureKey) and snake_case (feature_key)
+                    const key = r.featureKey || r.feature_key;
+                    const title = r.featureTitle || r.feature_title;
+                    if (key) {
+                      favMap[key] = true;
+                      if (title) {
+                        titleMap[key] = title;
+                      }
+                    }
+                  });
+                  set({ favorites: favMap, favoriteTitles: titleMap });
                 }
               }
             }
@@ -95,7 +142,6 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
         } catch (err) {
           console.error('[favoritesStore] initialize error:', err);
         } finally {
-          console.log('[favoritesStore] initialize FINALLY - setting isSyncing=false');
           set({ isSyncing: false, _hasHydrated: true });
         }
       },
@@ -104,25 +150,34 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
 
       isFavorite: (key: string) => !!get().favorites[key],
 
+      getFavoriteTitle: (key: string) => get().favoriteTitles[key],
+
       toggleFavorite: async (key: string, title?: string) => {
-        console.log('[favoritesStore] toggleFavorite START', { key, title });
         const isFav = get().isFavorite(key);
         const user = useAuthStore.getState().user;
         const token = await getValidAccessToken();
-        console.log('[favoritesStore] toggleFavorite auth check', { hasUser: !!user, hasToken: !!token, isFav });
         if (!user || !token) {
-          // Caller (UI) should handle prompting login
           throw new Error('AUTH_REQUIRED');
         }
 
-        // Optimistically update local state
-        set((state) => ({
-          favorites: {
-            ...state.favorites,
-            ...(isFav ? {} : { [key]: true }),
-          },
-        }));
-        console.log('[favoritesStore] setting isSyncing=true');
+        // Optimistically update local state IMMEDIATELY for both add and remove
+        if (isFav) {
+          // Removing - delete immediately
+          set((state) => {
+            const favCopy = { ...state.favorites };
+            const titleCopy = { ...state.favoriteTitles };
+            delete favCopy[key];
+            delete titleCopy[key];
+            return { favorites: favCopy, favoriteTitles: titleCopy };
+          });
+        } else {
+          // Adding - add immediately
+          set((state) => ({
+            favorites: { ...state.favorites, [key]: true },
+            favoriteTitles: title ? { ...state.favoriteTitles, [key]: title } : state.favoriteTitles,
+          }));
+        }
+        
         set({ isSyncing: true });
 
         try {
@@ -136,21 +191,24 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
             if (!res.ok) {
               // revert on failure
               set((state) => {
-                const copy = { ...state.favorites };
-                delete copy[key];
-                return { favorites: copy };
+                const favCopy = { ...state.favorites };
+                const titleCopy = { ...state.favoriteTitles };
+                delete favCopy[key];
+                delete titleCopy[key];
+                return { favorites: favCopy, favoriteTitles: titleCopy };
               });
             } else {
               try {
                 const json = await res.json();
                 const addedKey = json?.data?.feature_key;
-                if (!addedKey) {
-                  // fallback: ensure our optimistic state still applies
-                  set((state) => ({ favorites: { ...state.favorites, [key]: true } }));
-                } else {
-                  set((state) => ({ favorites: { ...state.favorites, [addedKey]: true } }));
+                const addedTitle = json?.data?.feature_title;
+                if (addedKey) {
+                  set((state) => ({
+                    favorites: { ...state.favorites, [addedKey]: true },
+                    favoriteTitles: addedTitle ? { ...state.favoriteTitles, [addedKey]: addedTitle } : state.favoriteTitles,
+                  }));
                 }
-              } catch (err) {
+              } catch {
                 // no-op; keep optimistic
               }
             }
@@ -161,35 +219,35 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             });
             if (!res.ok) {
-              // If the server returned 404 (not found), treat as success
+              // If the server returned 404 (not found), treat as success - already deleted
               if (res.status === 404) {
-                set((state) => {
-                  const copy = { ...state.favorites };
-                  delete copy[key];
-                  return { favorites: copy };
-                });
+                // optimistic delete already done, no-op
               } else {
                 // revert on other failures
-                set((state) => ({ favorites: { ...state.favorites, [key]: true } }));
+                set((state) => ({
+                  favorites: { ...state.favorites, [key]: true },
+                  favoriteTitles: title ? { ...state.favoriteTitles, [key]: title } : state.favoriteTitles,
+                }));
               }
-            } else {
-              set((state) => {
-                const copy = { ...state.favorites };
-                delete copy[key];
-                return { favorites: copy };
-              });
             }
+            // On success, optimistic delete already applied, no-op
           }
         } catch (err) {
           console.error('[favoritesStore] toggleFavorite error:', err);
           // revert optimistic update
           set((state) => {
-            const copy = { ...state.favorites };
-            if (isFav) copy[key] = true; else delete copy[key];
-            return { favorites: copy };
+            const favCopy = { ...state.favorites };
+            const titleCopy = { ...state.favoriteTitles };
+            if (isFav) {
+              favCopy[key] = true;
+              if (title) titleCopy[key] = title;
+            } else {
+              delete favCopy[key];
+              delete titleCopy[key];
+            }
+            return { favorites: favCopy, favoriteTitles: titleCopy };
           });
         } finally {
-          console.log('[favoritesStore] toggleFavorite FINALLY - setting isSyncing=false');
           set({ isSyncing: false });
         }
       },
@@ -197,7 +255,6 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
       syncPending: async () => { /* Basic implementation omitted for now */ },
 
       resetSyncing: () => {
-        console.log('[favoritesStore] MANUAL resetSyncing called');
         set({ isSyncing: false });
       },
     }),

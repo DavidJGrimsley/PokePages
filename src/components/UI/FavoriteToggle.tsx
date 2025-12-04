@@ -1,7 +1,6 @@
-import React from 'react';
-import { Pressable } from 'react-native';
-import Animated, { Layout, FadeIn, FadeOut } from 'react-native-reanimated';
-import { Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { Pressable, View, Platform } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import useFavoriteFeaturesStore from '@/src/store/favoriteFeaturesStore';
 import { useAuthStore } from '@/src/store/authStore';
@@ -21,24 +20,35 @@ export default function FavoriteToggle({ featureKey, featureTitle, size = 22, st
   const isSyncing = useFavoriteFeaturesStore((s) => s.isSyncing);
   const navigateToSignIn = useNavigateToSignIn();
 
-  console.log('[FavoriteToggle] RENDER', { featureKey, isLoggedIn, isFavorite, isSyncing });
+  const progress = useSharedValue(isFavorite ? 1 : 0);
 
-  // Use Reanimated Layout and Fade transitions for a simpler dissolve effect
+  useEffect(() => {
+    progress.value = withTiming(isFavorite ? 1 : 0, { duration: 300 });
+  }, [isFavorite, progress]);
+
+  const filledStyle = useAnimatedStyle(() => {
+    return {
+      opacity: progress.value,
+      transform: [{ scale: 0.9 + progress.value * 0.1 }],
+    };
+  });
+
+  const outlineStyle = useAnimatedStyle(() => {
+    return {
+      opacity: 1 - progress.value,
+      transform: [{ scale: 1 - progress.value * 0.1 }],
+    };
+  });
 
   const handleToggle = async () => {
-    console.log('[FavoriteToggle] handleToggle CALLED', { featureKey, isLoggedIn, isFavorite, isSyncing });
     try {
       if (!isLoggedIn) {
-        console.log('[FavoriteToggle] not logged in, navigating to sign-in');
         navigateToSignIn();
         return;
       }
-      console.log('[FavoriteToggle] calling toggleFavorite...');
       await toggleFavorite(featureKey, featureTitle);
-      console.log('[FavoriteToggle] toggleFavorite completed');
     } catch (err: any) {
       if (err?.message === 'AUTH_REQUIRED') {
-        console.log('[FavoriteToggle] auth required error');
         navigateToSignIn();
       } else {
         console.error('[FavoriteToggle] toggle error', err);
@@ -49,18 +59,20 @@ export default function FavoriteToggle({ featureKey, featureTitle, size = 22, st
   return (
     <Pressable
       onPress={handleToggle}
-      onPressIn={() => console.log('[FavoriteToggle] onPressIn')}
-      onPressOut={() => console.log('[FavoriteToggle] onPressOut')}
       accessibilityLabel="toggle favorite"
       accessibilityRole="button"
       accessibilityState={{ selected: isFavorite }}
-      style={[{ padding: 8, minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', zIndex: 999, ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}) }, style]}
       hitSlop={{ top: 8, left: 8, bottom: 8, right: 8 }}
       disabled={isSyncing}
     >
-      <Animated.View layout={Layout} entering={FadeIn.duration(200)} exiting={FadeOut.duration(150)}>
-        <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={size} color={isFavorite ? '#F44336' : '#6B7280'} />
-      </Animated.View>
+      <View style={{ position: 'relative', width: size, height: size }}>
+        <Animated.View style={[{ position: 'absolute' }, outlineStyle]}>
+          <Ionicons name="heart-outline" size={size} color="#6B7280" />
+        </Animated.View>
+        <Animated.View style={[{ position: 'absolute' }, filledStyle]}>
+          <Ionicons name="heart" size={size} color="#F44336" />
+        </Animated.View>
+      </View>
     </Pressable>
   );
 }

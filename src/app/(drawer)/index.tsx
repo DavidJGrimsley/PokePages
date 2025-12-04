@@ -30,18 +30,11 @@ export default function Home() {
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
   
-  useEffect(() => {
-    console.log('[HOME] Favorite Features:', favorites);
-  }, [favorites]);
-
   // Ensure favorites store initializes and syncs for signed-in users
   useEffect(() => {
     const init = async () => {
       try {
-        // Avoid re-initializing if the persisted store has already hydrated
-        if (!useFavoriteFeaturesStore.getState()._hasHydrated) {
-          await useFavoriteFeaturesStore.getState().initialize();
-        }
+        await useFavoriteFeaturesStore.getState().initialize();
       } catch (e) {
         console.error('[HOME] favorite store init failed', e);
       }
@@ -162,8 +155,8 @@ export default function Home() {
 
             {/* HomeCards Section */}
             <HomeCards
-              newestFeaturePath="/(drawer)/guides/PLZA/dexTracker"
-              newestFeatureTitle="Legends Z-A Form Tracker"
+              newestFeaturePath="/guides/PLZA/dex-tracker"
+              newestFeatureTitle="Legends: Z-A Form Tracker"
             />
 
             {/* Conditional Events Section */}

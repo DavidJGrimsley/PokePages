@@ -12,6 +12,8 @@ import { EVYields } from '@/src/components/Guides/EVYields';
 import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
 import { ImageGallery } from '@/src/components/Guides/ImageGallery';
 import { Strategy, StrategiesConfig } from '@/src/types/strategy';
+import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
+import { registerFeature } from '@/src/utils/featureRegistry';
 
 // Static generation for all strategy slugs
 export async function generateStaticParams(): Promise<{ id: string }[]> {
@@ -30,6 +32,22 @@ export default function StrategyDetail() {
   
   // If no config found, default to first strategy
   const finalConfig: Strategy = config || (strategiesConfig as StrategiesConfig)[Object.keys(strategiesConfig)[0]];
+  
+  // Register feature for favorites - use actual route path which preserves case
+  const actualPath = typeof window !== 'undefined' ? window.location.pathname : `/guides/PLZA/strategies/${strategySlug}`;
+  // Extract the path segments to construct feature key - handle case sensitivity
+  const pathMatch = actualPath.match(/\/guides\/([^\/]+)\/strategies\/([^\/]+)/);
+  const gameFolder = pathMatch?.[1] || 'PLZA';
+  const featureKey = `feature:guides.${gameFolder}.strategies.${strategySlug}`;
+  
+  React.useEffect(() => {
+    registerFeature({
+      key: featureKey,
+      title: finalConfig.title,
+      path: `/guides/PLZA/strategies/${strategySlug}`,
+      icon: 'book'
+    });
+  }, [strategySlug, finalConfig.title, featureKey]);
   
   // SEO meta content
   const title = `PP: ${finalConfig.title} - Pokémon Legends Z-A | PokePages`;
@@ -93,13 +111,16 @@ export default function StrategyDetail() {
           titleElement={<BouncyText text={`${finalConfig.icon} ${finalConfig.title}`} />}
           headerHeight={isMobile ? 75 : 150}
         >
-          <Text
-            role="heading"
-            aria-level={1}
-            className="text-xl font-bold mb-0 text-app-secondary"
-          >
-            {finalConfig.subtitle}
-          </Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text
+              role="heading"
+              aria-level={1}
+              className="text-xl font-bold flex-1 text-app-secondary"
+            >
+              {finalConfig.subtitle}
+            </Text>
+            <FavoriteToggle featureKey={featureKey} featureTitle={finalConfig.title} />
+          </View>
 
           <AppText className="text-base mb-0 text-gray-700 dark:text-gray-400">
             {finalConfig.description}
