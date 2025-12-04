@@ -624,7 +624,6 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
     event,
     hasSession: !!session,
     userId: session?.user?.id,
-    userEmail: session?.user?.email,
   });
   
   const { setUser, setSession, setProfile } = useAuthStore.getState();

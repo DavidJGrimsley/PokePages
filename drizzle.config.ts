@@ -5,6 +5,7 @@ export default defineConfig({
   out: './drizzle',
   schema: [
     './src/db/eventsSchema.ts',
+    './src/db/eventClaimsSchema.ts',
     './src/db/profilesSchema.ts',
     './src/db/legendsZATrackerSchema.ts',
     './src/db/socialSchema.ts',

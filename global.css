@@ -14,9 +14,15 @@
     font-weight: 400;
   }
   
+  .typography-display-responsive {
+    font-family: 'Modak';
+    font-size: clamp(32px, 8vw, 48px);
+    font-weight: 400;
+  }
+  
   .typography-display-outlined {
     font-family: 'Modak';
-    font-size: 80px;
+    font-size: clamp(48px, 10vw, 80px);
     font-weight: 400;
     color: rgba(251, 251, 251, 1);
     text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
@@ -24,14 +30,14 @@
   
   .typography-display-outlined-ios {
     font-family: 'Modak';
-    font-size: 32px;
+    font-size: clamp(24px, 6vw, 32px);
     font-weight: 400;
     color: rgba(251, 251, 251, 1);
     text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
   }
   .typography-display-outlined-android {
     font-family: 'Modak';
-    font-size: 40px;
+    font-size: clamp(28px, 7vw, 40px);
     font-weight: 400;
     color: rgba(251, 251, 251, 1);
     text-shadow: 2px 2px 1px rgba(20, 17, 21, 1);
@@ -96,6 +102,11 @@
     font-family: 'RobotoMono';
     font-size: 14px;
     font-weight: 700;
+  }
+
+  /* Font-mono utility that doesn't override size */
+  .font-mono-family {
+    font-family: 'RobotoMono', 'Courier New', monospace;
   }
 
   /* Shadow Presets */

@@ -3,14 +3,13 @@
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Helper to detect web
-const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
-
 // Universal async adapter
 export const universalStorage = {
   async getItem(key: string): Promise<string | null> {
     try {
-      console.log(`[STORAGE] Getting item with key: ${key}, platform: ${Platform.OS}`);
+      // Check for web at runtime to handle SSR
+      const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
+      console.log(`[STORAGE] Getting item with key: ${key}, platform: ${Platform.OS}, isWeb: ${isWeb}`);
       let result: string | null;
       if (isWeb) {
         result = window.localStorage.getItem(key);
@@ -27,6 +26,7 @@ export const universalStorage = {
 
   async setItem(key: string, value: string): Promise<void> {
     try {
+      const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
       console.log(`[STORAGE] Setting item with key: ${key}, value length: ${value.length}, platform: ${Platform.OS}`);
       if (isWeb) {
         window.localStorage.setItem(key, value);
@@ -42,6 +42,7 @@ export const universalStorage = {
 
   async removeItem(key: string): Promise<void> {
     try {
+      const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
       if (isWeb) {
         window.localStorage.removeItem(key);
       } else {
@@ -55,6 +56,7 @@ export const universalStorage = {
 
   async getAllKeys(): Promise<readonly string[]> {
     try {
+      const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
       if (isWeb) {
         return Object.keys(window.localStorage);
       } else {
@@ -68,6 +70,7 @@ export const universalStorage = {
 
   async clear(): Promise<void> {
     try {
+      const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
       if (isWeb) {
         window.localStorage.clear();
       } else {

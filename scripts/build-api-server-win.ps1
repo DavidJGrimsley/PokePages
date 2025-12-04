@@ -30,6 +30,14 @@ Copy-Item api-server-package.json api-server/package.json -Force
 if (Test-Path start-api-server.sh) { Copy-Item start-api-server.sh api-server/start-api-server.sh -Force }
 if (Test-Path start-api-server.bat) { Copy-Item start-api-server.bat api-server/start-api-server.bat -Force }
 
+# Copy .env file
+if (Test-Path api-server.env) {
+    Write-Output "Copying api-server.env to api-server/.env..."
+    Copy-Item api-server.env api-server/.env -Force
+} else {
+    Write-Output "Warning: api-server.env file not found. Skipping copy."
+}
+
 # Optional copy of .env (should not be present by default in production)
 if ($CopyEnv) {
     if (Test-Path .env) {

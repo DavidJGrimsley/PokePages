@@ -34,7 +34,7 @@ export default function Gen9Layout() {
         }}
       />
       <Tabs.Screen
-        name="top50"
+        name="top-50"
         options={{
           title: 'Top 50 Builds',
           headerShown: false,

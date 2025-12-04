@@ -17,7 +17,7 @@ import { buildApiUrl } from '~/utils/apiConfig';
 import LottieView from 'lottie-react-native';
 
 import { useAuthStore } from '~/store/authStore';
-import { getEventStatus } from '~/utils/helperFX';
+import { getCounterEventStatus } from '~/utils/helperFX';
 import ErrorMessage from '~/components/Meta/Error';
 import { cn } from '~/utils/cn';
 import { useNavigateToSignIn } from '~/hooks/useNavigateToSignIn';
@@ -56,6 +56,7 @@ interface EventData {
 interface EventCounterProps {
   pokemonName: string;
   pokemonId: number;
+  isShiny?: boolean;
   teraType: string;
   eventTitle: string;
   eventDescription: string;
@@ -73,6 +74,7 @@ interface EventCounterProps {
 export const EventCounter: React.FC<EventCounterProps> = ({
   pokemonName,
   pokemonId,
+  isShiny = false,
   teraType,
   eventTitle,
   eventDescription,
@@ -205,8 +207,12 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           return;
         }
        
-        const imageUrl = pokemon.sprites.other?.['official-artwork']?.front_default || 
-                          pokemon.sprites.front_default || '';
+        const imageUrl = isShiny 
+        // Ignore the ts error about "Property 'front_shiny' does not exist on type 'OfficialArtwork'.ts(2339)"
+          ? (pokemon.sprites.other?.['official-artwork']?.front_shiny || 
+                          pokemon.sprites.front_shiny || '')
+          : (pokemon.sprites.other?.['official-artwork']?.front_default || 
+             pokemon.sprites.front_default || '');
         setPokemonImage(imageUrl);
         
         const statsArray = Array.isArray(pokemon.stats) ? pokemon.stats : [];
@@ -232,13 +238,12 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     };
 
     loadPokemonData();
-  }, [pokemonId]);
+  }, [pokemonId, isShiny]);
 
   // Fetch event data from API
   const fetchEventData = React.useCallback(async () => {
     try {
       const response = await fetch(`${apiUrl}${eventKey}`);
-      console.log('Api URL called:', `${apiUrl}${eventKey}`);
       const result = await response.json();
       
       if (result.success) {
@@ -302,7 +307,6 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       
       // Check if the date is valid
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date string:', dateString);
         return 'Date TBD';
       }
       
@@ -316,7 +320,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
     }
   };
 
-  const status = getEventStatus(startDate, endDate, distributionStart, distributionEnd);
+  const status = getCounterEventStatus(startDate, endDate, distributionStart, distributionEnd);
   
   // Get countdown text
   const getCountdownText = () => {
@@ -413,7 +417,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
   };
 
   return (
-    <ScrollView className="flex-1 bg-app-background" showsVerticalScrollIndicator={false}>
+    <ScrollView className="flex-1 bg-app-background dark:bg-dark-app-background" showsVerticalScrollIndicator={false}>
       {/* Pokemon Image - using exact original styling */}
       <View className="items-center my-sm h-[200px] justify-center">
         {imageLoading ? (
@@ -430,8 +434,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             resizeMode="contain"
           />
         ) : (
-          <View className="w-45 h-45 bg-app-secondary rounded-full justify-center items-center border-2 border-app-accent">
-            <Text className="typography-copy text-app-brown text-center">{pokemonName}</Text>
+          <View className="w-45 h-45 bg-app-secondary dark:bg-gray-700 rounded-full justify-center items-center border-2 border-app-accent dark:border-app-accent">
+            <Text className="typography-copy text-app-brown dark:text-gray-300 text-center">{pokemonName}</Text>
           </View>
         )}
       </View>
@@ -439,8 +443,8 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       {/* Show login prompt for better experience - using exact original styling */}
       {!isLoggedIn && (
         <Pressable onPress={navigateToSignIn}>
-          <View className="bg-app-background mx-lg my-sm p-md rounded-md border border-app-primary">
-            <Text className="typography-copy text-app-primary text-center">
+          <View className="bg-app-background dark:bg-dark-app-background mx-lg my-sm p-md rounded-md border border-app-primary dark:border-app-accent">
+            <Text className="typography-copy text-app-primary dark:text-app-accent text-center">
               💡 Sign in to sync your progress across devices and get personalized stats!
             </Text>
           </View>
@@ -448,26 +452,26 @@ export const EventCounter: React.FC<EventCounterProps> = ({
       )}
 
       {/* Counter Display - using exact original styling */}
-      <View className="bg-app-white py-xs px-lg my-sm mx-lg rounded-md border border-app-secondary shadow-app-small">
-        <Text className="typography-header text-center text-app-accent mb-sm">
+      <View className="bg-app-white dark:bg-dark-app-background py-xs px-lg my-sm mx-lg rounded-md border border-app-secondary dark:border-app-accent shadow-app-small">
+        <Text className="typography-header text-center text-app-accent dark:text-app-primary mb-sm">
           Global Count: {globalCount.toLocaleString()}
         </Text>
-        <Text className="typography-subheader text-center text-app-primary mb-sm">
+        <Text className="typography-subheader text-center text-app-primary dark:text-app-accent mb-sm">
           Your Contributions: {userCount.toLocaleString()}
         </Text>
         {!isLoggedIn && anonymousId && (
-          <Text className="typography-mono text-app-brown text-center">
+          <Text className="typography-mono text-app-brown dark:text-gray-400 text-center">
             Anonymous ID: {anonymousId.slice(-8)}
           </Text>
         )}
         {isLoggedIn && anonymousId && (
-          <Text className="typography-mono text-app-brown text-center">
+          <Text className="typography-mono text-app-brown dark:text-gray-400 text-center">
             Anonymous ID: {anonymousId.slice(-8)}
           </Text>
         )}
         {lastUpdated && (
-          <Text className="typography-copy text-app-brown text-center mb-sm">
-            Last updated: {new Date(lastUpdated).toLocaleString()}
+          <Text className="typography-copy text-app-brown dark:text-gray-400 text-center mb-sm">
+            Last updated: {new Date(lastUpdated).toLocaleTimeString()}
           </Text>
         )}
       </View>
@@ -483,7 +487,7 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
       {/* Tera Type - using exact original styling */}
       <View className="my-md flex-row justify-center">
-        <Text className="typography-header mb-md text-center text-app-text px-lg">
+        <Text className="typography-header mb-md text-center text-app-text dark:text-dark-app-text px-lg">
           {teraType} Tera Type
         </Text>
         <Pressable onPress={() => setShowBaseStats(!showBaseStats)}>
@@ -495,32 +499,32 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
       {/* Base Stats Section - using exact original styling with dynamic colors */}
       {(pokemonStats && showBaseStats) && (
-        <View className="bg-app-white my-md p-md rounded-md border border-app-secondary shadow-app-small self-center" style={{ width: getStatsContainerWidth() }}>
-          <Text className="typography-subheader text-center text-app-text mb-md">Base Stats</Text>
+        <View className="bg-app-white dark:bg-dark-app-background my-md p-md rounded-md border border-app-secondary dark:border-app-accent shadow-app-small self-center" style={{ width: getStatsContainerWidth() }}>
+          <Text className="typography-header text-center text-app-text dark:text-dark-app-text mb-md">Base Stats</Text>
           <View className="flex-row flex-wrap justify-between">
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.hp) }}>
-              <Text className="typography-copy text-app-text mb-xs">HP</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.hp}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">HP</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.hp}</Text>
             </View>
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.attack) }}>
-              <Text className="typography-copy text-app-text mb-xs">Attack</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.attack}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">Attack</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.attack}</Text>
             </View>
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.defense) }}>
-              <Text className="typography-copy text-app-text mb-xs">Defense</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.defense}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">Defense</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.defense}</Text>
             </View>
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.specialAttack) }}>
-              <Text className="typography-copy text-app-text mb-xs">Sp. Atk</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.specialAttack}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">Sp. Atk</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.specialAttack}</Text>
             </View>
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.specialDefense) }}>
-              <Text className="typography-copy text-app-text mb-xs">Sp. Def</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.specialDefense}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">Sp. Def</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.specialDefense}</Text>
             </View>
             <View className="w-[30%] p-sm rounded-md mb-sm items-center" style={{ backgroundColor: getStatColor(pokemonStats.speed) }}>
-              <Text className="typography-copy text-app-text mb-xs">Speed</Text>
-              <Text className="typography-copy-bold text-app-text">{pokemonStats.speed}</Text>
+              <Text className="typography-copy text-app-text dark:text-app-text mb-xs">Speed</Text>
+              <Text className="typography-copy-bold text-app-text dark:text-app-text">{pokemonStats.speed}</Text>
             </View>
           </View>
         </View>
@@ -534,18 +538,18 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           <View className={cn(
             "my-md mx-lg p-lg rounded-md border-2 items-center",
             globalCount >= maxRew 
-              ? "bg-app-background border-app-secondary" 
-              : "bg-app-background border-app-accent"
+              ? "bg-app-background dark:bg-dark-app-background border-app-secondary dark:border-app-secondary" 
+              : "bg-app-background dark:bg-dark-app-background border-app-accent dark:border-app-accent"
           )}>
             <Text className={cn(
               "typography-subheader text-center mb-md",
-              globalCount >= maxRew ? "text-orange-600" : "text-app-accent"
+              globalCount >= maxRew ? "text-orange-600 dark:text-orange-400" : "text-app-accent dark:text-app-accent"
             )}>
               🎉 {globalCount >= maxRew ? 'MAXIMUM REWARDS UNLOCKED!' : 'MILESTONE REACHED!'} 🎉
             </Text>
             <Text className={cn(
-              "typography-copy text-center mb-sm",
-              globalCount >= maxRew ? "text-orange-800" : "text-app-text"
+              "typography-copy text-center",
+              globalCount >= maxRew ? "text-orange-800 dark:text-orange-300" : "text-app-text dark:text-dark-app-text"
             )}>
               {globalCount >= maxRew 
                 ? `Incredible! We've defeated ${pokemonName} ${globalCount.toLocaleString()} times! All bonus rewards have been unlocked!`
@@ -554,12 +558,12 @@ export const EventCounter: React.FC<EventCounterProps> = ({
             </Text>
             <Text className={cn(
               "typography-copy text-center italic",
-              globalCount >= maxRew ? "text-orange-600" : "text-app-brown"
+              globalCount >= maxRew ? "text-orange-600 dark:text-orange-400" : "text-app-brown dark:text-gray-400"
             )}>
               Don&apos;t forget to claim your {pokemonName} from Mystery Gift between {formatUserFriendlyDate(distributionStart)} and {formatUserFriendlyDate(distributionEnd)}!
             </Text>
-            <View className="bg-app-background mx-lg my-md p-md rounded-md border border-app-secondary">
-              <Text className="typography-copy-bold text-app-brown text-center mb-sm">
+            <View className="bg-app-background dark:bg-dark-app-background mx-lg my-md p-md rounded-md border border-app-secondary dark:border-app-secondary">
+              <Text className="typography-copy-bold text-app-brown dark:text-gray-400 text-center mb-sm">
                 Bonus Rewards Unlocked: {getBonusRewards()}
               </Text>
               <Text className="typography-copy text-app-brown text-center">
@@ -572,20 +576,20 @@ export const EventCounter: React.FC<EventCounterProps> = ({
 
       {/* Progress Bar - using exact original styling */}
       <View className="mx-lg my-md">
-        <View className="h-5 bg-app-secondary rounded-lg overflow-hidden">
+        <View className="h-5 bg-app-secondary dark:bg-gray-700 rounded-lg overflow-hidden">
           <View 
-            className="h-full bg-app-accent rounded-lg"
+            className="h-full bg-app-accent dark:bg-app-accent rounded-lg"
             style={{ width: `${getProgressPercentage()}%` }}
           />
         </View>
-        <Text className="text-center mt-sm typography-copy-bold text-app-accent">
+        <Text className="text-center mt-sm typography-copy-bold text-app-accent dark:text-app-accent">
           {getProgressPercentage().toFixed(3)}% Complete
         </Text>
       </View>
 
       {/* Error Message - using exact original styling */}
       {error && (
-        <Text className="typography-copy text-red-500 text-center my-md px-lg">{error}</Text>
+        <Text className="typography-copy text-red-500 dark:text-red-400 text-center my-md px-lg">{error}</Text>
       )}
 
       {/* Action Button - using exact original styling */}
@@ -610,24 +614,24 @@ export const EventCounter: React.FC<EventCounterProps> = ({
              `Defeated ${pokemonName}`}
           </Text>
         </Pressable>
-        <Text className="typography-copy text-center mx-lg text-app-brown">{eventDescription}</Text>
+        <Text className="typography-copy text-center mx-lg text-app-brown dark:text-gray-400">{eventDescription}</Text>
       </View>
 
       {/* Event Status and Countdown - using exact original styling */}
       <View className={cn(
-        "bg-app-white mx-lg my-md p-md rounded-md border-2 items-center shadow-app-small",
-        status === 'active' ? "border-app-accent bg-app-background" :
-        status === 'upcoming' ? "border-app-secondary bg-app-background" : 
-        "border-app-brown bg-app-background"
+        "bg-app-white dark:bg-dark-app-background mx-lg my-md p-md rounded-md border-2 items-center shadow-app-small",
+        status === 'active' ? "border-app-accent bg-app-background dark:bg-dark-app-background" :
+        status === 'upcoming' ? "border-app-secondary bg-app-background dark:bg-dark-app-background" : 
+        "border-app-brown bg-app-background dark:bg-dark-app-background"
       )}>
-        <Text className="typography-subheader mb-sm text-app-text">
+        <Text className="typography-subheader mb-sm text-app-text dark:text-dark-app-text">
           {status === 'active' ? '🟢 EVENT ACTIVE' :
            status === 'upcoming' ? '🟡 UPCOMING EVENT' : '🔴 EVENT ENDED'}
         </Text>
-        <Text className="typography-copy-bold mb-sm text-app-text text-center">
+        <Text className="typography-copy-bold mb-sm text-app-text dark:text-dark-app-text text-center">
           {getCountdownText()}
         </Text>
-        <Text className="typography-copy text-app-brown text-center italic">
+        <Text className="typography-copy text-app-brown dark:text-gray-400 text-center italic">
           {formatUserFriendlyDate(startDate)} - {formatUserFriendlyDate(endDate)}
         </Text>
       </View>

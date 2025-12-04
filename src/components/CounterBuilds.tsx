@@ -1,76 +1,64 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { BuildVariant } from '~/types/builds';
 import { Build } from 'components/Build';
-import { cn } from '~/utils/cn';
-
-interface CounterBuildData {
-  pokemonName: string;
-  pokemonId: number;
-  pokemonVariant?: string;
-  variant: BuildVariant;
-  ability: string;
-  nature: string;
-  evs: {
-    hp: number;
-    attack: number;
-    defense: number;
-    specialAttack: number;
-    specialDefense: number;
-    speed: number;
-  };
-  ivs?: {
-    hp?: number;
-    attack?: number;
-    defense?: number;
-    specialAttack?: number;
-    specialDefense?: number;
-    speed?: number;
-  };
-  level?: number;
-  heldItem: string;
-  moves: string[];
-  teraType?: string;
-  role: string;
-  notes?: string;
-}
+import { buildsConfig } from '~/constants/buildsConfig';
+import type { Build as BuildType } from '../types/builds';
 
 interface CounterBuildsProps {
-  bossPokemonName?: string;
-  attackerBuilds?: CounterBuildData[];
-  defenderBuilds?: CounterBuildData[];
+  pokemonName?: string;
+  attackerBuilds?: BuildType[];
+  defenderBuilds?: BuildType[];
   colorScheme?: 'light' | 'dark';
 }
 
 export const CounterBuilds: React.FC<CounterBuildsProps> = ({
-  bossPokemonName,
-  attackerBuilds = [],
-  defenderBuilds = [],
+  pokemonName,
+  attackerBuilds: propAttackerBuilds,
+  defenderBuilds: propDefenderBuilds,
   colorScheme = 'light'
 }) => {
-  if (attackerBuilds.length === 0 && defenderBuilds.length === 0) {
+  // Support two usage patterns:
+  // 1. Pass pokemonName - looks up builds from config (for event pages)
+  // 2. Pass attackerBuilds/defenderBuilds directly (for top-50 page)
+  
+  let attackerBuilds = propAttackerBuilds;
+  let defenderBuilds = propDefenderBuilds;
+  let displayName = pokemonName || 'Pokémon';
+
+  // If no builds provided directly, look them up from config
+  if (!attackerBuilds && !defenderBuilds && pokemonName) {
+    // Convert pokemon name to kebab-case for config lookup
+    // Remove 'Shiny' prefix if present since configs use base pokemon names
+    const configKey = pokemonName.toLowerCase().replace(/^shiny\s+/, '').replace(/\s+/g, '-');
+    const buildsData = buildsConfig[configKey];
+
+    if (buildsData) {
+      attackerBuilds = buildsData.attackers;
+      defenderBuilds = buildsData.defenders;
+    }
+  }
+
+  // Return null if no builds available from either source
+  if ((!attackerBuilds || attackerBuilds.length === 0) && (!defenderBuilds || defenderBuilds.length === 0)) {
     return null;
   }
 
   return (
     <View className="mt-lg mb-xxl mx-auto max-w-[1000px] w-[90%] self-center">
-      <Text className="typography-subheader text-4xl text-center mb-lg text-app-text">
-        Best <Text className="text-app-red">Attacker</Text>
+      <Text className="typography-subheader text-4xl text-center mb-lg text-app-text dark:text-dark-app-text">
+        Best <Text className="text-app-red dark:text-red-400">Attacker</Text>
         {' & '}
-        <Text className="text-app-accent">Defender</Text>
-        {bossPokemonName ? ' Tera Raid Builds for ' : ' Tera Raid Builds'}
-        {bossPokemonName}
+        <Text className="text-app-accent dark:text-app-accent">Defender</Text>
+        {' Tera Raid Builds for '}
+        {displayName}
       </Text>
-      <Text className="typography-copy text-center text-app-brown">
-        {bossPokemonName 
-          ? `Here are the best Tera Raid counters and optimal builds for defeating ${bossPokemonName} in Pokémon Scarlet & Violet. These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.`
-          : 'Here are the best counters for most Tera Raid bosses! These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.'
-        }
+      <Text className="typography-copy text-center text-app-brown dark:text-gray-400">
+        Here are the best Tera Raid counters and optimal builds for defeating {displayName} in Pokémon Scarlet & Violet. These strategies include both offensive attackers and defensive tanks to help you succeed in 5-star Tera Raid battles.
       </Text>
 
-      {attackerBuilds.length > 0 && (
+      {attackerBuilds && attackerBuilds.length > 0 && (
         <View>
-          <Text className="typography-header mb-md mt-md text-left text-app-red">
+          <Text className="typography-header mb-md mt-md text-left text-app-red dark:text-red-400">
             Best Attacker Builds & Counters
           </Text>
           {attackerBuilds.map((build, index) => (
@@ -96,9 +84,9 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
         </View>
       )}
 
-      {defenderBuilds.length > 0 && (
+      {defenderBuilds && defenderBuilds.length > 0 && (
         <View>
-          <Text className="typography-header mb-md mt-md text-left text-app-accent">
+          <Text className="typography-header mb-md mt-md text-left text-app-accent dark:text-app-accent">
             Best Defender Builds & Tank Strategies
           </Text>
           {defenderBuilds.map((build, index) => (
@@ -124,7 +112,7 @@ export const CounterBuilds: React.FC<CounterBuildsProps> = ({
         </View>
       )}
 
-      <View className="h-0.5 bg-app-secondary my-md w-3/5 self-center rounded-sm" />
+      <View className="h-0.5 bg-app-secondary dark:bg-gray-700 my-md w-3/5 self-center rounded-sm" />
     </View>
   );
 };

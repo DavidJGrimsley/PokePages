@@ -43,6 +43,13 @@
       "when": 1763417066071,
       "tag": "0005_tidy_lily_hollister",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1764824436283,
+      "tag": "0006_panoramic_northstar",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,59 @@ This guide provides step-by-step instructions for implementing comprehensive SEO
 - Define page-specific title, description, and keywords variables
 - Use the web URL `https://pokepages.app` for canonical links
 
+## Heading Hierarchy & Accessibility Guidelines
+
+### Proper Heading Structure
+Every page MUST have proper heading hierarchy for SEO and accessibility:
+
+1. **H1 (Level 1 Heading)**: 
+   - Use `typography-header` class with Modak font
+   - Must appear exactly ONCE per page as the main page title
+   - Should be the first major heading users see
+   - Use `accessibilityRole="header"` and `accessibilityLevel={1}` on React Native Text components
+   ```tsx
+   <Text 
+     className="typography-header text-app-text dark:text-dark-app-text" 
+     style={{ fontFamily: 'Modak' }}
+     accessibilityRole="header"
+     accessibilityLevel={1}
+   >
+     {pageTitle}
+   </Text>
+   ```
+
+2. **H2 (Level 2 Headings)**:
+   - Use `typography-subheader` class
+   - Can appear multiple times per page for major sections
+   - Use `accessibilityRole="header"` and `accessibilityLevel={2}` on React Native Text components
+   ```tsx
+   <Text 
+     className="typography-subheader text-app-text dark:text-dark-app-text"
+     accessibilityRole="header"
+     accessibilityLevel={2}
+   >
+     Section Title
+   </Text>
+   ```
+
+3. **Semantic Structure**:
+   - Never skip heading levels (don't jump from h1 to h3)
+   - Headings should create a logical outline of page content
+   - Use appropriate ARIA labels for screen readers
+
+### Button Accessibility
+All interactive buttons should use the Press Start 2P font for consistent game-style UI:
+```tsx
+<Pressable>
+  <Text 
+    style={{ fontFamily: 'PressStart2P', fontSize: 10 }}
+    className="text-app-white"
+  >
+    Button Text
+  </Text>
+</Pressable>
+```
+
 ## Core Meta Tags Template
 
 ### For Each Page Component:

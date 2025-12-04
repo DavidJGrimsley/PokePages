@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { envPresence, isDotEnvPresent, formatMemoryUsage, formatUptime } from './src/utils/diagnostics.js';
 import eventRouter from './src/routes/events/index.js';
+import eventClaimsRouter from './src/routes/eventClaims/index.js';
 import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
 import legendsZARouter from './src/routes/legends-za/index.js';
@@ -76,13 +77,10 @@ app.get('/', (req, res) => {
 });
 
 // Event Counter Routes
-app.use('/events', (req, res, next) => {
-  console.log(`[EVENTS DEBUG] ${req.method} ${req.originalUrl} | Path: ${req.path} | BaseUrl: ${req.baseUrl}`);
-  next();
-});
-
-// Event Counter Routes
 app.use('/events', eventRouter);
+
+// Event Claims Routes (for tera raids, mystery gifts, promo codes)
+app.use('/event-claims', eventClaimsRouter);
 
 // AI Routes
 app.use('/ai', aiRouter);
@@ -147,6 +145,8 @@ server = app.listen(port, '0.0.0.0', () => {
   console.log(`   Profiles: ${apiBaseUrl}/profiles`);
   console.log(`   Legends Z-A Tracker: ${apiBaseUrl}/legends-za`);
   console.log(`   Social: ${apiBaseUrl}/social`);
+  console.log(`   Favorites: ${apiBaseUrl}/favorites`);
+  console.log(`   Event Claims: ${apiBaseUrl}/event-claims`);
   console.log('legendsZARouter router loaded:', typeof legendsZARouter);
   console.log('socialRouter router loaded:', typeof socialRouter);
 });

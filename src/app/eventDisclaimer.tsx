@@ -1,7 +1,7 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Platform, Text, View, Linking, Pressable, ScrollView } from 'react-native';
-import { getEventStatus } from '~/utils/helperFX';
+import { getCounterEventStatus } from '~/utils/helperFX';
 
 export default function EventDisclaimer() {
   const { eventData } = useLocalSearchParams<{ eventData?: string }>();
@@ -46,7 +46,7 @@ export default function EventDisclaimer() {
   const pokemonFinishedUrl = `https://www.pokemon.com/us/pokemon-news/announcing-the-total-victories-against-${sanitizedPokemonNameForPokemonCom}-in-pokemon-scarlet-and-pokemon-violet`;
   const claimMysteryGiftUrl = 'https://youtu.be/63FRpg8slIw?si=CQGN-Qwy6hbuheUR&t=430';
 
-  const status = getEventStatus(eventInfo.startDate, eventInfo.endDate, eventInfo.distributionStart, eventInfo.distributionEnd);
+  const status = getCounterEventStatus(eventInfo.startDate, eventInfo.endDate, eventInfo.distributionStart, eventInfo.distributionEnd);
   return (
     <>
       <Stack.Screen options={{ title: '' }} />

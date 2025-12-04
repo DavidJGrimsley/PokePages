@@ -1,11 +1,14 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, useWindowDimensions } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { View, useWindowDimensions } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { HomeCard } from './HomeCard';
 import { ShortcutsModal } from './ShortcutsModal';
 import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 import { useAuthStore } from '@/src/store/authStore';
 import { getFeatureMeta } from '@/src/utils/featureRegistry';
 import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
+import { getActiveEvents, EventType } from '~/constants/events';
+import { getLocalClaims, type EventClaimsCache } from '@/src/services/eventClaimsService';
 
 interface HomeCardsProps {
   newestFeaturePath?: string;
@@ -26,6 +29,29 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
   const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
   const getFavoriteTitle = useFavoriteFeaturesStore((s) => s.getFavoriteTitle);
   const favoriteKeys = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
+  
+  // Get event claims to filter out claimed events
+  const [eventClaims, setEventClaims] = useState<EventClaimsCache>({});
+  
+  // Load claims on mount
+  useEffect(() => {
+    const loadClaims = async () => {
+      const claims = await getLocalClaims();
+      setEventClaims(claims);
+    };
+    loadClaims();
+  }, []);
+  
+  // Reload claims when screen comes into focus (after claiming an event)
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshClaims = async () => {
+        const claims = await getLocalClaims();
+        setEventClaims(claims);
+      };
+      refreshClaims();
+    }, [])
+  );
 
   // Calculate responsive columns
   // Small screens (<640px): 2 columns
@@ -70,6 +96,61 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
       .filter(Boolean);
   }, [favoriteKeys, cardWidth, getFavoriteTitle]);
 
+  // Build event cards - only show unclaimed active events, one per type
+  const eventCards = useMemo(() => {
+    // Get first unclaimed event from each type
+    const seenTypes = new Set<EventType>();
+    const uniqueEvents: any[] = [];
+
+    const allActiveEvents = [
+      ...getActiveEvents(EventType.MYSTERY_GIFT),
+      ...getActiveEvents(EventType.PROMO_CODE),
+      ...getActiveEvents(EventType.TERA_RAID),
+      ...getActiveEvents(EventType.COUNTER),
+    ];
+
+    for (const event of allActiveEvents) {
+      if (!seenTypes.has(event.eventType) && !eventClaims[event.eventKey]?.claimed) {
+        seenTypes.add(event.eventType);
+        uniqueEvents.push(event);
+      }
+    }
+
+    const cards = uniqueEvents.map(event => {
+      // Determine icon based on event type
+      let icon: keyof typeof import('@expo/vector-icons').Ionicons.glyphMap = 'calendar';
+      if (event.eventType === EventType.MYSTERY_GIFT) icon = 'gift';
+      else if (event.eventType === EventType.PROMO_CODE) icon = 'key';
+      else if (event.eventType === EventType.TERA_RAID) icon = 'trophy';
+      else if (event.eventType === EventType.COUNTER) icon = 'flash';
+
+      return (
+        <View key={event.eventKey} style={{ width: cardWidth, marginBottom: 16 }}>
+          <HomeCard
+            title={event.title}
+            icon={icon}
+            path={`/(drawer)/events/${event.eventKey}` as any}
+            variant="event"
+          />
+        </View>
+      );
+    });
+
+    // Add "More Events" card at the end
+    cards.push(
+      <View key="more-events" style={{ width: cardWidth, marginBottom: 16 }}>
+        <HomeCard
+          title="More Events"
+          icon="trophy"
+          path="/(drawer)/events"
+          variant="event"
+        />
+      </View>
+    );
+
+    return cards;
+  }, [eventClaims, cardWidth]);
+
   return (
     <>
       <View className="items-center mb-lg">
@@ -112,6 +193,10 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
               />
             </View>
           )}
+
+          {/* Events Cards (if active events) - Only title and icon, and only show if claimed status is not true */}
+          {eventCards}
+
         </View>
       </View>
 

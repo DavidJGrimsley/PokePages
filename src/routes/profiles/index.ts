@@ -23,10 +23,20 @@ import {
 
 const profileRouter = Router();
 
-// GET /profiles/search?q=username&limit=20 (public)
+/**
+ * @route GET /api/profiles/search
+ * @desc Search for profiles by username
+ * @access Public
+ * @query { q: string, limit?: number }
+ */
 profileRouter.get('/search', validateQuery(searchQuerySchema), searchProfiles);
 
-// GET /profiles/all?limit=100&offset=0 (admin only)
+/**
+ * @route GET /api/profiles/all
+ * @desc Get all profiles with pagination (admin only)
+ * @access Private (Admin)
+ * @query { limit?: number, offset?: number }
+ */
 profileRouter.get('/all', 
   verifySupabaseAuth,
   requireAdmin,
@@ -34,16 +44,34 @@ profileRouter.get('/all',
   getAllProfiles
 );
 
-// GET /profiles/by-username/:username (public)
+/**
+ * @route GET /api/profiles/by-username/:username
+ * @desc Get a profile by username
+ * @access Public
+ */
 profileRouter.get('/by-username/:username', validateParams(usernameParamsSchema), getProfileByUsername);
 
-// GET /profiles/:userId (public)
+/**
+ * @route GET /api/profiles/:userId
+ * @desc Get a profile by user ID
+ * @access Public
+ */
 profileRouter.get('/:userId', validateParams(userIdParamsSchema), getProfile);
 
-// POST /profiles (create new profile - public for sign-up)
+/**
+ * @route POST /api/profiles
+ * @desc Create a new profile
+ * @access Public
+ * @body { userId: string, username: string, displayName?: string, ... }
+ */
 profileRouter.post('/', validateData(signupProfileSchema), createProfile);
 
-// PUT /profiles/:userId (update profile - requires auth + ownership)
+/**
+ * @route PUT /api/profiles/:userId
+ * @desc Update a profile (requires auth + ownership)
+ * @access Private
+ * @body { username?: string, displayName?: string, bio?: string, ... }
+ */
 profileRouter.put('/:userId', 
   verifySupabaseAuth,
   verifyResourceOwnership,
@@ -52,7 +80,11 @@ profileRouter.put('/:userId',
   updateProfile
 );
 
-// DELETE /profiles/:userId (delete profile - requires auth + ownership)
+/**
+ * @route DELETE /api/profiles/:userId
+ * @desc Delete a profile (requires auth + ownership)
+ * @access Private
+ */
 profileRouter.delete('/:userId', 
   verifySupabaseAuth,
   verifyResourceOwnership,

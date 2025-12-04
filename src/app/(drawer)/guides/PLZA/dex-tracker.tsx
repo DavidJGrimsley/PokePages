@@ -64,73 +64,11 @@ export default function DexTrackerPage() {
     });
   }, [filter, query]);
 
-  // Debug: Log the current pokemon tracker state (only on mount)
-  useEffect(() => {
-    const state = usePokemonTrackerStore.getState();
-    console.log('[DEX TRACKER TEST] Current pokemon tracker state:', state.pokemon);
-    console.log('[DEX TRACKER TEST] Pokemon count:', Object.keys(state.pokemon).length);
-    console.log('[DEX TRACKER TEST] Has hydrated:', hasHydrated);
-    console.log('[DEX TRACKER TEST] Is syncing:', state.isSyncing);
-    console.log('[DEX TRACKER TEST] Last sync time:', state.lastSyncTime);
-    console.log('[DEX TRACKER TEST] Pending updates:', state.pendingUpdates);
-    console.log('__DEV__ flag:', __DEV__);
-    
-    // Test direct API call for debugging
-    if (hasHydrated && typeof fetch !== 'undefined') {
-      console.log('[DEX TRACKER TEST] Running direct API test...');
-      import('@/src/utils/supabaseClient').then(({ supabase }) => {
-        import('@/src/utils/apiConfig').then(({ buildApiUrl, API_BASE_URL }) => {
-          console.log('[DEX TRACKER TEST] API_BASE_URL from apiConfig:', API_BASE_URL);
-          supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.access_token) {
-              const testUrl = buildApiUrl('legends-za');
-              console.log('[DEX TRACKER TEST] Testing API with token present, URL:', testUrl);
-              
-              // Test the actual API endpoint
-              fetch(testUrl, {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${session.access_token}`,
-                },
-              })
-              .then(res => {
-                console.log('[DEX TRACKER TEST] Direct API test response status:', res.status, 'ok:', res.ok);
-                return res.text(); // Get as text first to see raw response
-              })
-              .then(text => {
-                console.log('[DEX TRACKER TEST] Direct API test raw response:', text);
-                try {
-                  const data = JSON.parse(text);
-                  console.log('[DEX TRACKER TEST] Direct API test parsed data:', data);
-                  if (data.data && Array.isArray(data.data)) {
-                    console.log('[DEX TRACKER TEST] Direct API test - found', data.data.length, 'records');
-                    data.data.forEach((record: any, i: number) => {
-                      console.log(`[DEX TRACKER TEST] Record ${i}:`, record);
-                    });
-                  }
-                } catch (e) {
-                  console.error('[DEX TRACKER TEST] Failed to parse response as JSON:', e);
-                }
-              })
-              .catch(err => {
-                console.error('[DEX TRACKER TEST] Direct API test error:', err);
-              });
-            } else {
-              console.log('[DEX TRACKER TEST] No token available for API test');
-            }
-          });
-        });
-      });
-    }
-  }, [hasHydrated]);
-
   // After hydration completes, explicitly load from database to avoid race conditions
   useEffect(() => {
     if (hasHydrated) {
-      console.log('[DEX TRACKER PAGE] Hydrated=true -> calling loadFromDatabase');
       try {
         usePokemonTrackerStore.getState().loadFromDatabase();
-        console.log('[DEX TRACKER PAGE] Successfully triggered loadFromDatabase');
       } catch (e) {
         console.error('[DEX TRACKER PAGE] Failed to trigger loadFromDatabase:', e);
       }

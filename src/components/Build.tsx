@@ -80,7 +80,7 @@ export const Build: React.FC<BuildProps> = ({
       });
   }, [pokemonId]);
   //
-  // trying to fetch the image for the Pokémon based on its name and variant.
+  // trying to fetch the image for the Pokémon based on its name and variant. POKEAPI is too complex and not complex enough for this. Maybe V3 will fix it.
   // useEffect(() => {
   //   const sanitizedPokemonVariant = (variant: string) => {
   //     return variant.replace(/\s+/g, '-').toLowerCase();

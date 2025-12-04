@@ -28,22 +28,22 @@ interface HomeCardProps {
 
 const variantStyles = {
   system: {
-    borderColor: '#A33EA100',
-    iconColor: '#A33EA1',
+    borderColor: '#A33EA100', // Purple
+    iconColor: '#A33EA1', // Purple
     gradientColors: ['rgba(163, 62, 161, 0.06)', 'rgba(0, 0, 0, 0)'] as const,
     borderGlowColor: 'rgba(255, 165, 0, 0.1)',
     borderGlowColorSecondary: 'rgba(163, 62, 161, 0.5)',
   },
   favorite: {
-    borderColor: '#FFA50000',
-    iconColor: '#FFA500',
+    borderColor: '#FFA50000', // Orange
+    iconColor: '#FFA500', // Orange
     gradientColors: ['rgba(255, 165, 0, 0.06)', 'rgba(0, 0, 0, 0)'] as const,
     borderGlowColor: 'rgba(0,0,0, 1)',
     borderGlowColorSecondary: 'rgba(255, 0, 0, 0.6)',
   },
   event: {
-    borderColor: '#EF4444',
-    iconColor: '#EE8130',
+    borderColor: '#EF444400', // Red (transparent is a hack to make border gradient work, but i don' think it's still needed?)
+    iconColor: '#EF4444', // Red (matches news red-500)
     gradientColors: ['rgba(239, 68, 68, 0.1)', 'rgba(0, 0, 0, 0)'] as const,
     borderGlowColor: 'rgba(239, 68, 68, 1)',
     borderGlowColorSecondary: 'rgba(255, 150, 150, 0.6)',

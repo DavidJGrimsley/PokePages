@@ -1,0 +1,197 @@
+import { PromoCodeEvent, EventType } from './types';
+
+/**
+ * Promo Code Events
+ * Redeemable codes for in-game rewards with expiration dates
+ * Data source: Official Pokémon Scarlet/Violet Mystery Gift codes
+ */
+export const promoCodeEvents: Record<string, PromoCodeEvent> = {
+  'la1c26ta1lw1nd': {
+    eventKey: 'la1c26ta1lw1nd',
+    eventType: EventType.PROMO_CODE,
+    title: 'Whimsicott Mystery Gift',
+    description: 'Redeem this code to receive a special Whimsicott in Pokémon Scarlet & Violet!',
+    code: 'LA1C26TA1LW1ND',
+    codeType: 'in-game',
+    rewards: [
+      {
+        type: 'pokemon',
+        name: 'Whimsicott',
+        details: 'Special distribution Whimsicott',
+      },
+    ],
+    redemptionLimit: 'once',
+    expirationDate: '2025-11-30T07:59:00Z',
+    howToRedeem: {
+      steps: [
+        'Open the Poké Portal in the X menu',
+        'Select "Mystery Gift"',
+        'Select "Get with Code/Password"',
+        'Enter the code: LA1C26TA1LW1ND',
+        'Receive your Whimsicott!',
+      ],
+      menuPath: 'X Menu → Poké Portal → Mystery Gift → Get with Code/Password',
+    },
+    startDate: '2024-11-01T00:00:00Z',
+    endDate: '2025-11-30T07:59:00Z',
+    timezone: 'UTC',
+    game: 'scarlet-violet',
+    youtubeVideos: [],
+    officialLinks: [],
+    tags: ['pokemon', 'limited-time', 'whimsicott'],
+  },
+  'elementstones': {
+    eventKey: 'elementstones',
+    eventType: EventType.PROMO_CODE,
+    title: 'Evolution Stones Pack',
+    description: 'Get a set of Evolution Stones to evolve your Pokémon! Includes multiple stone types.',
+    code: 'ELEMENTSTONES',
+    codeType: 'in-game',
+    rewards: [
+      {
+        type: 'item',
+        name: 'Evolution Stones',
+        details: 'Various Evolution Stones for evolving Pokémon',
+      },
+    ],
+    redemptionLimit: 'once',
+    expirationDate: '2026-01-01T07:59:00Z',
+    game: 'scarlet-violet',
+    howToRedeem: {
+      steps: [
+        'Open the Poké Portal in the X menu',
+        'Select "Mystery Gift"',
+        'Select "Get with Code/Password"',
+        'Enter the code: ELEMENTSTONES',
+        'Receive your Evolution Stones!',
+      ],
+      menuPath: 'X Menu → Poké Portal → Mystery Gift → Get with Code/Password',
+    },
+    startDate: '2024-12-01T00:00:00Z',
+    endDate: '2026-01-01T07:59:00Z',
+    timezone: 'UTC',
+    youtubeVideos: [
+      // Add your YouTube video IDs here for event guides/coverage
+      // Example: 'dQw4w9WgXcQ'
+    ],
+    officialLinks: [],
+    tags: ['items', 'evolution-stones', 'limited-time'],
+  },
+  'c0sm1cstones': {
+    eventKey: 'c0sm1cstones',
+    eventType: EventType.PROMO_CODE,
+    title: 'Cosmic Stones Bundle',
+    description: 'Redeem for additional Evolution Stones to complete your collection!',
+    code: 'C0SM1CSTONES',
+    codeType: 'in-game',
+    rewards: [
+      {
+        type: 'item',
+        name: 'Evolution Stones',
+        details: 'Additional Evolution Stones bundle',
+      },
+    ],
+    redemptionLimit: 'once',
+    expirationDate: '2026-01-01T07:59:00Z',
+    game: 'scarlet-violet',
+    howToRedeem: {
+      steps: [
+        'Open the Poké Portal in the X menu',
+        'Select "Mystery Gift"',
+        'Select "Get with Code/Password"',
+        'Enter the code: C0SM1CSTONES',
+        'Receive your Evolution Stones!',
+      ],
+      menuPath: 'X Menu → Poké Portal → Mystery Gift → Get with Code/Password',
+    },
+    startDate: '2024-12-01T00:00:00Z',
+    endDate: '2026-01-01T07:59:00Z',
+    timezone: 'UTC',
+    youtubeVideos: [],
+    officialLinks: [],
+    tags: ['items', 'evolution-stones', 'limited-time'],
+  },
+  'v1tam1ns': {
+    eventKey: 'v1tam1ns',
+    eventType: EventType.PROMO_CODE,
+    title: 'Vitamin Pack',
+    description: 'Receive 2x of each Vitamin to boost your Pokémon\'s stats! Includes HP Up, Protein, Iron, Calcium, Zinc, and Carbos.',
+    code: 'V1TAM1NS',
+    codeType: 'in-game',
+    rewards: [
+      {
+        type: 'item',
+        name: '2x each Vitamin',
+        quantity: 12,
+        details: '2x HP Up, Protein, Iron, Calcium, Zinc, Carbos',
+      },
+    ],
+    redemptionLimit: 'once',
+    expirationDate: '2026-01-01T07:59:00Z',
+    game: 'scarlet-violet',
+    howToRedeem: {
+      steps: [
+        'Open the Poké Portal in the X menu',
+        'Select "Mystery Gift"',
+        'Select "Get with Code/Password"',
+        'Enter the code: V1TAM1NS',
+        'Receive your Vitamins!',
+      ],
+      menuPath: 'X Menu → Poké Portal → Mystery Gift → Get with Code/Password',
+    },
+    startDate: '2024-12-01T00:00:00Z',
+    endDate: '2026-01-01T07:59:00Z',
+    timezone: 'UTC',
+    youtubeVideos: [],
+    officialLinks: [],
+    tags: ['items', 'vitamins', 'stat-boost', 'limited-time'],
+  },
+  'prepar1ng': {
+    eventKey: 'prepar1ng',
+    eventType: EventType.PROMO_CODE,
+    title: 'Mega Dimension Prep Pack',
+    description: 'Prepare for the Mega Dimension DLC with this helpful bundle of Max Revives, Full Restores, and Ultra Balls!',
+    code: 'PREPAR1NG',
+    codeType: 'in-game',
+    rewards: [
+      {
+        type: 'item',
+        name: 'Max Revive',
+        quantity: 5,
+        details: 'Revive and fully restore HP',
+      },
+      {
+        type: 'item',
+        name: 'Full Restore',
+        quantity: 10,
+        details: 'Fully restore HP and heal status conditions',
+      },
+      {
+        type: 'item',
+        name: 'Ultra Ball',
+        quantity: 10,
+        details: 'High-performance Poké Ball',
+      },
+    ],
+    redemptionLimit: 'once',
+    expirationDate: '2026-12-31T23:59:59Z',
+    game: 'legends-za',
+    howToRedeem: {
+      steps: [
+        'Unlock Mystery Gift by playing through the main story',
+        'Pause the game and select Link Play',
+        'Select Mystery Gift menu',
+        'Select "Receive Via Code"',
+        'Enter the code: PREPAR1NG',
+        'Items will be placed in your bag',
+      ],
+      menuPath: 'Pause Menu → Link Play → Mystery Gift → Receive Via Code',
+    },
+    startDate: '2025-12-04T00:00:00Z',
+    endDate: '2026-12-31T23:59:59Z',
+    timezone: 'UTC',
+    youtubeVideos: ['stVjysR7nDY'],
+    officialLinks: ['https://legends.pokemon.com/en-us/news/'],
+    tags: ['items', 'mega-dimension', 'dlc-prep', 'legends-za'],
+  },
+};

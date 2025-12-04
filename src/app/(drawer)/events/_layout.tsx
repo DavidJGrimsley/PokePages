@@ -3,13 +3,11 @@ import { Link, Stack, router } from 'expo-router';
 import { HeaderButton } from 'components/UI/HeaderComponents';
 import { Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
-import { eventConfig } from 'constants/eventConfig';
+import { allEvents } from '~/constants/events/index';
+import { isCounterEvent, isTeraRaidEvent, isMysteryGiftEvent, isPromoCodeEvent } from '~/constants/events/types';
 import { theme } from 'constants/style/theme';
 
 export default function EventsLayout() {
-  const navigation = useNavigation();
-
   return (
     <Stack>
       <Stack.Screen 
@@ -22,12 +20,26 @@ export default function EventsLayout() {
         }} 
       />
       <Stack.Screen 
-        name="[counterEvent]" 
+        name="[event]" 
         options={({ route }) => {
-          const { counterEvent } = route.params as { counterEvent: string };
-          const config = eventConfig[counterEvent as keyof typeof eventConfig];
+          const { event } = route.params as { event: string };
+          const eventData = allEvents[event];
+          
+          let eventTypeLabel = 'Event';
+          if (eventData) {
+            if (isCounterEvent(eventData)) {
+              eventTypeLabel = 'Participation Challenge';
+            } else if (isTeraRaidEvent(eventData)) {
+              eventTypeLabel = 'Tera Raid';
+            } else if (isMysteryGiftEvent(eventData)) {
+              eventTypeLabel = 'Mystery Gift';
+            } else if (isPromoCodeEvent(eventData)) {
+              eventTypeLabel = 'Promo Code';
+            }
+          }
+          
           return {
-            title: config?.pokemonName ? `${config.eventTitle}` : 'Defeat Counter',
+            title: eventTypeLabel,
             headerLeft: () => (
               <Pressable
                 onPress={() => {
@@ -43,7 +55,7 @@ export default function EventsLayout() {
                 href={{
                   pathname: '/eventDisclaimer',
                   params: { 
-                    eventData: JSON.stringify(config || {})
+                    eventData: JSON.stringify(eventData || {})
                   }
                 }} 
                 asChild

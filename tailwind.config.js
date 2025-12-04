@@ -146,7 +146,7 @@ module.exports = {
         'copy': ['Roboto'],                      // fontFamilies.copy
         'header': ['RobotoSlab'],                // fontFamilies.header
         'subheader': ['RobotoCondensed'],        // fontFamilies.subheader
-        'mono': ['RobotoMono'],                  // fontFamilies.mono
+        'mono': ['RobotoMono', 'Courier New', 'monospace'],  // fontFamilies.mono - fixed to use proper monospace fonts
         
         // Aliases for convenience
         'press-start': ['PressStart2P'],
@@ -154,7 +154,7 @@ module.exports = {
         'roboto': ['Roboto'],
         'roboto-slab': ['RobotoSlab'], 
         'roboto-condensed': ['RobotoCondensed'],
-        'roboto-mono': ['RobotoMono'],
+        'roboto-mono': ['RobotoMono', 'Courier New', 'monospace'],
       },
       fontSize: {
         // Using RFPercentage equivalent values (approximated for web compatibility)
@@ -165,7 +165,7 @@ module.exports = {
         'xl-responsive': '20px',     // ~RFPercentage(2.0) - also used for subheader
         'xxl-responsive': '24px',    // ~RFPercentage(2.4)
         'xxxl-responsive': '32px',   // ~RFPercentage(3.2)
-        'display-responsive': '56px', // ~RFPercentage(5.6)
+        'display-responsive': 'clamp(32px, 8vw, 48px)', // Truly responsive: 32px mobile → 48px desktop
         'header-responsive': '28px',  // ~RFPercentage(2.8)
         'mono-responsive': '14px',    // ~RFPercentage(1.4)
       },

@@ -7,19 +7,22 @@ import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 import { Container } from 'components/UI/Container';
 import { HomeCards } from '@/src/components/Home/HomeCards';
 import { NewsCard } from '@/src/components/Home/NewsCard';
-import { eventConfig } from 'constants/eventConfig';
+import { 
+  getActiveEvents, 
+  EventType,
+  isCounterEvent,
+  isTeraRaidEvent,
+  isMysteryGiftEvent,
+  isPromoCodeEvent
+} from '~/constants/events';
+import { 
+  CounterEventCard, 
+  TeraRaidEventCard, 
+  MysteryGiftEventCard, 
+  PromoCodeEventCard 
+} from '~/components/Events';
 import { Footer } from '@/src/components/Meta/Footer';
 import { getRecentNews, type NewsArticle } from '@/src/services/rssService';
-
-const getEventStatus = (startDate: string, endDate: string): 'active' | 'upcoming' | 'ended' => {
-  const now = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-  
-  if (now < start) return 'upcoming';
-  if (now > end) return 'ended';
-  return 'active';
-};
 
 export default function Home() {
   // Use shallow comparator to avoid re-render loop when an array reference changes
@@ -63,23 +66,21 @@ export default function Home() {
   const description = 'Join thousands of trainers on Poké Pages, a social and resource hub! Track global Pokémon events, participate in community challenges, access battle strategies, type calculators, and stay updated with the latest Pokémon news and distributions.';
   const keywords = 'Pokemon, Poké Pages, Pokemon events, Pokemon battles, Pokemon community, Pokemon type chart, Pokemon strategies, Pokemon news, Pokemon Scarlet Violet, Legends Z-A, Treasures of Ruin, global challenges, Pokemon counters';
   
-  // Generate events from our configuration
-  const activeCounterEvents = useMemo(() => 
-    Object.entries(eventConfig)
-      .map(([key, config]) => ({
-        key,
-        buttonText: `Join the ${config.pokemonName} Challenge!`,
-        href: `/(drawer)/events/${key}` as any,
-        status: getEventStatus(config.startDate, config.endDate),
-        isActive: getEventStatus(config.startDate, config.endDate) === 'active',
-        pokemonName: config.pokemonName,
-        endDate: config.endDate,
-        teraType: config.teraType,
-        targetCount: config.targetCount,
-      }))
-      .filter(event => event.isActive),
-    [] // Empty dependency array means it only calculates once
-  );
+  // Get one active event from each category for home page
+  const activeEventCards = useMemo(() => {
+    const counterEvents = getActiveEvents(EventType.COUNTER);
+    const teraRaidEvents = getActiveEvents(EventType.TERA_RAID);
+    const mysteryGiftEvents = getActiveEvents(EventType.MYSTERY_GIFT);
+    const promoCodeEvents = getActiveEvents(EventType.PROMO_CODE);
+
+    return {
+      counter: counterEvents[0],
+      teraRaid: teraRaidEvents[0],
+      mysteryGift: mysteryGiftEvents[0],
+      promoCode: promoCodeEvents[0],
+      hasAny: counterEvents.length > 0 || teraRaidEvents.length > 0 || mysteryGiftEvents.length > 0 || promoCodeEvents.length > 0
+    };
+  }, []);
 
   return (
     <>
@@ -154,33 +155,13 @@ export default function Home() {
             </Text>
 
             {/* HomeCards Section */}
+            
             <HomeCards
               newestFeaturePath="/guides/PLZA/dex-tracker"
               newestFeatureTitle="Legends: Z-A Form Tracker"
             />
 
-            {/* Conditional Events Section */}
-            {activeCounterEvents.length > 0 && (
-              <>
-                <Text
-                  role="heading"
-                  aria-level={3}
-                  className="typography-subheader text-app-secondary mb-sm"
-                >
-                  Latest Events
-                </Text>
-                
-                {/* Active Event Buttons */}
-                {activeCounterEvents.map((event) => (
-                  <Link key={event.key} href={event.href} asChild>
-                    <Pressable className="bg-red-500 py-lg px-lg rounded-lg items-center mb-sm shadow-app-medium active:opacity-80">
-                      <Text className="typography-cta text-app-white text-center mb-xs">{event.buttonText}</Text>
-                      <Text className="typography-copy text-app-white text-center opacity-90">Click to contribute to the global counter</Text>
-                    </Pressable>
-                  </Link>
-                ))}
-              </>
-            )}
+
                     
             {/* Latest News Section */}
             <View className='items-center'>
@@ -271,26 +252,26 @@ export default function Home() {
             </View>
           </View>
 
-          {/* NO current events View  */}
-          <View className="items-center mb-lg">
-            <Text
-                role="heading"
-                aria-level={3}
-                className="typography-subheader text-app-secondary mb-sm"
-              >
-                Latest Events
-              </Text>
-            {activeCounterEvents.length === 0 && (
+          {/* NO current events View - Only show if no active events */}
+          {!activeEventCards.hasAny && (
+            <View className="items-center mb-lg">
+              <Text
+                  role="heading"
+                  aria-level={3}
+                  className="typography-subheader text-app-secondary mb-sm"
+                >
+                  Latest Events
+                </Text>
               <Text className="typography-copy text-app-brown dark:text-dark-app-brown text-center mb-sm">
-                No participation events currently active
+                No events currently active
               </Text>
-            )}
-            <Link href="/(drawer)/events" asChild>
-              <Pressable className="bg-app-accent dark:bg-dark-app-accent py-md px-lg rounded-md self-center active:opacity-80 hover:shadow-app-medium">
-                <Text className="typography-cta text-app-background dark:text-dark-app-background">View All Events</Text>
-              </Pressable>
-            </Link>
-          </View>
+              <Link href="/(drawer)/events" asChild>
+                <Pressable className="bg-app-accent dark:bg-dark-app-accent py-md px-lg rounded-md self-center active:opacity-80 hover:shadow-app-medium">
+                  <Text className="typography-cta text-app-background dark:text-dark-app-background">View All Events</Text>
+                </Pressable>
+              </Link>
+            </View>
+          )}
           <Footer />
         </ScrollView>
       </Container>

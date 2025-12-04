@@ -247,6 +247,7 @@ export const lumioseDex: Pokemon[] = [
   { id: 229, name: "Yveltal", type1: "Dark", type2: "Flying", hasMega: false, canBeAlpha: false, evYield: {hp:3} },
   { id: 230, name: "Zygarde", type1: "Dragon", type2: "Ground", hasMega: true, canBeAlpha: false, evYield: {hp:3} },
   { id: 231, name: "Diancie", type1: "Rock", type2: "Fairy", hasMega: true, canBeAlpha: false, evYield: {defense:3} },
+  { id: 232, name: "Mewtwo", type1: "Psychic", hasMega: true, canBeAlpha: false, evYield: {specialAttack:3} },
 ];
 
 export const lumioseMegaDex: Pokemon[] = [
@@ -315,6 +316,8 @@ export const lumioseMegaDex: Pokemon[] = [
   { id: 227, name: "Mega Metagross", type1: "Steel", type2: "Psychic", hasMega: true, canBeAlpha: true, evYield: {defense:3} },
   { id: 230, name: "Mega Zygarde", type1: "Dragon", type2: "Ground", hasMega: true, canBeAlpha: false, evYield: {hp:3} },
   { id: 231, name: "Mega Diancie", type1: "Rock", type2: "Fairy", hasMega: true, canBeAlpha: false, evYield: {defense:3} },
+  { id: 232, name: "Mega Mewtwo X", type1: "Psychic", type2: "Fighting", hasMega: true, canBeAlpha: false, evYield: {attack:3} },
+  { id: 232, name: "Mega Mewtwo Y", type1: "Psychic", hasMega: true, canBeAlpha: false, evYield: {specialAttack:3} },
 ];
 
 

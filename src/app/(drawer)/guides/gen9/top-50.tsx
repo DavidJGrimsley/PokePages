@@ -1,12 +1,13 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { ScrollView } from 'react-native';
+import { ScrollView, useColorScheme } from 'react-native';
 import Head from 'expo-router/head';
 import { teraBuildsTop50 } from 'constants/teraBuildsTop50Config';
 import { CounterBuilds } from 'components/CounterBuilds';
-import { theme } from 'constants/style/theme';
 
 export default function Top50Builds() {
+  const colorScheme = useColorScheme();
+  
   // SEO meta content
   const title = 'Top 50 Tera Raid Builds | Best Pokémon for Tera Raids | PokePages';
   const description = 'The top 50 best Pokémon builds for Tera Raids in Scarlet and Violet. Complete movesets, EVs, items, and strategies for both attackers and defenders.';
@@ -64,13 +65,17 @@ export default function Top50Builds() {
         />
       </Head>
       <Stack.Screen options={{ title: 'Top 50 Builds' }} />
-      <ScrollView style={{ flex: 1, backgroundColor: theme.colors.light.white }}>
+      <ScrollView 
+        className="flex-1 bg-app-background dark:bg-dark-app-background"
+        contentContainerClassName="pb-lg"
+      >
         {teraBuildsTop50 && (
-                  <CounterBuilds
-                    attackerBuilds={teraBuildsTop50['Top Tera Raid Pokémon Builds'].attackers}
-                    defenderBuilds={teraBuildsTop50['Top Tera Raid Pokémon Builds'].defenders}
-                  />
-                )}
+          <CounterBuilds
+            attackerBuilds={teraBuildsTop50['Top Tera Raid Pokémon Builds'].attackers}
+            defenderBuilds={teraBuildsTop50['Top Tera Raid Pokémon Builds'].defenders}
+            colorScheme={colorScheme === 'dark' ? 'dark' : 'light'}
+          />
+        )}
       </ScrollView>
     </>
   );

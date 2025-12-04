@@ -1069,8 +1069,188 @@ export const buildsConfig: Builds = {
         notes: "Double resists Dark moves. Screech greatly lowers boss Defense for allies. Snarl lowers boss's Special Attack every hit (useful if boss runs Icy Wind). Moonlight heals itself. Synchronize can bounce status (if boss tried to Frostbite from Icy Wind drop – not applicable in Gen9)."
       }
     ]
+  },
+
+  // Dragapult Tera Raid Boss (Dragon Tera Type)
+  'dragapult': {
+    attackers: [
+      {
+        pokemonName: "Iron Hands",
+        pokemonId: 992,
+        pokemonVariant: "Violet",
+        variant: "physical-attacker" as const,
+        ability: "Quark Drive",
+        nature: "Adamant",
+        evs: { hp: 252, attack: 252, defense: 0, specialAttack: 0, specialDefense: 4, speed: 0 },
+        heldItem: "Shell Bell, Booster Energy, or Metronome",
+        moves: ["Belly Drum", "Drain Punch", "Play Rough", "Electric Terrain"],
+        teraType: "Fairy",
+        role: "Physical DPS",
+        notes: "Play Rough hits Dragon super effectively; Belly Drum + Drain Punch sustain damage."
+      },
+      {
+        pokemonName: "Azumarill",
+        pokemonId: 184,
+        variant: "physical-attacker" as const,
+        ability: "Huge Power",
+        nature: "Adamant",
+        evs: { hp: 252, attack: 252, defense: 0, specialAttack: 0, specialDefense: 4, speed: 0 },
+        heldItem: "Shell Bell",
+        moves: ["Belly Drum", "Play Rough", "Aqua Jet", "Helping Hand"],
+        teraType: "Fairy",
+        role: "Physical DPS",
+        notes: "Classic raid slayer; Fairy STAB Play Rough crushes Dragon Tera Dragapult."
+      },
+      {
+        pokemonName: "Iron Valiant",
+        pokemonId: 1006,
+        pokemonVariant: "Violet",
+        variant: "special-attacker" as const,
+        ability: "Quark Drive",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Wise Glasses",
+        moves: ["Moonblast", "Calm Mind", "Aura Sphere", "Electric Terrain"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Moonblast is a reliable Fairy STAB; Calm Mind boosts SpA/SpD for raid longevity."
+      },
+      {
+        pokemonName: "Sylveon",
+        pokemonId: 700,
+        variant: "special-attacker" as const,
+        ability: "Pixilate",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Metronome",
+        moves: ["Hyper Voice", "Calm Mind", "Draining Kiss", "Light Screen"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Pixilate Hyper Voice hits all targets; Calm Mind boosts; Draining Kiss heals."
+      },
+      {
+        pokemonName: "Gardevoir",
+        pokemonId: 282,
+        variant: "special-attacker" as const,
+        ability: "Trace",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Shell Bell",
+        moves: ["Moonblast", "Calm Mind", "Life Dew", "Reflect"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Moonblast punishes Dragon typing; Life Dew provides team healing."
+      },
+      {
+        pokemonName: "Mimikyu",
+        pokemonId: 778,
+        variant: "physical-attacker" as const,
+        ability: "Disguise",
+        nature: "Adamant",
+        evs: { hp: 252, attack: 252, defense: 0, specialAttack: 0, specialDefense: 4, speed: 0 },
+        heldItem: "Metronome",
+        moves: ["Play Rough", "Swords Dance", "Shadow Sneak", "Taunt"],
+        teraType: "Fairy",
+        role: "Physical DPS",
+        notes: "Disguise gives free setup turn; Play Rough is strong Fairy STAB."
+      },
+      {
+        pokemonName: "Togekiss",
+        pokemonId: 468,
+        variant: "special-attacker" as const,
+        ability: "Serene Grace",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Leftovers",
+        moves: ["Moonblast", "Air Slash", "Nasty Plot", "Helping Hand"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Moonblast punishes Dragon typing; Nasty Plot boosts damage."
+      },
+      {
+        pokemonName: "Dachsbun",
+        pokemonId: 927,
+        variant: "physical-attacker" as const,
+        ability: "Well-Baked Body",
+        nature: "Adamant",
+        evs: { hp: 252, attack: 252, defense: 0, specialAttack: 0, specialDefense: 4, speed: 0 },
+        heldItem: "Shell Bell",
+        moves: ["Play Rough", "Howl", "Helping Hand", "Protect"],
+        teraType: "Fairy",
+        role: "Physical DPS",
+        notes: "Bulky Fairy attacker with Play Rough; Howl boosts allies."
+      },
+      {
+        pokemonName: "Hatterene",
+        pokemonId: 858,
+        variant: "special-attacker" as const,
+        ability: "Magic Bounce",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Wise Glasses",
+        moves: ["Dazzling Gleam", "Calm Mind", "Mystical Fire", "Life Dew"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Dazzling Gleam spreads Fairy damage; Life Dew heals allies."
+      },
+      {
+        pokemonName: "Magearna",
+        pokemonId: 801,
+        variant: "special-attacker" as const,
+        ability: "Soul-Heart",
+        nature: "Modest",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 252, specialDefense: 4, speed: 0 },
+        heldItem: "Metronome",
+        moves: ["Moonblast", "Calm Mind", "Fleur Cannon", "Reflect"],
+        teraType: "Fairy",
+        role: "Special DPS",
+        notes: "Moonblast and Fleur Cannon provide strong Fairy STAB; Soul-Heart snowballs SpA."
+      }
+    ],
+    defenders: [
+      {
+        pokemonName: "Grimmsnarl",
+        pokemonId: 861,
+        variant: "special-wall" as const,
+        ability: "Prankster",
+        nature: "Careful",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 0, specialDefense: 252, speed: 4 },
+        heldItem: "Light Clay",
+        moves: ["Reflect", "Light Screen", "Taunt", "Spirit Break"],
+        teraType: "Fairy",
+        role: "Screen Support",
+        notes: "Sets dual screens with Prankster priority; Spirit Break lowers SpA."
+      },
+      {
+        pokemonName: "Umbreon",
+        pokemonId: 197,
+        variant: "special-wall" as const,
+        ability: "Synchronize",
+        nature: "Calm",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 0, specialDefense: 252, speed: 4 },
+        heldItem: "Leftovers",
+        moves: ["Snarl", "Helping Hand", "Wish", "Protect"],
+        teraType: "Fairy",
+        role: "Special Wall Support",
+        notes: "Snarl lowers Dragapult’s SpA; Wish provides healing."
+      },
+      {
+        pokemonName: "Chansey",
+        pokemonId: 113,
+        variant: "special-wall" as const,
+        ability: "Natural Cure",
+        nature: "Calm",
+        evs: { hp: 252, attack: 0, defense: 0, specialAttack: 0, specialDefense: 252, speed: 4 },
+        heldItem: "Eviolite",
+        moves: ["Life Dew", "Heal Pulse", "Light Screen", "Helping Hand"],
+        teraType: "Fairy",
+        role: "Healer Support",
+        notes: "Extremely bulky; Life Dew and Heal Pulse for team healing."
+      }
+    ]
   }
 };
+    
 
 // Helper function to get builds for a specific Pokemon event
 export const getBuildsForEvent = (eventKey: string) => {
