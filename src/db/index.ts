@@ -6,7 +6,7 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as profilesSchema from './profilesSchema.js';
 import * as eventsSchema from './eventsSchema.js';
-import * as legendsZATrackerSchema from './legendsZATrackerSchema.js';
+import * as dexTrackerSchema from './dexTrackerSchema.js';
 import * as socialSchema from './socialSchema.js';
 import * as favoritesSchema from './favoritesSchema.js';
 
@@ -45,9 +45,9 @@ try {
   client = postgres(connectionString, {
   prepare: false, // Required for pgbouncer
   ssl: 'require',
-  max: 5, // Reduced from 10 - fewer connections for serverless/Plesk
-  idle_timeout: 30, // Increased from 20 - keep connections alive longer
-  connect_timeout: 10, // Reduced from 30 - fail faster on connection issues
+  max: 3, // Minimal pool for better connection stability
+  idle_timeout: 20, // Timeout idle connections after 20 seconds
+  connect_timeout: 30, // 30 second timeout for initial connection
   max_lifetime: 60 * 30, // 30 minutes - recycle connections to prevent stale connections
   });
 } catch (e) {
@@ -61,7 +61,7 @@ try {
   db = drizzle(client, { schema: {
   ...profilesSchema,
   ...eventsSchema,
-  ...legendsZATrackerSchema,
+  ...dexTrackerSchema,
   ...socialSchema,
   ...favoritesSchema,
   } });
@@ -76,7 +76,16 @@ export async function getDbPing() {
     const result = await db.execute('SELECT 1 as test');
     return { ok: true, result };
   } catch (e) {
-    return { ok: false, error: (e instanceof Error) ? e.message : String(e) };
+    console.error('[DB] getDbPing error:', e);
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    const errorStack = e instanceof Error ? e.stack : undefined;
+    const errorCause = e instanceof Error && 'cause' in e ? e.cause : undefined;
+    return { 
+      ok: false, 
+      error: errorMessage,
+      stack: errorStack,
+      cause: errorCause 
+    };
   }
 }
 

@@ -19,7 +19,9 @@ export default function AuthStatus() {
   };
 
   return (
-    <View className="flex-row items-center justify-between p-2 bg-yellow-100 border border-yellow-300 rounded-lg m-2 w-full">
+    <View 
+    className="flex-row items-center  bg-yellow-100 border border-yellow-300 rounded-lg mb-2 w-full"
+    >
       <TouchableOpacity
         className="flex-1 mr-2 px-3 py-2 bg-yellow-200 rounded-md items-center"
         onPress={navigateToSignIn}

@@ -10,7 +10,7 @@ const getApiUrl = (): string => {
   // More robust development detection
   // Check for browser environment first
   const isBrowser = typeof window !== 'undefined';
-  const hostname = isBrowser ? window.location.hostname : '';
+  const hostname = isBrowser ? window?.location?.hostname : '';
   const isDev = __DEV__ || process.env.NODE_ENV === 'development' || hostname === 'localhost' || hostname === '127.0.0.1';
   
   if (isDev) {

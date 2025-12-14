@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { SidebarCollapsible } from '@/src/components/UI/SidebarCollapsible';
-import { usePokemonTrackerStore } from '@/src/store/pokemonTrackerStoreEnhanced';
+import { usePokemonTrackerStore } from '@/src/store/dexTrackerStore';
 import { useShallow } from 'zustand/react/shallow';
-import { type Pokemon } from '@/data/Pokemon/LumioseDex';
+import { type Pokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
 
 interface ProgressSidebarProps {
   pokemonList: Pokemon[];
@@ -78,12 +77,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
   const alphaShinyMegaDexProgress = React.useMemo(() => getAlphaShinyMegaDexProgress(pokemonList), [getAlphaShinyMegaDexProgress, pokemonList, pokemon]);
 
   return (
-    <SidebarCollapsible 
-      title="Progress" 
-      backgroundColor="bg-green-50"
-      borderColor="border-green-500"
-    >
-      <View className="space-y-2">
+    <View className="space-y-2">
         <ProgressBar
           title="📖 Pokédex (any form) Completion"
           obtained={pokedexProgress.obtained}
@@ -147,7 +141,6 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
           percentage={alphaShinyMegaDexProgress.percentage}
           color="bg-gradient-to-r from-purple-600 to-pink-600"
         />
-      </View>
-    </SidebarCollapsible>
+    </View>
   );
 };

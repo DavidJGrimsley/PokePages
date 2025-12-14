@@ -106,6 +106,9 @@ export interface TeraRaidEvent extends BaseEvent {
 export interface MysteryGiftEvent extends BaseEvent {
   eventType: EventType.MYSTERY_GIFT;
   rewardType: 'pokemon' | 'item' | 'unlock';
+  pokemonName?: string;
+  isShiny?: boolean;
+  teraType?: string;
   rewardName: string;
   rewardDetails: {
     species?: string;

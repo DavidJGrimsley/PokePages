@@ -112,6 +112,7 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
             const token = await getValidAccessToken();
             if (token) {
               const url = buildApiUrl('favorites');
+              console.log('[favoritesStore] fetching favorites from', url);
               const res = await fetch(url, {
                 headers: {
                   'Content-Type': 'application/json',

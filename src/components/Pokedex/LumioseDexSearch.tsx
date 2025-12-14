@@ -9,7 +9,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { lumioseDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
+import { lumioseDex, type Pokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
 import { cn } from '@/src/utils/cn';
 
 const isWeb = Platform.OS === 'web';

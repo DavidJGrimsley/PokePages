@@ -9,30 +9,35 @@ import { RegisteredStatus, FormType } from '@/src/types/tracker';
 // (Deprecated) PokemonStatus was merged into RegisteredStatus
 
 interface PokemonTrackerState {
-  // Single tracker for ALL Pokemon - no separate tracker types needed
-  pokemon: Record<number, RegisteredStatus>;
+  // Nested structure: pokemon data separated by pokedex
+  pokemon: Record<string, Record<number, RegisteredStatus>>;
   
   // Sync state
   isOnline: boolean;
   isSyncing: boolean;
   lastSyncTime: string | null;
-  pendingUpdates: { pokemonId: number; form: FormType; value: boolean; timestamp: string }[];
+  pendingUpdates: { pokemonId: number; form: FormType; value: boolean; pokedex: string; timestamp: string }[];
   
-  // Actions
-  toggleForm: (dex: number, form: FormType) => Promise<void>;
-  getFormStatus: (dex: number, form: FormType) => boolean;
-  getPokemonStatus: (dex: number) => RegisteredStatus;
-  setPokemonData: (data: Record<number, RegisteredStatus>) => void;
+  // Actions (pokedex required for API sync operations)
+  toggleForm: (dex: number, form: FormType, pokedex: string) => Promise<void>;
+  getFormStatus: (dex: number, form: FormType, pokedex: string) => boolean;
+  getPokemonStatus: (dex: number, pokedex: string) => RegisteredStatus | undefined;
+  setPokemonData: (data: Record<number, RegisteredStatus>, pokedex: string) => void;
   clearAllPokemon: () => void;
   
-  // Sync actions
-  syncWithDatabase: () => Promise<void>;
-  loadFromDatabase: () => Promise<void>;
+  // Sync actions (pokedex required to specify which dex to load/save)
+  syncWithDatabase: (pokedex: string) => Promise<void>;
+  loadFromDatabase: (pokedex: string) => Promise<void>;
   setOnlineStatus: (online: boolean) => void;
-  processPendingUpdates: () => Promise<void>;
+  processPendingUpdates: (pokedex: string) => Promise<void>;
   
-  // Stats - Multiple progress trackers
+  // Stats - Multiple progress trackers (work on whatever data is loaded)
   getPokedexProgress: (pokemonList: {id: number}[]) => {
+    obtained: number;
+    total: number;
+    percentage: number;
+  };
+  getNormalDexProgress: (pokemonList: {id: number}[]) => {
     obtained: number;
     total: number;
     percentage: number;
@@ -165,11 +170,28 @@ function getUserId(): string | undefined {
 }
 
 // Add: access token + header helpers with session refresh
+let cachedTokenPromise: Promise<string | undefined> | null = null;
+let lastTokenTime = 0;
+const TOKEN_CACHE_MS = 5000; // Cache for 5 seconds
+
 async function getValidAccessToken(): Promise<string | undefined> {
-  try {
-    // First try to get the current session which will auto-refresh if needed
-    const { supabase } = await import('@/src/utils/supabaseClient');
-    const { data: { session }, error } = await supabase.auth.getSession();
+  console.log('[TRACKER] getValidAccessToken: STARTING');
+  const now = Date.now();
+  
+  // If a request is already in flight, return it instead of making a new one
+  if (cachedTokenPromise && (now - lastTokenTime) < TOKEN_CACHE_MS) {
+    console.log('[TRACKER] getValidAccessToken: returning cached promise');
+    return cachedTokenPromise;
+  }
+  
+  // Create a new request
+  cachedTokenPromise = (async () => {
+    try {
+      // First try to get the current session which will auto-refresh if needed
+      const { supabase } = await import('@/src/utils/supabaseClient');
+      console.log('[TRACKER] getValidAccessToken: supabase imported');
+      const { data: { session }, error } = await supabase.auth.getSession();
+      console.log('[TRACKER] getValidAccessToken: getSession returned, session present?', !!session, 'error?', !!error);
     
     if (error) {
       console.error('[TRACKER] Error getting session:', error);
@@ -183,21 +205,23 @@ async function getValidAccessToken(): Promise<string | undefined> {
         console.log('[TRACKER] Refreshed token detected, updating auth store');
         authStore.setSession(session);
       }
+      console.log('[TRACKER] getValidAccessToken: returning token from session');
       return session.access_token;
     }
     
     // Fallback to auth store if getSession fails
     const s: any = useAuthStore.getState();
-    return (
-      s.session?.access_token ||
-      s.accessToken ||
-      s.token ||
-      s.user?.accessToken
-    );
+    const fallbackToken = s.session?.access_token || s.accessToken || s.token || s.user?.accessToken;
+    console.log('[TRACKER] getValidAccessToken: no session token, using fallback?', !!fallbackToken);
+    return fallbackToken;
   } catch (error) {
     console.error('[TRACKER] Error in getValidAccessToken:', error);
     return undefined;
   }
+  })();
+  
+  lastTokenTime = now;
+  return cachedTokenPromise;
 }
 
 async function authHeaders(): Promise<Record<string, string>> {
@@ -214,22 +238,30 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       ...initialState,
       
       // Toggle form with database sync
-      toggleForm: async (dex: number, form: FormType) => {
-        const currentStatus = get().getPokemonStatus(dex);
+      toggleForm: async (dex: number, form: FormType, pokedex: string) => {
+        const currentStatus = get().getPokemonStatus(dex, pokedex) || {
+          normal: false,
+          shiny: false,
+          alpha: false,
+          alphaShiny: false,
+        };
         const newValue = !currentStatus[form];
         console.log('[TRACKER] API_BASE_URL from apiConfig:', API_BASE_URL);
 
         // Debug
-        console.log('[TRACKER] toggleForm called', { dex, form, newValue });
+        console.log('[TRACKER] toggleForm called', { dex, form, newValue, pokedex });
 
-        // Update local state immediately (optimistic update)
+        // Update local state immediately (optimistic update) with nested structure
         const updatedStatus: RegisteredStatus = { ...currentStatus };
         updatedStatus[form] = newValue;
 
         set((state) => ({
           pokemon: {
             ...state.pokemon,
-            [dex]: updatedStatus,
+            [pokedex]: {
+              ...(state.pokemon[pokedex] || {}),
+              [dex]: updatedStatus,
+            },
           },
         }));
 
@@ -239,32 +271,53 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         if (isOnline) {
           try {
             const userId = getUserId();
-            console.log('[TRACKER] sync PUT -> ', buildApiUrl(`legends-za/${dex}`), { userIdPresent: !!userId });
+            const url = buildApiUrl(`dex-tracker/${dex}`);
+            console.log('[TRACKER] sync PUT -> ', url, { userIdPresent: !!userId, pokedex });
             
             if (!userId) {
               console.log('[TRACKER] No user ID available, cannot sync to server - queuing as pending');
               throw new Error('No user ID - user may not be logged in');
             }
 
-            const headers = await authHeaders(); // await the async function
-            const res = await fetch(buildApiUrl(`legends-za/${dex}`), {
+            console.log('[TRACKER] About to get auth headers...');
+            let headers: Record<string, string> = {};
+            try {
+              headers = await authHeaders(); // await the async function
+              console.log('[TRACKER] Auth headers obtained:', Object.keys(headers), 'Authorization present?', !!headers.Authorization);
+            } catch (headerError) {
+              console.error('[TRACKER] EXCEPTION getting auth headers:', headerError);
+              throw headerError;
+            }
+            
+            console.log('[TRACKER] About to call fetch with URL:', url);
+            console.log('[TRACKER] Fetch payload:', { pokedex, formType: form, value: newValue });
+            
+            const res = await fetch(url, {
               method: 'PUT',
               headers: headers, // include bearer
-              body: JSON.stringify({ userId, formType: form, value: newValue }),
+              body: JSON.stringify({ pokedex, formType: form, value: newValue }),
             });
+            
+            console.log('[TRACKER] Fetch returned, status:', res.status, res.statusText);
+            
             if (!res.ok) {
               const text = await res.text().catch(() => 'no-body');
               throw new Error(`HTTP ${res.status} ${text}`);
             }
-            console.log('[TRACKER] sync PUT success', { dex, form, newValue });
+            console.log('[TRACKER] sync PUT success', { dex, form, newValue, pokedex });
             set({ lastSyncTime: new Date().toISOString() });
           } catch (error) {
             console.error('[TRACKER] Failed to sync to database:', error);
+            console.error('[TRACKER] Error details:', {
+              name: error instanceof Error ? error.name : 'unknown',
+              message: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined
+            });
             // Add to pending updates for later sync
             set((state) => ({
               pendingUpdates: [
                 ...state.pendingUpdates,
-                { pokemonId: dex, form, value: newValue, timestamp: new Date().toISOString() }
+                { pokemonId: dex, form, value: newValue, pokedex, timestamp: new Date().toISOString() }
               ]
             }));
           }
@@ -274,16 +327,16 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           set((state) => ({
             pendingUpdates: [
               ...state.pendingUpdates,
-              { pokemonId: dex, form, value: newValue, timestamp: new Date().toISOString() }
+              { pokemonId: dex, form, value: newValue, pokedex, timestamp: new Date().toISOString() }
             ]
           }));
         }
       },
 
       // Load data from server (Drizzle)
-      loadFromDatabase: async () => {
+      loadFromDatabase: async (pokedex: string) => {
         try {
-          console.log('[TRACKER] loadFromDatabase: starting');
+          console.log('[TRACKER] loadFromDatabase: starting for pokedex:', pokedex);
           set({ isSyncing: true });
           const userId = getUserId();
           console.log('[TRACKER] loadFromDatabase: userId present?', !!userId);
@@ -293,7 +346,7 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
             return;
           }
 
-          const url = buildApiUrl(`legends-za?userId=${userId}`);
+          const url = buildApiUrl(`dex-tracker?pokedex=${pokedex}`);
           console.log('[TRACKER] GET ->', url);
           
           // Add timeout to fetch request
@@ -301,10 +354,14 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
           
           const headers = await authHeaders(); // await the async function
+          console.log('[TRACKER] Headers prepared:', Object.keys(headers));
+          
+          console.log('[TRACKER] About to fetch...');
           const res = await fetch(url, {
             headers: headers, // include bearer
             signal: controller.signal,
           });
+          console.log('[TRACKER] Fetch completed, status:', res.status, res.statusText);
           
           clearTimeout(timeoutId);
           if (!res.ok) {
@@ -360,32 +417,20 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           console.log('[TRACKER] loadFromDatabase: loaded records', records.length);
           console.log('[TRACKER] loadFromDatabase: final pokemon data', pokemonData);
 
-          // SAFETY: Merge with local data instead of overwriting
-          // Keep any Pokemon that exist locally but not in DB
-          const currentPokemon = get().pokemon;
-          const mergedPokemon = { ...currentPokemon };
-          
-          // Only overwrite with DB data if DB has any data for that Pokemon
-          Object.entries(pokemonData).forEach(([dexId, status]) => {
-            const id = Number(dexId);
-            // If DB has ANY true values for this Pokemon, use DB data
-            // Otherwise keep local data
-            if (status.normal || status.shiny || status.alpha || status.alphaShiny) {
-              mergedPokemon[id] = status;
-              console.log(`[TRACKER] loadFromDatabase: using DB data for #${id}:`, status);
-            } else if (currentPokemon[id]) {
-              console.log(`[TRACKER] loadFromDatabase: keeping local data for #${id}:`, currentPokemon[id]);
-              // Keep existing local data
-            }
-          });
-
-          console.log('[TRACKER] loadFromDatabase: merged pokemon data', mergedPokemon);
-
-          set({ 
-            pokemon: mergedPokemon,
+          // Merge with existing data for this pokedex
+          set((state) => ({
+            pokemon: {
+              ...state.pokemon,
+              [pokedex]: {
+                ...(state.pokemon[pokedex] || {}),
+                ...pokemonData,
+              },
+            },
             lastSyncTime: new Date().toISOString(),
-            isSyncing: false 
-          });
+            isSyncing: false,
+          }));
+
+          console.log('[TRACKER] loadFromDatabase: merged pokemon data', get().pokemon);
         } catch (error) {
           console.error('[TRACKER] Failed to load from database:', error);
           if (error instanceof TypeError && error.message === 'Network request failed') {
@@ -404,12 +449,12 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       },
 
       // Sync local changes to server (Drizzle)
-      syncWithDatabase: async () => {
+      syncWithDatabase: async (pokedex: string) => {
         const { isOnline, isSyncing } = get();
         if (!isOnline || isSyncing) return;
 
         try {
-          console.log('[TRACKER] Full syncWithDatabase: starting');
+          console.log('[TRACKER] Full syncWithDatabase: starting for pokedex:', pokedex);
           set({ isSyncing: true });
           const userId = getUserId();
           console.log('[TRACKER] syncWithDatabase: userId present?', !!userId);
@@ -421,12 +466,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
           // Process pending updates first
           console.log('[TRACKER] syncWithDatabase: processing pending updates (count=', get().pendingUpdates.length, ')');
-          await get().processPendingUpdates();
+          await get().processPendingUpdates(pokedex);
 
           // Full sync: compare local data with database
-          const localPokemon = get().pokemon;
+          const allPokemon = get().pokemon;
+          const localPokemon = allPokemon[pokedex] || {};
           const headers = await authHeaders(); // await the async function
-          const res = await fetch(buildApiUrl(`legends-za?userId=${userId}`), {
+          const res = await fetch(buildApiUrl(`dex-tracker?pokedex=${pokedex}`), {
             headers: headers, // include bearer
           });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -461,10 +507,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           if (updates.length > 0) {
             console.log('[TRACKER] syncWithDatabase: sending batch updates', updates.length);
             const headers2 = await authHeaders(); // await the async function
-            const res2 = await fetch(buildApiUrl('legends-za/batch'), {
+            const res2 = await fetch(buildApiUrl('dex-tracker/batch'), {
                method: 'POST',
                headers: headers2, // include bearer
-               body: JSON.stringify({ userId, updates }),
+               body: JSON.stringify({ pokedex, updates }),
              });
             if (!res2.ok) {
               const text = await res2.text().catch(() => 'no-body');
@@ -484,12 +530,12 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       },
 
       // Process pending updates via server batch endpoint
-      processPendingUpdates: async () => {
+      processPendingUpdates: async (pokedex: string) => {
         const { pendingUpdates } = get();
         if (pendingUpdates.length === 0) return;
 
         try {
-          console.log('[TRACKER] processPendingUpdates: count=', pendingUpdates.length);
+          console.log('[TRACKER] processPendingUpdates: count=', pendingUpdates.length, 'pokedex:', pokedex);
           const userId = getUserId();
           console.log('[TRACKER] processPendingUpdates: userId present?', !!userId);
           if (!userId) return;
@@ -507,10 +553,10 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
           console.log('[TRACKER] processPendingUpdates: sending batch of', updates.length);
           const headers = await authHeaders(); // await the async function
-          const res = await fetch(buildApiUrl(`legends-za/batch?userId=${userId}`), {
+          const res = await fetch(buildApiUrl('dex-tracker/batch'), {
              method: 'POST',
              headers: headers, // include bearer
-             body: JSON.stringify({ userId, updates }),
+             body: JSON.stringify({ pokedex, updates }),
            });
           if (!res.ok) {
             const text = await res.text().catch(() => 'no-body');
@@ -527,40 +573,44 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       setOnlineStatus: (online: boolean) => {
         set({ isOnline: online });
-        if (online) {
-          // Auto-sync when coming online
-          setTimeout(() => get().syncWithDatabase(), 1000);
-        }
+        // Note: Don't auto-sync here - we don't know which pokedex to sync
+        // The UI should call loadFromDatabase(pokedex) when needed
       },
 
-      getFormStatus: (dex: number, form: FormType) => {
-        const pokemon = get().pokemon[dex];
+      getFormStatus: (dex: number, form: FormType, pokedex: string) => {
+        const pokemon = get().pokemon[pokedex]?.[dex];
         return pokemon ? pokemon[form] : false;
       },
 
-      getPokemonStatus: (dex: number) => {
-        return get().pokemon[dex] || {
-          normal: false,
-          shiny: false,
-          alpha: false,
-          alphaShiny: false,
-        };
+      getPokemonStatus: (dex: number, pokedex: string) => {
+        return get().pokemon[pokedex]?.[dex];
       },
 
-      setPokemonData: (data: Record<number, RegisteredStatus>) => {
-        set({ pokemon: data });
+      setPokemonData: (data: Record<number, RegisteredStatus>, pokedex: string) => {
+        set((state) => ({
+          pokemon: {
+            ...state.pokemon,
+            [pokedex]: data,
+          },
+        }));
       },
 
       clearAllPokemon: () => {
         set({ pokemon: {} });
       },
 
-      // Progress calculation functions (unchanged from original)
+      // Progress calculation functions - these look across ALL pokedexes
       getPokedexProgress: (pokemonList) => {
-        const pokemon = get().pokemon;
+        const allPokemon = get().pokemon;
         const obtained = pokemonList.filter(p => {
-          const s = pokemon[p.id];
-          return !!(s?.normal || s?.shiny || s?.alpha || s?.alphaShiny);
+          // Check if Pokemon is obtained in ANY pokedex
+          for (const pokedex in allPokemon) {
+            const s = allPokemon[pokedex][p.id];
+            if (s?.normal || s?.shiny || s?.alpha || s?.alphaShiny) {
+              return true;
+            }
+          }
+          return false;
         }).length;
         return {
           obtained,
@@ -569,10 +619,15 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         };
       },
 
-      // Same behavior as the old getPokedexProgress: count normal only
+      // Same behavior as the old getPokedexProgress: count normal only - check ALL pokedexes
       getNormalDexProgress: (pokemonList) => {
-        const pokemon = get().pokemon;
-        const obtained = pokemonList.filter(p => pokemon[p.id]?.normal).length;
+        const allPokemon = get().pokemon;
+        const obtained = pokemonList.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.normal) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: pokemonList.length,
@@ -581,8 +636,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       },
 
       getShinyDexProgress: (pokemonList) => {
-        const pokemon = get().pokemon;
-        const obtained = pokemonList.filter(p => pokemon[p.id]?.shiny).length;
+        const allPokemon = get().pokemon;
+        const obtained = pokemonList.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.shiny) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: pokemonList.length,
@@ -592,8 +652,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       getAlphaDexProgress: (pokemonList) => {
         const alphaCapable = pokemonList.filter(p => p.canBeAlpha);
-        const pokemon = get().pokemon;
-        const obtained = alphaCapable.filter(p => pokemon[p.id]?.alpha).length;
+        const allPokemon = get().pokemon;
+        const obtained = alphaCapable.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.alpha) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: alphaCapable.length,
@@ -603,8 +668,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       getShinyAlphaDexProgress: (pokemonList) => {
         const alphaCapable = pokemonList.filter(p => p.canBeAlpha);
-        const pokemon = get().pokemon;
-        const obtained = alphaCapable.filter(p => pokemon[p.id]?.alphaShiny).length;
+        const allPokemon = get().pokemon;
+        const obtained = alphaCapable.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.alphaShiny) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: alphaCapable.length,
@@ -614,8 +684,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       getMegaDexProgress: (pokemonList) => {
         const megaCapable = pokemonList.filter(p => p.hasMega);
-        const pokemon = get().pokemon;
-        const obtained = megaCapable.filter(p => pokemon[p.id]?.normal).length;
+        const allPokemon = get().pokemon;
+        const obtained = megaCapable.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.normal) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: megaCapable.length,
@@ -625,8 +700,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       getMegaShinyDexProgress: (pokemonList) => {
         const megaCapable = pokemonList.filter(p => p.hasMega);
-        const pokemon = get().pokemon;
-        const obtained = megaCapable.filter(p => pokemon[p.id]?.shiny).length;
+        const allPokemon = get().pokemon;
+        const obtained = megaCapable.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.shiny) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: megaCapable.length,
@@ -636,8 +716,13 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
 
       getAlphaShinyMegaDexProgress: (pokemonList) => {
         const megaCapable = pokemonList.filter(p => p.hasMega);
-        const pokemon = get().pokemon;
-        const obtained = megaCapable.filter(p => pokemon[p.id]?.alphaShiny).length;
+        const allPokemon = get().pokemon;
+        const obtained = megaCapable.filter(p => {
+          for (const pokedex in allPokemon) {
+            if (allPokemon[pokedex][p.id]?.alphaShiny) return true;
+          }
+          return false;
+        }).length;
         return {
           obtained,
           total: megaCapable.length,
@@ -646,18 +731,31 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
       },
 
       getOverallProgress: (pokemonList) => {
-        const pokemon = get().pokemon;
+        const allPokemon = get().pokemon;
         let obtainedForms = 0;
         let totalForms = 0;
 
         pokemonList.forEach(p => {
-          const status = pokemon[p.id];
-          if (status) {
-            if (status.normal) obtainedForms++;
-            if (status.shiny) obtainedForms++;
-            if (p.canBeAlpha && status.alpha) obtainedForms++;
-            if (p.canBeAlpha && status.alphaShiny) obtainedForms++;
+          // Check all pokedexes for this Pokemon
+          let hasNormal = false;
+          let hasShiny = false;
+          let hasAlpha = false;
+          let hasAlphaShiny = false;
+          
+          for (const pokedex in allPokemon) {
+            const status = allPokemon[pokedex][p.id];
+            if (status) {
+              if (status.normal) hasNormal = true;
+              if (status.shiny) hasShiny = true;
+              if (status.alpha) hasAlpha = true;
+              if (status.alphaShiny) hasAlphaShiny = true;
+            }
           }
+          
+          if (hasNormal) obtainedForms++;
+          if (hasShiny) obtainedForms++;
+          if (p.canBeAlpha && hasAlpha) obtainedForms++;
+          if (p.canBeAlpha && hasAlphaShiny) obtainedForms++;
 
           totalForms += 2; // normal + shiny
           if (p.canBeAlpha) totalForms += 2; // alpha + alphaShiny

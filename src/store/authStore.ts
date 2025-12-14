@@ -639,19 +639,8 @@ supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session 
       await migrateAnonymousData(session.user.id);
     }
 
-    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-      try {
-        const mod = await import('./pokemonTrackerStoreEnhanced');
-        const trackerStore = mod.usePokemonTrackerStore;
-        if (trackerStore && trackerStore.getState) {
-          console.log('🔄 Syncing Pokemon tracker...');
-          await trackerStore.getState().syncWithDatabase();
-          console.log('✅ Pokemon tracker synced');
-        }
-      } catch (err) {
-        console.error('Failed to sync tracker:', err);
-      }
-    }
+    // Dex tracker data is now loaded lazily when user visits the page
+    // This improves login performance and only fetches data that's actually needed
   } else if (event === 'SIGNED_OUT') {
     console.log('🏪 Signed out event detected, clearing profile');
     setProfile(null);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { AppText } from '@/src/components/TextTheme/AppText';
-import { lumioseDex, Pokemon } from '@/data/Pokemon/LumioseDex';
+import { lumioseDex, Pokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
 
 interface EVYieldsProps {
   game: 'PLZA' | 'SV' | 'BDSP';

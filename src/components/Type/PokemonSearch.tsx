@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { View, TextInput, Pressable, Text, ScrollView, Platform, Keyboard } from 'react-native';
-import { nationalDex, type Pokemon } from '@/data/Pokemon/NationalDex';
-import { lumioseMegaDex } from '@/data/Pokemon/LumioseDex';
+import { nationalDex, type Pokemon as NationalPokemon } from '@/data/Pokemon/NationalDex';
+import { megaDex } from '@/data/Pokemon/MegaDex';
+import { hyperspaceDex } from '@/data/Pokemon/LegendsZA/HyperspaceDex';
+import type { Pokemon as LegendsPokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
 import { cn } from '@/src/utils/cn';
 import { type PokemonType } from '~/constants/typeUtils';
 
@@ -11,6 +13,7 @@ interface PokemonSearchProps {
 }
 
 const isWeb = Platform.OS === 'web';
+type SearchPokemon = NationalPokemon | LegendsPokemon;
 
 export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon..." }: PokemonSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +24,8 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
     if (!searchQuery.trim()) return [];
     
     const query = searchQuery.toLowerCase();
-    const results: Pokemon[] = [];
+      type SearchPokemon = NationalPokemon | LegendsPokemon;
+    const results: SearchPokemon[] = [];
     
     // Search through national dex
     const regularMatches = nationalDex.filter(pokemon => 
@@ -33,15 +37,28 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
       results.push(pokemon);
       
       // Find and add mega evolutions for this Pokemon
-      const megaForms = lumioseMegaDex.filter(mega => mega.id === pokemon.id);
+      const megaForms = megaDex.filter(mega => mega.id === pokemon.id);
       results.push(...megaForms);
     });
     
     // Also search for direct mega searches (e.g., "Mega Gyarados")
-    const directMegaMatches = lumioseMegaDex.filter(mega => 
+    const directMegaMatches = megaDex.filter(mega => 
       mega.name.toLowerCase().includes(query)
     );
     
+    // Also search Hyperspace / DLC entries directly and add them
+    const directHyperspaceMatches = hyperspaceDex.filter(pokemon => 
+      pokemon.name.toLowerCase().includes(query) ||
+      pokemon.type1.toLowerCase().includes(query) ||
+      pokemon.type2?.toLowerCase().includes(query)
+    );
+    // Merge Hyperspace entries
+    directHyperspaceMatches.forEach(h => {
+      if (!results.some(r => r.id === h.id && r.name === h.name)) {
+        results.push(h);
+      }
+    });
+
     // Add direct mega matches that aren't already in results
     directMegaMatches.forEach(mega => {
       if (!results.some(r => r.id === mega.id && r.name === mega.name)) {
@@ -52,7 +69,7 @@ export function PokemonSearch({ onPokemonSelect, placeholder = "Search Pokémon.
     return results.slice(0, 15); // Limit to 15 results for performance
   }, [searchQuery]);
 
-  const handlePokemonSelect = (pokemon: Pokemon) => {
+  const handlePokemonSelect = (pokemon: SearchPokemon) => {
     // Set the search input to the selected Pokemon's name
     setSearchQuery(pokemon.name);
     setIsDropdownVisible(false);

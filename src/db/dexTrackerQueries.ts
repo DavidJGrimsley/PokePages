@@ -1,15 +1,16 @@
 import { eq, and } from 'drizzle-orm';
 import { db } from './index.js';
-import { legendsZATracker } from './legendsZATrackerSchema.js';
+import { dexTracker } from './dexTrackerSchema.js';
 import { RegisteredStatus } from '@/src/types/tracker';
 
 // RegisteredStatus is now shared from src/types/tracker
 
-console.log('[DEBUG] legendsZATrackerQueries.ts loaded');
+console.log('[DEBUG] dexTrackerQueries.ts loaded');
 
 export type PokemonTrackerRecord = {
   id: string;
   userId: string;
+  pokedex: string;
   pokemonId: number;
   normal: boolean;
   shiny: boolean;
@@ -20,14 +21,17 @@ export type PokemonTrackerRecord = {
 };
 
 /**
- * Get all Pokemon tracker records for a user
+ * Get all Pokemon tracker records for a user in a specific pokedex
  */
-export async function getUserPokemonTrackerData(userId: string): Promise<PokemonTrackerRecord[]> {
+export async function getUserPokemonTrackerData(userId: string, pokedex: string): Promise<PokemonTrackerRecord[]> {
   try {
     const result = await db
       .select()
-      .from(legendsZATracker)
-      .where(eq(legendsZATracker.userId, userId));
+      .from(dexTracker)
+      .where(and(
+        eq(dexTracker.userId, userId),
+        eq(dexTracker.pokedex, pokedex)
+      ));
     
     return result;
   } catch (error) {
@@ -37,19 +41,21 @@ export async function getUserPokemonTrackerData(userId: string): Promise<Pokemon
 }
 
 /**
- * Get specific Pokemon tracker record for a user
+ * Get specific Pokemon tracker record for a user in a specific pokedex
  */
 export async function getUserPokemonRecord(
-  userId: string, 
+  userId: string,
+  pokedex: string,
   pokemonId: number
 ): Promise<PokemonTrackerRecord | null> {
   try {
     const result = await db
       .select()
-      .from(legendsZATracker)
+      .from(dexTracker)
       .where(and(
-        eq(legendsZATracker.userId, userId),
-        eq(legendsZATracker.pokemonId, pokemonId)
+        eq(dexTracker.userId, userId),
+        eq(dexTracker.pokedex, pokedex),
+        eq(dexTracker.pokemonId, pokemonId)
       ))
       .limit(1);
     
@@ -65,24 +71,26 @@ export async function getUserPokemonRecord(
  */
 export async function upsertPokemonRecord(
   userId: string,
+  pokedex: string,
   pokemonId: number,
   formData: RegisteredStatus
 ): Promise<PokemonTrackerRecord> {
   try {
     // First, try to get existing record
-    const existingRecord = await getUserPokemonRecord(userId, pokemonId);
+    const existingRecord = await getUserPokemonRecord(userId, pokedex, pokemonId);
     
     if (existingRecord) {
       // Update existing record
       const result = await db
-        .update(legendsZATracker)
+        .update(dexTracker)
         .set({
           ...formData,
           updatedAt: new Date(),
         })
         .where(and(
-          eq(legendsZATracker.userId, userId),
-          eq(legendsZATracker.pokemonId, pokemonId)
+          eq(dexTracker.userId, userId),
+          eq(dexTracker.pokedex, pokedex),
+          eq(dexTracker.pokemonId, pokemonId)
         ))
         .returning();
       
@@ -90,9 +98,10 @@ export async function upsertPokemonRecord(
     } else {
       // Insert new record
       const result = await db
-        .insert(legendsZATracker)
+        .insert(dexTracker)
         .values({
           userId,
+          pokedex,
           pokemonId,
           ...formData,
         })
@@ -111,13 +120,14 @@ export async function upsertPokemonRecord(
  */
 export async function updatePokemonForm(
   userId: string,
+  pokedex: string,
   pokemonId: number,
   formType: keyof RegisteredStatus,
   value: boolean
 ): Promise<PokemonTrackerRecord> {
   try {
     // Get current record or create default
-    let currentRecord = await getUserPokemonRecord(userId, pokemonId);
+    let currentRecord = await getUserPokemonRecord(userId, pokedex, pokemonId);
     
     if (!currentRecord) {
       // Create new record with default values
@@ -129,7 +139,7 @@ export async function updatePokemonForm(
       };
       defaultFormData[formType] = value;
       
-      return await upsertPokemonRecord(userId, pokemonId, defaultFormData);
+      return await upsertPokemonRecord(userId, pokedex, pokemonId, defaultFormData);
     }
     
     // Update the specific form
@@ -141,7 +151,7 @@ export async function updatePokemonForm(
     };
     updatedFormData[formType] = value;
     
-    return await upsertPokemonRecord(userId, pokemonId, updatedFormData);
+    return await upsertPokemonRecord(userId, pokedex, pokemonId, updatedFormData);
   } catch (error) {
     console.error('Error updating Pokemon form:', error);
     throw error;
@@ -153,6 +163,7 @@ export async function updatePokemonForm(
  */
 export async function batchUpdatePokemonRecords(
   userId: string,
+  pokedex: string,
   updates: { pokemonId: number; formData: RegisteredStatus }[]
 ): Promise<PokemonTrackerRecord[]> {
   try {
@@ -160,7 +171,7 @@ export async function batchUpdatePokemonRecords(
     
     // Process updates sequentially to avoid conflicts
     for (const update of updates) {
-      const result = await upsertPokemonRecord(userId, update.pokemonId, update.formData);
+      const result = await upsertPokemonRecord(userId, pokedex, update.pokemonId, update.formData);
       results.push(result);
     }
     
@@ -176,14 +187,16 @@ export async function batchUpdatePokemonRecords(
  */
 export async function deletePokemonRecord(
   userId: string,
+  pokedex: string,
   pokemonId: number
 ): Promise<void> {
   try {
     await db
-      .delete(legendsZATracker)
+      .delete(dexTracker)
       .where(and(
-        eq(legendsZATracker.userId, userId),
-        eq(legendsZATracker.pokemonId, pokemonId)
+        eq(dexTracker.userId, userId),
+        eq(dexTracker.pokedex, pokedex),
+        eq(dexTracker.pokemonId, pokemonId)
       ));
   } catch (error) {
     console.error('Error deleting Pokemon record:', error);
@@ -192,11 +205,11 @@ export async function deletePokemonRecord(
 }
 
 /**
- * Get Pokemon tracker statistics for a user
+ * Get Pokemon tracker statistics for a user in a specific pokedex
  */
-export async function getUserPokemonStats(userId: string) {
+export async function getUserPokemonStats(userId: string, pokedex: string) {
   try {
-    const records = await getUserPokemonTrackerData(userId);
+    const records = await getUserPokemonTrackerData(userId, pokedex);
     
     const stats = {
       totalRegistered: 0,

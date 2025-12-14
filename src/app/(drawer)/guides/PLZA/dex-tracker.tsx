@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import Head from 'expo-router/head';
+import { Container } from '@/src/components/UI/Container';
+import { ProgressSidebar } from '@/src/components/UI/ProgressSidebar';
+import colors from '@/src/constants/style/colors';
+import { cn } from '@/src/utils/cn';
+import { usePokemonTrackerStore} from '@/src/store/dexTrackerStore';
+import { useAuthStore } from '@/src/store/authStore';
+import { useShallow } from 'zustand/react/shallow';
+import { lumioseDex, type Pokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
+import { hyperspaceDex } from '@/data/Pokemon/LegendsZA/HyperspaceDex';
+import { type FormType }from '~/types/tracker';
+import SearchBar from '@/src/components/Pokedex/LumioseDexSearch';
+import AuthStatus from '@/src/components/Auth/AuthStatus';
+import { Footer } from '@/src/components/Meta/Footer';
+import { DualCollapsibleRow } from '@/src/components/Pokedex/DualCollapsibleRow';
 import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
 import { registerFeature } from '@/src/utils/featureRegistry';
+import { FilterModal } from '@/src/components/Pokedex/FilterModal';
+
 export const FEATURE_KEY = 'feature:guides.PLZA.dex-tracker';
 registerFeature({
   key: FEATURE_KEY,
@@ -8,41 +26,39 @@ registerFeature({
   path: '/guides/PLZA/dex-tracker',
   icon: 'calculator' });
 
-import { View, Text, Pressable, ActivityIndicator, useColorScheme } from 'react-native';
-import Head from 'expo-router/head';
-import { Container } from '@/src/components/UI/Container';
-import { AppText } from '@/src/components/TextTheme/AppText';
-import { BouncyText } from '@/src/components/TextTheme/BouncyText';
-import { SidebarCollapsible } from '@/src/components/UI/SidebarCollapsible';
-import { ProgressSidebar } from '@/src/components/UI/ProgressSidebar';
-import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
-import MultiLayerParallaxScrollView from '@/src/components/Parallax/MultiLayerParallaxScrollView';
-import colors from '@/src/constants/style/colors';
-import { cn } from '@/src/utils/cn';
-import { usePokemonTrackerStore} from '@/src/store/pokemonTrackerStoreEnhanced';
-import { useShallow } from 'zustand/react/shallow';
-import { lumioseDex, type Pokemon } from '@/data/Pokemon/LumioseDex';
-import { type FormType }from '~/types/tracker';
-import SearchBar from '@/src/components/Pokedex/LumioseDexSearch';
-import AuthStatus from '@/src/components/Auth/AuthStatus';
-
 
 type FilterType = 'all' | 'alpha' | 'mega';
 
 export default function DexTrackerPage() {
-  const colorScheme = useColorScheme(); // 'light' | 'dark' | null
   const hasHydrated = usePokemonTrackerStore((state) => state._hasHydrated);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [activeDex, setActiveDex] = useState<'all' | 'lumiose' | 'hyperspace'>('all');
   const [query, setQuery] = useState('');
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
 
   // Filter Pokemon based on selected filter + search query
   const filteredPokemon = React.useMemo(() => {
-    if (!lumioseDex || !Array.isArray(lumioseDex)) {
-      console.error('[DEX TRACKER] nationalDex is not available or not an array:', lumioseDex);
+    // Select the appropriate dex based on activeDex state
+    let sourceDex: Pokemon[];
+      switch (activeDex) {
+      case 'all':
+        sourceDex = [...lumioseDex, ...hyperspaceDex];
+        break;
+      case 'hyperspace':
+        sourceDex = hyperspaceDex;
+        break;
+      case 'lumiose':
+      default:
+        sourceDex = lumioseDex;
+        break;
+    }
+
+    if (!sourceDex || !Array.isArray(sourceDex)) {
+      console.error('[DEX TRACKER] sourceDex is not available or not an array:', sourceDex);
       return [];
     }
     
-    let base = lumioseDex;
+    let base = sourceDex;
     switch (filter) {
       case 'alpha':
         base = base.filter(p => p?.canBeAlpha);
@@ -62,64 +78,73 @@ export default function DexTrackerPage() {
       const idMatch = String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q);
       return nameMatch || idMatch;
     });
-  }, [filter, query]);
+  }, [activeDex, filter, query]);
 
-  // After hydration completes, explicitly load from database to avoid race conditions
+  // Helper functions
+  const getActiveDexName = () => {
+    switch (activeDex) {
+      case 'all':
+        return 'All Pokédex';
+      case 'lumiose':
+        return 'Lumiose Dex';
+      case 'hyperspace':
+        return 'Hyperspace';
+    }
+  };
+
+  const getActiveDexCount = () => {
+    switch (activeDex) {
+      case 'all':
+        return lumioseDex.length + hyperspaceDex.length;
+      case 'lumiose':
+        return lumioseDex.length;
+      case 'hyperspace':
+        return hyperspaceDex.length;
+    }
+  };
+
+  // After hydration completes, load data for the active dex
   useEffect(() => {
-    if (hasHydrated) {
+    const userId = useAuthStore.getState().user?.id;
+    
+    if (hasHydrated && userId) {
       try {
-        usePokemonTrackerStore.getState().loadFromDatabase();
+        if (activeDex === 'all') {
+          // Load both dexes when 'all' is selected
+          usePokemonTrackerStore.getState().loadFromDatabase('lumiose');
+          usePokemonTrackerStore.getState().loadFromDatabase('hyperspace');
+        } else {
+          // Load only the selected dex
+          usePokemonTrackerStore.getState().loadFromDatabase(activeDex);
+        }
       } catch (e) {
         console.error('[DEX TRACKER PAGE] Failed to trigger loadFromDatabase:', e);
       }
     }
-  }, [hasHydrated]);
-
-  const FilterButton = ({ filterType, label, count }: { filterType: FilterType; label: string; count: number }) => (
-    <Pressable
-      onPress={() => setFilter(filterType)}
-      className={cn(
-        'px-4 py-2 rounded-lg border-2 flex-1 items-center justify-center',
-        filter === filterType
-          ? 'bg-blue-500 border-blue-600'
-          : 'bg-gray-200 border-gray-300'
-      )}
-    >
-      <Text className={cn(
-        'text-sm font-semibold',
-        filter === filterType ? 'text-white' : 'text-gray-700'
-      )}>
-        {label}
-      </Text>
-      <Text className={cn(
-        'text-xs mt-0.5',
-        filter === filterType ? 'text-blue-100' : 'text-gray-500'
-      )}>
-        {count} Pokémon
-      </Text>
-    </Pressable>
-  );
+  }, [hasHydrated, activeDex]);
 
   const FormButton = ({ 
-    dex, 
+    dexNum, 
     form, 
     label, 
-    emoji 
+    emoji,
+    pokedex
   }: { 
-    dex: number; 
+    dexNum: number; 
     form: FormType; 
     label: string; 
     emoji: string;
+    pokedex: string;
   }) => {
-    // Subscribe to this specific form's status reactively
+    // Subscribe to this specific form's status for this pokedex
     const isObtained = usePokemonTrackerStore((state) => 
-      state.pokemon[dex]?.[form] || false
+      state.pokemon[pokedex]?.[dexNum]?.[form] || false
     );
     const toggleForm = usePokemonTrackerStore((state) => state.toggleForm);
     
     return (
       <Pressable
-        onPress={() => toggleForm(dex, form)}
+        onPress={() => toggleForm(dexNum, form, pokedex)}
         className={cn(
           'flex-1 py-2 px-2 rounded-md border-2 items-center justify-center min-w-[70px]',
           isObtained 
@@ -140,13 +165,13 @@ export default function DexTrackerPage() {
     );
   };
 
-  const PokemonRow = ({ pokemon }: { pokemon: Pokemon }) => {
-    const { id: dex, name, hasMega, canBeAlpha } = pokemon;
+  const PokemonRow = ({ pokemon, pokedex }: { pokemon: Pokemon; pokedex: string }) => {
+    const { id: dexNum, name, hasMega, canBeAlpha } = pokemon;
     
     // Subscribe to a tuple of primitive values with shallow comparison
     const [normal, shiny, alpha, alphaShiny] = usePokemonTrackerStore(
       useShallow((state) => {
-        const s = state.pokemon[dex];
+        const s = state.pokemon[pokedex]?.[dexNum];
         return [!!s?.normal, !!s?.shiny, !!s?.alpha, !!s?.alphaShiny] as const;
       })
     );
@@ -164,7 +189,7 @@ export default function DexTrackerPage() {
             className="text-sm font-bold text-app-text w-12"
             numberOfLines={1}
           >
-            #{String(dex).padStart(3, '0')}
+            #{String(dexNum).padStart(3, '0')}
           </Text>
           <Text className="text-lg font-semibold text-app-text flex-1">{name}</Text>
           
@@ -190,12 +215,12 @@ export default function DexTrackerPage() {
         </View>
         
         <View className="flex-row gap-2">
-          <FormButton dex={dex} form="normal" label="Normal" emoji="⚪" />
-          <FormButton dex={dex} form="shiny" label="Shiny" emoji="✨" />
+          <FormButton dexNum={dexNum} form="normal" label="Normal" emoji="⚪" pokedex={pokedex} />
+          <FormButton dexNum={dexNum} form="shiny" label="Shiny" emoji="✨" pokedex={pokedex} />
           {canBeAlpha && (
             <>
-              <FormButton dex={dex} form="alpha" label="Alpha" emoji="🔴" />
-              <FormButton dex={dex} form="alphaShiny" label="Alpha ✨" emoji="👑" />
+              <FormButton dexNum={dexNum} form="alpha" label="Alpha" emoji="🔴" pokedex={pokedex} />
+              <FormButton dexNum={dexNum} form="alphaShiny" label="Alpha ✨" emoji="👑" pokedex={pokedex} />
             </>
           )}
         </View>
@@ -222,107 +247,168 @@ export default function DexTrackerPage() {
       </Head>
       
       <Container>
-        <MultiLayerParallaxScrollView
-          headerHeight={180}
-          showsVerticalScrollIndicator={true}
-          titleElement={
-            <View className="flex-1 justify-center items-center px-4">
-              <View className="flex-row items-center justify-center w-full">
-                <BouncyText text="Pokédex Tracker" />
+        <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={true}>
+          {/* Header */}
+            <View className=" flex-row items-center justify-between mb-2">
+              <View className="flex-1">
+                <Text className="typography-display-responsive  text-app-secondary dark:text-dark-app-secondary">Pokédex Tracker</Text>
+                <Text className="text-sm text-dark-app-secondary dark:text-app-secondary mt-1">
+                  Track your collection and special forms
+                </Text>
               </View>
-              <Text
-                role="heading"
-                aria-level={1}
-                className="text-center text-app-brown text-lg mt-2"
+              <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Pokédex Tracker" />
+            </View>
+
+          <View className="">
+            <AuthStatus />
+            
+            {/* Search Bar and Filter Button */}
+            <View className="flex-row items-center gap-3 mb-4">
+              <View className="flex-1">
+                <SearchBar value={query} onChange={setQuery} />
+              </View>
+              <Pressable
+                onPress={() => setFilterModalVisible(true)}
+                className="bg-blue-500 dark:bg-blue-600 px-4 py-3 rounded-lg flex-row items-center gap-2"
               >
-                Track your Pokédex completion and special forms
+                <Text className="text-white dark:text-gray-100 font-semibold">🔍 Filter</Text>
+                {(filter !== 'all' || activeDex !== 'all') && (
+                  <View className="bg-white dark:bg-gray-800 rounded-full w-5 h-5 items-center justify-center">
+                    <Text className="text-blue-500 dark:text-blue-400 text-xs font-bold">!</Text>
+                  </View>
+                )}
+              </Pressable>
+            </View>
+
+            {/* Dual Collapsible Row - Progress & Instructions */}
+            <DualCollapsibleRow
+              leftTitle="Progress"
+              leftIcon="📊"
+              leftContent={
+                <ProgressSidebar pokemonList={[...lumioseDex, ...hyperspaceDex]} />
+              }
+              leftBgColor="bg-green-50"
+              leftBorderColor="border-green-500"
+              rightTitle="How to Use"
+              rightIcon="📝"
+              rightContent={
+                <View>
+                  <Text className="text-xs text-app-brown dark:text-gray-400 mb-1">• Tap a button to toggle obtained status (gray → green)</Text>
+                  <Text className="text-xs text-app-brown dark:text-gray-400 mb-1">• ⚪ Registered: Caught the regular version at least once</Text>
+                  <Text className="text-xs text-app-brown dark:text-gray-400 mb-1">• ✨ Shiny: Caught the shiny version (non-alpha) at least once</Text>
+                  <Text className="text-xs text-app-brown dark:text-gray-400 mb-1">• 🔴 Alpha: Caught the alpha version (non-shiny) at least once</Text>
+                  <Text className="text-xs text-app-brown dark:text-gray-400 mb-3">• 👑 Alpha ✨: Caught the shiny alpha version at least once</Text>
+                  <Text className="text-xs text-app-text dark:text-gray-300 mb-3">**If you catch a shiny or alpha and evolve it, toggle the previous entry to false and the current one to true**</Text>
+                  
+                  {/* Badges section */}
+                  <Text className="text-sm font-semibold text-app-text dark:text-gray-100 mb-2" role="heading" aria-level={3}>🏷️ Badges:</Text>
+                  <View className="flex-row gap-4">
+                    <View className="flex-row items-center">
+                      <View className="bg-purple-500 dark:bg-purple-600 px-1.5 py-0.5 rounded mr-1">
+                        <Text className="text-xs text-white dark:text-gray-100 font-bold">M</Text>
+                      </View>
+                      <Text className="text-xs text-app-brown dark:text-gray-400">Has Mega Evolution</Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <View className="bg-red-500 dark:bg-red-600 px-1.5 py-0.5 rounded mr-1">
+                        <Text className="text-xs text-white dark:text-gray-100 font-bold">α</Text>
+                      </View>
+                      <Text className="text-xs text-app-brown dark:text-gray-400">Can be Alpha</Text>
+                    </View>
+                  </View>
+                </View>
+              }
+              rightBgColor="bg-blue-50"
+              rightBorderColor="border-blue-500"
+            />
+
+            {/* Pokémon List */}
+            {activeDex === 'all' ? (
+              <>
+                {/* Lumiose Dex Section */}
+                <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium mb-4">
+                  <Text className="text-lg font-bold text-dark-app-text dark:text-app-text mb-4" role="heading" aria-level={2}>
+                    Lumiose Pokédex ({(() => {
+                      let filtered = lumioseDex;
+                      if (filter === 'alpha') filtered = filtered.filter(p => p?.canBeAlpha);
+                      if (filter === 'mega') filtered = filtered.filter(p => p?.hasMega);
+                      const q = query.trim().toLowerCase();
+                      if (q) filtered = filtered.filter(p => p.name?.toLowerCase().includes(q) || String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q));
+                      return filtered.length;
+                    })()})
+                  </Text>
+                  {(() => {
+                    let filtered = lumioseDex;
+                    if (filter === 'alpha') filtered = filtered.filter(p => p?.canBeAlpha);
+                    if (filter === 'mega') filtered = filtered.filter(p => p?.hasMega);
+                    const q = query.trim().toLowerCase();
+                    if (q) filtered = filtered.filter(p => p.name?.toLowerCase().includes(q) || String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q));
+                    return filtered.map((pokemon) => (
+                      <PokemonRow key={`lumiose-${pokemon.id}-${pokemon.name}`} pokemon={pokemon} pokedex="lumiose" />
+                    ));
+                  })()}
+                </View>
+
+                {/* Hyperspace Dex Section */}
+                <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium mb-4">
+                  <Text className="text-lg font-bold text-app-text  mb-4" role="heading" aria-level={2}>
+                    Hyperspace Pokédex ({(() => {
+                      let filtered = hyperspaceDex;
+                      if (filter === 'alpha') filtered = filtered.filter(p => p?.canBeAlpha);
+                      if (filter === 'mega') filtered = filtered.filter(p => p?.hasMega);
+                      const q = query.trim().toLowerCase();
+                      if (q) filtered = filtered.filter(p => p.name?.toLowerCase().includes(q) || String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q));
+                      return filtered.length;
+                  })()})
+                  </Text>
+                  {(() => {
+                    let filtered = hyperspaceDex;
+                    if (filter === 'alpha') filtered = filtered.filter(p => p?.canBeAlpha);
+                    if (filter === 'mega') filtered = filtered.filter(p => p?.hasMega);
+                    const q = query.trim().toLowerCase();
+                    if (q) filtered = filtered.filter(p => p.name?.toLowerCase().includes(q) || String(p.id).includes(q) || String(p.id).padStart(4, '0').includes(q));
+                    return filtered.map((pokemon) => (
+                      <PokemonRow key={`hyperspace-${pokemon.id}-${pokemon.name}`} pokemon={pokemon} pokedex="hyperspace" />
+                    ));
+                  })()}
+                </View>
+              </>
+            ) : (
+              <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium mb-4">
+                <Text className="text-lg font-bold text-app-text dark:text-gray-100 mb-4" role="heading" aria-level={2}>
+                  {getActiveDexName()} ({filteredPokemon.length})
+                </Text>
+                {filteredPokemon.map((pokemon) => (
+                  <PokemonRow key={`${activeDex}-${pokemon.id}-${pokemon.name}`} pokemon={pokemon} pokedex={activeDex} />
+                ))}
+              </View>
+            )}
+
+            {/* Footer Note */}
+            <View className="mt-6 mb-4">
+              <Text className="text-xs text-center text-app-brown dark:text-gray-400 italic">
+                💾 Your progress is saved locally and synced to your account
+              </Text>
+              <Text className="text-xs text-center text-app-brown dark:text-gray-400 italic mt-1">
+                🔄 Automatically syncs when online
               </Text>
             </View>
-          }
-        >
-          <AuthStatus />
-          <View className="flex-row items-center gap-3 mb-4" style={{ zIndex: 50 }}>
-            <View className="flex-1" style={{ zIndex: 50 }}>
-              <SearchBar value={query} onChange={setQuery} />
-            </View>
-            <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Pokédex Tracker" />
+            <Footer/>
           </View>
+        </ScrollView>
 
-          {/* Filter Buttons */}
-          <View className="flex-row gap-2 mb-6">
-            <FilterButton 
-              filterType="all" 
-              label="All" 
-              count={lumioseDex.length} 
-            />
-            <FilterButton 
-              filterType="alpha" 
-              label="Alpha" 
-              count={lumioseDex.filter(p => p.canBeAlpha).length} 
-            />
-            <FilterButton 
-              filterType="mega" 
-              label="Mega" 
-              count={lumioseDex.filter(p => p.hasMega).length} 
-            />
-          </View>
-
-          {/* Progress Sidebar */}
-          <ProgressSidebar pokemonList={lumioseDex} />
-
-          {/* Instructions */}
-          <SidebarCollapsible
-            title="📝 How to Use"
-            backgroundColor="bg-blue-50"
-            borderColor="border-blue-500"
-          >
-            <Text className="text-xs text-app-brown mb-1">• Tap a button to toggle obtained status (gray → green)</Text>
-            <Text className="text-xs text-app-brown mb-1">• ⚪ Registered: Caught the regular version at least once</Text>
-            <Text className="text-xs text-app-brown mb-1">• ✨ Shiny: Caught the shiny version (non-alpha) at least once</Text>
-            <Text className="text-xs text-app-brown mb-1">• 🔴 Alpha: Caught the alpha version (non-shiny) at least once</Text>
-            <Text className="text-xs text-app-brown mb-3">• 👑 Alpha ✨: Caught the shiny alpha version at least once</Text>
-            <Text className="text-xs text-app-text mb-3">**If you catch a shiny or alpha and evolve it, toggle the previous entry to false and the current one to true**</Text>
-            
-            {/* Badges section */}
-            <Text className="text-sm font-semibold text-app-text mb-2">🏷️ Badges:</Text>
-            <View className="flex-row gap-4">
-              <View className="flex-row items-center">
-                <View className="bg-purple-500 px-1.5 py-0.5 rounded mr-1">
-                  <Text className="text-xs text-white font-bold">M</Text>
-                </View>
-                <Text className="text-xs text-app-brown">Has Mega Evolution</Text>
-              </View>
-              <View className="flex-row items-center">
-                <View className="bg-red-500 px-1.5 py-0.5 rounded mr-1">
-                  <Text className="text-xs text-white font-bold">α</Text>
-                </View>
-                <Text className="text-xs text-app-brown">Can be Alpha</Text>
-              </View>
-            </View>
-          </SidebarCollapsible>
-
-          {/* Pokémon List */}
-          <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium">
-            <Text className="text-lg font-bold text-app-text mb-4">
-              {filter === 'all' ? 'All Pokémon' :
-                filter === 'alpha' ? 'Alpha Pokémon' :
-                'Mega Evolution Pokémon'} ({filteredPokemon.length})
-            </Text>
-            {filteredPokemon.map((pokemon) => (
-              <PokemonRow key={pokemon.id} pokemon={pokemon} />
-            ))}
-          </View>
-
-          {/* Footer Note */}
-          <View className="mt-6 mb-4">
-            <Text className="text-xs text-center text-app-brown italic">
-              💾 Your progress is saved locally and synced to your account
-            </Text>
-            <Text className="text-xs text-center text-app-brown italic mt-1">
-              🔄 Automatically syncs when online
-            </Text>
-          </View>
-        </MultiLayerParallaxScrollView>
+        {/* Filter Modal */}
+        <FilterModal
+          visible={filterModalVisible}
+          onClose={() => setFilterModalVisible(false)}
+          filter={filter}
+          setFilter={setFilter}
+          activeDex={activeDex}
+          setActiveDex={setActiveDex}
+          lumioseDex={lumioseDex}
+          hyperspaceDex={hyperspaceDex}
+          getActiveDexCount={getActiveDexCount}
+        />
       </Container>
     </>
   );

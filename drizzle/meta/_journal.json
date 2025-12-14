@@ -50,6 +50,13 @@
       "when": 1764824436283,
       "tag": "0006_panoramic_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1765464360463,
+      "tag": "0007_tidy_firebrand",
+      "breakpoints": true
     }
   ]
 }

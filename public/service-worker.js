@@ -30,7 +30,15 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Don't intercept API requests to localhost:3001 or external APIs
+  const url = new URL(event.request.url);
+  if (url.port === '3001' || url.hostname === 'localhost' && url.port !== location.port) {
+    // Let API requests pass through without caching
+    return;
+  }
+  
   if (event.request.method !== 'GET') return;
+  
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) return cachedResponse;

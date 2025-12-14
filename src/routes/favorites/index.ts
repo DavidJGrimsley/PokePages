@@ -4,6 +4,11 @@ import { verifySupabaseAuth } from '../../middlewares/authMiddleware.js';
 
 const router = Router();
 
+router.use((req, res, next) => {
+  console.log(`[DEBUG] favorites router: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 /**
  * @route GET /api/favorites
  * @desc Get all favorite features for the authenticated user

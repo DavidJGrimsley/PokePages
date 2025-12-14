@@ -6,7 +6,7 @@ import eventRouter from './src/routes/events/index.js';
 import eventClaimsRouter from './src/routes/eventClaims/index.js';
 import aiRouter from './src/routes/AI/index.js';
 import profileRouter from './src/routes/profiles/index.js';
-import legendsZARouter from './src/routes/legends-za/index.js';
+import dexTrackerRouter from './src/routes/dexTracker/index.js';
 import socialRouter from './src/routes/social/index.js';
 import favoritesRouter from './src/routes/favorites/index.js';
 
@@ -50,6 +50,8 @@ app.use(cors({
     'http://10.0.2.2:19006', // Android emulator
   ],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 app.use(express.json());
 
@@ -88,8 +90,8 @@ app.use('/ai', aiRouter);
 // Profile Routes
 app.use('/profiles', profileRouter);
 
-// Legends Z-A Dex & Form Tracker Routes
-app.use('/legends-za', legendsZARouter);
+// Dex Tracker Routes (multi-pokedex support)
+app.use('/dex-tracker', dexTrackerRouter);
 
 // Social Routes
 app.use('/social', socialRouter);
@@ -104,16 +106,19 @@ app.get('/test', (req, res) => {
 
 // Database connection test
 app.get('/test-db', async (req, res) => {
+  console.log('[DEBUG] test-db route: Testing database connection...');
   try {
     const { getDbPing } = await import('./src/db/index.js');
     const result = await getDbPing();
     if (result.ok) {
+      console.log('[DEBUG] test-db route: Database ping successful');
       res.json({ success: true, message: 'Database connection working!', result: result.result });
     } else {
+      console.error('[ERROR] test-db route: Database ping failed:', result.error);
       res.status(500).json({ success: false, message: 'Database ping failed', error: result.error });
     }
   } catch (error) {
-    console.error('Database test error:', error);
+    console.error('[ERROR] test-db route: Exception caught:', error);
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -143,11 +148,11 @@ server = app.listen(port, '0.0.0.0', () => {
   console.log(`   Events: ${apiBaseUrl}/events`);
   console.log(`   AI: ${apiBaseUrl}/ai`);
   console.log(`   Profiles: ${apiBaseUrl}/profiles`);
-  console.log(`   Legends Z-A Tracker: ${apiBaseUrl}/legends-za`);
+  console.log(`   Dex Tracker: ${apiBaseUrl}/dex-tracker?pokedex=lumiose`);
   console.log(`   Social: ${apiBaseUrl}/social`);
   console.log(`   Favorites: ${apiBaseUrl}/favorites`);
   console.log(`   Event Claims: ${apiBaseUrl}/event-claims`);
-  console.log('legendsZARouter router loaded:', typeof legendsZARouter);
+  console.log('dexTrackerRouter router loaded:', typeof dexTrackerRouter);
   console.log('socialRouter router loaded:', typeof socialRouter);
 });
 

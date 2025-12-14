@@ -6,10 +6,10 @@ import {
   batchUpdatePokemonRecords,
   deletePokemonRecord,
   getUserPokemonStats,
-} from '../../db/legendsZATrackerQueries.js';
+} from '../../db/dexTrackerQueries.js';
 import { RegisteredStatus } from '@/src/types/tracker';
 
-console.log('[DEBUG] legends-za/controller.ts loaded');
+console.log('[DEBUG] dexTracker/controller.ts loaded');
 
 /**
  * Get all Pokemon tracker data for the authenticated user
@@ -24,7 +24,15 @@ export const getUserTrackerData = async (req: Request, res: Response) => {
       });
     }
 
-    const data = await getUserPokemonTrackerData(userId);
+    const { pokedex } = req.query;
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex query parameter is required (e.g., ?pokedex=lumiose)'
+      });
+    }
+
+    const data = await getUserPokemonTrackerData(userId, pokedex);
     
     res.json({
       success: true,
@@ -53,6 +61,7 @@ export const getPokemonRecord = async (req: Request, res: Response) => {
     }
 
     const { pokemonId } = req.params;
+    const { pokedex } = req.query;
     
     if (!pokemonId || isNaN(parseInt(pokemonId))) {
       return res.status(400).json({
@@ -60,8 +69,15 @@ export const getPokemonRecord = async (req: Request, res: Response) => {
         error: 'Valid Pokemon ID is required'
       });
     }
+
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex query parameter is required (e.g., ?pokedex=lumiose)'
+      });
+    }
     
-    const record = await getUserPokemonRecord(userId, parseInt(pokemonId));
+    const record = await getUserPokemonRecord(userId, pokedex, parseInt(pokemonId));
     
     res.json({
       success: true,
@@ -90,13 +106,20 @@ export const updatePokemonFormData = async (req: Request, res: Response) => {
     }
 
     const { pokemonId } = req.params;
-    const { formType, value } = req.body;
+    const { formType, value, pokedex } = req.body;
     
     // Validation
     if (!pokemonId || isNaN(parseInt(pokemonId))) {
       return res.status(400).json({
         success: false,
         error: 'Valid Pokemon ID is required'
+      });
+    }
+
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex field is required in request body (e.g., pokedex: "lumiose")'
       });
     }
     
@@ -114,7 +137,7 @@ export const updatePokemonFormData = async (req: Request, res: Response) => {
       });
     }
     
-  const updatedRecord = await updatePokemonForm(userId, parseInt(pokemonId), formType as keyof RegisteredStatus, value);
+    const updatedRecord = await updatePokemonForm(userId, pokedex, parseInt(pokemonId), formType as keyof RegisteredStatus, value);
     
     res.json({
       success: true,
@@ -142,12 +165,19 @@ export const batchUpdateRecords = async (req: Request, res: Response) => {
       });
     }
 
-    const { updates } = req.body;
+    const { updates, pokedex } = req.body;
     
     if (!Array.isArray(updates)) {
       return res.status(400).json({
         success: false,
         error: 'Updates must be an array'
+      });
+    }
+
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex field is required in request body (e.g., pokedex: "lumiose")'
       });
     }
     
@@ -177,7 +207,7 @@ export const batchUpdateRecords = async (req: Request, res: Response) => {
       }
     }
     
-    const results = await batchUpdatePokemonRecords(userId, updates);
+    const results = await batchUpdatePokemonRecords(userId, pokedex, updates);
     
     res.json({
       success: true,
@@ -206,6 +236,7 @@ export const deletePokemonRecordData = async (req: Request, res: Response) => {
     }
 
     const { pokemonId } = req.params;
+    const { pokedex } = req.query;
     
     if (!pokemonId || isNaN(parseInt(pokemonId))) {
       return res.status(400).json({
@@ -213,8 +244,15 @@ export const deletePokemonRecordData = async (req: Request, res: Response) => {
         error: 'Valid Pokemon ID is required'
       });
     }
+
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex query parameter is required (e.g., ?pokedex=lumiose)'
+      });
+    }
     
-    await deletePokemonRecord(userId, parseInt(pokemonId));
+    await deletePokemonRecord(userId, pokedex, parseInt(pokemonId));
     
     res.json({
       success: true,
@@ -242,7 +280,15 @@ export const getTrackerStats = async (req: Request, res: Response) => {
       });
     }
 
-    const stats = await getUserPokemonStats(userId);
+    const { pokedex } = req.query;
+    if (!pokedex || typeof pokedex !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'pokedex query parameter is required (e.g., ?pokedex=lumiose)'
+      });
+    }
+
+    const stats = await getUserPokemonStats(userId, pokedex);
     
     res.json({
       success: true,

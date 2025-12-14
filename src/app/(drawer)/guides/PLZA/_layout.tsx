@@ -12,6 +12,7 @@ export default function PLZALayout() {
       tabBarInactiveTintColor: theme.tabBarStyles.tabBarInactiveTintColor,
       tabBarIconStyle: theme.tabBarStyles.tabBarIconStyle,
       }}
+      initialRouteName="dex-tracker"
     >
       <Tabs.Screen
       name="before-you-play"
