@@ -11,12 +11,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Container } from 'components/UI/Container';
 import SuccessMessage from 'components/UI/SuccessMessage';
 import { HashtagInput } from 'components/Social/HashtagInput';
 import { MediaPicker } from 'components/Social/MediaPicker';
+import LoadingLottieModal from '@/src/components/Animation/LoadingLottieModal';
 import { useAuthStore } from '~/store/authStore';
 import * as socialApi from '~/utils/socialApi';
 import { uploadImages, uploadVideo } from '~/utils/storageApi';
@@ -366,6 +368,12 @@ export default function CreatePostTab() {
             <Footer />
           </ScrollView>
         </KeyboardAvoidingView>
+        
+        {/* Loading Modal */}
+        <LoadingLottieModal 
+          visible={loading} 
+          message={uploadProgress || 'Creating your post...'} 
+        />
       </Container>
     </>
   );

@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, useWindowDimensions } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { HomeCard } from './HomeCard';
 import { ShortcutsModal } from './ShortcutsModal';
 import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 import { useAuthStore } from '@/src/store/authStore';
 import { getFeatureMeta } from '@/src/utils/featureRegistry';
-import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
+import { useNavigateToSignIn, useShowSignInAlert } from '@/src/hooks/useNavigateToSignIn';
 import { getActiveEvents, EventType } from '~/constants/events';
 import { getLocalClaims, type EventClaimsCache } from '@/src/services/eventClaimsService';
 
@@ -22,12 +22,15 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
   const { width } = useWindowDimensions();
   const [modalVisible, setModalVisible] = useState(false);
   const navigateToSignIn = useNavigateToSignIn();
+  const showSignInAlert = useShowSignInAlert();
+  const router = useRouter();
   
   const user = useAuthStore((s) => s.user);
   const isSignedIn = !!user;
   
   const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
   const getFavoriteTitle = useFavoriteFeaturesStore((s) => s.getFavoriteTitle);
+  const initializeFavorites = useFavoriteFeaturesStore((s) => s.initialize);
   const favoriteKeys = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
   
   // Get event claims to filter out claimed events
@@ -42,15 +45,20 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
     loadClaims();
   }, []);
   
-  // Reload claims when screen comes into focus (after claiming an event)
+  // Reload favorites and claims when screen comes into focus (after sign-in or claiming an event)
   useFocusEffect(
     React.useCallback(() => {
-      const refreshClaims = async () => {
+      const refreshData = async () => {
+        // Reload favorites if user is signed in
+        if (isSignedIn) {
+          await initializeFavorites();
+        }
+        // Reload event claims
         const claims = await getLocalClaims();
         setEventClaims(claims);
       };
-      refreshClaims();
-    }, [])
+      refreshData();
+    }, [isSignedIn, initializeFavorites])
   );
 
   // Calculate responsive columns
@@ -161,9 +169,16 @@ export const HomeCards: React.FC<HomeCardsProps> = ({
             <HomeCard
               title="Messages"
               icon="chatbubbles"
-              path="/(drawer)/social/(tabs)/messages"
+              path="#"
               variant="system"
               badge="NEW"
+              onPress={() => {
+                if (isSignedIn) {
+                  router.push('/(drawer)/social/(tabs)/messages');
+                } else {
+                  showSignInAlert();
+                }
+              }}
             />
           </View>
 

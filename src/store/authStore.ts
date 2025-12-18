@@ -379,50 +379,68 @@ export const useAuthStore = create(
       
       signOut: async () => {
         console.log('🏪 AuthStore: signOut function called')
+        
+        // Step 1: Try to invalidate server-side session with timeout
         try {
-          console.log('🔄 AuthStore: Calling supabase.auth.signOut()...')
+          const signOutWithTimeout = async (timeout = 3000) => {
+            return Promise.race([
+              supabase.auth.signOut(),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('SignOut timeout')), timeout)
+              )
+            ]);
+          };
           
-          // Add timeout to prevent hanging
-          const signOutPromise = supabase.auth.signOut();
-          const timeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Supabase signOut timeout after 5 seconds')), 5000)
-          );
-          
-          const { error } = await Promise.race([signOutPromise, timeoutPromise]) as any;
-          console.log('📡 AuthStore: Supabase signOut response - error:', error)
-          
-          if (error) {
-            console.error('❌ AuthStore: Supabase signOut error:', error)
-            // Don't throw - still clear local state
-          }
-          
-          console.log('🧹 AuthStore: Clearing local state...')
-          set((state) => ({
-            ...state,
-            user: null,
-            session: null,
-            isLoggedIn: false,
-            isVip: false,
-            profile: null, // Clear profile data on sign out
-          }));
-          get().updateComputedProperties();
-          console.log('✅ AuthStore: Local state cleared successfully')
+          console.log('📡 Attempting to invalidate server session...');
+          await signOutWithTimeout(3000); // 3 second max wait
+          console.log('✅ Server session invalidated');
         } catch (error) {
-          console.error("💥 AuthStore: Error signing out:", error);
-          
-          // Even if Supabase fails, still clear local state for better UX
-          console.log('🧹 AuthStore: Clearing local state despite error...')
-          set((state) => ({
-            ...state,
-            user: null,
-            session: null,
-            isLoggedIn: false,
-            isVip: false,
-            profile: null,
-          }));
-          get().updateComputedProperties();
-          console.log('✅ AuthStore: Local state cleared after error')
+          // Log but don't block - we'll clear local state anyway
+          console.warn('⚠️ Supabase signOut issue (timeout or network):', error instanceof Error ? error.message : error);
         }
+        
+        // Step 2: Clear local storage (Supabase keys + app stores)
+        try {
+          console.log('🧹 Clearing local storage...');
+          if (Platform.OS === 'web') {
+            // Clear all Supabase auth keys from localStorage
+            const keysToRemove = Object.keys(localStorage).filter(key => 
+              key.startsWith('sb-') || key.includes('supabase')
+            );
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            
+            // Clear app stores
+            localStorage.removeItem('favorite-features');
+            localStorage.removeItem('pokemon-tracker-enhanced');
+          } else {
+            // Clear from AsyncStorage
+            const keys = await AsyncStorage.getAllKeys();
+            const supabaseKeys = keys.filter(key => 
+              key.startsWith('sb-') || key.includes('supabase')
+            );
+            await AsyncStorage.multiRemove([
+              ...supabaseKeys,
+              'favorite-features',
+              'pokemon-tracker-enhanced'
+            ]);
+          }
+          console.log('✅ Cleared all persisted data');
+        } catch (e) {
+          console.warn('⚠️ Failed to clear storage:', e);
+        }
+        
+        // Step 3: Reset app state
+        console.log('🔄 Resetting app state...');
+        set((state) => ({
+          ...state,
+          user: null,
+          session: null,
+          isLoggedIn: false,
+          isVip: false,
+          profile: null,
+        }));
+        get().updateComputedProperties();
+        console.log('✅ AuthStore: Sign out complete');
       },
       
       setUser: (user: User | null) => {
@@ -619,13 +637,6 @@ useAuthStore.setState({ _authInitialized: true });
 
 // Set up auth state listener
 supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
-  console.log('🔐 Auth state change event:', event);
-  console.log('📋 Session info:', {
-    event,
-    hasSession: !!session,
-    userId: session?.user?.id,
-  });
-  
   const { setUser, setSession, setProfile } = useAuthStore.getState();
 
   setSession(session);

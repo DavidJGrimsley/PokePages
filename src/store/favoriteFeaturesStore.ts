@@ -104,6 +104,7 @@ export const useFavoriteFeaturesStore = create<FavoriteFeaturesState>()(
       _hasHydrated: false,
 
       initialize: async () => {
+        console.log('[FAVORITES DEBUG] initialize called, current favorites:', Object.keys(get().favorites));
         const user = useAuthStore.getState().user;
         const uid = user?.id;
         try {

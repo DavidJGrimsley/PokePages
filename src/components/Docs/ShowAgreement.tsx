@@ -18,10 +18,6 @@ export const ShowAgreement: React.FC<ShowAgreementProps> = ({
 }) => {
   const agreement = documentsData[agreementType];
   
-  // Debug log to check if data is loading
-  console.log('ShowAgreement - agreementType:', agreementType);
-  console.log('ShowAgreement - agreement data:', agreement);
-  
   // Get the title based on agreement type
   const getTitle = () => {
     if (agreementType === 'termsOfService') {

@@ -10,6 +10,7 @@ import { useAuthStore } from "~/store/authStore"
 
 import { Button } from 'components/UI/Button'
 import SuccessMessage from 'components/UI/SuccessMessage'
+import LoadingLottieModal from '@/src/components/Animation/LoadingLottieModal'
 
 interface SignUpFormData {
   email: string
@@ -20,7 +21,6 @@ interface SignUpFormData {
 }
 
 export default function EnhancedSignUp() {
-  const { setProfile } = useAuthStore()
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDatePicker, setShowDatePicker] = useState(false)
@@ -110,14 +110,8 @@ export default function EnhancedSignUp() {
         return
       }
 
-      // Update local store
-      setProfile({
-        username: data.username.trim(),
-        birthdate: data.birthdate.toISOString().split('T')[0],
-        bio: null,
-        avatarUrl: null,
-      })
-
+      // Profile created successfully - auth state listener will load profile automatically
+      
       // Show success message
       setShowSuccess(true)
       
@@ -139,13 +133,14 @@ export default function EnhancedSignUp() {
   }
 
   return (
-    <KeyboardAwareScrollView
-      className="flex-1"
-      contentContainerStyle={{ padding: 16, paddingTop: 64 }}
-      enableOnAndroid={true}
-      extraScrollHeight={20}
-      keyboardShouldPersistTaps="handled"
-    >
+    <>
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingTop: 64 }}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+      >
       {showSuccess ? (
         <View className="mb-6">
           <SuccessMessage
@@ -415,5 +410,9 @@ export default function EnhancedSignUp() {
         </>
       )}
     </KeyboardAwareScrollView>
+    
+    {/* Loading Modal */}
+    <LoadingLottieModal visible={loading} message="Creating your account..." />
+  </>
   )
 }

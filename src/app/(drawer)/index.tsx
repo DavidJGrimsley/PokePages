@@ -1,8 +1,9 @@
-import { Stack, Link } from 'expo-router';
+import { Stack, Link, useFocusEffect } from 'expo-router';
 import Head from 'expo-router/head';
-import { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable, Platform, ActivityIndicator } from 'react-native';
 import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
+import { useAuthStore } from '@/src/store/authStore';
 
 import { Container } from 'components/UI/Container';
 import { HomeCards } from '@/src/components/Home/HomeCards';
@@ -28,22 +29,40 @@ export default function Home() {
   // Use shallow comparator to avoid re-render loop when an array reference changes
   const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
   const favorites = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
+  const isSignedIn = useAuthStore((s) => s.isLoggedIn);
   
   // State for news articles
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
   
-  // Ensure favorites store initializes and syncs for signed-in users
-  useEffect(() => {
-    const init = async () => {
-      try {
-        await useFavoriteFeaturesStore.getState().initialize();
-      } catch (e) {
-        console.error('[HOME] favorite store init failed', e);
-      }
-    };
-    init();
-  }, []);
+  // Refresh favorites when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshData = async () => {
+        try {
+          if (isSignedIn) {
+            // If signed in, initialize/sync favorites from server
+            await useFavoriteFeaturesStore.getState().initialize();
+          } else {
+            // If not signed in, ensure favorites are cleared
+            const currentFavorites = useFavoriteFeaturesStore.getState().favorites;
+            if (Object.keys(currentFavorites).length > 0) {
+              console.log('[HOME] User not signed in, clearing favorites');
+              useFavoriteFeaturesStore.setState({ 
+                favorites: {},
+                favoriteTitles: {},
+                pendingAdds: [],
+                pendingRemoves: []
+              });
+            }
+          }
+        } catch (e) {
+          console.error('[HOME] Error refreshing favorites:', e);
+        }
+      };
+      refreshData();
+    }, [isSignedIn])
+  );
   
   // Load recent news articles
   useEffect(() => {

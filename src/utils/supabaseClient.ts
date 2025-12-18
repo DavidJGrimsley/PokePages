@@ -33,14 +33,6 @@ import { Platform } from 'react-native';
 const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Debug logging for Android
-if (Platform.OS === 'android' && __DEV__) {
-  console.log('🔍 Supabase Client Configuration:');
-  console.log('Platform:', Platform.OS);
-  console.log('Supabase URL:', SUPABASE_URL);
-  console.log('Has Anon Key:', !!SUPABASE_ANON_KEY);
-}
-
 // Check if we're in a browser environment
 const isWeb = Platform.OS === 'web';
 

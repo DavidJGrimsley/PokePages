@@ -6,6 +6,7 @@ import { supabase } from "~/utils/supabaseClient"
 import { router } from 'expo-router'
 
 import { Button } from 'components/UI/Button'
+import LoadingLottieModal from '@/src/components/Animation/LoadingLottieModal'
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -64,13 +65,14 @@ export default function EnhancedSignIn() {
   }
 
   return (
-    <KeyboardAwareScrollView
-      className="flex-1"
-      contentContainerStyle={{ padding: 16, paddingTop: 64 }}
-      enableOnAndroid={true}
-      extraScrollHeight={20}
-      keyboardShouldPersistTaps="handled"
-    >
+    <>
+      <KeyboardAwareScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingTop: 64 }}
+        enableOnAndroid={true}
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+      >
       <Text className="text-2xl font-bold text-center mb-8 text-gray-800">
         Welcome Back
       </Text>
@@ -175,5 +177,9 @@ export default function EnhancedSignIn() {
         />
       </View>
     </KeyboardAwareScrollView>
+    
+    {/* Loading Modal */}
+    <LoadingLottieModal visible={loading} message="Signing in..." />
+  </>
   )
 }

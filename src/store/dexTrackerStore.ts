@@ -173,7 +173,7 @@ function getUserId(): string | undefined {
 let cachedTokenPromise: Promise<string | undefined> | null = null;
 let lastTokenTime = 0;
 const TOKEN_CACHE_MS = 5000; // Cache for 5 seconds
-const TOKEN_TIMEOUT_MS = 2000; // Fail fast on web if Supabase hangs
+const TOKEN_TIMEOUT_MS = 5000; // 5 seconds timeout for better Android reliability
 
 async function getValidAccessToken(): Promise<string | undefined> {
   console.log('[TRACKER] getValidAccessToken: STARTING');
@@ -286,9 +286,9 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
         const { isOnline } = get();
         console.log('[TRACKER] Online status before sync attempt:', isOnline);
         if (isOnline) {
+          const url = buildApiUrl(`dex-tracker/${dex}`);
           try {
             const userId = getUserId();
-            const url = buildApiUrl(`dex-tracker/${dex}`);
             console.log('[TRACKER] sync PUT -> ', url, { userIdPresent: !!userId, pokedex });
             
             if (!userId) {
@@ -326,9 +326,14 @@ export const usePokemonTrackerStore = create<PokemonTrackerState>()(
           } catch (error) {
             console.error('[TRACKER] Failed to sync to database:', error);
             console.error('[TRACKER] Error details:', {
+              url: url,
+              method: 'PUT',
               name: error instanceof Error ? error.name : 'unknown',
               message: error instanceof Error ? error.message : String(error),
-              stack: error instanceof Error ? error.stack : undefined
+              stack: error instanceof Error ? error.stack : undefined,
+              pokedex: pokedex,
+              dex: dex,
+              form: form
             });
             // Add to pending updates for later sync
             set((state) => ({

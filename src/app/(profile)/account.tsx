@@ -8,6 +8,7 @@ import EditProfile from 'components/Auth/EditProfile';
 import { Button } from 'components/UI/Button';
 import { FriendsList } from '@/src/components/Social/FriendsList';
 import { SettingsModal } from '@/src/components/Settings/SettingsModal';
+import LoadingLottieModal from '@/src/components/Animation/LoadingLottieModal';
 import { useState } from 'react';
 
 
@@ -16,6 +17,14 @@ export default function EditProfileScreen() {
   const { user, session, isLoggedIn, signOut } = useAuthStore();
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    await signOut();
+    setIsSigningOut(false);
+    router.replace('/');
+  };
 
   // If absolutely no user object, redirect. Allow session to be null on initial load.
   if (!user) {
@@ -80,8 +89,11 @@ export default function EditProfileScreen() {
         visible={showSettings}
         onClose={() => setShowSettings(false)}
         userId={user.id}
-        onSignOut={signOut}
+        onSignOut={handleSignOut}
       />
+      
+      {/* Sign Out Loading Overlay */}
+      <LoadingLottieModal visible={isSigningOut} message="Signing out..." />
 
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </>

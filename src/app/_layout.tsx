@@ -34,7 +34,7 @@ import {
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
 // HeaderTitle removed from root layout (not used here)
-import Loading from 'components/Animation/LoadingAnim';
+import Loading from '@/src/components/Animation/LoadingFull';
 
 // Add mobile debugging console ONLY in development
 // In development we previously added a mobile in-browser console (eruda).
@@ -134,34 +134,8 @@ export default function RootLayout() {
   }, []);
 
   if (!isHydrated) {
-  // Showing loading screen while hydration completes
-    const overlayStyleWeb = {
-      position: 'absolute' as const,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      justifyContent: 'center' as const,
-      alignItems: 'center' as const,
-      backgroundColor: '#E6e6fa',
-    };
-    const overlayStyleNative = {
-      flex: 1,
-      justifyContent: 'center' as const,
-      alignItems: 'center' as const,
-      backgroundColor: '#E6e6fa',
-    };
-    return (
-  <View style={Platform.OS === 'web' ? (overlayStyleWeb as any) : overlayStyleNative}>
-        {/* <LottieView
-          autoPlay={true}
-          loop={true}
-          style={{ width: 200, height: 200 }}
-          source={require('@/assets/lottie/stars.json')}
-        /> */}
-        <Loading />
-      </View>
-    );
+    // Showing loading screen while hydration completes
+    return <Loading />;
   }
 
   if ((!_hasHydrated || !_hasHydratedOnboarding || (!fontsLoaded && !fontLoadingTimedOut)) && !isWeb) {

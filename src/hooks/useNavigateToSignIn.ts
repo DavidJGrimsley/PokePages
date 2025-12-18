@@ -24,10 +24,7 @@ export function useNavigateToSignIn() {
       currentPath !== '/';
     
     if (shouldStoreReturn) {
-      console.log('📍 Storing return URL:', currentPath);
       setReturnUrl(currentPath);
-    } else {
-      console.log('📍 Not storing return URL for:', currentPath);
     }
     
     router.push('/sign-in' as any);
@@ -44,16 +41,11 @@ export function useShowSignInAlert() {
   const navigateToSignIn = useNavigateToSignIn();
 
   const showAlertAndNavigateToSignIn = useCallback(() => {
-    console.log('[AUTH] Showing sign-in alert');
-    
     if (Platform.OS === 'web') {
       // Web fallback since Alert.alert doesn't work on web
       const shouldSignIn = window.confirm('You must sign in to use this feature.\n\nWould you like to sign in now?');
       if (shouldSignIn) {
-        console.log('[AUTH] User chose to sign in');
         navigateToSignIn();
-      } else {
-        console.log('[AUTH] User cancelled sign-in');
       }
     } else {
       Alert.alert(
@@ -63,15 +55,11 @@ export function useShowSignInAlert() {
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => console.log('[AUTH] User cancelled sign-in'),
           },
           {
             text: 'Sign In',
             style: 'default',
-            onPress: () => {
-              console.log('[AUTH] User chose to sign in');
-              navigateToSignIn();
-            },
+            onPress: () => navigateToSignIn(),
           },
         ]
       );

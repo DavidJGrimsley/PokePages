@@ -9,14 +9,12 @@ export const universalStorage = {
     try {
       // Check for web at runtime to handle SSR
       const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
-      console.log(`[STORAGE] Getting item with key: ${key}, platform: ${Platform.OS}, isWeb: ${isWeb}`);
       let result: string | null;
       if (isWeb) {
         result = window.localStorage.getItem(key);
       } else {
         result = await AsyncStorage.getItem(key);
       }
-      console.log(`[STORAGE] Retrieved ${result ? result.length : 0} characters for key: ${key}`);
       return result;
     } catch (error) {
       console.error('[STORAGE] Error getting storage item:', error);
@@ -27,13 +25,11 @@ export const universalStorage = {
   async setItem(key: string, value: string): Promise<void> {
     try {
       const isWeb = typeof window !== 'undefined' && Platform.OS === 'web';
-      console.log(`[STORAGE] Setting item with key: ${key}, value length: ${value.length}, platform: ${Platform.OS}`);
       if (isWeb) {
         window.localStorage.setItem(key, value);
       } else {
         await AsyncStorage.setItem(key, value);
       }
-      console.log(`[STORAGE] Successfully saved to key: ${key}`);
     } catch (error) {
       console.error('[STORAGE] Error setting storage item:', error);
       throw error;
