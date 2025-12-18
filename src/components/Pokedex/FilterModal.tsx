@@ -132,7 +132,7 @@ export function FilterModal({
                 'text-sm font-semibold text-center',
                 activeDex === 'hyperspace' ? 'text-white dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'
               )}>
-                Mega Dim
+                Hyperspace
               </Text>
               <Text className={cn(
                 'text-xs text-center mt-0.5',

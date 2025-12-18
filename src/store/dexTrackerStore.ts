@@ -173,53 +173,70 @@ function getUserId(): string | undefined {
 let cachedTokenPromise: Promise<string | undefined> | null = null;
 let lastTokenTime = 0;
 const TOKEN_CACHE_MS = 5000; // Cache for 5 seconds
+const TOKEN_TIMEOUT_MS = 2000; // Fail fast on web if Supabase hangs
 
 async function getValidAccessToken(): Promise<string | undefined> {
   console.log('[TRACKER] getValidAccessToken: STARTING');
   const now = Date.now();
-  
-  // If a request is already in flight, return it instead of making a new one
+
+  // If a request is already in flight and fresh, reuse it
   if (cachedTokenPromise && (now - lastTokenTime) < TOKEN_CACHE_MS) {
     console.log('[TRACKER] getValidAccessToken: returning cached promise');
     return cachedTokenPromise;
   }
-  
-  // Create a new request
+
+  // Fast path: use token already in auth store (no network)
+  try {
+    const s: any = useAuthStore.getState();
+    const storeToken = s.session?.access_token || s.accessToken || s.token || s.user?.accessToken;
+    if (storeToken) {
+      lastTokenTime = now;
+      cachedTokenPromise = Promise.resolve(storeToken);
+      console.log('[TRACKER] getValidAccessToken: using token from auth store');
+      return cachedTokenPromise;
+    }
+  } catch (e) {
+    console.warn('[TRACKER] getValidAccessToken: auth store read failed', e);
+  }
+
+  // Create a new request with timeout to avoid hanging on web
   cachedTokenPromise = (async () => {
     try {
-      // First try to get the current session which will auto-refresh if needed
       const { supabase } = await import('@/src/utils/supabaseClient');
       console.log('[TRACKER] getValidAccessToken: supabase imported');
-      const { data: { session }, error } = await supabase.auth.getSession();
+
+      const sessionOrTimeout = await Promise.race([
+        supabase.auth.getSession(),
+        new Promise<{ data: { session: any }, error: any }>((resolve) =>
+          setTimeout(() => resolve({ data: { session: undefined }, error: new Error('getSession-timeout') }), TOKEN_TIMEOUT_MS)
+        ),
+      ]);
+
+      const session = sessionOrTimeout?.data?.session as any | undefined;
+      const error = sessionOrTimeout?.error;
       console.log('[TRACKER] getValidAccessToken: getSession returned, session present?', !!session, 'error?', !!error);
-    
-    if (error) {
-      console.error('[TRACKER] Error getting session:', error);
+
+      if (session?.access_token) {
+        const authStore = useAuthStore.getState();
+        if (authStore.session?.access_token !== session.access_token) {
+          console.log('[TRACKER] Refreshed token detected, updating auth store');
+          authStore.setSession(session);
+        }
+        console.log('[TRACKER] getValidAccessToken: returning token from session');
+        return session.access_token as string;
+      }
+
+      // Fallback to any token in auth store
+      const s2: any = useAuthStore.getState();
+      const fallbackToken = s2.session?.access_token || s2.accessToken || s2.token || s2.user?.accessToken;
+      console.log('[TRACKER] getValidAccessToken: no session token, using fallback?', !!fallbackToken);
+      return fallbackToken as string | undefined;
+    } catch (error) {
+      console.error('[TRACKER] Error in getValidAccessToken:', error);
       return undefined;
     }
-    
-    if (session?.access_token) {
-      // Update auth store with fresh session
-      const authStore = useAuthStore.getState();
-      if (authStore.session?.access_token !== session.access_token) {
-        console.log('[TRACKER] Refreshed token detected, updating auth store');
-        authStore.setSession(session);
-      }
-      console.log('[TRACKER] getValidAccessToken: returning token from session');
-      return session.access_token;
-    }
-    
-    // Fallback to auth store if getSession fails
-    const s: any = useAuthStore.getState();
-    const fallbackToken = s.session?.access_token || s.accessToken || s.token || s.user?.accessToken;
-    console.log('[TRACKER] getValidAccessToken: no session token, using fallback?', !!fallbackToken);
-    return fallbackToken;
-  } catch (error) {
-    console.error('[TRACKER] Error in getValidAccessToken:', error);
-    return undefined;
-  }
   })();
-  
+
   lastTokenTime = now;
   return cachedTokenPromise;
 }

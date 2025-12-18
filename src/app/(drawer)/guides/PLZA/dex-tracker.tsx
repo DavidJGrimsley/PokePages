@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, ScrollView, Alert, Platform } from 'react-native';
 import Head from 'expo-router/head';
 import { Container } from '@/src/components/UI/Container';
 import { ProgressSidebar } from '@/src/components/UI/ProgressSidebar';
@@ -8,6 +8,7 @@ import { cn } from '@/src/utils/cn';
 import { usePokemonTrackerStore} from '@/src/store/dexTrackerStore';
 import { useAuthStore } from '@/src/store/authStore';
 import { useShallow } from 'zustand/react/shallow';
+import { useFocusEffect } from '@react-navigation/native';
 import { lumioseDex, type Pokemon } from '@/data/Pokemon/LegendsZA/LumioseDex';
 import { hyperspaceDex } from '@/data/Pokemon/LegendsZA/HyperspaceDex';
 import { type FormType }from '~/types/tracker';
@@ -18,11 +19,13 @@ import { DualCollapsibleRow } from '@/src/components/Pokedex/DualCollapsibleRow'
 import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
 import { registerFeature } from '@/src/utils/featureRegistry';
 import { FilterModal } from '@/src/components/Pokedex/FilterModal';
+import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
 
 export const FEATURE_KEY = 'feature:guides.PLZA.dex-tracker';
+const FEATURE_TITLE = 'Legends: Z-A Form Tracker';
 registerFeature({
   key: FEATURE_KEY,
-  title: 'Legends: Z-A Form Tracker',
+  title: FEATURE_TITLE,
   path: '/guides/PLZA/dex-tracker',
   icon: 'calculator' });
 
@@ -31,10 +34,47 @@ type FilterType = 'all' | 'alpha' | 'mega';
 
 export default function DexTrackerPage() {
   const hasHydrated = usePokemonTrackerStore((state) => state._hasHydrated);
+  const user = useAuthStore((s) => s.user);
+  const navigateToSignIn = useNavigateToSignIn();
   const [filter, setFilter] = useState<FilterType>('all');
   const [activeDex, setActiveDex] = useState<'all' | 'lumiose' | 'hyperspace'>('all');
   const [query, setQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  const showAlertAndNavigateToSignIn = () => {
+    console.log('[DEX TRACKER] Showing sign-in alert');
+    
+    if (Platform.OS === 'web') {
+      // Web fallback since Alert.alert doesn't work on web
+      const shouldSignIn = window.confirm('You must sign in to use this feature.\n\nWould you like to sign in now?');
+      if (shouldSignIn) {
+        console.log('[DEX TRACKER] User chose to sign in');
+        navigateToSignIn();
+      } else {
+        console.log('[DEX TRACKER] User cancelled sign-in');
+      }
+    } else {
+      Alert.alert(
+        'Sign In Required',
+        'You must sign in to use this feature.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => console.log('[DEX TRACKER] User cancelled sign-in'),
+          },
+          {
+            text: 'Sign In',
+            style: 'default',
+            onPress: () => {
+              console.log('[DEX TRACKER] User chose to sign in');
+              navigateToSignIn();
+            },
+          },
+        ]
+      );
+    }
+  };
 
   // Filter Pokemon based on selected filter + search query
   const filteredPokemon = React.useMemo(() => {
@@ -103,25 +143,42 @@ export default function DexTrackerPage() {
     }
   };
 
-  // After hydration completes, load data for the active dex
+  // After hydration/user change, load data for the active dex
   useEffect(() => {
-    const userId = useAuthStore.getState().user?.id;
-    
+    const userId = user?.id;
     if (hasHydrated && userId) {
       try {
         if (activeDex === 'all') {
-          // Load both dexes when 'all' is selected
           usePokemonTrackerStore.getState().loadFromDatabase('lumiose');
           usePokemonTrackerStore.getState().loadFromDatabase('hyperspace');
         } else {
-          // Load only the selected dex
           usePokemonTrackerStore.getState().loadFromDatabase(activeDex);
         }
       } catch (e) {
         console.error('[DEX TRACKER PAGE] Failed to trigger loadFromDatabase:', e);
       }
     }
-  }, [hasHydrated, activeDex]);
+  }, [hasHydrated, activeDex, user?.id]);
+
+  // Refetch when screen gains focus (e.g., navigating back)
+  useFocusEffect(
+    React.useCallback(() => {
+      const userId = user?.id;
+      if (hasHydrated && userId) {
+        try {
+          if (activeDex === 'all') {
+            usePokemonTrackerStore.getState().loadFromDatabase('lumiose');
+            usePokemonTrackerStore.getState().loadFromDatabase('hyperspace');
+          } else {
+            usePokemonTrackerStore.getState().loadFromDatabase(activeDex);
+          }
+        } catch (e) {
+          console.error('[DEX TRACKER PAGE] Focus reload failed:', e);
+        }
+      }
+      return undefined;
+    }, [hasHydrated, user?.id, activeDex])
+  );
 
   const FormButton = ({ 
     dexNum, 
@@ -144,7 +201,16 @@ export default function DexTrackerPage() {
     
     return (
       <Pressable
-        onPress={() => toggleForm(dexNum, form, pokedex)}
+        onPress={() => {
+          console.log('[DEX TRACKER] Button pressed', { dexNum, form, pokedex, hasUser: !!user });
+          if (!user) {
+            console.log('[DEX TRACKER] No user, showing alert');
+            showAlertAndNavigateToSignIn();
+          } else {
+            console.log('[DEX TRACKER] User exists, toggling form');
+            toggleForm(dexNum, form, pokedex);
+          }
+        }}
         className={cn(
           'flex-1 py-2 px-2 rounded-md border-2 items-center justify-center min-w-[70px]',
           isObtained 
@@ -256,7 +322,7 @@ export default function DexTrackerPage() {
                   Track your collection and special forms
                 </Text>
               </View>
-              <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Pokédex Tracker" />
+              <FavoriteToggle featureKey={FEATURE_KEY} featureTitle={FEATURE_TITLE} />
             </View>
 
           <View className="">
@@ -375,8 +441,8 @@ export default function DexTrackerPage() {
               </>
             ) : (
               <View className="bg-app-surface dark:bg-app-background p-4 rounded-lg shadow-app-medium mb-4">
-                <Text className="text-lg font-bold text-app-text dark:text-gray-100 mb-4" role="heading" aria-level={2}>
-                  {getActiveDexName()} ({filteredPokemon.length})
+                <Text className="text-lg font-bold text-dark-app-text dark:text-app-text mb-4" role="heading" aria-level={2}>
+                  {getActiveDexName()} Pokédex ({filteredPokemon.length})
                 </Text>
                 {filteredPokemon.map((pokemon) => (
                   <PokemonRow key={`${activeDex}-${pokemon.id}-${pokemon.name}`} pokemon={pokemon} pokedex={activeDex} />
