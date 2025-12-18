@@ -1,5 +1,6 @@
 import { useRouter, usePathname, useSegments } from 'expo-router';
 import { useCallback } from 'react';
+import { Platform, Alert } from 'react-native';
 import { useOnboardingStore } from '~/store/onboardingStore';
 
 /**
@@ -33,4 +34,49 @@ export function useNavigateToSignIn() {
   }, [pathname, segments, setReturnUrl, router]);
 
   return navigateToSignIn;
+}
+
+/**
+ * Hook that provides a function to show a sign-in alert and navigate to sign-in
+ * Use this when a user tries to access a feature that requires authentication
+ */
+export function useShowSignInAlert() {
+  const navigateToSignIn = useNavigateToSignIn();
+
+  const showAlertAndNavigateToSignIn = useCallback(() => {
+    console.log('[AUTH] Showing sign-in alert');
+    
+    if (Platform.OS === 'web') {
+      // Web fallback since Alert.alert doesn't work on web
+      const shouldSignIn = window.confirm('You must sign in to use this feature.\n\nWould you like to sign in now?');
+      if (shouldSignIn) {
+        console.log('[AUTH] User chose to sign in');
+        navigateToSignIn();
+      } else {
+        console.log('[AUTH] User cancelled sign-in');
+      }
+    } else {
+      Alert.alert(
+        'Sign In Required',
+        'You must sign in to use this feature.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => console.log('[AUTH] User cancelled sign-in'),
+          },
+          {
+            text: 'Sign In',
+            style: 'default',
+            onPress: () => {
+              console.log('[AUTH] User chose to sign in');
+              navigateToSignIn();
+            },
+          },
+        ]
+      );
+    }
+  }, [navigateToSignIn]);
+
+  return showAlertAndNavigateToSignIn;
 }

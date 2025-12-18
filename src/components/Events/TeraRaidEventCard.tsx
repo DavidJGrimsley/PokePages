@@ -9,6 +9,7 @@ import { useEventClaim } from '~/services/eventClaimsService';
 import { cn } from '~/utils/cn';
 import { BaseEventCard } from './BaseEventCard';
 import { EventClaimButton } from './EventClaimButton';
+import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';
 
 interface TeraRaidEventCardProps {
   event: TeraRaidEvent;
@@ -35,6 +36,17 @@ export const TeraRaidEventCard: React.FC<TeraRaidEventCardProps> = ({ event, eve
     event.periods.period2?.end
   );
   const { claimed, toggleClaim } = useEventClaim(eventKey);
+  const showSignInAlert = useShowSignInAlert();
+
+  const handleToggleClaim = async () => {
+    try {
+      await toggleClaim();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'AUTH_REQUIRED') {
+        showSignInAlert();
+      }
+    }
+  };
 
   const getStatusBgClass = () => {
     if (status === EventStatus.PERIOD1_ACTIVE || status === EventStatus.PERIOD2_ACTIVE) {
@@ -122,7 +134,7 @@ export const TeraRaidEventCard: React.FC<TeraRaidEventCardProps> = ({ event, eve
       {(status === EventStatus.PERIOD1_ACTIVE || status === EventStatus.PERIOD2_ACTIVE || status === EventStatus.ENDED) && (
         <EventClaimButton
           claimed={claimed}
-          onToggle={toggleClaim}
+          onToggle={handleToggleClaim}
           iconName="trophy"
           claimedLabel="✓ Caught"
           unclaimedLabel="Mark as Caught"

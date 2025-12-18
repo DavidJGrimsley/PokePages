@@ -8,6 +8,7 @@ import { getPromoCodeStatus } from '~/utils/helperFX';
 import { useEventClaim } from '~/services/eventClaimsService';
 import { BaseEventCard } from './BaseEventCard';
 import { EventClaimButton } from './EventClaimButton';
+import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';
 
 interface PromoCodeEventCardProps {
   event: PromoCodeEvent;
@@ -37,6 +38,17 @@ const showAlert = (title: string, message?: string) => {
 export const PromoCodeEventCard: React.FC<PromoCodeEventCardProps> = ({ event, eventKey }) => {
   const status = getPromoCodeStatus(event.expirationDate);
   const { claimed, toggleClaim } = useEventClaim(eventKey);
+  const showSignInAlert = useShowSignInAlert();
+
+  const handleToggleClaim = async () => {
+    try {
+      await toggleClaim();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'AUTH_REQUIRED') {
+        showSignInAlert();
+      }
+    }
+  };
 
   const getStatusBgClass = () => {
     switch (status) {
@@ -107,7 +119,7 @@ export const PromoCodeEventCard: React.FC<PromoCodeEventCardProps> = ({ event, e
       {status === EventStatus.ACTIVE && (
         <EventClaimButton
           claimed={claimed}
-          onToggle={toggleClaim}
+          onToggle={handleToggleClaim}
           iconName="key"
           claimedLabel="✓ Redeemed"
           unclaimedLabel="Mark as Redeemed"

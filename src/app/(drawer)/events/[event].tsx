@@ -12,6 +12,7 @@ import { EventDetailLayout } from '@/src/components/Events/EventDetailLayout';
 import { EventClaimButton } from '@/src/components/Events/EventClaimButton';
 import { PokemonStatsDisplay } from '@/src/components/Events/PokemonStatsDisplay';
 import { PokemonDisplay } from '@/src/components/Events/PokemonDisplay';
+import { useShowSignInAlert } from '@/src/hooks/useNavigateToSignIn';
 
 // Static generation for all event slugs
 export async function generateStaticParams(): Promise<{ event: string }[]> {
@@ -43,6 +44,18 @@ export default function EventDetailPage() {
   
   // Use event claim hook for promo code events
   const { claimed, toggleClaim } = useEventClaim(slug || '');
+  const showSignInAlert = useShowSignInAlert();
+  
+  // Handle claim toggle with auth check
+  const handleToggleClaim = async () => {
+    try {
+      await toggleClaim();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'AUTH_REQUIRED') {
+        showSignInAlert();
+      }
+    }
+  };
   
   // Helper for showing alerts
   const showAlert = (title: string, message?: string) => {
@@ -147,7 +160,7 @@ export default function EventDetailPage() {
           <View className="mb-md">
             <EventClaimButton
               claimed={claimed}
-              onToggle={toggleClaim}
+              onToggle={handleToggleClaim}
               iconName="trophy"
               claimedLabel="✓ Caught"
               unclaimedLabel="Mark as Caught"
@@ -217,7 +230,7 @@ export default function EventDetailPage() {
           <View className="mb-md">
             <EventClaimButton
               claimed={claimed}
-              onToggle={toggleClaim}
+              onToggle={handleToggleClaim}
               iconName="gift"
               claimedLabel="✓ Claimed"
               unclaimedLabel="Mark as Claimed"
@@ -285,7 +298,7 @@ export default function EventDetailPage() {
             <View className="mb-md">
               <EventClaimButton
                 claimed={claimed}
-                onToggle={toggleClaim}
+                onToggle={handleToggleClaim}
                 iconName="key"
                 claimedLabel="✓ Redeemed"
                 unclaimedLabel="Mark as Redeemed"

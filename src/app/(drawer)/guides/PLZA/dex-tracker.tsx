@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ActivityIndicator, ScrollView, Alert, Platform } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator, ScrollView } from 'react-native';
 import Head from 'expo-router/head';
 import { Container } from '@/src/components/UI/Container';
 import { ProgressSidebar } from '@/src/components/UI/ProgressSidebar';
@@ -19,7 +19,7 @@ import { DualCollapsibleRow } from '@/src/components/Pokedex/DualCollapsibleRow'
 import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
 import { registerFeature } from '@/src/utils/featureRegistry';
 import { FilterModal } from '@/src/components/Pokedex/FilterModal';
-import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
+import { useShowSignInAlert } from '@/src/hooks/useNavigateToSignIn';
 
 export const FEATURE_KEY = 'feature:guides.PLZA.dex-tracker';
 const FEATURE_TITLE = 'Legends: Z-A Form Tracker';
@@ -35,46 +35,11 @@ type FilterType = 'all' | 'alpha' | 'mega';
 export default function DexTrackerPage() {
   const hasHydrated = usePokemonTrackerStore((state) => state._hasHydrated);
   const user = useAuthStore((s) => s.user);
-  const navigateToSignIn = useNavigateToSignIn();
+  const showAlertAndNavigateToSignIn = useShowSignInAlert();
   const [filter, setFilter] = useState<FilterType>('all');
   const [activeDex, setActiveDex] = useState<'all' | 'lumiose' | 'hyperspace'>('all');
   const [query, setQuery] = useState('');
   const [filterModalVisible, setFilterModalVisible] = useState(false);
-
-  const showAlertAndNavigateToSignIn = () => {
-    console.log('[DEX TRACKER] Showing sign-in alert');
-    
-    if (Platform.OS === 'web') {
-      // Web fallback since Alert.alert doesn't work on web
-      const shouldSignIn = window.confirm('You must sign in to use this feature.\n\nWould you like to sign in now?');
-      if (shouldSignIn) {
-        console.log('[DEX TRACKER] User chose to sign in');
-        navigateToSignIn();
-      } else {
-        console.log('[DEX TRACKER] User cancelled sign-in');
-      }
-    } else {
-      Alert.alert(
-        'Sign In Required',
-        'You must sign in to use this feature.',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-            onPress: () => console.log('[DEX TRACKER] User cancelled sign-in'),
-          },
-          {
-            text: 'Sign In',
-            style: 'default',
-            onPress: () => {
-              console.log('[DEX TRACKER] User chose to sign in');
-              navigateToSignIn();
-            },
-          },
-        ]
-      );
-    }
-  };
 
   // Filter Pokemon based on selected filter + search query
   const filteredPokemon = React.useMemo(() => {

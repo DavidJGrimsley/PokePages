@@ -8,8 +8,7 @@ import { getMysteryGiftStatus } from '~/utils/helperFX';
 import { useEventClaim } from '~/services/eventClaimsService';
 import { cn } from '~/utils/cn';
 import { BaseEventCard } from './BaseEventCard';
-import { EventClaimButton } from './EventClaimButton';
-
+import { EventClaimButton } from './EventClaimButton';import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';
 interface MysteryGiftEventCardProps {
   event: MysteryGiftEvent;
   eventKey: string;
@@ -30,6 +29,17 @@ const formatUserFriendlyDate = (dateString: string) => {
 export const MysteryGiftEventCard: React.FC<MysteryGiftEventCardProps> = ({ event, eventKey }) => {
   const status = getMysteryGiftStatus(event.startDate, event.endDate, event.isOngoing);
   const { claimed, toggleClaim } = useEventClaim(eventKey);
+  const showSignInAlert = useShowSignInAlert();
+
+  const handleToggleClaim = async () => {
+    try {
+      await toggleClaim();
+    } catch (error) {
+      if (error instanceof Error && error.message === 'AUTH_REQUIRED') {
+        showSignInAlert();
+      }
+    }
+  };
 
   const getStatusBgClass = () => {
     switch (status) {
@@ -90,7 +100,7 @@ export const MysteryGiftEventCard: React.FC<MysteryGiftEventCardProps> = ({ even
       {(status === EventStatus.ACTIVE || event.isOngoing) && (
         <EventClaimButton
           claimed={claimed}
-          onToggle={toggleClaim}
+          onToggle={handleToggleClaim}
           iconName="gift"
           claimedLabel="✓ Claimed"
           unclaimedLabel="Mark as Claimed"
