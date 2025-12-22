@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, View } from 'react-native';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
+import { FontAwesome, Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { 
   PressStart2P_400Regular,
 } from '@expo-google-fonts/press-start-2p';
@@ -67,10 +68,17 @@ export default function RootLayout() {
     'Roboto Condensed-Medium': RobotoCondensed_500Medium,
     'Roboto Mono': RobotoMono_400Regular,
     'Roboto Mono-Bold': RobotoMono_700Bold,
+    // Preload vector icon fonts used across the app (web needs this)
+    ...FontAwesome.font,
+    ...Feather.font,
+    ...Ionicons.font,
+    ...MaterialCommunityIcons.font,
+    ...MaterialIcons.font,
   });
 
   // Add fallback for slow font loading on mobile
   const [fontLoadingTimedOut, setFontLoadingTimedOut] = useState(false);
+  const [fontsReady, setFontsReady] = useState(false);
   
   useEffect(() => {
     // Set a timeout for font loading (5 seconds)
@@ -81,6 +89,46 @@ export default function RootLayout() {
     }, 5000);
 
     return () => clearTimeout(fontTimeout);
+  }, [fontsLoaded]);
+
+  // Confirm fonts are applied before rendering (especially on web)
+  useEffect(() => {
+    if (!fontsLoaded) return;
+
+    // On web, wait for the Font Loading API to resolve specific families (text + icons)
+    if (Platform.OS === 'web' && 'fonts' in document) {
+      const families = [
+        'PressStart2P', 'Press Start 2P',
+        'Modak',
+        'Roboto', 'Roboto-Medium', 'Roboto-Bold',
+        'Roboto Slab', 'Roboto Slab-SemiBold',
+        'Roboto Condensed', 'Roboto Condensed-Medium',
+        'Roboto Mono', 'Roboto Mono-Bold',
+        // Icon font families
+        ...Object.keys(FontAwesome.font),
+        ...Object.keys(Feather.font),
+        ...Object.keys(Ionicons.font),
+        ...Object.keys(MaterialCommunityIcons.font),
+        ...Object.keys(MaterialIcons.font),
+      ];
+
+      const checks = families.map((f) => (document as any).fonts.load(`1rem "${f}"`));
+      Promise.all(checks)
+        .then(() => {
+          // Optional: mark DOM as ready for CSS hooks
+          document.documentElement.classList.add('fonts-ready');
+          setFontsReady(true);
+        })
+        .catch(() => {
+          // Don’t block forever if any font fails
+          setFontsReady(true);
+        });
+      return;
+    }
+
+    // Native: small buffer is enough
+    const renderDelay = setTimeout(() => setFontsReady(true), 300);
+    return () => clearTimeout(renderDelay);
   }, [fontsLoaded]);
 
   // Global error diagnostics for web to surface silent failures in production
@@ -117,10 +165,10 @@ export default function RootLayout() {
   // Hide the splash screen after both stores have been hydrated AND fonts are loaded (or timed out)
   useEffect(() => {
     // Hide the splash screen once stores and fonts are ready (or timed out)
-    if (_hasHydrated && _hasHydratedOnboarding && (fontsLoaded || fontLoadingTimedOut)) {
+    if (_hasHydrated && _hasHydratedOnboarding && (fontsReady || fontLoadingTimedOut)) {
       SplashScreen.hideAsync();
     }
-  }, [_hasHydrated, _hasHydratedOnboarding, fontsLoaded, fontLoadingTimedOut]);
+  }, [_hasHydrated, _hasHydratedOnboarding, fontsReady, fontLoadingTimedOut]);
 
   // You'll need to update your root layout to handle hydration properly
   // Add this to prevent infinite re-renders:
@@ -133,12 +181,12 @@ export default function RootLayout() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isHydrated) {
-    // Showing loading screen while hydration completes
+  // Show loading animation until both hydration and fonts are ready
+  if (!isHydrated || (!fontsReady && !fontLoadingTimedOut)) {
     return <Loading />;
   }
 
-  if ((!_hasHydrated || !_hasHydratedOnboarding || (!fontsLoaded && !fontLoadingTimedOut)) && !isWeb) {
+  if ((!_hasHydrated || !_hasHydratedOnboarding) && !isWeb) {
     return null;
   }
 

@@ -11,7 +11,7 @@ export default function LoadingFull() {
       backgroundColor: '#E6e6fa',
     }}>
       <LottieView
-        source={require('../../../assets/lottie/loading.json')}
+        source={require('../../../assets/lottie/PokePages_Scatter.json')}
         autoPlay
         loop
         style={{
