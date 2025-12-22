@@ -1,10 +1,20 @@
 import { TypeHeader } from '@/src/components/Type/TypeHeader';
 import { TypeInfo } from '@/src/components/Type/TypeInfo';
+import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
 import { Container } from '@/src/components/UI/Container';
 import React, { useState } from 'react';
 import { View, Pressable, Text } from 'react-native';
 import Head from 'expo-router/head';
+import { registerFeature } from '@/src/utils/featureRegistry';
 import { type PokemonType } from '~/constants/typeUtils';
+
+const FEATURE_KEY = 'feature:resources.type.info';
+registerFeature({
+  key: FEATURE_KEY,
+  title: 'Type Info',
+  path: '/(drawer)/resources/type/info',
+  icon: 'book',
+});
 
 export default function TypeInfoPage() {
   const [selectedType, setSelectedType] = useState<PokemonType | null>(null);
@@ -80,7 +90,12 @@ export default function TypeInfoPage() {
         />
       </Head>
       
-      <TypeHeader onTypeSelect={handleTypeSelect} />
+      <View className="flex-row items-center gap-3 px-3 pt-2 pb-1" style={{ zIndex: 50 }}>
+        <View className="flex-1">
+          <TypeHeader onTypeSelect={handleTypeSelect} />
+        </View>
+        <FavoriteToggle featureKey={FEATURE_KEY} featureTitle="Type Info" />
+      </View>
       {selectedType && (
         <View className="px-4 pb-2">
           <Pressable
