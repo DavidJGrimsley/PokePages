@@ -21,6 +21,7 @@ import * as socialApi from '~/utils/socialApi';
 import type { ReactionType } from '~/utils/socialApi';
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import { Footer } from '@/src/components/Meta/Footer';
+import { AdBannerWithModal } from '@/src/components/Ads';
 
 type FeedMode = 'explore' | 'friends';
 
@@ -29,11 +30,40 @@ interface PostWithReactions extends socialApi.Post {
   currentUserReaction?: ReactionType | null;
 }
 
+// Type for feed items (posts + ads)
+type FeedItem = 
+  | { type: 'post'; data: PostWithReactions }
+  | { type: 'ad'; id: string };
+
 export default function FeedTab() {
   const { user } = useAuthStore();
   const [feedMode, setFeedMode] = useState<FeedMode>('explore');
   const [posts, setPosts] = useState<PostWithReactions[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Inject ads into feed items
+  // Show ad between every 15-20 posts, at least once if there are posts, not at top or bottom
+  const feedItems: FeedItem[] = React.useMemo(() => {
+    if (posts.length === 0) return [];
+    
+    const items: FeedItem[] = [];
+    const adInterval = 17; // Middle of 15-20 range
+    
+    posts.forEach((post, index) => {
+      items.push({ type: 'post', data: post });
+      
+      // Insert ad after every adInterval posts, but not after the last post
+      // Also ensure at least one ad if we have enough posts (> 3)
+      const shouldShowAd = (index + 1) % adInterval === 0 && index < posts.length - 1;
+      const shouldShowFirstAd = index === Math.floor(posts.length / 2) && posts.length > 3 && items.filter(i => i.type === 'ad').length === 0;
+      
+      if (shouldShowAd || shouldShowFirstAd) {
+        items.push({ type: 'ad', id: `ad-${index}` });
+      }
+    });
+    
+    return items;
+  }, [posts]);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
@@ -372,48 +402,55 @@ export default function FeedTab() {
           </View>
         ) : (
           <FlatList
-            data={posts}
-            keyExtractor={(item) => item.id}
+            data={feedItems}
+            keyExtractor={(item) => item.type === 'post' ? item.data.id : item.id}
             showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <PostCard
-                post={item}
-                currentUserId={user.id}
-                onReaction={(reactionType) => handleReaction(item.id, reactionType)}
-                onComment={() => {
-                  console.log('💬 onComment clicked for postId:', item.id);
-                  console.log('💬 Current selectedPostId:', selectedPostId);
-                  console.log('💬 Setting selectedPostId to:', item.id);
-                  
-                  // Use setTimeout to see if the freeze is from a blocking operation
-                  setTimeout(() => {
-                    console.log('💬 Timeout executing setSelectedPostId');
-                    setSelectedPostId(item.id);
-                    console.log('💬 selectedPostId set complete');
-                  }, 0);
-                }}
-                onHashtagPress={handleHashtagPress}
-                onDelete={
-                  item.authorId === user.id ? () => handleDelete(item.id) : undefined
-                }
-                onUserPress={() => {
-                  const username = item.author?.username;
-                  if (username) {
-                    console.log('👤 onUserPress called for username:', username);
-                    console.log('👤 Navigating to /(profile)/' + username);
-                    router.push(`/(profile)/${username}`);
-                  } else {
-                    console.warn('⚠️ No username available for author:', item.authorId);
+            renderItem={({ item }) => {
+              if (item.type === 'ad') {
+                return <AdBannerWithModal key={item.id} />;
+              }
+              
+              const post = item.data;
+              return (
+                <PostCard
+                  post={post}
+                  currentUserId={user.id}
+                  onReaction={(reactionType) => handleReaction(post.id, reactionType)}
+                  onComment={() => {
+                    console.log('💬 onComment clicked for postId:', post.id);
+                    console.log('💬 Current selectedPostId:', selectedPostId);
+                    console.log('💬 Setting selectedPostId to:', post.id);
+                    
+                    // Use setTimeout to see if the freeze is from a blocking operation
+                    setTimeout(() => {
+                      console.log('💬 Timeout executing setSelectedPostId');
+                      setSelectedPostId(post.id);
+                      console.log('💬 selectedPostId set complete');
+                    }, 0);
+                  }}
+                  onHashtagPress={handleHashtagPress}
+                  onDelete={
+                    post.authorId === user.id ? () => handleDelete(post.id) : undefined
                   }
-                }}
-                onPress={() => {
-                  // Navigate to individual post page
-                  router.push(`/social/posts/${item.id}`);
-                }}
-                reactions={item.reactions}
-                currentUserReaction={item.currentUserReaction}
-              />
-            )}
+                  onUserPress={() => {
+                    const username = post.author?.username;
+                    if (username) {
+                      console.log('👤 onUserPress called for username:', username);
+                      console.log('👤 Navigating to /(profile)/' + username);
+                      router.push(`/(profile)/${username}`);
+                    } else {
+                      console.warn('⚠️ No username available for author:', post.authorId);
+                    }
+                  }}
+                  onPress={() => {
+                    // Navigate to individual post page
+                    router.push(`/social/posts/${post.id}`);
+                  }}
+                  reactions={post.reactions}
+                  currentUserReaction={post.currentUserReaction}
+                />
+              );
+            }}
             contentContainerClassName="pb-4"
             refreshControl={
               <RefreshControl

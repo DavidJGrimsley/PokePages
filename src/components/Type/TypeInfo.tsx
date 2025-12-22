@@ -1,9 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, Fragment } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import typeAnalysis from '~/constants/typeAnalysis.json';
 import { getTypeColor } from '~/utils/typeColors';
 import { type PokemonType } from '~/constants/typeUtils';
 import { nationalDex } from '@/data/Pokemon/NationalDex';
+import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { getAllAds } from '~/constants/adsConfig';
 
 type TypeData = {
   id: string;
@@ -16,6 +18,12 @@ interface TypeInfoProps {
 }
 
 export function TypeInfo({ selectedType }: TypeInfoProps) {
+  const ads = useMemo(() => getAllAds(), []);
+  const adBaseIndex = useMemo(
+    () => (ads.length > 0 ? Math.floor(Math.random() * ads.length) : 0),
+    [ads.length]
+  );
+
   // Helper function to get Pokémon with specific type combination
   const getPokemonWithTypes = useMemo(() => {
     return (type1: string, type2?: string) => {
@@ -227,7 +235,26 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
             Single Types
           </Text>
           <View className="gap-3 mb-6">
-            {singleTypes.map(([key, type]) => renderTypeChip(key, type, false))}
+            {(() => {
+              let adSlot = 0;
+              return singleTypes.map(([key, type], index) => {
+                const shouldShowAd = (index + 1) % 25 === 0 && index + 1 < singleTypes.length;
+                const adId = shouldShowAd && ads.length > 0
+                  ? ads[(adBaseIndex + adSlot) % ads.length].id
+                  : undefined;
+                if (shouldShowAd) adSlot += 1;
+                return (
+                  <Fragment key={key}>
+                    {renderTypeChip(key, type, false)}
+                    {shouldShowAd && adId && (
+                      <View className="my-4">
+                        <AdBannerWithModal adId={adId} />
+                      </View>
+                    )}
+                  </Fragment>
+                );
+              });
+            })()}
           </View>
         </>
       )}
@@ -243,7 +270,26 @@ export function TypeInfo({ selectedType }: TypeInfoProps) {
             Dual Types
           </Text>
           <View className="gap-3 mb-6">
-            {dualTypes.map(([key, type]) => renderTypeChip(key, type, true))}
+            {(() => {
+              let adSlot = 0;
+              return dualTypes.map(([key, type], index) => {
+                const shouldShowAd = (index + 1) % 25 === 0 && index + 1 < dualTypes.length;
+                const adId = shouldShowAd && ads.length > 0
+                  ? ads[(adBaseIndex + adSlot) % ads.length].id
+                  : undefined;
+                if (shouldShowAd) adSlot += 1;
+                return (
+                  <Fragment key={key}>
+                    {renderTypeChip(key, type, true)}
+                    {shouldShowAd && adId && (
+                      <View className="my-4">
+                        <AdBannerWithModal adId={adId} />
+                      </View>
+                    )}
+                  </Fragment>
+                );
+              });
+            })()}
           </View>
         </>
       )}

@@ -1,10 +1,11 @@
 import { Stack, Link } from 'expo-router';
 import Head from 'expo-router/head';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { View, Text, ScrollView, ActivityIndicator, RefreshControl, Pressable } from 'react-native';
 import { Container } from '@/src/components/UI/Container';
 import { NewsCard } from '@/src/components/Home/NewsCard';
 import { fetchNews, type NewsArticle } from '@/src/services/rssService';
+import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -87,8 +88,15 @@ export default function NewsPage() {
             </View>
           ) : (
             <View>
-              {articles.map((article) => (
-                <NewsCard key={article.id} article={article} />
+              {articles.map((article, index) => (
+                <Fragment key={article.id}>
+                  <NewsCard article={article} />
+                  {(index + 1) % 10 === 0 && index + 1 < articles.length && (
+                    <View className="my-6">
+                      <AdBannerWithModal />
+                    </View>
+                  )}
+                </Fragment>
               ))}
             </View>
           )}

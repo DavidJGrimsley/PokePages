@@ -24,6 +24,7 @@ import {
 } from '~/components/Events';
 import { Footer } from '@/src/components/Meta/Footer';
 import { getRecentNews, type NewsArticle } from '@/src/services/rssService';
+import { AdBannerWithModal } from '@/src/components/Ads';
 
 export default function Home() {
   // Use shallow comparator to avoid re-render loop when an array reference changes
@@ -139,7 +140,7 @@ export default function Home() {
       </Head>
       <Container>
         <ScrollView 
-          contentContainerStyle={{ flexGrow: 1, padding: 0 }}
+          contentContainerStyle={{ flexGrow: 1,  gap: 20 }}
           showsVerticalScrollIndicator={false}
           >
           {/* Download App Banner */}
@@ -156,8 +157,8 @@ export default function Home() {
           </Link>)}
           
           
-          <View className="p-lg bg-app-background dark:bg-dark-app-background">
             {/* Hero Section */}
+          <View className=" bg-app-background dark:bg-dark-app-background">
             <Text
               role="heading"
               aria-level={1}
@@ -230,8 +231,13 @@ export default function Home() {
             </View>
           </View>
 
+          {/* Ad Banner */}
+          <View className=" items-center">
+            <AdBannerWithModal />
+          </View>
+
           {/* Features Section */}
-          <View className="p-lg rounded-lg mb-5 border-t-2 border-b-2 border-app-flag">
+          <View className="p-lg rounded-lg border-t-2 border-b-2 border-app-flag">
             <Text
               role="heading"
               aria-level={3}
@@ -273,7 +279,7 @@ export default function Home() {
 
           {/* NO current events View - Only show if no active events */}
           {!activeEventCards.hasAny && (
-            <View className="items-center mb-lg">
+            <View className="items-center ">
               <Text
                   role="heading"
                   aria-level={3}

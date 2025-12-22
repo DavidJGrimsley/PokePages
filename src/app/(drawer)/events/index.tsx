@@ -20,6 +20,7 @@ import {
   PromoCodeEventCard 
 } from '~/components/Events';
 import { Footer } from '@/src/components/Meta/Footer';
+import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
 
 export default function EventsIndex() {
   // SEO meta content
@@ -208,6 +209,11 @@ export default function EventsIndex() {
             </View>
           </View>
         )}
+
+        {/* Inline Ad between active and inactive sections */}
+        <View className="px-lg mb-xl">
+          <AdBannerWithModal />
+        </View>
 
         {/* Inactive Events Section */}
         {(archivedMysteryGiftEvents.length > 0 || archivedPromoCodeEvents.length > 0 || archivedTeraRaidEvents.length > 0 || archivedCounterEvents.length > 0) && (

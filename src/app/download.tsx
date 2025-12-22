@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { View, Text, ScrollView } from 'react-native';
 
 import { Container } from 'components/UI/Container';
+import { AdBannerWithModal } from '@/src/components/Ads';
 
 export default function DownloadApp() {
   return (
@@ -31,6 +32,9 @@ export default function DownloadApp() {
               loading="lazy"
             />
           </View>
+
+          {/* Ad Banner */}
+          <AdBannerWithModal />
         </ScrollView>
       </Container>
     </>

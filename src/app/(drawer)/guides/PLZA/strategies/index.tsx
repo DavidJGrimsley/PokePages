@@ -11,9 +11,12 @@ import { EVYields } from '@/src/components/Guides/EVYields';
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import { Frame } from 'components/UI/Frame';
 import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
+import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
 
 export default function Strategies() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
+  const strategies = Object.values(strategiesConfig);
+  const midpoint = Math.ceil(strategies.length / 2);
 
   // SEO meta content
   const title = 'Pokémon Legends Z-A Strategies & Guides | PokePages';
@@ -94,18 +97,22 @@ export default function Strategies() {
           </Text>
           <InProgressDisclaimer />
           
-          {Object.values(strategiesConfig).map((strategy) => (
-            <StrategyCard
-              key={strategy.id}
-              id={strategy.id}
-              title={strategy.title}
-              subtitle={strategy.subtitle}
-              icon={strategy.icon}
-            />
+          {strategies.map((strategy, index) => (
+            <React.Fragment key={strategy.id}>
+              <StrategyCard
+                id={strategy.id}
+                title={strategy.title}
+                subtitle={strategy.subtitle}
+                icon={strategy.icon}
+              />
+              {index === midpoint - 1 && (
+                <View className="my-6">
+                  <AdBannerWithModal />
+                </View>
+              )}
+            </React.Fragment>
           ))}
 
-          
-         
           <VideoCarousel videoIds={["mE3xS2Myzq4", "XcG0nh5AvYg"]} isMobile={isMobile} />
         </MultiLayerParallaxScrollView>
       </Container>
