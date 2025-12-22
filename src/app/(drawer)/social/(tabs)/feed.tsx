@@ -407,7 +407,11 @@ export default function FeedTab() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => {
               if (item.type === 'ad') {
-                return <AdBannerWithModal key={item.id} />;
+                return (
+                  <View className="my-4 px-4">
+                    <AdBannerWithModal key={item.id} />
+                  </View>
+                )
               }
               
               const post = item.data;

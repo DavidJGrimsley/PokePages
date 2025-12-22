@@ -3,40 +3,34 @@
 // npm install react-native-typewriter
 
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import TypeWriter from 'react-native-typewriter';
-
 
 const disclaimerText = "This is a fan made application and is not affiliated with or endorsed by Pokémon Company, Game Freak, or Nintendo.";
 
-
+// NativeWind refactor + reserved height to prevent jumping
 export function Disclaimer() {
 	return (
-		<View style={styles.container}>
-			<TypeWriter
-				typing={1}
-				maxDelay={100}
-				minDelay={20}
-				style={styles.text}
+		<View className="relative my-4 px-5 items-center justify-center">
+			{/* Placeholder reserves final height */}
+			<Text
+				className="opacity-0 text-center w-full"
+				style={{ fontFamily: 'monospace', fontSize: 13, letterSpacing: 0.5 }}
 			>
-				<Text>{disclaimerText}</Text>
-			</TypeWriter>
+				{disclaimerText}
+			</Text>
+
+			{/* Animated text overlays placeholder, so layout height doesn't change */}
+			<View className="absolute inset-0 px-5 items-center justify-center">
+				<TypeWriter typing={1} maxDelay={100} minDelay={20}>
+					<Text
+						className="text-center text-gray-500 w-full"
+						style={{ fontFamily: 'monospace', fontSize: 13, letterSpacing: 0.5 }}
+					>
+						{disclaimerText}
+					</Text>
+				</TypeWriter>
+			</View>
 		</View>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: {
-		marginVertical: 16,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingHorizontal: 20,
-	},
-	text: {
-		fontFamily: 'monospace',
-		fontSize: 13,
-		color: '#888',
-		textAlign: 'center',
-		letterSpacing: 0.5,
-	},
-});
