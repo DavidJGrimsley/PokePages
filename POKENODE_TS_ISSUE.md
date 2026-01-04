@@ -90,7 +90,7 @@ declare module 'pokenode-ts' {
 
 ## References
 
-- [Original PR #1321](https://github.com/Gabb-c/pokenode-ts/pull/1321/commits)
+- [Original PR #1321](https://github.com/Gabb-c/pokenode-ts/pull/1321)
 - [PokéAPI Official Documentation](https://pokeapi.co/docs/v2)
 - [Pokenode-ts Repository](https://github.com/Gabb-c/pokenode-ts)
 - [PokePages.app](https://pokepages.app) - Where this library is used
