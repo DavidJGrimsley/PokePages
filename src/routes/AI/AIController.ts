@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { promises as fs } from 'fs';
 import path from 'path';
 import { PokemonClient } from 'pokenode-ts';
 import OpenAI from 'openai';
@@ -8,6 +7,63 @@ import type { Pokemon } from '../../../data/Pokemon/NationalDex.js';
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+// MCP Server URL - defaults to production
+const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'https://davidjgrimsley.com/mcp/mrdj-pokemon-mcp';
+
+/**
+ * Fetch a strategy guide from the MCP server
+ * @param guideId - The guide ID (e.g., 'tera-raid', 'general')
+ * @returns The guide content
+ */
+const fetchGuideFromMCP = async (guideId: string): Promise<string | null> => {
+  try {
+    const response = await fetch(`${MCP_SERVER_URL}/mcp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: Date.now(),
+        method: 'tools/call',
+        params: {
+          name: 'get_strategy',
+          arguments: { guideId }
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`MCP server returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Extract text from MCP response format
+    if (data.result?.content?.[0]?.text) {
+      return data.result.content[0].text;
+    }
+    
+    throw new Error('Invalid MCP response format');
+  } catch (error) {
+    console.error(`Error fetching guide ${guideId} from MCP:`, error);
+    return null;
+  }
+};
+
+/**
+ * Fetch multiple strategy guides from MCP server
+ * @param guideIds - Array of guide IDs to fetch
+ * @returns Combined guide content
+ */
+const fetchMultipleGuides = async (guideIds: string[]): Promise<string> => {
+  const guides = await Promise.all(
+    guideIds.map(id => fetchGuideFromMCP(id))
+  );
+  
+  return guides
+    .filter(guide => guide !== null)
+    .join('\n\n---\n\n');
+};
 
 // Load and parse the National Dex data
 const loadNationalDex = async (): Promise<Pokemon[]> => {
@@ -43,15 +99,19 @@ export async function chat(req: Request, res: Response) {
   }
 
   try {
-    // Load National Dex and strategies
+    // Load National Dex and fetch strategies from MCP server
     const pokemonList = await loadNationalDex();
-    const strategiesPath = path.join(process.cwd(), 'data/ML', 'supervision.md');
     let customStrategies = '';
     
     try {
-      customStrategies = await fs.readFile(strategiesPath, 'utf-8');
-    } catch {
-      customStrategies = 'No custom strategies available.';
+      // Fetch both tera-raid and general guides for comprehensive context
+      customStrategies = await fetchMultipleGuides(['tera-raid', 'general']);
+      if (!customStrategies) {
+        customStrategies = 'Strategy guides temporarily unavailable.';
+      }
+    } catch (error) {
+      console.error('Error fetching strategies from MCP:', error);
+      customStrategies = 'Strategy guides temporarily unavailable.';
     }
 
     // Get the latest user message
