@@ -26,6 +26,31 @@ export default function EnhancedSignUp() {
   const [showDatePicker, setShowDatePicker] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
+  const fetchWithTimeout = (url: string, options: RequestInit = {}, timeoutMs = 15000) => {
+    return Promise.race([
+      fetch(url, options),
+      new Promise((_r, rej) => setTimeout(() => rej(new Error('Request timed out')), timeoutMs)),
+    ]) as Promise<Response>
+  }
+
+  const toFriendlyNetworkMessage = (message: string, url?: string) => {
+    const m = message.toLowerCase()
+    const isNetwork =
+      m.includes('load failed') ||
+      m.includes('failed to fetch') ||
+      m.includes('network request failed') ||
+      m.includes('networkerror') ||
+      m.includes('request timed out')
+
+    if (!isNetwork) return message
+
+    const base = "Couldn't reach the server."
+    const hint =
+      " If you're running a dev build on a phone or another computer, your API base URL can't be localhost — set EXPO_PUBLIC_API_BASE_URL (e.g. http://192.168.1.10:3001)."
+    const debug = __DEV__ && url ? `\n\nTried: ${url}` : ''
+    return `${base}${hint}${debug}`
+  }
+
   const {
     control,
     handleSubmit,
@@ -88,7 +113,8 @@ export default function EnhancedSignUp() {
       }
 
       // Step 2: Create profile via our API
-      const profileResponse = await fetch(buildApiUrl('profiles'), {
+      const profileUrl = buildApiUrl('profiles')
+      const profileResponse = await fetchWithTimeout(profileUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,9 +124,15 @@ export default function EnhancedSignUp() {
           username: data.username.trim(),
           birthdate: data.birthdate.toISOString().split('T')[0], // YYYY-MM-DD format
         }),
-      })
+      }, 15000)
 
-      const profileResult = await profileResponse.json()
+      let profileResult: any = null
+      try {
+        profileResult = await profileResponse.json()
+      } catch {
+        const text = await profileResponse.text().catch(() => '')
+        profileResult = { success: false, error: text || 'Invalid server response' }
+      }
 
       if (!profileResponse.ok || !profileResult.success) {
         // If profile creation fails, clean up the auth user
@@ -122,7 +154,8 @@ export default function EnhancedSignUp() {
       
     } catch (error) {
       console.error('Sign up error:', error)
-      setErrorMessage(error instanceof Error ? error.message : 'An unexpected error occurred')
+      const msg = error instanceof Error ? error.message : 'An unexpected error occurred'
+      setErrorMessage(toFriendlyNetworkMessage(msg, buildApiUrl('profiles')))
     } finally {
       setLoading(false)
     }

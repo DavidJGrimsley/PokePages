@@ -51,6 +51,7 @@ api-server.env
 # Temporary files
 *.tmp
 *.temp
+temp/
 
 app-example
 

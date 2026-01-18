@@ -39,8 +39,11 @@ app.use((req, res, next) => {
 });
 
 // Middleware
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(cors({
-  origin: [
+  // In dev, allow LAN hosts (Expo web on phone, etc). In prod, keep a tight allowlist.
+  origin: isProduction ? [
     'https://pokepages.app',
     'http://localhost:8081',
     'http://localhost:3000',
@@ -48,7 +51,7 @@ app.use(cors({
     'http://localhost:19006',
     'http://10.0.2.2:8081', // Android emulator
     'http://10.0.2.2:19006', // Android emulator
-  ],
+  ] : true,
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

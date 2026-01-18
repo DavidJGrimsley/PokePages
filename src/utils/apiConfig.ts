@@ -1,11 +1,12 @@
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 // API Configuration for development vs production
 const getApiUrl = (): string => {
   // Allow environment variable to override
-  // if (process.env.EXPO_PUBLIC_API_BASE_URL) {
-  //   return process.env.EXPO_PUBLIC_API_BASE_URL;
-  // }
+  if (process.env.EXPO_PUBLIC_API_BASE_URL) {
+    return process.env.EXPO_PUBLIC_API_BASE_URL.replace(/\/+$/, '');
+  }
   
   // More robust development detection
   // Check for browser environment first
@@ -14,13 +15,37 @@ const getApiUrl = (): string => {
   const isDev = __DEV__ || process.env.NODE_ENV === 'development' || hostname === 'localhost' || hostname === '127.0.0.1';
   
   if (isDev) {
-    // For Android emulator, use 10.0.2.2 instead of localhost
-    // For iOS simulator and web, localhost works fine
-    if (Platform.OS === 'android') {
-      return 'http://10.0.2.2:3001';
-    } else {
+    // Web dev:
+    // - If loaded from a LAN hostname (e.g. 192.168.x.x:8081), prefer that same host for the API.
+    // - If loaded from localhost, keep localhost.
+    if (Platform.OS === 'web') {
+      if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+        return `http://${hostname}:3001`;
+      }
       return 'http://localhost:3001';
     }
+
+    // Native dev:
+    // - Android emulator cannot reach the host via localhost, so use 10.0.2.2.
+    // - Physical devices must hit your machine via LAN IP.
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      return 'http://10.0.2.2:3001';
+    }
+
+    const hostUri =
+      (Constants as any)?.expoConfig?.hostUri ||
+      (Constants as any)?.manifest?.debuggerHost ||
+      (Constants as any)?.manifest2?.extra?.expoClient?.hostUri;
+
+    if (typeof hostUri === 'string' && hostUri.length > 0) {
+      const host = hostUri.split(':')[0];
+      if (host && host !== 'localhost' && host !== '127.0.0.1') {
+        return `http://${host}:3001`;
+      }
+    }
+
+    // Fallback (simulators often can reach localhost)
+    return 'http://localhost:3001';
   } else {
     return 'https://api.pokepages.app';
   }
