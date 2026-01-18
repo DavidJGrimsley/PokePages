@@ -8,7 +8,7 @@ const CORE_ASSETS = [
   '/images/icons/pwa-512x512.png',
   '/images/icons/favicon.ico',
   '/images/icons/apple-touch-icon.png',
-  '/images/icons/favicon-32.png'
+  '/images/icons/favicon-32x32.png'
 ];
 
 self.addEventListener('install', (event) => {
