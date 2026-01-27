@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import type { AdConfig } from '~/constants/adsConfig';
+import type { AdConfig } from '~/services/adsService';
 
 interface AdBannerProps {
   /** The ad configuration to display */

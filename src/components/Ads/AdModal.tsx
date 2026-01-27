@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import type { AdConfig } from '~/constants/adsConfig';
+import type { AdConfig } from '~/services/adsService';
 
 interface AdModalProps {
   /** Whether the modal is visible */
@@ -22,7 +22,7 @@ interface AdModalProps {
   onClose: () => void;
   
   /** The ad configuration to display */
-  ad: AdConfig;
+  ad?: AdConfig | null;
 }
 
 /**
@@ -33,6 +33,10 @@ interface AdModalProps {
  * If internal form route exists, navigates there; otherwise opens external URL.
  */
 export function AdModal({ visible, onClose, ad }: AdModalProps) {
+  if (!ad) {
+    return null;
+  }
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,6 +50,7 @@ export function AdModal({ visible, onClose, ad }: AdModalProps) {
   };
 
   const gradient = gradientColors[ad.accentColor] || gradientColors.blue;
+  const features = Array.isArray(ad.features) ? ad.features : [];
 
   const handlePrimaryCTA = async () => {
     setIsLoading(true);
@@ -156,16 +161,21 @@ export function AdModal({ visible, onClose, ad }: AdModalProps) {
               <Text className="text-gray-900 dark:text-white font-bold text-base mb-2">
                 What&apos;s Included:
               </Text>
-                <View className="space-y-2">
-                  {ad.features.map((feature, index) => (
-                    <View key={`${feature}-${index}`} className="flex-row items-start gap-2">
-                      <Ionicons name="checkmark-circle" size={16} color={gradient[0]} style={{ marginTop: 2 }} />
-                      <Text className="text-sm text-gray-800 dark:text-gray-200 leading-5">
-                        {feature}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
+              <View className="space-y-2">
+                {features.map((feature, index) => (
+                  <View key={`${feature}-${index}`} className="flex-row items-start gap-2">
+                    <Ionicons name="checkmark-circle" size={16} color={gradient[0]} style={{ marginTop: 2 }} />
+                    <Text className="text-sm text-gray-800 dark:text-gray-200 leading-5">
+                      {feature}
+                    </Text>
+                  </View>
+                ))}
+                {features.length === 0 && (
+                  <Text className="text-sm text-gray-600 dark:text-gray-400 leading-5">
+                    Details coming soon.
+                  </Text>
+                )}
+              </View>
             </View>
           </ScrollView>
 

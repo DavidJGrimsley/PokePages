@@ -5,7 +5,7 @@ import { getTypeColor } from '~/utils/typeColors';
 import { type PokemonType } from '~/constants/typeUtils';
 import { nationalDex } from '@/data/Pokemon/NationalDex';
 import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
-import { getAllAds } from '~/constants/adsConfig';
+import { getAllAds } from '~/services/adsService';
 
 type TypeData = {
   id: string;

@@ -1,16 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getAllAds, type AdConfig } from '~/constants/adsConfig';
+import { getAllAds, type AdConfig } from '~/services/adsService';
 import { IframeEmbed } from '~/components/UI/IframeEmbed';
 
 export default function IntakeFormPage() {
   const { form } = useLocalSearchParams<{ form: string }>();
+  const [adConfig, setAdConfig] = useState<AdConfig | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Find the ad configuration based on the form parameter
-  const allAds = getAllAds();
-  const adConfig = allAds.find((ad: AdConfig) => ad.id === form);
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAd = async () => {
+      try {
+        const allAds = await getAllAds();
+        if (!isMounted) return;
+        const match = allAds.find((ad) => ad.id === form) ?? null;
+        setAdConfig(match);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadAd();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [form]);
+
+  if (isLoading) {
+    return (
+      <>
+        <Stack.Screen
+          options={{
+            title: 'Loading…',
+            headerShown: true,
+            headerTransparent: false,
+          }}
+        />
+        <View className="flex-1 items-center justify-center bg-app-background">
+          <Text className="typography-title text-app-text-primary">
+            Loading form…
+          </Text>
+        </View>
+      </>
+    );
+  }
 
   if (!adConfig || !adConfig.formUrl) {
     return (

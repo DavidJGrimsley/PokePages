@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Animated, Easing } from 'react-native';
-import { getRandomAd, type AdConfig } from '~/constants/adsConfig';
+import { getRandomAd, getAdById, type AdConfig } from '~/services/adsService';
 import { AdBanner } from './AdBanner';
 import { AdModal } from './AdModal';
 import { AdInfoModal } from './AdInfoModal';
@@ -29,22 +29,35 @@ export function AdBannerWithModal({ adId, className }: AdBannerWithModalProps) {
   const animatedValue = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Get a random ad on mount (or specific ad if ID provided)
-    if (adId) {
-      // If specific ad ID provided, try to load it
-      import('~/constants/adsConfig').then(({ getAdById }) => {
-        const specificAd = getAdById(adId);
-        if (specificAd) {
-          setAd(specificAd);
-        } else {
-          // Fallback to random if ID not found
-          setAd(getRandomAd());
+    let isMounted = true;
+
+    const loadAd = async () => {
+      try {
+        if (adId) {
+          const specificAd = await getAdById(adId);
+          if (!isMounted) return;
+          if (specificAd) {
+            setAd(specificAd);
+            return;
+          }
         }
-      });
-    } else {
-      // Random ad - rotates on each mount
-      setAd(getRandomAd());
-    }
+
+        const randomAd = await getRandomAd();
+        if (!isMounted) return;
+        setAd(randomAd);
+      } catch (error) {
+        console.error('Failed to load ad:', error);
+        if (isMounted) {
+          setAd(null);
+        }
+      }
+    };
+
+    loadAd();
+
+    return () => {
+      isMounted = false;
+    };
   }, [adId]);
 
   const handleDismiss = () => {
