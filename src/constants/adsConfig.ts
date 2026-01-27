@@ -1,9 +1,11 @@
 /**
  * Ad Configuration
  * 
- * Defines all promotional service ads shown throughout the app.
- * Ads rotate randomly and display as banners between content sections.
+ * NOW FETCHES FROM API: https://davidjgrimsley.com/api/content
+ * This file provides legacy compatibility and transformation utilities.
  */
+
+import { getAllAds as fetchAllAds, getRandomAd as apiGetRandomAd, getAdById as apiGetAdById, type AdConfig as APIAdConfig } from '@/services/contentApi';
 
 export interface AdConfig {
   /** Unique identifier for the ad */
@@ -41,149 +43,88 @@ export interface AdConfig {
 }
 
 /**
- * All available service ads
- * 
- * Current 
- * App development, website building, game development, tutoring, online presence.
- * 
- * Real service information from DavidsPortfolio
- * Contact: DavidJGrimsley@gmail.com | Website: davidjgrimsley.com
+ * Icon mapping for services
  */
-export const adsConfig: Record<string, AdConfig> = {
-  // checked
-  'app-development': {
-    id: 'app-development',
-    title: 'Need an App Developed?',
-    tagline: 'Turn your idea into reality',
-    description: 'Professional mobile and web app development with business goals wired in from day one—strategy, UX, and build tied to outcomes, plus optional bundling with online presence services so the app and your listings work together.',
-    ctaText: 'Start Your Project',
-    internalFormRoute: '/intake/app-development',
-    externalUrl: 'mailto:DavidJGrimsley@gmail.com?subject=App%20Development%20Inquiry',
-    formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSemBxe0Z6JYAZi8D9ZeMBU9HTRxqC-QlsSWoBTG6LvYKGDWsA/viewform?embedded=true',
-    features: [
-      'Cross-platform React Native apps',
-      'iOS & Android deployment',
-      'Modern UI/UX design',
-      'Backend integration & APIs',
-      'Real-time features & databases',
-      'App Store optimization',
-    ],
-    icon: 'phone-portrait-outline',
-    accentColor: 'blue',
-  },
-  // checked
-  'website-building': {
-    id: 'website-building',
-    title: 'Get a Website Built!',
-    tagline: 'Beautiful, fast, and responsive',
-    description: 'Custom business and portfolio websites built around your business goals from start to finish—conversion-focused UX, performance, and SEO—plus optional bundling with online presence services so your site, listings, and profiles reinforce each other.',
-    ctaText: 'Get Your Website',
-    internalFormRoute: '/intake/website-building',
-    externalUrl: 'https://davidjgrimsley.com',
-    formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfyVF35E5-vuZP7WORUDtUC36tJrnTrWUFzRGa41FGxqelV4Q/viewform?usp=sf_link',
-    features: [
-      'Portfolio websites',
-      'E-commerce solutions',
-      'Custom domain setup',
-      'Responsive design for all devices',
-      'SEO optimization',
-      'Fast loading performance',
-      'Modern UI/UX',
-      'Content management',
-    ],
-    icon: 'globe-outline',
-    accentColor: 'green',
-  },
-  // checked
-  'game-development': {
-    id: 'game-development',
-    title: 'Want to Make a Game?',
-    tagline: 'Bring your game concept to life',
-    description: 'Game development by the Poké Pages team specializing in Fortnite experiences (UEFN & Verse), Unreal Engine, Unity, Roblox, and Scratch. Perfect for educational games and engaging experiences.',
-    ctaText: 'Create Your Game',
-    internalFormRoute: '/intake/game-development',
-    externalUrl: 'mailto:DavidJGrimsley@gmail.com?subject=Game%20Development%20Inquiry',
-    formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSemBxe0Z6JYAZi8D9ZeMBU9HTRxqC-QlsSWoBTG6LvYKGDWsA/viewform?embedded=true',
-    features: [
-      'Fortnite Experiences (UEFN & Verse)',
-      'Unreal Engine (Blueprint & C++) development',
-      'Educational games (Scratch, Roblox)',
-      'Game design consulting',
-      '2D & 3D game mechanics',
-      'Mobile, Console, Web, PC, etc.',
-      'Interactive experiences',
-    ],
-    icon: 'game-controller-outline',
-    accentColor: 'purple',
-  },
-  // checked
-  'tutoring': {
-    id: 'tutoring',
-    title: 'Need Tutoring?',
-    tagline: 'Learn from an experienced developer',
-    description: 'Personalized tutoring in mathematics, game development, computer science, web development, and more from the Poké Pages team. Fill out the form to get started and inquire about pricing and availability .',
-    ctaText: 'Sign Up for Tutoring',
-    internalFormRoute: '/intake/tutoring',
-    externalUrl: 'https://davidjgrimsley.com',
-    formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSca1rbKUU94fup06Ko-wW3vVOLxNuMJNOaqnbMh6tJdyiJ1dw/viewform?usp=header',
-    features: [
-      'Math: Geometry, Algebra, Calculus',
-      'Software Development: AP CSA, AP CSP, Web Dev',
-      'Game dev: Fortnite, Unreal, Roblox',
-      'One-on-one: Tailored lessons',
-      'Group classes: Get the benefit of peers',
-      'Flexible virtual scheduling',
-      'Pricing to fit your budget',
-    ],
-    icon: 'school-outline',
-    accentColor: 'orange',
-  },
-  // checked
-  'online-presence': {
-    id: 'online-presence',
-    title: 'Build Your Online Presence',
-    tagline: 'Own your business profiles everywhere',
-    description: 'Fix and level up your business listings and profiles: Apple Business Connect, Google Maps/Business Profile, LinkedIn, and more—bundle with a polished site so your info stays accurate and consistent.',
-    ctaText: 'Get a consultation',
-    internalFormRoute: '/intake/online-presence',
-    externalUrl: 'https://davidjgrimsley.com',
-    formUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfyVF35E5-vuZP7WORUDtUC36tJrnTrWUFzRGa41FGxqelV4Q/viewform?usp=sf_link',
-    features: [
-      'Apple Business Connect setup and verification',
-      'Google Business Profile + Maps accuracy and hours',
-      'LinkedIn company page setup or refresh',
-      'Directory cleanup: Yelp, Bing, and other maps',
-      'Professional portfolio or landing page build',
-      'Contact forms, booking links, and call-to-action wiring',
-      'Branded domain email and DNS records',
-      'Analytics and review links to track engagement',
-    ],
-    icon: 'trending-up-outline',
-    accentColor: 'pink',
-  },
+const iconMap: Record<string, string> = {
+  'app-development': 'phone-portrait-outline',
+  'website-building': 'globe-outline',
+  'game-development': 'game-controller-outline',
+  'tutoring': 'school-outline',
+  'online-presence': 'trending-up-outline',
 };
 
 /**
- * Get all ad configurations as an array
+ * Color mapping from hex to Tailwind color names
  */
-export const getAllAds = (): AdConfig[] => {
-  return Object.values(adsConfig);
+const colorMap: Record<string, string> = {
+  '#0E668B': 'blue',
+  '#1E9E70': 'green',
+  '#723B80': 'purple',
+  '#EEA444': 'orange',
+  '#D63C83': 'pink',
+};
+
+/**
+ * Transform API ad to legacy AdConfig format
+ */
+function transformApiAd(apiAd: APIAdConfig): AdConfig {
+  const accentColor = colorMap[apiAd.accent] || 'blue';
+  const icon = iconMap[apiAd.serviceId] || 'information-circle-outline';
+  
+  return {
+    id: apiAd.id,
+    title: apiAd.headline,
+    tagline: apiAd.body.split('.')[0] || apiAd.body.substring(0, 50),
+    description: apiAd.body,
+    ctaText: apiAd.ctaLabel,
+    externalUrl: apiAd.ctaUrl,
+    internalFormRoute: `/intake/${apiAd.serviceId}`,
+    features: [], // Features not included in API response
+    icon,
+    accentColor,
+  };
+}
+
+/**
+ * Get all ad configurations as an array
+ * NOW FETCHES FROM API
+ */
+export const getAllAds = async (): Promise<AdConfig[]> => {
+  try {
+    const apiAds = await fetchAllAds();
+    return apiAds.map(transformApiAd);
+  } catch (error) {
+    console.error('Failed to fetch ads from API:', error);
+    return []; // Return empty array on error
+  }
 };
 
 /**
  * Get a random ad from the pool
+ * NOW FETCHES FROM API
  */
-export const getRandomAd = (): AdConfig => {
-  const ads = getAllAds();
-  const randomIndex = Math.floor(Math.random() * ads.length);
-  return ads[randomIndex];
+export const getRandomAd = async (): Promise<AdConfig | null> => {
+  try {
+    const apiAd = await apiGetRandomAd();
+    return transformApiAd(apiAd);
+  } catch (error) {
+    console.error('Failed to fetch random ad from API:', error);
+    return null;
+  }
 };
 
 /**
  * Get an ad by ID
+ * NOW FETCHES FROM API
  */
-export const getAdById = (id: string): AdConfig | undefined => {
-  return adsConfig[id];
+export const getAdById = async (id: string): Promise<AdConfig | undefined> => {
+  try {
+    const apiAd = await apiGetAdById(id);
+    return apiAd ? transformApiAd(apiAd) : undefined;
+  } catch (error) {
+    console.error('Failed to fetch ad by ID from API:', error);
+    return undefined;
+  }
 };
 
-export type AdConfigKey = keyof typeof adsConfig;
+export type AdConfigKey = string; // No longer limited to hardcoded keys
