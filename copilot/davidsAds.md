@@ -4,7 +4,11 @@ This guide explains how to consume David’s ads API from any app (web, mobile, 
 
 ### API Endpoint
 
-- **URL:** https://davidjgrimsley.com/api/content
+- **Default URL:** https://davidjgrimsley.com/api/content
+- **Env override:**
+	```
+	EXPO_PUBLIC_ADS_API_URL=https://davidjgrimsley.com/api/content
+	```
 - **Response:**
 	- `ads`: array of ad objects
 	- `services`: service definitions
@@ -27,6 +31,20 @@ Each ad in `ads` has:
 - `ctaLabel`
 - `ctaUrl`
 - `accent`
+
+### Intake URL (External)
+
+PokePages builds the intake URL from **serviceId**:
+
+```
+{INTAKE_BASE_URL}/{serviceId}
+```
+
+Set the base URL via env:
+
+```
+EXPO_PUBLIC_ADS_INTAKE_BASE_URL=https://davidjgrimsley.com/services
+```
 
 ### Storage Strategy
 
@@ -75,5 +93,6 @@ export async function getAllAds(): Promise<AdConfig[]> {
 - Service file: `src/services/adsService.ts`
 - Components import directly from the service.
 - Offline-first caching already implemented.
+- Intake URL is external (no in-app forms).
 
 If you want this for another app, copy `adsService.ts` and update any UI-specific transforms (icons/colors).

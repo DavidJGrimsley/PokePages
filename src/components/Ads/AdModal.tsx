@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import type { AdConfig } from '~/services/adsService';
 
 interface AdModalProps {
@@ -29,16 +28,15 @@ interface AdModalProps {
  * AdModal Component
  * 
  * Full-screen modal displaying detailed information about a service ad.
- * Includes features list, CTA button, and option to open in external browser.
- * If internal form route exists, navigates there; otherwise opens external URL.
+ * Includes features list and CTA button.
+ * CTA opens the external intake page.
  */
 export function AdModal({ visible, onClose, ad }: AdModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   if (!ad) {
     return null;
   }
-
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
 
   // Gradient colors based on accent color
   const gradientColors: Record<string, [string, string]> = {
@@ -52,49 +50,35 @@ export function AdModal({ visible, onClose, ad }: AdModalProps) {
   const gradient = gradientColors[ad.accentColor] || gradientColors.blue;
   const features = Array.isArray(ad.features) ? ad.features : [];
 
+  console.log('[AdModal] ad details', {
+    id: ad.id,
+    title: ad.title,
+    featuresCount: features.length,
+    hasDescription: Boolean(ad.description),
+  });
+
   const handlePrimaryCTA = async () => {
     setIsLoading(true);
     
     try {
-      if (ad.internalFormRoute) {
-        // Navigate to internal form route
-        onClose();
-        router.push(ad.internalFormRoute as any);
-      } else {
-        // Open external URL (in-app on mobile, new tab on web)
-        const supported = await Linking.canOpenURL(ad.externalUrl);
+      // Open external intake URL (in-app on mobile, new tab on web)
+      const supported = await Linking.canOpenURL(ad.ctaUrl);
+      
+      if (supported) {
+        await Linking.openURL(ad.ctaUrl);
         
-        if (supported) {
-          await Linking.openURL(ad.externalUrl);
-          
-          // On web, don't close modal since it opens in new tab
-          if (Platform.OS !== 'web') {
-            onClose();
-          }
-        } else {
-          Alert.alert('Error', 'Unable to open this link');
+        // On web, don't close modal since it opens in new tab
+        if (Platform.OS !== 'web') {
+          onClose();
         }
+      } else {
+        Alert.alert('Error', 'Unable to open this link');
       }
     } catch (error) {
       console.error('Error opening link:', error);
       Alert.alert('Error', 'Failed to open the link. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleOpenInBrowser = async () => {
-    try {
-      const supported = await Linking.canOpenURL(ad.externalUrl);
-      
-      if (supported) {
-        await Linking.openURL(ad.externalUrl);
-      } else {
-        Alert.alert('Error', 'Unable to open this link in browser');
-      }
-    } catch (error) {
-      console.error('Error opening in browser:', error);
-      Alert.alert('Error', 'Failed to open the link in browser.');
     }
   };
 
@@ -180,13 +164,13 @@ export function AdModal({ visible, onClose, ad }: AdModalProps) {
           </ScrollView>
 
           {/* Action Buttons */}
-          <View className="p-4 pt-2 border-t border-gray-200 dark:border-gray-700">
+          <View className="p-4 pt-2 pb-2 border-t border-gray-200 dark:border-gray-700">
               {/* Primary CTA */}
               <TouchableOpacity
                 onPress={handlePrimaryCTA}
                 disabled={isLoading}
                 activeOpacity={0.8}
-                className="mb-2"
+                className="mb-0"
               >
                 <LinearGradient
                   colors={gradient}
@@ -199,34 +183,6 @@ export function AdModal({ visible, onClose, ad }: AdModalProps) {
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
-
-              {/* Secondary CTA - Open in External Browser */}
-              {!ad.internalFormRoute && (
-                <TouchableOpacity
-                  onPress={handleOpenInBrowser}
-                  activeOpacity={0.7}
-                  className="border border-gray-300 dark:border-gray-600 rounded-lg py-2.5 px-4"
-                >
-                  <View className="flex-row items-center justify-center">
-                    <Ionicons 
-                      name="open-outline" 
-                      size={16} 
-                      color="#6b7280" 
-                      style={{ marginRight: 4 }}
-                    />
-                    <Text className="text-gray-700 dark:text-gray-300 text-center font-medium text-xs">
-                      Open in External Browser
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-
-              {/* Internal form route indicator */}
-              {ad.internalFormRoute && (
-                <Text className="text-gray-500 text-xs text-center mt-1">
-                  Opens in-app form
-                </Text>
-              )}
             </View>
           </View>
         </View>

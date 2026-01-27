@@ -1,11 +1,11 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useEffect, useMemo, useState, Fragment } from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import typeAnalysis from '~/constants/typeAnalysis.json';
 import { getTypeColor } from '~/utils/typeColors';
 import { type PokemonType } from '~/constants/typeUtils';
 import { nationalDex } from '@/data/Pokemon/NationalDex';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
-import { getAllAds } from '~/services/adsService';
+import { AdBannerWithModal } from '~/components/Ads/AdBannerWithModal';
+import { getAllAds, type AdConfig } from '~/services/adsService';
 
 type TypeData = {
   id: string;
@@ -18,7 +18,28 @@ interface TypeInfoProps {
 }
 
 export function TypeInfo({ selectedType }: TypeInfoProps) {
-  const ads = useMemo(() => getAllAds(), []);
+  const [ads, setAds] = useState<AdConfig[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAds = async () => {
+      try {
+        const results = await getAllAds();
+        if (!isMounted) return;
+        setAds(results);
+      } catch (error) {
+        console.error('TypeInfo ads load failed:', error);
+      }
+    };
+
+    loadAds();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const adBaseIndex = useMemo(
     () => (ads.length > 0 ? Math.floor(Math.random() * ads.length) : 0),
     [ads.length]

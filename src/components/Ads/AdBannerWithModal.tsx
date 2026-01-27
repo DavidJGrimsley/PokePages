@@ -33,8 +33,11 @@ export function AdBannerWithModal({ adId, className }: AdBannerWithModalProps) {
 
     const loadAd = async () => {
       try {
+        console.log('[AdBannerWithModal] Loading ad...', { adId });
+        
         if (adId) {
           const specificAd = await getAdById(adId);
+          console.log('[AdBannerWithModal] Loaded specific ad:', { found: !!specificAd, adId });
           if (!isMounted) return;
           if (specificAd) {
             setAd(specificAd);
@@ -43,10 +46,11 @@ export function AdBannerWithModal({ adId, className }: AdBannerWithModalProps) {
         }
 
         const randomAd = await getRandomAd();
+        console.log('[AdBannerWithModal] Loaded random ad:', { found: !!randomAd, title: randomAd?.title });
         if (!isMounted) return;
         setAd(randomAd);
       } catch (error) {
-        console.error('Failed to load ad:', error);
+        console.error('[AdBannerWithModal] Failed to load ad:', error);
         if (isMounted) {
           setAd(null);
         }
