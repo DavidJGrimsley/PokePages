@@ -240,19 +240,3 @@ export const lumioseDex: Pokemon[] = [
 // NOTE: Mega forms moved to `data/Pokemon/MegaDex.ts`
 // NOTE: Hyperspace entries moved to `data/Pokemon/LegendsZA/HyperspaceDex.ts`
 
-// Re-export utility functions for backwards compatibility
-export {
-  findPokemonById,
-  findPokemonByName,
-  findMegaPokemonById,
-  findMegaPokemonByName,
-  hasMegaEvolution,
-  getMegaFormsForPokemon,
-  searchAllPokemon,
-  findPokemonByType,
-  getTotalPokemonCount
-} from '@/data/Pokemon/pokedexUtils';
-
-// Legacy alias for searchAllPokemon
-export { searchAllPokemon as searchPokemon } from '@/data/Pokemon/pokedexUtils';
-

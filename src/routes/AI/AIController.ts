@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import path from 'path';
 import { PokemonClient } from 'pokenode-ts';
 import OpenAI from 'openai';
 import type { Pokemon } from '../../../data/Pokemon/NationalDex.js';

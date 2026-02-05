@@ -4,8 +4,7 @@ import typeAnalysis from '~/constants/typeAnalysis.json';
 import { getTypeColor } from '~/utils/typeColors';
 import { type PokemonType } from '~/constants/typeUtils';
 import { nationalDex } from '@/data/Pokemon/NationalDex';
-import { AdBannerWithModal } from '~/components/Ads/AdBannerWithModal';
-import { getAllAds, type AdConfig } from '~/services/adsService';
+import { AdBannerWithModal, getAllAds, type AdConfig } from '@mr.dj2u/ads';
 
 type TypeData = {
   id: string;

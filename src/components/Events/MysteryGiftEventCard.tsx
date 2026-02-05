@@ -1,14 +1,13 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 import { MysteryGiftEvent, EventStatus } from '~/constants/events/types';
 import { getMysteryGiftStatus } from '~/utils/helperFX';
 import { useEventClaim } from '~/services/eventClaimsService';
-import { cn } from '~/utils/cn';
 import { BaseEventCard } from './BaseEventCard';
-import { EventClaimButton } from './EventClaimButton';import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';
+import { EventClaimButton } from './EventClaimButton';
+import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';
 interface MysteryGiftEventCardProps {
   event: MysteryGiftEvent;
   eventKey: string;

@@ -20,7 +20,7 @@ import {
   PromoCodeEventCard 
 } from '~/components/Events';
 import { Footer } from '@/src/components/Meta/Footer';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export default function EventsIndex() {
   // SEO meta content

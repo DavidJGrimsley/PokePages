@@ -13,7 +13,6 @@ import { validateData, validateParams, validateQuery } from '../../middlewares/v
 import { verifySupabaseAuth, verifyResourceOwnership, requireAdmin } from '../../middlewares/authMiddleware.js';
 import { 
   updateProfileSchema,
-  userEditableProfileSchema,
   signupProfileSchema,
   userIdParamsSchema,
   usernameParamsSchema,

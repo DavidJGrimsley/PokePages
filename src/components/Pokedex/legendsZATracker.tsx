@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { RegisteredStatus, FormType } from '@/src/types/tracker';
-import { buildApiUrlNoTrailingSlash as buildApiUrl } from '@/src/utils/apiConfig';
 import { useAuthStore } from '@/src/store/authStore';
 
 interface Pokemon {

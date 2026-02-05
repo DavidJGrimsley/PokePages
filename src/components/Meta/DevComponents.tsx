@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { ThemedText } from 'components/TextTheme/ThemedText';
 import { ThemedView } from 'components/TextTheme/ThemedView';
 import { Collapsible } from 'components/UI/Collapsible';
-import { IconSymbol } from 'components/UI/IconSymbol';
+import { IconSymbol, type IconSymbolName } from 'components/UI/IconSymbol';
 import { useColorScheme } from '~/hooks/useColorScheme';
 import colors from 'constants/style/colors';
 
@@ -313,7 +313,7 @@ function GuidelineItem({
   title, 
   description 
 }: { 
-  icon: string; 
+  icon: IconSymbolName; 
   iconColor: string; 
   title: string; 
   description: string; 

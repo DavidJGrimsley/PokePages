@@ -1,6 +1,6 @@
 import { pgTable, unique, uuid, timestamp, text, check, date } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
-import { createInsertSchema, createSelectSchema } from "drizzle-zod"
+import { createInsertSchema } from "drizzle-zod"
 import { z } from "zod"
 
 export const profiles = pgTable("profiles", {
@@ -68,4 +68,3 @@ export const paginationQuerySchema = z.object({
   offset: z.string().regex(/^\d+$/).optional().default('0'),
 });
 
-type ProfileType = z.infer<typeof updateProfileSchema>;

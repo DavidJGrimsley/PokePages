@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Pressable, View, Platform } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
-import useFavoriteFeaturesStore from '@/src/store/favoriteFeaturesStore';
+import { useFavoriteFeaturesStore } from '@/src/store/favoriteFeaturesStore';
 import { useAuthStore } from '@/src/store/authStore';
 import { useNavigateToSignIn } from '@/src/hooks/useNavigateToSignIn';
 

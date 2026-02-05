@@ -34,12 +34,6 @@ export default function ParallaxScrollView({
     extrapolate: 'clamp',
   });
 
-  const titleOpacity = scrollY.interpolate({
-    inputRange: [0, headerHeight - 100],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, headerHeight],
     outputRange: [0, -headerHeight * 2.25],

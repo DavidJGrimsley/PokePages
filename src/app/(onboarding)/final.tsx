@@ -1,15 +1,14 @@
 import { Stack, router } from 'expo-router';
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 
 import { Button } from 'components/UI/Button';
 import { useOnboardingStore } from '~/store/onboardingStore';
 import { useAuthStore } from '~/store/authStore';
 
-import { PrettyText } from 'components/TextTheme/PrettyText';
 export default function OnboardingFinalScreen() {
-  const { completeOnboarding, hasCompletedOnboarding, returnUrl, setReturnUrl } = useOnboardingStore();
+  const { completeOnboarding, returnUrl, setReturnUrl } = useOnboardingStore();
   const { isLoggedIn } = useAuthStore();
   const exploreBtnRef = useRef<View>(null); // ref to the Start Exploring button
   const signInButtonRef = useRef<View>(null); // ref to the Sign In button

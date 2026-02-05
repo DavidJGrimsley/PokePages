@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import { View, Text, ScrollView } from 'react-native';
 
 import { Container } from 'components/UI/Container';
-import { AdBannerWithModal } from '@/src/components/Ads';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export default function DownloadApp() {
   return (

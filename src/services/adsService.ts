@@ -15,7 +15,6 @@ import { Platform } from 'react-native';
 const API_URL = process.env.EXPO_PUBLIC_ADS_API_URL ?? 'https://davidjgrimsley.com/api/content';
 const INTAKE_BASE_URL = (process.env.EXPO_PUBLIC_ADS_INTAKE_BASE_URL ?? 'https://davidjgrimsley.com/services')
   .replace(/\/$/, '');
-const ADS_DEBUG = process.env.EXPO_PUBLIC_ADS_DEBUG === 'true';
 const CACHE_KEY = 'ads_cache';
 const CACHE_TIMESTAMP_KEY = 'ads_cache_timestamp';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
@@ -36,27 +35,22 @@ export interface AdConfig {
   features?: string[];
 }
 
-interface APIAdConfig {
-  id: string;
-  serviceId: string;
-  headline: string;
-  body: string;
-  ctaLabel: string;
-  ctaUrl: string;
-  accent: string;
-}
-
 interface APIServiceConfig {
   id: string;
+  title: string;
+  tagline: string;
   description: string;
-  features?: string[];
+  features: string[];
+  primaryCtaLabel: string;
+  primaryCtaId: string;
+  intakeUrl: string;
+  accent: string;
 }
 
 interface ContentPayload {
   version: string;
   generatedAt: string;
   services: APIServiceConfig[];
-  ads: APIAdConfig[];
 }
 
 // ===========================
@@ -108,20 +102,24 @@ const colorMap: Record<string, string> = {
   '#D63C83': 'pink',
 };
 
-function transformApiAd(apiAd: APIAdConfig, service?: APIServiceConfig): AdConfig {
-  const accentColor = colorMap[apiAd.accent] || 'blue';
-  const icon = iconMap[apiAd.serviceId] || 'information-circle-outline';
+function transformService(service: APIServiceConfig): AdConfig {
+  const accentColor = colorMap[service.accent] || 'blue';
+  const icon = iconMap[service.id] || 'information-circle-outline';
+  
+  // Construct full URL from base + relative path
+  const ctaUrl = `${INTAKE_BASE_URL}${service.intakeUrl}`;
+
   
   return {
-    id: apiAd.id,
-    title: apiAd.headline,
-    tagline: apiAd.body.split('.')[0] || apiAd.body.substring(0, 50),
-    description: service?.description ?? apiAd.body,
-    ctaText: apiAd.ctaLabel,
-    ctaUrl: `${INTAKE_BASE_URL}/${apiAd.serviceId}`,
+    id: service.id,
+    title: service.title,
+    tagline: service.tagline,
+    description: service.description,
+    ctaText: service.primaryCtaLabel,
+    ctaUrl,
     icon,
     accentColor,
-    features: service?.features ?? [],
+    features: service.features ?? [],
   };
 }
 
@@ -176,26 +174,11 @@ async function fetchAdsFromAPI(): Promise<AdConfig[]> {
   const payload: ContentPayload = await response.json();
 
   console.log('[adsService] payload', {
-    adsCount: payload.ads?.length ?? 0,
     servicesCount: payload.services?.length ?? 0,
     apiUrl: API_URL,
   });
 
-  const serviceMap = new Map((payload.services ?? []).map((service) => [service.id, service]));
-
-  return (payload.ads ?? []).map((ad) => {
-    const service = serviceMap.get(ad.serviceId);
-
-    if (!service) {
-      console.warn('[adsService] missing service for ad', {
-        adId: ad.id,
-        serviceId: ad.serviceId,
-        availableServiceIds: Array.from(serviceMap.keys()),
-      });
-    }
-
-    return transformApiAd(ad, service);
-  });
+  return (payload.services ?? []).map(transformService);
 }
 
 // ===========================

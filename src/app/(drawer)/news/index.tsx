@@ -5,7 +5,7 @@ import { View, Text, ScrollView, ActivityIndicator, RefreshControl, Pressable } 
 import { Container } from '@/src/components/UI/Container';
 import { NewsCard } from '@/src/components/Home/NewsCard';
 import { fetchNews, type NewsArticle } from '@/src/services/rssService';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export default function NewsPage() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);

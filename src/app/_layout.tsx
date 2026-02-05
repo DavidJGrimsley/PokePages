@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Stack, SplashScreen } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import { FontAwesome, Feather, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -35,7 +35,8 @@ import {
 import { useAuthStore } from '~/store/authStore';
 import { useOnboardingStore } from '~/store/onboardingStore';
 // HeaderTitle removed from root layout (not used here)
-import Loading from '@/src/components/Animation/LoadingFull';
+import { LoadingPP } from '@/src/components/Animation/LoadingPP';
+ 
 
 // Add mobile debugging console ONLY in development
 // In development we previously added a mobile in-browser console (eruda).
@@ -183,7 +184,7 @@ export default function RootLayout() {
 
   // Show loading animation until both hydration and fonts are ready
   if (!isHydrated || (!fontsReady && !fontLoadingTimedOut)) {
-    return <Loading />;
+    return <LoadingPP />;
   }
 
   if ((!_hasHydrated || !_hasHydratedOnboarding) && !isWeb) {

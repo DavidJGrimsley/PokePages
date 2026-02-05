@@ -9,7 +9,6 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 
-import { ThemedView } from 'components/TextTheme/ThemedView';
 import { ThemedText } from 'components/TextTheme/ThemedText';
 import { useBottomTabOverflow } from 'components/UI/TabBarBackground';
 import { useColorScheme } from '~/hooks/useColorScheme';

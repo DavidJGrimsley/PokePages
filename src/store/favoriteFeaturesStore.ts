@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { Platform } from 'react-native';
-import { universalStorage } from '@/src/utils/platformStorage';
 import { useAuthStore } from './authStore';
-import { buildApiUrl, buildApiUrlNoTrailingSlash, API_BASE_URL } from '@/src/utils/apiConfig';
+import { buildApiUrl, buildApiUrlNoTrailingSlash } from '@/src/utils/apiConfig';
 
 interface FavoriteFeaturesState {
   favorites: Record<string, true>;

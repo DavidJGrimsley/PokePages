@@ -1,7 +1,7 @@
 import { Link, Stack, router } from 'expo-router';
 
 import { HeaderButton } from 'components/UI/HeaderComponents';
-import { Pressable, Image } from 'react-native';
+import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { allEvents } from '~/constants/events/index';
 import { isCounterEvent, isTeraRaidEvent, isMysteryGiftEvent, isPromoCodeEvent } from '~/constants/events/types';

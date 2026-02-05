@@ -20,7 +20,7 @@ import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
 import { registerFeature } from '@/src/utils/featureRegistry';
 import { FilterModal } from '@/src/components/Pokedex/FilterModal';
 import { useShowSignInAlert } from '@/src/hooks/useNavigateToSignIn';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export const FEATURE_KEY = 'feature:guides.PLZA.dex-tracker';
 const FEATURE_TITLE = 'Legends: Z-A Form Tracker';

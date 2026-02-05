@@ -6,7 +6,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { supabase } from 'utils/supabaseClient'
 import { buildApiUrl } from '~/utils/apiConfig'
 import { router } from 'expo-router'
-import { useAuthStore } from "~/store/authStore"
 
 import { Button } from 'components/UI/Button'
 import SuccessMessage from 'components/UI/SuccessMessage'

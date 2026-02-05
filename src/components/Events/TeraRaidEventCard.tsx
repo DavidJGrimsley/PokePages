@@ -1,12 +1,11 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 
 import { TeraRaidEvent, EventStatus } from '~/constants/events/types';
 import { getTeraRaidStatus } from '~/utils/helperFX';
 import { useEventClaim } from '~/services/eventClaimsService';
-import { cn } from '~/utils/cn';
 import { BaseEventCard } from './BaseEventCard';
 import { EventClaimButton } from './EventClaimButton';
 import { useShowSignInAlert } from '~/hooks/useNavigateToSignIn';

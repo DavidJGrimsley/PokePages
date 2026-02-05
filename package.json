@@ -39,6 +39,7 @@
     "@expo-google-fonts/roboto-slab": "^0.4.1",
     "@expo/metro-runtime": "~6.1.2",
     "@lottiefiles/dotlottie-react": "^0.15.0",
+    "@mr.dj2u/ads": "^1.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-google-signin/google-signin": "^16.0.0",

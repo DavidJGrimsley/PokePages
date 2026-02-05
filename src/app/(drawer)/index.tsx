@@ -10,26 +10,13 @@ import { HomeCards } from '@/src/components/Home/HomeCards';
 import { NewsCard } from '@/src/components/Home/NewsCard';
 import { 
   getActiveEvents, 
-  EventType,
-  isCounterEvent,
-  isTeraRaidEvent,
-  isMysteryGiftEvent,
-  isPromoCodeEvent
+  EventType
 } from '~/constants/events';
-import { 
-  CounterEventCard, 
-  TeraRaidEventCard, 
-  MysteryGiftEventCard, 
-  PromoCodeEventCard 
-} from '~/components/Events';
 import { Footer } from '@/src/components/Meta/Footer';
 import { getRecentNews, type NewsArticle } from '@/src/services/rssService';
-import { AdBannerWithModal } from '@/src/components/Ads';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export default function Home() {
-  // Use shallow comparator to avoid re-render loop when an array reference changes
-  const favoritesObj = useFavoriteFeaturesStore((s) => s.favorites);
-  const favorites = useMemo(() => Object.keys(favoritesObj), [favoritesObj]);
   const isSignedIn = useAuthStore((s) => s.isLoggedIn);
   
   // State for news articles

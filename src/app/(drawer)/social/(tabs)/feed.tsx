@@ -21,7 +21,7 @@ import * as socialApi from '~/utils/socialApi';
 import type { ReactionType } from '~/utils/socialApi';
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
 import { Footer } from '@/src/components/Meta/Footer';
-import { AdBannerWithModal } from '@/src/components/Ads';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 type FeedMode = 'explore' | 'friends';
 

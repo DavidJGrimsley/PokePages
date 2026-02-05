@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Stack, useLocalSearchParams, router } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { View, Text, FlatList, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity } from 'react-native';
 import { useAuthStore } from '~/store/authStore';
 import * as socialApi from '~/utils/socialApi';

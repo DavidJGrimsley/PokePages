@@ -43,6 +43,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList }) => {
   // Subscribe to the entire pokemon state to trigger re-renders on any change
   const pokemon = usePokemonTrackerStore((state) => state.pokemon);
+  void pokemon;
   
   const {
     getPokedexProgress,
@@ -67,14 +68,14 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({ pokemonList })
   );
 
   // Calculate all progress metrics - will re-calculate when pokemon state changes
-  const pokedexProgress = React.useMemo(() => getPokedexProgress(pokemonList), [getPokedexProgress, pokemonList, pokemon]);
-  const normalDexProgress = React.useMemo(() => getNormalDexProgress(pokemonList), [getNormalDexProgress, pokemonList, pokemon]);
-  const shinyDexProgress = React.useMemo(() => getShinyDexProgress(pokemonList), [getShinyDexProgress, pokemonList, pokemon]);
-  const alphaDexProgress = React.useMemo(() => getAlphaDexProgress(pokemonList), [getAlphaDexProgress, pokemonList, pokemon]);
-  const shinyAlphaDexProgress = React.useMemo(() => getShinyAlphaDexProgress(pokemonList), [getShinyAlphaDexProgress, pokemonList, pokemon]);
-  const megaDexProgress = React.useMemo(() => getMegaDexProgress(pokemonList), [getMegaDexProgress, pokemonList, pokemon]);
-  const megaShinyDexProgress = React.useMemo(() => getMegaShinyDexProgress(pokemonList), [getMegaShinyDexProgress, pokemonList, pokemon]);
-  const alphaShinyMegaDexProgress = React.useMemo(() => getAlphaShinyMegaDexProgress(pokemonList), [getAlphaShinyMegaDexProgress, pokemonList, pokemon]);
+  const pokedexProgress = getPokedexProgress(pokemonList);
+  const normalDexProgress = getNormalDexProgress(pokemonList);
+  const shinyDexProgress = getShinyDexProgress(pokemonList);
+  const alphaDexProgress = getAlphaDexProgress(pokemonList);
+  const shinyAlphaDexProgress = getShinyAlphaDexProgress(pokemonList);
+  const megaDexProgress = getMegaDexProgress(pokemonList);
+  const megaShinyDexProgress = getMegaShinyDexProgress(pokemonList);
+  const alphaShinyMegaDexProgress = getAlphaShinyMegaDexProgress(pokemonList);
 
   return (
     <View className="space-y-2">

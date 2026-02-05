@@ -107,10 +107,10 @@ export default function SocialLayout() {
         <Stack.Screen name="conversations/[conversationId]" />
         <Stack.Screen 
           name="posts/[postId]"
-          headerBackTitle="Back"
           options={{ 
             title: '',
-            headerStyle: { backgroundColor: theme.colors.light.secondary, height: theme.spacing.xl } }} // Lavender, shorter
+            headerBackTitle: 'Back',
+            headerStyle: { backgroundColor: theme.colors.light.secondary } }} // Lavender, shorter
 
         />
       </Stack.Protected>

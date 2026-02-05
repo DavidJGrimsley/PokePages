@@ -103,3 +103,7 @@ export async function fetchPokemonDataByName(name: string, client: PokemonClient
     return undefined;
   }
 }
+
+export default function PokedexUtilsRoute() {
+  return null;
+}

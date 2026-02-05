@@ -19,7 +19,7 @@ import { getTypeColor } from '~/utils/typeColors';
 import { TypeBlurb } from './Blurb';
 import { CounterSuggestions } from './CounterSuggestions';
 import { Footer } from '../Meta/Footer';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 // Helper component to render a type name with its color background
 function TypeBadge({ typeName }: { typeName: string }) {

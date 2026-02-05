@@ -63,9 +63,6 @@ export const Build: React.FC<BuildProps> = ({
   };
 
   useEffect(() => {
-    const sanitizedPokemonVariant = (variant: string) => {
-      return variant.replace(/\s+/g, '-').toLowerCase();
-    };
     if (!pokemonId) return;
     fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
     .then(res => res.json())

@@ -7,7 +7,6 @@ import { ScreenContent } from 'components/UI/ScreenContent';
 import { Button } from 'components/UI/Button';
 import { buildApiUrl } from '~/utils/apiConfig';
 import * as socialApi from '~/utils/socialApi';
-import { Ionicons } from '@expo/vector-icons';
 
 interface ProfileData {
   id: string;
@@ -17,19 +16,10 @@ interface ProfileData {
   socialLink: string | null;
 }
 
-interface CatchData {
-  id: string;
-  pokemonId: number;
-  storagePath: string;
-  caughtAt: string;
-  notes: string | null;
-}
-
 export default function UserProfileScreen() {
   const { username } = useLocalSearchParams<{ username: string }>();
   const { user, session } = useAuthStore();
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [catches, setCatches] = useState<CatchData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFriend, setIsFriend] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
@@ -73,23 +63,6 @@ export default function UserProfileScreen() {
       setProfile(null);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchCatches = async () => {
-    if (!profile?.id) return;
-    try {
-      const response = await fetch(buildApiUrl(`catches/${profile.id}`), {
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-        },
-      });
-      const result = await response.json();
-      if (result.success) {
-        setCatches(result.data);
-      }
-    } catch (error) {
-      console.error('Error fetching catches:', error);
     }
   };
 
@@ -348,28 +321,6 @@ export default function UserProfileScreen() {
             </View>
           )}
 
-          {/* Catches Gallery Section */}
-          <View className="mb-8 border-2 border-amber-500 rounded-3xl p-4 bg-white">
-            <Text className="text-lg font-bold text-gray-800 mb-4">Catches</Text>
-            {catches.length > 0 ? (
-              <View className="flex-row flex-wrap gap-2">
-                {catches.map((catchData) => (
-                  <View
-                    key={catchData.id}
-                    className="w-24 h-24 border-2 border-amber-500 rounded-2xl overflow-hidden bg-gray-100"
-                  >
-                    <Image
-                      source={{ uri: catchData.storagePath }}
-                      className="w-full h-full"
-                      resizeMode="cover"
-                    />
-                  </View>
-                ))}
-              </View>
-            ) : (
-              <Text className="text-gray-400 italic">No catches yet</Text>
-            )}
-          </View>
         </ScrollView>
       </ScreenContent>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />

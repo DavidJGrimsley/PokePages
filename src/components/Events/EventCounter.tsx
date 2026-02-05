@@ -207,12 +207,12 @@ export const EventCounter: React.FC<EventCounterProps> = ({
           return;
         }
        
-        const imageUrl = isShiny 
-        // Ignore the ts error about "Property 'front_shiny' does not exist on type 'OfficialArtwork'.ts(2339)"
-          ? (pokemon.sprites.other?.['official-artwork']?.front_shiny || 
-                          pokemon.sprites.front_shiny || '')
-          : (pokemon.sprites.other?.['official-artwork']?.front_default || 
-             pokemon.sprites.front_default || '');
+        const officialArtwork = pokemon.sprites.other?.['official-artwork'] as
+          | { front_default?: string; front_shiny?: string }
+          | undefined;
+        const imageUrl = isShiny
+          ? (officialArtwork?.front_shiny || pokemon.sprites.front_shiny || '')
+          : (officialArtwork?.front_default || pokemon.sprites.front_default || '');
         setPokemonImage(imageUrl);
         
         const statsArray = Array.isArray(pokemon.stats) ? pokemon.stats : [];

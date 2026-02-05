@@ -46,10 +46,6 @@ export function TypeBlurb({ selectedType, secondType = null }: TypeBlurbProps) {
         ? `${selectedType.toUpperCase()}/${secondType?.toUpperCase()} Type Analysis`
         : `${selectedType.toUpperCase()} Type Analysis`);
 
-  const aboutLabel = info?.title
-    ? `About ${info.title} type`
-    : `About ${isDualTyped && secondType ? `${selectedType}/${secondType}` : selectedType} type`;
-
   return (
     <LinearGradient
       colors={[color1, color2]}

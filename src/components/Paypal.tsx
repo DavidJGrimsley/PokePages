@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, Pressable, Linking, StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
 
 export function PayPal() {
   const handleDonatePress = () => {

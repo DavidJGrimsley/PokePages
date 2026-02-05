@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
+import { View } from 'react-native';
+import Head from 'expo-router/head';
 import FavoriteToggle from '@/src/components/UI/FavoriteToggle';
-export const FEATURE_KEY = 'feature:resources.type.analyzer';
 import { registerFeature } from '@/src/utils/featureRegistry';
+import { Container } from 'components/UI/Container';
+import { TypeHeader } from '@/src/components/Type/TypeHeader';
+import { TypeAnalysis } from '@/src/components/Type/Analyzer';
+import { TypeSelector } from '@/src/components/Type/Selector';
+import { type PokemonType, ALL_STANDARD_TYPES } from '~/constants/typeUtils';
+
+export const FEATURE_KEY = 'feature:resources.type.analyzer';
 // Register this feature for registry usage
 registerFeature({ 
   key: FEATURE_KEY, 
   title: 'Type Analyzer', 
   path: '/(drawer)/resources/type/analyzer', 
   icon: 'analytics' });
-
-import { Text, View } from 'react-native';
-import Head from 'expo-router/head';
-import { Container } from 'components/UI/Container';
-import { TypeHeader } from '@/src/components/Type/TypeHeader';
-import { TypeAnalysis } from '@/src/components/Type/Analyzer';
-import { TypeSelector } from '@/src/components/Type/Selector';
-import { type PokemonType, ALL_STANDARD_TYPES } from '~/constants/typeUtils';
 
 export default function TypeAnalyzer() {
   const [typeOne, setTypeOne] = useState<PokemonType>('fire');

@@ -7,6 +7,7 @@ export function maskSecret(value?: string) {
 }
 
 export function envPresence(key: string) {
+  // eslint-disable-next-line expo/no-dynamic-env-var
   const v = process.env[key];
   return v ? `SET len=${v.length}` : 'MISSING';
 }
@@ -14,7 +15,7 @@ export function envPresence(key: string) {
 export function isDotEnvPresent() {
   try {
     return fs.existsSync('./.env');
-  } catch (e) {
+  } catch {
     return false;
   }
 }

@@ -37,7 +37,7 @@ export default function NewsLayout() {
               <HeaderButton iconName="user-circle" />
             </Link>
           ),
-          headerStyle: { backgroundColor: theme.colors.light.secondary, height: theme.spacing.xl },
+          headerStyle: { backgroundColor: theme.colors.light.secondary },
         }}
       />
     </Stack>

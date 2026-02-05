@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { theme } from 'constants/style/theme';
 
 export default function Gen9Layout() {

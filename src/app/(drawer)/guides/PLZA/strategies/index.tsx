@@ -6,12 +6,9 @@ import { StrategyCard } from '@/src/components/UI/StrategyCard';
 import strategiesConfig from '@/src/constants/PLZAStrategiesConfig.json';
 import { Platform, View, Text } from 'react-native';
 import Head from 'expo-router/head';
-import { EVYields } from '@/src/components/Guides/EVYields';
-
 import { InProgressDisclaimer } from '@/src/components/Meta/InProgressDisclaimer';
-import { Frame } from 'components/UI/Frame';
 import { VideoCarousel } from '@/src/components/Guides/VideoCarousel';
-import { AdBannerWithModal } from '@/src/components/Ads/AdBannerWithModal';
+import { AdBannerWithModal } from '@mr.dj2u/ads';
 
 export default function Strategies() {
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';

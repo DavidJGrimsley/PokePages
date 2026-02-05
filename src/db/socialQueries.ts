@@ -22,17 +22,7 @@ import {
   type NewPostMedia,
   type NewComment,
   type NewDirectMessage,
-  type NewFriendship,
-  type NewLike,
-  type NewBlock,
-  type NewUserMute,
   type NewNotification,
-  type NewConversation,
-  type NewHashtag,
-  type NewPostHashtag,
-  type NewSavedPost,
-  type NewReaction,
-  type NewCommentReaction,
   type NewCatch,
 } from './socialSchema.js';
 import { profiles } from './profilesSchema.js';

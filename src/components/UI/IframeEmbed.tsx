@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   webview: {
     height: '85%' as any,
     width: '100%',
-    border: 'none',
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
 });

@@ -1,12 +1,9 @@
 import { PropsWithChildren, useState } from 'react';
 import { TouchableOpacity, View, Text, Image, Platform } from 'react-native';
 import Animated, { 
-  FadeIn, 
   FadeInDown, 
-  SlideInDown,
   useSharedValue,
   useAnimatedStyle,
-  withTiming,
   withSpring
 } from 'react-native-reanimated';
 
